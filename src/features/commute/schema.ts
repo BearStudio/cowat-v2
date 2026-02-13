@@ -1,5 +1,6 @@
 import { t } from 'i18next';
 import { z } from 'zod';
+
 import { zu } from '@/lib/zod/zod-utils';
 
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
