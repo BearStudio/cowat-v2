@@ -1,49 +1,47 @@
+import { faker } from '@faker-js/faker';
+
 import { db } from '@/server/db';
 
-import { SEED_EMAILS } from './user';
-
-const LOCATIONS = [
-  {
-    name: 'Home',
-    address: '12 rue de la Paix, 75002 Paris',
-    latitude: 48.8698,
-    longitude: 2.3302,
-  },
-  {
-    name: 'Office',
-    address: '1 avenue des Champs-Élysées, 75008 Paris',
-    latitude: 48.8656,
-    longitude: 2.311,
-  },
-  {
-    name: 'Station',
-    address: 'Gare de Lyon, 75012 Paris',
-    latitude: 48.8443,
-    longitude: 2.3744,
-  },
-] as const;
+const TARGET_LOCATIONS_PER_USER = 2;
 
 export async function createLocations() {
   console.log(`⏳ Seeding locations`);
 
   let createdCounter = 0;
+  const existingCount = await db.location.count();
 
-  for (const email of SEED_EMAILS) {
-    const user = await db.user.findUnique({ where: { email } });
-    if (!user) continue;
+  const users = await db.user.findMany({ select: { id: true }, take: 20 });
 
-    const existingCount = await db.location.count({
+  for (const user of users) {
+    const userLocationCount = await db.location.count({
       where: { userId: user.id },
     });
-    if (existingCount > 0) continue;
 
-    for (const loc of LOCATIONS) {
+    for (
+      let i = 0;
+      i < Math.max(0, TARGET_LOCATIONS_PER_USER - userLocationCount);
+      i++
+    ) {
       await db.location.create({
-        data: { ...loc, userId: user.id },
+        data: {
+          name: faker.helpers.arrayElement([
+            'Home',
+            'Office',
+            'Station',
+            'University',
+            'Gym',
+          ]),
+          address: faker.location.streetAddress({ useFullAddress: true }),
+          latitude: faker.location.latitude(),
+          longitude: faker.location.longitude(),
+          userId: user.id,
+        },
       });
       createdCounter += 1;
     }
   }
 
-  console.log(`✅ ${createdCounter} locations created`);
+  console.log(
+    `✅ ${existingCount} existing locations 👉 ${createdCounter} locations created`
+  );
 }
