@@ -136,10 +136,10 @@ model Location {
   address       String
   latitude      Float?
   longitude     Float?
-  isDeleted     Boolean        @default(false) @map("is_deleted")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  userId        String         @map("user_id")
+  isDeleted     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  userId        String
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   stops         Stop[]
   templateStops TemplateStop[]
@@ -149,21 +149,19 @@ model Location {
 }
 
 model Commute {
-  id          String        @id @default(cuid())
-  date        DateTime      @db.Date
-  seats       Int
-  type        CommuteType
-  status      CommuteStatus @default(UNKNOWN)
-  delay       Int?
-  outwardTime String        @map("outward_time")
-  inwardTime  String?       @map("inward_time")
-  comment     String?
-  isDeleted   Boolean       @default(false) @map("is_deleted")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  driverId    String        @map("driver_id")
-  driver      User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  stops       Stop[]
+  id        String        @id @default(cuid())
+  date      DateTime      @db.Date
+  seats     Int
+  type      CommuteType
+  status    CommuteStatus @default(UNKNOWN)
+  delay     Int?
+  comment   String?
+  isDeleted Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  driverId  String
+  driver    User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  stops     Stop[]
 
   @@index([driverId, date])
   @@map("commute")
@@ -172,14 +170,15 @@ model Commute {
 model Stop {
   id           String              @id @default(cuid())
   order        Int                 @default(0)
-  time         String
-  driverStatus DriverStopStatus    @default(UNKNOWN) @map("driver_status")
-  isDeleted    Boolean             @default(false) @map("is_deleted")
-  createdAt    DateTime            @default(now()) @map("created_at")
-  updatedAt    DateTime            @updatedAt @map("updated_at")
-  commuteId    String              @map("commute_id")
+  outwardTime  String
+  inwardTime   String?
+  driverStatus DriverStopStatus    @default(UNKNOWN)
+  isDeleted    Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  commuteId    String
   commute      Commute             @relation(fields: [commuteId], references: [id], onDelete: Cascade)
-  locationId   String              @map("location_id")
+  locationId   String
   location     Location            @relation(fields: [locationId], references: [id], onDelete: Restrict)
   passengers   PassengersOnStops[]
 
@@ -190,16 +189,16 @@ model Stop {
 model PassengersOnStops {
   id          String        @id @default(cuid())
   status      RequestStatus @default(REQUESTED)
-  stopStatus  StopStatus    @default(UNKNOWN) @map("stop_status")
-  tripType    TripType      @map("trip_type")
+  stopStatus  StopStatus    @default(UNKNOWN)
+  tripType    TripType
   delay       Int?
   comment     String?
-  isDeleted   Boolean       @default(false) @map("is_deleted")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  passengerId String        @map("passenger_id")
+  isDeleted   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  passengerId String
   passenger   User          @relation(fields: [passengerId], references: [id], onDelete: Cascade)
-  stopId      String        @map("stop_id")
+  stopId      String
   stop        Stop          @relation(fields: [stopId], references: [id], onDelete: Cascade)
 
   @@unique([passengerId, stopId])
@@ -213,13 +212,13 @@ model CommuteTemplate {
   name        String
   seats       Int
   type        CommuteType
-  outwardTime String         @map("outward_time")
-  inwardTime  String?        @map("inward_time")
+  outwardTime String
+  inwardTime  String?
   comment     String?
-  isDeleted   Boolean        @default(false) @map("is_deleted")
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
-  driverId    String         @map("driver_id")
+  isDeleted   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  driverId    String
   driver      User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
   stops       TemplateStop[]
 
@@ -229,11 +228,11 @@ model CommuteTemplate {
 model TemplateStop {
   id         String          @id @default(cuid())
   order      Int             @default(0)
-  createdAt  DateTime        @default(now()) @map("created_at")
-  updatedAt  DateTime        @updatedAt @map("updated_at")
-  templateId String          @map("template_id")
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  templateId String
   template   CommuteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  locationId String          @map("location_id")
+  locationId String
   location   Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
   @@index([templateId])
