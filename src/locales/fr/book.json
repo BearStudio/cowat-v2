@@ -1,0 +1,78 @@
+{
+  "common": {
+    "title": {
+      "alreadyUsed": "Titre déjà utilisé avec le même auteur",
+      "label": "Titre",
+      "required": "Le titre est requis"
+    },
+    "author": {
+      "label": "Auteur"
+    },
+    "genre": {
+      "label": "Genre"
+    },
+    "publisher": {
+      "label": "Éditeur"
+    },
+    "notFound": "Aucun livre disponible",
+    "loadMore": "Charger plus de livres",
+    "byCapitalized": "Par"
+  },
+  "app": {
+    "list": {
+      "title": "Livres"
+    }
+  },
+  "manager": {
+    "list": {
+      "title": "Livres",
+      "loadMore": "Charger plus",
+      "showing": "Affichage de {{count}} sur {{total}}",
+      "searchResults": "{{total}} résultats pour \"{{searchTerm}}\""
+    },
+    "detail": {
+      "editButton": {
+        "label": "Modifier"
+      },
+      "deleteButton": {
+        "label": "Supprimer"
+      },
+      "deleted": "Livre supprimé",
+      "deleteError": "Échec de la suppression du livre",
+      "confirmDeleteTitle": "Supprimer \"{{title}}\"",
+      "confirmDeleteDescription": "Vous êtes sur le point de supprimer définitivement ce livre. Cette action ne peut pas être annulée"
+    },
+    "form": {
+      "titleAlreadyExist": "Un livre existe déjà pour cet auteur"
+    },
+    "new": {
+      "title": "Nouveau livre",
+      "createButton": {
+        "label": "Créer"
+      },
+      "createError": "Échec de la création du livre"
+    },
+    "update": {
+      "title": "Mettre à jour le livre",
+      "updateButton": {
+        "label": "Sauvegarder"
+      },
+      "updateError": "Échec de la modification du livre"
+    },
+    "uploadCover": "Modifier",
+    "uploadErrors": {
+      "NOT_AUTHENTICATED": "Vous devez être authentifié pour pouvoir télécharger une nouvelle couverture",
+      "UNAUTHORIZED": "Vous n'êtes pas autorisé à changer la couverture du livre",
+      "unknown": "Une erreur inconnue s'est produite lors du téléchargement",
+      "invalid_request": "Demande de téléchargement invalide",
+      "no_files": "Aucun fichier sélectionné pour le téléchargement",
+      "s3_upload": "Échec du téléchargement du fichier vers le stockage",
+      "file_too_large": "Le fichier est trop volumineux. Taille maximale : 100 Mo",
+      "invalid_file_type": "Type de fichier invalide. Seules les images PNG, JPEG, WebP et GIF sont autorisées",
+      "rejected": "Le téléchargement a été rejeté",
+      "too_many_files": "Trop de fichiers sélectionnés",
+      "aborted": "Le téléchargement a été annulé",
+      "failed": "Échec du téléchargement"
+    }
+  }
+}

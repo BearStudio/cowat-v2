@@ -1,0 +1,83 @@
+{
+  "sheet": {
+    "close": "إغلاق"
+  },
+  "dialog": {
+    "close": "إغلاق"
+  },
+  "datePickerButton": {
+    "pickADate": "اختر موعدًا"
+  },
+  "pageError": {
+    "403": {
+      "title": "غير مصرح",
+      "message": "ليس لديك حق الوصول إلى هذه الصفحة"
+    },
+    "404": {
+      "title": "غير موجود",
+      "message": "لا يمكن العثور على هذه الصفحة"
+    },
+    "error-boundary": {
+      "title": "خطأ",
+      "message": "واجهنا خطأ غير متوقع"
+    },
+    "unknown-server-error": {
+      "title": "خطأ",
+      "message": "حدث خطأ غير متوقع في الخادم"
+    },
+    "unknown-auth-error": {
+      "title": "خطأ",
+      "message": "حدث خطأ في المصادقة"
+    },
+    "unknown": {
+      "title": "خطأ",
+      "message": "واجهنا خطأ غير متوقع"
+    },
+    "goHome": "الرئيسية",
+    "goBack": "رجوع"
+  },
+  "searchInput": {
+    "clear": "مسح البحث",
+    "placeholder": "بحث..."
+  },
+  "datalist": {
+    "retry": "إعادة المحاولة",
+    "errorTitle": "حدث خطأ ما",
+    "emptyTitle": "لا توجد بيانات",
+    "noResultsTitle": "لا توجد نتائج لـ \"{{searchTerm}}\"",
+    "clear": "مسح"
+  },
+  "confirmResponsiveDrawer": {
+    "cancelText": "إلغاء",
+    "confirmText": "تأكيد",
+    "heading": "هل أنت متأكد؟"
+  },
+  "searchButton": {
+    "label": "بحث"
+  },
+  "sidebar": {
+    "title": "الشريط الجانبي",
+    "toggle": "تبديل الشريط الجانبي"
+  },
+  "backButton": {
+    "label": "رجوع"
+  },
+  "select": {
+    "placeholder": "اختر..."
+  },
+  "preventNavigation": {
+    "confirmLabel": "هل أنت متأكد أنك تريد المغادرة؟"
+  },
+  "combobox": {
+    "placeholder": "اختر...",
+    "noItemsFound": "لم يتم العثور على عناصر."
+  },
+  "errorBoundary": {
+    "title": "خطأ غير معروف",
+    "details": "التفاصيل",
+    "description": "حدث خطأ غير متوقع أثناء تحميل هذا المحتوى",
+    "unknown": "غير معروف",
+    "copyError": "نسخ الخطأ",
+    "copied": "تم النسخ"
+  }
+}

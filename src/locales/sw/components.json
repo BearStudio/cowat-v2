@@ -1,0 +1,83 @@
+{
+  "sheet": {
+    "close": "Funga"
+  },
+  "dialog": {
+    "close": "Funga"
+  },
+  "datePickerButton": {
+    "pickADate": "Chagua tarehe"
+  },
+  "pageError": {
+    "403": {
+      "title": "Hauruhusiwi",
+      "message": "Huna ufikiaji wa ukurasa huu"
+    },
+    "404": {
+      "title": "Haikupatikana",
+      "message": "Ukurasa huu haukuweza kupatikana"
+    },
+    "error-boundary": {
+      "title": "Hitilafu",
+      "message": "Tumekutana na hitilafu isiyotarajiwa"
+    },
+    "unknown-server-error": {
+      "title": "Hitilafu",
+      "message": "Hitilafu isiyo ya kutarajiwa ya seva ilitokea"
+    },
+    "unknown-auth-error": {
+      "title": "Hitilafu",
+      "message": "Hitilafu ya uthibitishaji imetokea"
+    },
+    "unknown": {
+      "title": "Hitilafu",
+      "message": "Tumekutana na hitilafu isiyotarajiwa"
+    },
+    "goHome": "Nyumbani",
+    "goBack": "Rudi nyuma"
+  },
+  "searchInput": {
+    "clear": "Futa utaftaji",
+    "placeholder": "Tafuta..."
+  },
+  "datalist": {
+    "retry": "Jaribu tena",
+    "errorTitle": "Kitu kilienda vibaya",
+    "emptyTitle": "Hakuna data",
+    "noResultsTitle": "Hakuna matokeo ya \"{{searchTerm}}\"",
+    "clear": "Futa"
+  },
+  "confirmResponsiveDrawer": {
+    "cancelText": "Ghairi",
+    "confirmText": "Thibitisha",
+    "heading": "Una uhakika?"
+  },
+  "searchButton": {
+    "label": "Tafuta"
+  },
+  "sidebar": {
+    "title": "Pembeni",
+    "toggle": "Kubadilisha pembeni"
+  },
+  "backButton": {
+    "label": "Rudi nyuma"
+  },
+  "select": {
+    "placeholder": "Chagua..."
+  },
+  "preventNavigation": {
+    "confirmLabel": "Je, una uhakika unataka kuondoka?"
+  },
+  "combobox": {
+    "placeholder": "Chagua...",
+    "noItemsFound": "Hakuna vitu vilivyopatikana."
+  },
+  "errorBoundary": {
+    "title": "Hitilafu Isiyojulikana",
+    "details": "Maelezo",
+    "description": "Hitilafu isiyotarajiwa ilitokea wakati wa kupakia maudhui haya",
+    "unknown": "Haijulikani",
+    "copyError": "Nakili Hitilafu",
+    "copied": "Imenakiliwa"
+  }
+}

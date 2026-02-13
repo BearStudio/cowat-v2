@@ -1,0 +1,83 @@
+{
+  "sheet": {
+    "close": "Close"
+  },
+  "dialog": {
+    "close": "Close"
+  },
+  "datePickerButton": {
+    "pickADate": "Pick a date"
+  },
+  "pageError": {
+    "403": {
+      "title": "Unauthorized",
+      "message": "You don't have access to this page"
+    },
+    "404": {
+      "title": "Not Found",
+      "message": "This page could not be found"
+    },
+    "error-boundary": {
+      "title": "Error",
+      "message": "We encountered an unexpected error"
+    },
+    "unknown-server-error": {
+      "title": "Error",
+      "message": "An unexpected server error occurred"
+    },
+    "unknown-auth-error": {
+      "title": "Error",
+      "message": "An authentication error occurred"
+    },
+    "unknown": {
+      "title": "Error",
+      "message": "We encountered an unexpected error"
+    },
+    "goHome": "Home",
+    "goBack": "Back"
+  },
+  "searchInput": {
+    "clear": "Clear search",
+    "placeholder": "Search..."
+  },
+  "datalist": {
+    "retry": "Retry",
+    "errorTitle": "Something went wrong",
+    "emptyTitle": "No Data",
+    "noResultsTitle": "No results for \"{{searchTerm}}\"",
+    "clear": "Clear"
+  },
+  "confirmResponsiveDrawer": {
+    "cancelText": "Cancel",
+    "confirmText": "Confirm",
+    "heading": "Are you sure?"
+  },
+  "searchButton": {
+    "label": "Search"
+  },
+  "sidebar": {
+    "title": "Sidebar",
+    "toggle": "Toggle Sidebar"
+  },
+  "backButton": {
+    "label": "Back"
+  },
+  "select": {
+    "placeholder": "Select..."
+  },
+  "preventNavigation": {
+    "confirmLabel": "Are you sure you want to leave?"
+  },
+  "combobox": {
+    "placeholder": "Select...",
+    "noItemsFound": "No items found."
+  },
+  "errorBoundary": {
+    "title": "Unknown Error",
+    "details": "Details",
+    "description": "An unexpected error occurred while loading this content",
+    "unknown": "Unknown",
+    "copyError": "Copy Error",
+    "copied": "Copied"
+  }
+}
