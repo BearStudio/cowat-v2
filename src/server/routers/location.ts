@@ -17,7 +17,7 @@ export default {
     })
     .input(zFormFieldsLocation())
     .output(zLocation())
-    .handler(async ({ context, input }) => {
+    .handler(async ({ _context, _input }) => {
       throw new ORPCError('NOT_IMPLEMENTED');
     }),
 
@@ -44,7 +44,7 @@ export default {
         total: z.number(),
       })
     )
-    .handler(async ({ context, input }) => {
+    .handler(async ({ _context, _input }) => {
       throw new ORPCError('NOT_IMPLEMENTED');
     }),
 
@@ -62,7 +62,7 @@ export default {
       })
     )
     .output(zLocation())
-    .handler(async ({ context, input }) => {
+    .handler(async ({ _context, _input }) => {
       throw new ORPCError('NOT_IMPLEMENTED');
     }),
 
@@ -82,7 +82,7 @@ export default {
       })
     )
     .output(zLocation())
-    .handler(async ({ context, input }) => {
+    .handler(async ({ _context, _input }) => {
       throw new ORPCError('NOT_IMPLEMENTED');
     }),
 
@@ -100,7 +100,7 @@ export default {
       })
     )
     .output(z.void())
-    .handler(async ({ context, input }) => {
+    .handler(async ({ _context, _input }) => {
       throw new ORPCError('NOT_IMPLEMENTED');
     }),
 };
