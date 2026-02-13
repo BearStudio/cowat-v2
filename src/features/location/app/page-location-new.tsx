@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
-import { useForm, FormStateSubscribe } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { FormStateSubscribe, useForm } from 'react-hook-form';
 
 import { orpc } from '@/lib/orpc/client';
 
@@ -21,6 +22,7 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageLocationNew = () => {
+  const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const form = useForm({
@@ -74,11 +76,13 @@ export const PageLocationNew = () => {
                 className="min-w-20"
                 loading={locationCreate.isPending}
               >
-                Create
+                {t('location:new.submitButton')}
               </Button>
             }
           >
-            <PageLayoutTopBarTitle>New Location</PageLayoutTopBarTitle>
+            <PageLayoutTopBarTitle>
+              {t('location:new.title')}
+            </PageLayoutTopBarTitle>
           </PageLayoutTopBar>
           <PageLayoutContent>
             <Card>

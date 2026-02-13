@@ -2,6 +2,7 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ExternalLinkIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
@@ -28,6 +29,8 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageLocations = () => {
+  const { t } = useTranslation(['location', 'common']);
+
   const locationsQuery = useInfiniteQuery(
     orpc.location.getAll.infiniteOptions({
       input: (cursor: string | undefined) => ({
@@ -42,7 +45,7 @@ export const PageLocations = () => {
   const locationDelete = useMutation(
     orpc.location.delete.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        toast.success('Location deleted');
+        toast.success(t('location:list.deleteSuccessMessage'));
         await context.client.invalidateQueries({
           queryKey: orpc.location.getAll.key(),
           type: 'all',
@@ -64,7 +67,7 @@ export const PageLocations = () => {
       <PageLayoutTopBar
         endActions={
           <ResponsiveIconButtonLink
-            label="New Location"
+            label={t('location:list.newAction')}
             variant="secondary"
             size="sm"
             to="/app/account/locations/new"
@@ -73,7 +76,9 @@ export const PageLocations = () => {
           </ResponsiveIconButtonLink>
         }
       >
-        <PageLayoutTopBarTitle>Locations</PageLayoutTopBarTitle>
+        <PageLayoutTopBarTitle>
+          {t('location:list.title')}
+        </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
         <DataList>
@@ -107,7 +112,7 @@ export const PageLocations = () => {
                         size="sm"
                         nativeButton={false}
                         className="relative z-10"
-                        label="Maps"
+                        label={t('location:list.mapsAction')}
                         render={
                           <a
                             href={`https://www.google.com/maps/search/${encodeURIComponent(item.address)}`}
@@ -121,8 +126,10 @@ export const PageLocations = () => {
                     </DataListCell>
                     <DataListCell className="flex-none">
                       <ConfirmResponsiveDrawer
-                        description="You are about to delete this location."
-                        confirmText="Delete"
+                        description={t(
+                          'location:list.deleteConfirmDescription'
+                        )}
+                        confirmText={t('common:actions.delete')}
                         confirmVariant="destructive"
                         onConfirm={() =>
                           locationDelete.mutateAsync({ id: item.id })
@@ -132,7 +139,7 @@ export const PageLocations = () => {
                           variant="ghost"
                           size="sm"
                           className="relative z-10"
-                          label="Delete"
+                          label={t('common:actions.delete')}
                         >
                           <Trash2 />
                         </ResponsiveIconButton>
@@ -149,7 +156,7 @@ export const PageLocations = () => {
                         onClick={() => locationsQuery.fetchNextPage()}
                         loading={locationsQuery.isFetchingNextPage}
                       >
-                        Load more
+                        {t('location:list.loadMore')}
                       </Button>
                     </DataListCell>
                   </DataListRow>

@@ -32,7 +32,7 @@ export const PageAccount = () => {
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
           >
             <MapPinIcon className="size-5 text-muted-foreground" />
-            <span className="flex-1">Locations</span>
+            <span className="flex-1">{t('account:locationsLink')}</span>
             <ChevronRightIcon className="size-4 text-muted-foreground" />
           </Link>
           <DisplayPreferences />

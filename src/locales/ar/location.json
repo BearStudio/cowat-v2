@@ -1,0 +1,21 @@
+{
+  "list": {
+    "title": "المواقع",
+    "newAction": "موقع جديد",
+    "mapsAction": "الخرائط",
+    "deleteConfirmDescription": "أنت على وشك حذف هذا الموقع.",
+    "deleteSuccessMessage": "تم حذف الموقع",
+    "loadMore": "تحميل المزيد"
+  },
+  "new": {
+    "title": "موقع جديد",
+    "submitButton": "إنشاء"
+  },
+  "update": {
+    "submitButton": "حفظ"
+  },
+  "form": {
+    "name": "الاسم",
+    "address": "العنوان"
+  }
+}

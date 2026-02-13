@@ -13,6 +13,7 @@
       "notVerified": "Not Verified"
     }
   },
+  "locationsLink": "Locations",
   "changeNameDrawer": {
     "title": "Update your name",
     "description": "Form to update your name",
