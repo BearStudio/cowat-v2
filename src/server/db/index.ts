@@ -12,34 +12,102 @@ const levels = {
   fatal: ['error'],
 } satisfies Record<string, ('query' | 'error' | 'warn' | 'info')[]>;
 
+const SOFT_DELETE_MODELS = ['Location', 'Commute', 'CommuteTemplate'] as const;
+
+const SOFT_DELETE_READ_OPERATIONS = [
+  'findFirst',
+  'findFirstOrThrow',
+  'findMany',
+  'findUnique',
+  'findUniqueOrThrow',
+  'count',
+  'aggregate',
+  'groupBy',
+] as const;
+
+// Stored reference to the extended client, used by the soft-delete
+// extension to convert delete operations into update operations.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _client: any;
+
 function createPrisma() {
-  return new PrismaClient({
+  const client = new PrismaClient({
     log: levels[envServer.LOGGER_LEVEL],
-  }).$extends({
-    name: 'server-timing',
-    query: {
-      $allModels: {
-        async $allOperations({ query, args, model, operation }) {
-          const start = performance.now();
+  })
+    .$extends({
+      name: 'soft-delete',
+      query: {
+        $allModels: {
+          async $allOperations({ model, operation, args, query }) {
+            if (
+              !SOFT_DELETE_MODELS.includes(
+                model as (typeof SOFT_DELETE_MODELS)[number]
+              )
+            ) {
+              return query(args);
+            }
 
-          const result = await query(args);
+            // For read operations, automatically filter out soft-deleted records
+            if (
+              SOFT_DELETE_READ_OPERATIONS.includes(
+                operation as (typeof SOFT_DELETE_READ_OPERATIONS)[number]
+              )
+            ) {
+              const a = args as { where?: Record<string, unknown> };
+              a.where = { ...a.where, isDeleted: false };
+              return query(args);
+            }
 
-          const duration = performance.now() - start;
+            // Intercept delete → soft-delete (update isDeleted flag)
+            if (operation === 'delete') {
+              const prop = model.charAt(0).toLowerCase() + model.slice(1);
+              return _client[prop].update({
+                where: args.where,
+                data: { isDeleted: true },
+              });
+            }
 
-          const store = timingStore.getStore();
-          if (store) {
-            store.prisma.push({
-              model,
-              operation,
-              duration,
-            });
-          }
+            if (operation === 'deleteMany') {
+              const prop = model.charAt(0).toLowerCase() + model.slice(1);
+              return _client[prop].updateMany({
+                where: args.where,
+                data: { isDeleted: true },
+              });
+            }
 
-          return result;
+            return query(args);
+          },
         },
       },
-    },
-  });
+    })
+    .$extends({
+      name: 'server-timing',
+      query: {
+        $allModels: {
+          async $allOperations({ query, args, model, operation }) {
+            const start = performance.now();
+
+            const result = await query(args);
+
+            const duration = performance.now() - start;
+
+            const store = timingStore.getStore();
+            if (store) {
+              store.prisma.push({
+                model,
+                operation,
+                duration,
+              });
+            }
+
+            return result;
+          },
+        },
+      },
+    });
+
+  _client = client;
+  return client;
 }
 
 const globalForPrisma = globalThis as unknown as {

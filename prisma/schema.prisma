@@ -64,6 +64,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  phone         String?
+  autoAccept    Boolean  @default(false)
+  slackMemberId String?
+
   role        UserRole?
   banned      Boolean?
   banReason   String?
