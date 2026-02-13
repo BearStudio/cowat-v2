@@ -134,8 +134,8 @@ model Location {
   id            String         @id @default(cuid())
   name          String
   address       String
-  latitude      Float
-  longitude     Float
+  latitude      Float?
+  longitude     Float?
   isDeleted     Boolean        @default(false) @map("is_deleted")
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
