@@ -1,0 +1,21 @@
+{
+  "list": {
+    "title": "Lieux",
+    "newAction": "Nouveau lieu",
+    "mapsAction": "Maps",
+    "deleteConfirmDescription": "Vous êtes sur le point de supprimer ce lieu.",
+    "deleteSuccessMessage": "Lieu supprimé",
+    "loadMore": "Charger plus"
+  },
+  "new": {
+    "title": "Nouveau lieu",
+    "submitButton": "Créer"
+  },
+  "update": {
+    "submitButton": "Enregistrer"
+  },
+  "form": {
+    "name": "Nom",
+    "address": "Adresse"
+  }
+}
