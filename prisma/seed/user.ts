@@ -4,6 +4,8 @@ import { db } from '@/server/db';
 
 import { emphasis } from './_utils';
 
+export const SEED_EMAILS = ['user@user.com', 'admin@admin.com'] as const;
+
 export async function createUsers() {
   console.log(`⏳ Seeding users`);
 
