@@ -1,0 +1,16 @@
+{
+  "list": {
+    "title": "Safari",
+    "cancelConfirmDescription": "Unakaribia kufuta safari hii.",
+    "cancelSuccessMessage": "Safari imefutwa",
+    "loadMore": "Pakia zaidi",
+    "seats_one": "kiti {{count}}",
+    "seats_other": "viti {{count}}",
+    "type": {
+      "ROUND": "Kwenda na kurudi",
+      "ONEWAY": "Kwenda tu"
+    },
+    "stops_one": "kituo {{count}}",
+    "stops_other": "vituo {{count}}"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "list": {
+    "title": "الرحلات",
+    "cancelConfirmDescription": "أنت على وشك إلغاء هذه الرحلة.",
+    "cancelSuccessMessage": "تم إلغاء الرحلة",
+    "loadMore": "تحميل المزيد",
+    "seats_one": "مقعد {{count}}",
+    "seats_other": "{{count}} مقاعد",
+    "type": {
+      "ROUND": "ذهاب وإياب",
+      "ONEWAY": "ذهاب فقط"
+    },
+    "stops_one": "محطة {{count}}",
+    "stops_other": "{{count}} محطات"
+  }
+}

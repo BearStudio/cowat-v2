@@ -1,4 +1,6 @@
 export { default as IconBookOpen } from './IconBookOpen';
+export { default as IconCarDuotone } from './IconCarDuotone';
+export { default as IconCarFill } from './IconCarFill';
 export { default as IconBookOpenDuotone } from './IconBookOpenDuotone';
 export { default as IconBookOpenFill } from './IconBookOpenFill';
 export { default as IconGitBranch } from './IconGitBranch';

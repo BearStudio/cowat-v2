@@ -1,0 +1,16 @@
+{
+  "list": {
+    "title": "Trajets",
+    "cancelConfirmDescription": "Vous êtes sur le point d'annuler ce trajet.",
+    "cancelSuccessMessage": "Trajet annulé",
+    "loadMore": "Charger plus",
+    "seats_one": "{{count}} place",
+    "seats_other": "{{count}} places",
+    "type": {
+      "ROUND": "Aller-retour",
+      "ONEWAY": "Aller simple"
+    },
+    "stops_one": "{{count}} arrêt",
+    "stops_other": "{{count}} arrêts"
+  }
+}

@@ -1,6 +1,8 @@
 import { linkOptions } from '@tanstack/react-router';
 
 import {
+  IconCarDuotone,
+  IconCarFill,
   IconHouseDuotone,
   IconHouseFill,
   IconUserCircleDuotone,
@@ -14,6 +16,12 @@ export const MAIN_NAV_LINKS = linkOptions([
     iconActive: IconHouseFill,
     to: '/app',
     activeOptions: { exact: true },
+  },
+  {
+    labelTranslationKey: 'layout:nav.commutes',
+    icon: IconCarDuotone,
+    iconActive: IconCarFill,
+    to: '/app/commutes',
   },
   {
     labelTranslationKey: 'layout:nav.account',

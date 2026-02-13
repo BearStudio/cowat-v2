@@ -1,0 +1,16 @@
+{
+  "list": {
+    "title": "Commutes",
+    "cancelConfirmDescription": "You are about to cancel this commute.",
+    "cancelSuccessMessage": "Commute cancelled",
+    "loadMore": "Load more",
+    "seats_one": "{{count}} seat",
+    "seats_other": "{{count}} seats",
+    "type": {
+      "ROUND": "Round trip",
+      "ONEWAY": "One way"
+    },
+    "stops_one": "{{count}} stop",
+    "stops_other": "{{count}} stops"
+  }
+}
