@@ -32,6 +32,7 @@ import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users/new.index'
 import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
+import { Route as AppCommutesNewIndexRouteImport } from './routes/app/commutes/new.index'
 import { Route as AppAccountLocationsIndexRouteImport } from './routes/app/account/locations/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
@@ -155,6 +156,11 @@ const ManagerUsersIdIndexRoute = ManagerUsersIdIndexRouteImport.update({
   path: '/users/$id/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
+const AppCommutesNewIndexRoute = AppCommutesNewIndexRouteImport.update({
+  id: '/commutes/new/',
+  path: '/commutes/new/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppAccountLocationsIndexRoute =
   AppAccountLocationsIndexRouteImport.update({
     id: '/account/locations/',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new': typeof AppCommutesNewIndexRoute
   '/manager/users/$id': typeof ManagerUsersIdIndexRoute
   '/manager/users/new': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
@@ -283,6 +291,7 @@ export interface FileRoutesById {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations/'
+    | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/locations/new/'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations'
+    | '/app/commutes/new'
     | '/manager/users/$id'
     | '/manager/users/new'
     | '/app/account/locations/new'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations/'
+    | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/locations/new/'
@@ -563,6 +575,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerUsersIdIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
+    '/app/commutes/new/': {
+      id: '/app/commutes/new/'
+      path: '/commutes/new'
+      fullPath: '/app/commutes/new/'
+      preLoaderRoute: typeof AppCommutesNewIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/account/locations/': {
       id: '/app/account/locations/'
       path: '/account/locations'
@@ -620,6 +639,7 @@ interface AppRouteRouteChildren {
   AppAccountIndexRoute: typeof AppAccountIndexRoute
   AppCommutesIndexRoute: typeof AppCommutesIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
+  AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
   AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
@@ -629,6 +649,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountIndexRoute: AppAccountIndexRoute,
   AppCommutesIndexRoute: AppCommutesIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
+  AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
   AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }

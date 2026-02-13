@@ -1,6 +1,7 @@
 {
   "list": {
     "title": "Trajets",
+    "newAction": "Nouveau trajet",
     "cancelConfirmDescription": "Vous êtes sur le point d'annuler ce trajet.",
     "cancelSuccessMessage": "Trajet annulé",
     "loadMore": "Charger plus",
@@ -12,5 +13,31 @@
     },
     "stops_one": "{{count}} arrêt",
     "stops_other": "{{count}} arrêts"
+  },
+  "new": {
+    "title": "Nouveau trajet",
+    "submitButton": "Créer"
+  },
+  "form": {
+    "date": "Date",
+    "seats": "Places",
+    "type": "Type",
+    "typeOptions": {
+      "ROUND": "Aller-retour",
+      "ONEWAY": "Aller simple"
+    },
+    "comment": "Commentaire",
+    "commentPlaceholder": "Commentaire optionnel...",
+    "stops": "Arrêts",
+    "addStop": "Ajouter un arrêt",
+    "stopIndex": "Arrêt {{index}}",
+    "location": "Lieu",
+    "locationPlaceholder": "Sélectionner un lieu...",
+    "outwardTime": "Heure aller",
+    "inwardTime": "Heure retour",
+    "errors": {
+      "seatsMin": "Au moins 1 place requise",
+      "stopsMin": "Au moins 1 arrêt requis"
+    }
   }
 }

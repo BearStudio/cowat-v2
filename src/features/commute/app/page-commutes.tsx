@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Trash2 } from 'lucide-react';
+import { PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { match } from 'ts-pattern';
@@ -21,6 +21,7 @@ import {
   DataListText,
 } from '@/components/ui/datalist';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
+import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import {
   PageLayout,
@@ -65,7 +66,18 @@ export const PageCommutes = () => {
 
   return (
     <PageLayout>
-      <PageLayoutTopBar>
+      <PageLayoutTopBar
+        endActions={
+          <ResponsiveIconButtonLink
+            label={t('commute:list.newAction')}
+            variant="secondary"
+            size="sm"
+            to="/app/commutes/new"
+          >
+            <PlusIcon />
+          </ResponsiveIconButtonLink>
+        }
+      >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>

@@ -1,4 +1,6 @@
+import { t } from 'i18next';
 import { z } from 'zod';
+import { zu } from '@/lib/zod/zod-utils';
 
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
 export type CommuteType = z.infer<ReturnType<typeof zCommuteType>>;
@@ -41,4 +43,29 @@ export const zStopInput = () =>
     outwardTime: z.string(),
     inwardTime: z.string().nullish(),
     locationId: z.string(),
+  });
+
+export type FormFieldsStopInput = z.infer<
+  ReturnType<typeof zFormFieldsStopInput>
+>;
+export const zFormFieldsStopInput = () =>
+  z.object({
+    outwardTime: zu.fieldText.required(t('common:errors.required')),
+    inwardTime: zu.fieldText.nullish(),
+    locationId: zu.fieldText.required(t('common:errors.required')),
+  });
+
+export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
+export const zFormFieldsCommute = () =>
+  z.object({
+    date: z.date({ error: t('common:errors.required') }),
+    seats: z
+      .number({ error: t('common:errors.required') })
+      .int()
+      .min(1, t('commute:form.errors.seatsMin')),
+    type: zCommuteType(),
+    comment: zu.fieldText.nullish(),
+    stops: z
+      .array(zFormFieldsStopInput())
+      .min(1, t('commute:form.errors.stopsMin')),
   });

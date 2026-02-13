@@ -1,6 +1,7 @@
 {
   "list": {
     "title": "Commutes",
+    "newAction": "New Commute",
     "cancelConfirmDescription": "You are about to cancel this commute.",
     "cancelSuccessMessage": "Commute cancelled",
     "loadMore": "Load more",
@@ -12,5 +13,31 @@
     },
     "stops_one": "{{count}} stop",
     "stops_other": "{{count}} stops"
+  },
+  "new": {
+    "title": "New Commute",
+    "submitButton": "Create"
+  },
+  "form": {
+    "date": "Date",
+    "seats": "Seats",
+    "type": "Type",
+    "typeOptions": {
+      "ROUND": "Round trip",
+      "ONEWAY": "One way"
+    },
+    "comment": "Comment",
+    "commentPlaceholder": "Optional comment...",
+    "stops": "Stops",
+    "addStop": "Add stop",
+    "stopIndex": "Stop {{index}}",
+    "location": "Location",
+    "locationPlaceholder": "Select a location...",
+    "outwardTime": "Outward time",
+    "inwardTime": "Inward time",
+    "errors": {
+      "seatsMin": "At least 1 seat required",
+      "stopsMin": "At least 1 stop required"
+    }
   }
 }
