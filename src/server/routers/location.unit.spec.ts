@@ -5,8 +5,8 @@ import locationRouter from '@/server/routers/location';
 import {
   mockDb,
   mockGetSession,
-  mockUserHasPermission,
   mockUser,
+  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
 const now = new Date();
@@ -205,7 +205,7 @@ describe('location router', () => {
 
   describe('delete', () => {
     it('should soft-delete a location', async () => {
-      mockDb.location.update.mockResolvedValue({
+      mockDb.location.delete.mockResolvedValue({
         ...mockLocationFromDb,
         isDeleted: true,
       });
@@ -216,7 +216,7 @@ describe('location router', () => {
     });
 
     it('should throw NOT_FOUND when location does not exist', async () => {
-      mockDb.location.update.mockResolvedValue(null);
+      mockDb.location.delete.mockResolvedValue(null);
 
       await expect(
         call(locationRouter.delete, { id: 'nonexistent' })
@@ -226,7 +226,7 @@ describe('location router', () => {
     });
 
     it('should not require any specific permission', async () => {
-      mockDb.location.update.mockResolvedValue({
+      mockDb.location.delete.mockResolvedValue({
         ...mockLocationFromDb,
         isDeleted: true,
       });

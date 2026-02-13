@@ -17,8 +17,13 @@ export default {
     })
     .input(zFormFieldsLocation())
     .output(zLocation())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new ORPCError('NOT_IMPLEMENTED');
+    .handler(async ({ context, input }) => {
+      return await context.db.location.create({
+        data: {
+          ...input,
+          userId: context.user.id,
+        },
+      });
     }),
 
   getAll: protectedProcedure({
@@ -44,8 +49,26 @@ export default {
         total: z.number(),
       })
     )
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new ORPCError('NOT_IMPLEMENTED');
+    .handler(async ({ context, input }) => {
+      const where = { userId: context.user.id };
+
+      const [total, items] = await Promise.all([
+        context.db.location.count({ where }),
+        context.db.location.findMany({
+          take: input.limit + 1,
+          cursor: input.cursor ? { id: input.cursor } : undefined,
+          orderBy: { name: 'asc' },
+          where,
+        }),
+      ]);
+
+      let nextCursor: typeof input.cursor | undefined = undefined;
+      if (items.length > input.limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      return { items, nextCursor, total };
     }),
 
   getById: protectedProcedure({
@@ -62,8 +85,16 @@ export default {
       })
     )
     .output(zLocation())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new ORPCError('NOT_IMPLEMENTED');
+    .handler(async ({ context, input }) => {
+      const location = await context.db.location.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!location) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return location;
     }),
 
   update: protectedProcedure({
@@ -82,8 +113,20 @@ export default {
       })
     )
     .output(zLocation())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new ORPCError('NOT_IMPLEMENTED');
+    .handler(async ({ context, input }) => {
+      const updated = await context.db.location.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          address: input.address,
+        },
+      });
+
+      if (!updated) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return updated;
     }),
 
   delete: protectedProcedure({
@@ -100,7 +143,13 @@ export default {
       })
     )
     .output(z.void())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new ORPCError('NOT_IMPLEMENTED');
+    .handler(async ({ context, input }) => {
+      const deleted = await context.db.location.delete({
+        where: { id: input.id },
+      });
+
+      if (!deleted) {
+        throw new ORPCError('NOT_FOUND');
+      }
     }),
 };
