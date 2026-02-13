@@ -37,6 +37,7 @@ import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/ap
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
 import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
 import { Route as AppAccountLocationsNewIndexRouteImport } from './routes/app/account/locations/new.index'
+import { Route as AppAccountLocationsIdUpdateIndexRouteImport } from './routes/app/account/locations/$id.update.index'
 
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
@@ -181,6 +182,12 @@ const AppAccountLocationsNewIndexRoute =
     path: '/account/locations/new/',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppAccountLocationsIdUpdateIndexRoute =
+  AppAccountLocationsIdUpdateIndexRouteImport.update({
+    id: '/account/locations/$id/update/',
+    path: '/account/locations/$id/update/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -238,6 +246,7 @@ export interface FileRoutesByTo {
   '/manager/users/new': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/locations/$id/update': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -269,6 +278,7 @@ export interface FileRoutesById {
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/manager/users/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
+    | '/app/account/locations/$id/update/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/manager/users/new'
     | '/app/account/locations/new'
     | '/manager/users/$id/update'
+    | '/app/account/locations/$id/update'
   id:
     | '__root__'
     | '/'
@@ -358,6 +370,7 @@ export interface FileRouteTypes {
     | '/manager/users/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
+    | '/app/account/locations/$id/update/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -573,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountLocationsNewIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/account/locations/$id/update/': {
+      id: '/app/account/locations/$id/update/'
+      path: '/account/locations/$id/update'
+      fullPath: '/app/account/locations/$id/update/'
+      preLoaderRoute: typeof AppAccountLocationsIdUpdateIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
@@ -581,6 +601,7 @@ interface AppRouteRouteChildren {
   AppAccountIndexRoute: typeof AppAccountIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
+  AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -588,6 +609,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountIndexRoute: AppAccountIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
+  AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

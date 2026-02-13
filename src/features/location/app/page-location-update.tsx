@@ -7,14 +7,14 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocationNew = () => {
+export const PageLocationUpdate = (_props: { params: { id: string } }) => {
   return (
     <PageLayout>
       <PageLayoutTopBar startActions={<BackButton />}>
-        <PageLayoutTopBarTitle>New Location</PageLayoutTopBarTitle>
+        <PageLayoutTopBarTitle>Edit Location</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
-        <div>New Location</div>
+        <div>Edit Location</div>
       </PageLayoutContent>
     </PageLayout>
   );
