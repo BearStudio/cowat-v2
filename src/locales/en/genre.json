@@ -1,9 +1,0 @@
-{
-  "common": {
-    "name": {
-      "label": "Name",
-      "required": "Name is required",
-      "alreadyUsed": "Genre already exists"
-    }
-  }
-}

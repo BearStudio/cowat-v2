@@ -21,9 +21,7 @@ vi.mock('@tanstack/react-start/server', () => ({
 }));
 
 vi.mock('@/env/client', () => ({
-  envClient: {
-    VITE_IS_DEMO: false,
-  },
+  envClient: {},
 }));
 
 vi.mock('@/env/server', () => ({

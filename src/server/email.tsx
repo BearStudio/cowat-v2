@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
-import { envClient } from '@/env/client';
 import { envServer } from '@/env/server';
 
 // eslint-disable-next-line sonarjs/no-clear-text-protocols
@@ -16,10 +15,6 @@ export const sendEmail = async ({
   ...options
 }: Omit<MailOptions, 'html'> &
   Required<Pick<MailOptions, 'subject'>> & { template: ReactElement }) => {
-  if (envClient.VITE_IS_DEMO) {
-    return;
-  }
-
   const html = await render(template);
   return transport.sendMail({
     from: envServer.EMAIL_FROM,

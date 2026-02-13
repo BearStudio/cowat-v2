@@ -19,9 +19,7 @@ export default {
 export const Default = () => {
   return (
     <Button
-      onClick={() =>
-        toast.success('Hey there, thanks for checking out Start UI! [web]')
-      }
+      onClick={() => toast.success('Hey there, thanks for checking out Cowat!')}
     >
       Show toast
     </Button>

@@ -5,7 +5,6 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { match } from 'ts-pattern';
 
-import { envClient } from '@/env/client';
 import { Permission } from '@/features/auth/permissions';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
@@ -67,7 +66,6 @@ const base = os
     } catch (error) {
       const logLevel = (() => {
         if (!(error instanceof ORPCError)) return 'error';
-        if (error.message === 'DEMO_MODE_ENABLED') return 'info';
         const errorCode = error.status;
         if (errorCode >= 500) return 'error';
         if (errorCode >= 400) return 'warn';
@@ -99,15 +97,6 @@ const base = os
 
       return result;
     });
-  })
-  // Demo Mode
-  .use(async ({ next, procedure }) => {
-    if (envClient.VITE_IS_DEMO && procedure['~orpc'].route.method !== 'GET') {
-      throw new ORPCError('METHOD_NOT_SUPPORTED', {
-        message: 'DEMO_MODE_ENABLED',
-      });
-    }
-    return await next();
   })
   // Prisma Error Handler
   .use(async ({ next, context }) => {

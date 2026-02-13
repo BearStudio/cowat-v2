@@ -7,7 +7,6 @@ import { match } from 'ts-pattern';
 import i18n from '@/lib/i18n';
 
 import TemplateLoginCode from '@/emails/templates/login-code';
-import { envClient } from '@/env/client';
 import { envServer } from '@/env/server';
 import {
   AUTH_EMAIL_OTP_EXPIRATION_IN_MINUTES,
@@ -60,8 +59,8 @@ export const auth = betterAuth({
     emailOTP({
       disableSignUp: !AUTH_SIGNUP_ENABLED,
       expiresIn: AUTH_EMAIL_OTP_EXPIRATION_IN_MINUTES * 60,
-      // Use predictable mocked code in dev and demo
-      ...(import.meta.env.DEV || envClient.VITE_IS_DEMO
+      // Use predictable mocked code in dev
+      ...(import.meta.env.DEV
         ? { generateOTP: () => AUTH_EMAIL_OTP_MOCKED }
         : undefined),
       async sendVerificationOTP({ email, otp, type }) {
@@ -91,20 +90,4 @@ export const auth = betterAuth({
       },
     }),
   ],
-  databaseHooks: {
-    user: {
-      create: {
-        before: async (user) => {
-          if (envClient.VITE_IS_DEMO) throw new Error('DEMO MODE');
-          return { data: user };
-        },
-      },
-      update: {
-        before: async (user) => {
-          if (envClient.VITE_IS_DEMO) throw new Error('DEMO MODE');
-          return { data: user };
-        },
-      },
-    },
-  },
 });

@@ -12,7 +12,6 @@ vi.mock('@/env/client', () => ({
     VITE_ENV_NAME: 'TEST',
     VITE_ENV_COLOR: 'blue',
     VITE_ENV_EMOJI: undefined,
-    VITE_IS_DEMO: false,
   },
 }));
 
@@ -25,7 +24,6 @@ describe('config router', () => {
         name: 'TEST',
         color: 'blue',
         emoji: undefined,
-        isDemo: false,
         isDev: expect.any(Boolean),
       });
     });

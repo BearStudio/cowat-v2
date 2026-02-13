@@ -13,7 +13,6 @@ export default {
         name: z.string().optional(),
         color: z.string(),
         emoji: z.string().optional(),
-        isDemo: z.boolean(),
         isDev: z.boolean(),
       })
     )
@@ -22,7 +21,6 @@ export default {
         name: envClient.VITE_ENV_NAME,
         color: envClient.VITE_ENV_COLOR,
         emoji: envClient.VITE_ENV_EMOJI,
-        isDemo: envClient.VITE_IS_DEMO,
         isDev: import.meta.env.DEV,
       };
     }),

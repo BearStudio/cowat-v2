@@ -3,23 +3,20 @@ import { useFormContext } from 'react-hook-form';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-import { envClient } from '@/env/client';
 import { AUTH_EMAIL_OTP_MOCKED } from '@/features/auth/config';
 
 export const LoginEmailHint = () => {
   const form = useFormContext();
   const mockedEmail = 'admin@admin.com';
 
-  if (import.meta.env.PROD && !envClient.VITE_IS_DEMO) {
+  if (import.meta.env.PROD) {
     return null;
   }
 
   return (
     <Alert dir="ltr">
       <TerminalIcon className="size-4" />
-      <AlertTitle>
-        {envClient.VITE_IS_DEMO ? 'Demo mode' : 'Dev mode'}
-      </AlertTitle>
+      <AlertTitle>Dev mode</AlertTitle>
       <AlertDescription className="flex flex-wrap text-sm leading-4">
         You can login with{' '}
         <button
@@ -41,16 +38,14 @@ export const LoginEmailHint = () => {
 export const LoginEmailOtpHint = () => {
   const form = useFormContext();
 
-  if (import.meta.env.PROD && !envClient.VITE_IS_DEMO) {
+  if (import.meta.env.PROD) {
     return null;
   }
 
   return (
     <Alert dir="ltr">
       <TerminalIcon className="size-4" />
-      <AlertTitle>
-        {envClient.VITE_IS_DEMO ? 'Demo mode' : 'Dev mode'}
-      </AlertTitle>
+      <AlertTitle>Dev mode</AlertTitle>
       <AlertDescription className="flex text-sm leading-4">
         Use the code{' '}
         <button
