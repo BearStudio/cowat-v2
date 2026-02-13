@@ -1,5 +1,18 @@
-import { BackButton } from '@/components/back-button';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useForm, FormStateSubscribe } from 'react-hook-form';
 
+import { orpc } from '@/lib/orpc/client';
+
+import { BackButton } from '@/components/back-button';
+import { Form } from '@/components/form';
+import { PreventNavigation } from '@/components/prevent-navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+
+import { FormLocation } from '@/features/location/app/form-location';
+import { zFormFieldsLocation } from '@/features/location/schema';
 import {
   PageLayout,
   PageLayoutContent,
@@ -8,14 +21,74 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageLocationNew = () => {
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+  const form = useForm({
+    resolver: zodResolver(zFormFieldsLocation()),
+    values: {
+      name: '',
+      address: '',
+    },
+  });
+
+  const locationCreate = useMutation(
+    orpc.location.create.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.location.getAll.key(),
+          type: 'all',
+        });
+
+        if (canGoBack) {
+          router.history.back({ ignoreBlocker: true });
+        } else {
+          router.navigate({
+            to: '/app/account/locations',
+            replace: true,
+            ignoreBlocker: true,
+          });
+        }
+      },
+    })
+  );
+
   return (
-    <PageLayout>
-      <PageLayoutTopBar startActions={<BackButton />}>
-        <PageLayoutTopBarTitle>New Location</PageLayoutTopBarTitle>
-      </PageLayoutTopBar>
-      <PageLayoutContent>
-        <div>New Location</div>
-      </PageLayoutContent>
-    </PageLayout>
+    <>
+      <FormStateSubscribe
+        control={form.control}
+        render={({ isDirty }) => <PreventNavigation shouldBlock={isDirty} />}
+      />
+      <Form
+        {...form}
+        onSubmit={(values) => {
+          locationCreate.mutate(values);
+        }}
+      >
+        <PageLayout>
+          <PageLayoutTopBar
+            startActions={<BackButton />}
+            endActions={
+              <Button
+                size="sm"
+                type="submit"
+                className="min-w-20"
+                loading={locationCreate.isPending}
+              >
+                Create
+              </Button>
+            }
+          >
+            <PageLayoutTopBarTitle>New Location</PageLayoutTopBarTitle>
+          </PageLayoutTopBar>
+          <PageLayoutContent>
+            <Card>
+              <CardContent>
+                <FormLocation />
+              </CardContent>
+            </Card>
+          </PageLayoutContent>
+        </PageLayout>
+      </Form>
+    </>
   );
 };
