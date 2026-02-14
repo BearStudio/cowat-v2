@@ -6,6 +6,7 @@ import {
   zBookingForDriver,
   zBookingRequest,
 } from '@/features/booking/schema';
+import { validateStatusTransition } from '@/features/booking/status-machine';
 import { protectedProcedure } from '@/server/orpc';
 
 const tags = ['bookings'];
@@ -86,6 +87,8 @@ export default {
         throw new ORPCError('FORBIDDEN');
       }
 
+      validateStatusTransition(booking.status, 'ACCEPTED');
+
       await context.db.passengersOnStops.update({
         where: { id: input.id },
         data: { status: 'ACCEPTED' },
@@ -114,6 +117,8 @@ export default {
         throw new ORPCError('FORBIDDEN');
       }
 
+      validateStatusTransition(booking.status, 'REFUSED');
+
       await context.db.passengersOnStops.update({
         where: { id: input.id },
         data: { status: 'REFUSED' },
@@ -140,6 +145,8 @@ export default {
       if (booking.passengerId !== context.user.id) {
         throw new ORPCError('FORBIDDEN');
       }
+
+      validateStatusTransition(booking.status, 'CANCELED');
 
       await context.db.passengersOnStops.update({
         where: { id: input.id },
