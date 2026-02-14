@@ -22,7 +22,7 @@ test.describe('Booking flow', () => {
     if ((await existingCancelBtn.count()) > 0) {
       await existingCancelBtn.click();
       await page.getByRole('button', { name: 'Delete' }).click();
-      await expect(page.getByText('Booking cancelled')).toBeVisible();
+      await expect(page.getByText('Booking cancelled').first()).toBeVisible();
     }
 
     // Step 1: Book the first available stop
@@ -36,13 +36,13 @@ test.describe('Booking flow', () => {
       drawer.getByRole('heading', { name: 'Book a ride' })
     ).toBeVisible();
     await drawer.getByRole('button', { name: 'Book' }).click();
-    await expect(page.getByText('Booking request sent')).toBeVisible();
+    await expect(page.getByText('Booking request sent').first()).toBeVisible();
 
     // Step 2: Cancel the booking we just made
     await expect(content.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await content.getByRole('button', { name: 'Cancel' }).click();
     await page.getByRole('button', { name: 'Delete' }).click();
-    await expect(page.getByText('Booking cancelled')).toBeVisible();
+    await expect(page.getByText('Booking cancelled').first()).toBeVisible();
 
     // Step 3: Book a different stop (pick the second one)
     const newBookButtons = content.getByRole('button', { name: 'Book' });
@@ -55,7 +55,7 @@ test.describe('Booking flow', () => {
       drawer2.getByRole('heading', { name: 'Book a ride' })
     ).toBeVisible();
     await drawer2.getByRole('button', { name: 'Book' }).click();
-    await expect(page.getByText('Booking request sent')).toBeVisible();
+    await expect(page.getByText('Booking request sent').first()).toBeVisible();
 
     // Verify no error toasts appeared during the flow
     await expect(
