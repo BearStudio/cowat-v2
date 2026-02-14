@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createServerFn } from '@tanstack/react-start';
+import { Result } from 'better-result';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -10,31 +11,43 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+
 import { db } from '@/server/db';
 
 const clearDb = createServerFn({ method: 'POST' }).handler(async () => {
-  // Truncate all tables in the correct order (respecting foreign keys)
-  await db.$executeRawUnsafe(`
-    TRUNCATE TABLE
-      "passengers_on_stops",
-      "template_stop",
-      "stop",
-      "commute_template",
-      "commute",
-      "location",
-      "verification",
-      "account",
-      "session",
-      "user"
-    CASCADE
-  `);
-  return { success: true };
+  const result = await Result.tryPromise(() =>
+    db.$executeRawUnsafe(`
+      TRUNCATE TABLE
+        "passengers_on_stops",
+        "template_stop",
+        "stop",
+        "commute_template",
+        "commute",
+        "location",
+        "verification",
+        "account",
+        "session",
+        "user"
+      CASCADE
+    `)
+  );
+
+  return result.match({
+    ok: () => ({ success: true, output: 'Database cleared' }),
+    err: (error) => ({
+      success: false,
+      output: error instanceof Error ? error.message : String(error),
+    }),
+  });
 });
 
 export function ClearDbAction() {
   const mutation = useMutation({
     mutationFn: () => clearDb(),
-    onSuccess: () => toast.success('Database cleared'),
+    onSuccess: (result) => {
+      if (result.success) toast.success('Database cleared');
+      else toast.error(`Failed to clear database: ${result.output}`);
+    },
     onError: () => toast.error('Failed to clear database'),
   });
 

@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
+import { Result } from 'better-result';
 import { z } from 'zod';
 
 export type CommandResult = { success: boolean; output: string };
@@ -23,14 +24,16 @@ export const runCommand = createServerFn({ method: 'POST' })
     const { promisify } = await import('node:util');
     const execAsync = promisify(exec);
 
-    try {
-      const { stdout, stderr } = await execAsync(`pnpm ${script}`);
-      return {
+    const result = await Result.tryPromise(() => execAsync(`pnpm ${script}`));
+
+    return result.match<CommandResult>({
+      ok: ({ stdout, stderr }) => ({
         success: true,
         output: [stdout, stderr].filter(Boolean).join('\n'),
-      };
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      return { success: false, output: msg };
-    }
+      }),
+      err: (error) => ({
+        success: false,
+        output: error instanceof Error ? error.message : String(error),
+      }),
+    });
   });
