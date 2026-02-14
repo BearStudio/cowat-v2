@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import {
@@ -18,8 +19,13 @@ export default {
     })
     .input(zBookingRequest())
     .output(zBooking())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new Error('Not implemented');
+    .handler(async ({ context, input }) => {
+      return await context.db.passengersOnStops.create({
+        data: {
+          ...input,
+          passengerId: context.user.id,
+        },
+      });
     }),
 
   accept: protectedProcedure({ permission: null })
@@ -30,8 +36,24 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new Error('Not implemented');
+    .handler(async ({ context, input }) => {
+      const booking = await context.db.passengersOnStops.findUnique({
+        where: { id: input.id },
+        include: { stop: { include: { commute: true } } },
+      });
+
+      if (!booking) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      if (booking.stop.commute.driverId !== context.user.id) {
+        throw new ORPCError('FORBIDDEN');
+      }
+
+      await context.db.passengersOnStops.update({
+        where: { id: input.id },
+        data: { status: 'ACCEPTED' },
+      });
     }),
 
   refuse: protectedProcedure({ permission: null })
@@ -42,8 +64,24 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new Error('Not implemented');
+    .handler(async ({ context, input }) => {
+      const booking = await context.db.passengersOnStops.findUnique({
+        where: { id: input.id },
+        include: { stop: { include: { commute: true } } },
+      });
+
+      if (!booking) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      if (booking.stop.commute.driverId !== context.user.id) {
+        throw new ORPCError('FORBIDDEN');
+      }
+
+      await context.db.passengersOnStops.update({
+        where: { id: input.id },
+        data: { status: 'REFUSED' },
+      });
     }),
 
   cancel: protectedProcedure({ permission: null })
@@ -54,8 +92,23 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new Error('Not implemented');
+    .handler(async ({ context, input }) => {
+      const booking = await context.db.passengersOnStops.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!booking) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      if (booking.passengerId !== context.user.id) {
+        throw new ORPCError('FORBIDDEN');
+      }
+
+      await context.db.passengersOnStops.update({
+        where: { id: input.id },
+        data: { status: 'CANCELED' },
+      });
     }),
 
   getRequestsForDriver: protectedProcedure({ permission: null })
@@ -79,7 +132,52 @@ export default {
         total: z.number(),
       })
     )
-    .handler(async ({ context: _context, input: _input }) => {
-      throw new Error('Not implemented');
+    .handler(async ({ context, input }) => {
+      const where = {
+        status: 'REQUESTED' as const,
+        stop: {
+          commute: {
+            driverId: context.user.id,
+          },
+        },
+      };
+
+      const include = {
+        passenger: { select: { id: true, name: true, image: true } },
+        stop: {
+          select: {
+            id: true,
+            order: true,
+            outwardTime: true,
+            inwardTime: true,
+            commute: {
+              select: {
+                id: true,
+                date: true,
+                type: true,
+              },
+            },
+          },
+        },
+      };
+
+      const [total, items] = await Promise.all([
+        context.db.passengersOnStops.count({ where }),
+        context.db.passengersOnStops.findMany({
+          take: input.limit + 1,
+          cursor: input.cursor ? { id: input.cursor } : undefined,
+          orderBy: { createdAt: 'desc' },
+          where,
+          include,
+        }),
+      ]);
+
+      let nextCursor: typeof input.cursor | undefined = undefined;
+      if (items.length > input.limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      return { items, nextCursor, total };
     }),
 };

@@ -20,6 +20,15 @@ const mockBookingFromDb = {
   stopId: 'stop-1',
 };
 
+const mockBookingWithStop = {
+  ...mockBookingFromDb,
+  stop: {
+    commute: {
+      driverId: mockUser.id,
+    },
+  },
+};
+
 const mockBookingForDriver = {
   ...mockBookingFromDb,
   passenger: { id: 'passenger-1', name: 'Passenger', image: null },
@@ -50,6 +59,12 @@ describe('booking router', () => {
       const result = await call(bookingRouter.request, requestInput);
 
       expect(result).toEqual(mockBookingFromDb);
+      expect(mockDb.passengersOnStops.create).toHaveBeenCalledWith({
+        data: {
+          ...requestInput,
+          passengerId: mockUser.id,
+        },
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -66,16 +81,43 @@ describe('booking router', () => {
   describe('accept', () => {
     const acceptInput = { id: 'booking-1' };
 
-    it('should succeed for an authenticated user', async () => {
-      mockDb.passengersOnStops.findUnique.mockResolvedValue(mockBookingFromDb);
-      mockDb.passengersOnStops.update.mockResolvedValue({
-        ...mockBookingFromDb,
-        status: 'ACCEPTED',
-      });
+    it('should succeed for the driver', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(
+        mockBookingWithStop
+      );
+      mockDb.passengersOnStops.update.mockResolvedValue(undefined);
 
       await expect(
         call(bookingRouter.accept, acceptInput)
       ).resolves.toBeUndefined();
+
+      expect(mockDb.passengersOnStops.update).toHaveBeenCalledWith({
+        where: { id: 'booking-1' },
+        data: { status: 'ACCEPTED' },
+      });
+    });
+
+    it('should throw NOT_FOUND when booking does not exist', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(null);
+
+      await expect(
+        call(bookingRouter.accept, acceptInput)
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw FORBIDDEN when user is not the driver', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue({
+        ...mockBookingWithStop,
+        stop: { commute: { driverId: 'other-user' } },
+      });
+
+      await expect(
+        call(bookingRouter.accept, acceptInput)
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -92,16 +134,43 @@ describe('booking router', () => {
   describe('refuse', () => {
     const refuseInput = { id: 'booking-1' };
 
-    it('should succeed for an authenticated user', async () => {
-      mockDb.passengersOnStops.findUnique.mockResolvedValue(mockBookingFromDb);
-      mockDb.passengersOnStops.update.mockResolvedValue({
-        ...mockBookingFromDb,
-        status: 'REFUSED',
-      });
+    it('should succeed for the driver', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(
+        mockBookingWithStop
+      );
+      mockDb.passengersOnStops.update.mockResolvedValue(undefined);
 
       await expect(
         call(bookingRouter.refuse, refuseInput)
       ).resolves.toBeUndefined();
+
+      expect(mockDb.passengersOnStops.update).toHaveBeenCalledWith({
+        where: { id: 'booking-1' },
+        data: { status: 'REFUSED' },
+      });
+    });
+
+    it('should throw NOT_FOUND when booking does not exist', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(null);
+
+      await expect(
+        call(bookingRouter.refuse, refuseInput)
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw FORBIDDEN when user is not the driver', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue({
+        ...mockBookingWithStop,
+        stop: { commute: { driverId: 'other-user' } },
+      });
+
+      await expect(
+        call(bookingRouter.refuse, refuseInput)
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -118,16 +187,41 @@ describe('booking router', () => {
   describe('cancel', () => {
     const cancelInput = { id: 'booking-1' };
 
-    it('should succeed for an authenticated user', async () => {
+    it('should succeed for the passenger', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue(mockBookingFromDb);
-      mockDb.passengersOnStops.update.mockResolvedValue({
-        ...mockBookingFromDb,
-        status: 'CANCELED',
-      });
+      mockDb.passengersOnStops.update.mockResolvedValue(undefined);
 
       await expect(
         call(bookingRouter.cancel, cancelInput)
       ).resolves.toBeUndefined();
+
+      expect(mockDb.passengersOnStops.update).toHaveBeenCalledWith({
+        where: { id: 'booking-1' },
+        data: { status: 'CANCELED' },
+      });
+    });
+
+    it('should throw NOT_FOUND when booking does not exist', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(null);
+
+      await expect(
+        call(bookingRouter.cancel, cancelInput)
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw FORBIDDEN when user is not the passenger', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue({
+        ...mockBookingFromDb,
+        passengerId: 'other-user',
+      });
+
+      await expect(
+        call(bookingRouter.cancel, cancelInput)
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
