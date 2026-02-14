@@ -1,0 +1,152 @@
+import { UseMutationResult } from '@tanstack/react-query';
+import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import { Button } from '@/components/ui/button';
+import {
+  CardCommute,
+  CardCommuteContent,
+  CardCommuteHeader,
+  CardCommuteTrigger,
+} from '@/components/ui/card-commute';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
+
+import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
+import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CommuteEnriched, StopEnriched } from '@/features/commute/schema';
+
+type DashboardCommuteCardProps = {
+  commute: CommuteEnriched;
+  currentUserId: string;
+  commuteCancel: UseMutationResult<void, unknown, { id: string }>;
+  bookingCancel: UseMutationResult<void, unknown, { id: string }>;
+  onBookStop: (stopId: string) => void;
+};
+
+export const DashboardCommuteCard = ({
+  commute,
+  currentUserId,
+  commuteCancel,
+  bookingCancel,
+  onBookStop,
+}: DashboardCommuteCardProps) => {
+  const { t } = useTranslation(['dashboard', 'commute', 'common']);
+
+  const acceptedPassengers = new Map<
+    string,
+    { id: string; name?: string | null; image?: string | null }
+  >();
+  for (const stop of commute.stops) {
+    for (const sp of stop.passengers) {
+      if (
+        sp.status === 'ACCEPTED' &&
+        !acceptedPassengers.has(sp.passenger.id)
+      ) {
+        acceptedPassengers.set(sp.passenger.id, sp.passenger);
+      }
+    }
+  }
+
+  const available = commute.seats - acceptedPassengers.size;
+  const isDriver = currentUserId === commute.driverId;
+  const hasPassengers = acceptedPassengers.size > 0;
+  const hasBookingOnCommute = commute.stops.some((s) =>
+    s.passengers.some(
+      (p) =>
+        p.passenger.id === currentUserId &&
+        (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
+    )
+  );
+
+  return (
+    <CardCommute>
+      <CardCommuteTrigger>
+        <CardCommuteHeader
+          driver={commute.driver}
+          date={commute.date}
+          status={commute.status}
+          type={commute.type}
+          availableSeats={available}
+          totalSeats={commute.seats}
+          actions={
+            isDriver && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <ConfirmResponsiveDrawer
+                  description={t(
+                    hasPassengers
+                      ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
+                      : 'dashboard:cancelCommute.confirmDescription'
+                  )}
+                  confirmText={t('common:actions.delete')}
+                  confirmVariant="destructive"
+                  onConfirm={() =>
+                    commuteCancel.mutateAsync({ id: commute.id })
+                  }
+                >
+                  <ResponsiveIconButton
+                    variant="ghost"
+                    size="sm"
+                    label={t('common:actions.delete')}
+                  >
+                    <Trash2 />
+                  </ResponsiveIconButton>
+                </ConfirmResponsiveDrawer>
+              </div>
+            )
+          }
+        />
+      </CardCommuteTrigger>
+      <CardCommuteContent>
+        <div className="flex flex-col gap-2">
+          {commute.comment && (
+            <p className="text-sm text-muted-foreground">{commute.comment}</p>
+          )}
+          <CardCommuteStopsList
+            stops={commute.stops}
+            renderActions={(stop) => {
+              if (isDriver) return null;
+              const enrichedStop = stop as StopEnriched;
+              const userBooking = enrichedStop.passengers?.find(
+                (p) =>
+                  p.passenger.id === currentUserId &&
+                  (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
+              );
+              if (userBooking) {
+                return (
+                  <ConfirmResponsiveDrawer
+                    description={t(
+                      'dashboard:cancelBooking.confirmDescription'
+                    )}
+                    confirmText={t('common:actions.delete')}
+                    confirmVariant="destructive"
+                    onConfirm={() =>
+                      bookingCancel.mutateAsync({ id: userBooking.id })
+                    }
+                  >
+                    <Button size="xs" variant="destructive">
+                      {t('common:actions.cancel')}
+                    </Button>
+                  </ConfirmResponsiveDrawer>
+                );
+              }
+              if (hasBookingOnCommute) return null;
+              return (
+                <Button
+                  size="xs"
+                  variant="secondary"
+                  onClick={() => onBookStop(stop.id)}
+                >
+                  {t('dashboard:booking.submitButton')}
+                </Button>
+              );
+            }}
+          />
+          <CardCommutePassengersList
+            passengers={[...acceptedPassengers.values()]}
+          />
+        </div>
+      </CardCommuteContent>
+    </CardCommute>
+  );
+};

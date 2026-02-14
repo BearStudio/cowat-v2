@@ -24,6 +24,7 @@
   },
   "cancelCommute": {
     "confirmDescription": "You are about to cancel this commute.",
+    "confirmDescriptionWithPassengers": "This commute has passengers. Are you sure you want to cancel it?",
     "successMessage": "Commute cancelled"
   }
 }

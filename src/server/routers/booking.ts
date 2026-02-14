@@ -20,6 +20,31 @@ export default {
     .input(zBookingRequest())
     .output(zBooking())
     .handler(async ({ context, input }) => {
+      // Find the commute this stop belongs to
+      const stop = await context.db.stop.findUnique({
+        where: { id: input.stopId },
+        select: { commuteId: true },
+      });
+
+      if (!stop) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      // Check if user already has an active booking on any stop of this commute
+      const existingBooking = await context.db.passengersOnStops.findFirst({
+        where: {
+          passengerId: context.user.id,
+          status: { in: ['REQUESTED', 'ACCEPTED'] },
+          stop: { commuteId: stop.commuteId },
+        },
+      });
+
+      if (existingBooking) {
+        throw new ORPCError('CONFLICT', {
+          message: 'You already have a booking on this commute',
+        });
+      }
+
       return await context.db.passengersOnStops.create({
         data: {
           ...input,

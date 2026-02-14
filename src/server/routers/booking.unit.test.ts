@@ -54,6 +54,8 @@ describe('booking router', () => {
     };
 
     it('should succeed for an authenticated user', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({ commuteId: 'commute-1' });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.create.mockResolvedValue(mockBookingFromDb);
 
       const result = await call(bookingRouter.request, requestInput);
@@ -64,6 +66,27 @@ describe('booking router', () => {
           ...requestInput,
           passengerId: mockUser.id,
         },
+      });
+    });
+
+    it('should throw NOT_FOUND when stop does not exist', async () => {
+      mockDb.stop.findUnique.mockResolvedValue(null);
+
+      await expect(
+        call(bookingRouter.request, requestInput)
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      });
+    });
+
+    it('should throw CONFLICT when user already has a booking on this commute', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({ commuteId: 'commute-1' });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(mockBookingFromDb);
+
+      await expect(
+        call(bookingRouter.request, requestInput)
+      ).rejects.toMatchObject({
+        code: 'CONFLICT',
       });
     });
 
