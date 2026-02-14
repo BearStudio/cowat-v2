@@ -7,13 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { AccountCardRow } from '@/features/account/account-card-row';
-import { ChangeNameDrawer } from '@/features/account/change-name-drawer';
+import { AutoAcceptToggle } from '@/features/account/auto-accept-toggle';
+import { EditNameDrawer } from '@/features/account/edit-name-drawer';
+import { EditPhoneDrawer } from '@/features/account/edit-phone-drawer';
 import { authClient } from '@/features/auth/client';
 import { ConfirmSignOut } from '@/features/auth/confirm-signout';
 
 export const UserCard = () => {
   const { t } = useTranslation(['auth', 'account']);
   const session = authClient.useSession();
+
   return (
     <Card className="gap-0 p-0">
       <CardHeader className="gap-y-0 py-4">
@@ -47,7 +50,7 @@ export const UserCard = () => {
       </CardHeader>
 
       <AccountCardRow label={t('account:userCard.name.label')}>
-        <ChangeNameDrawer>
+        <EditNameDrawer>
           <Button variant="link" size="sm" className="-my-1.5">
             <span className="truncate">
               {session.data?.user.name || (
@@ -59,7 +62,7 @@ export const UserCard = () => {
               {t('account:userCard.name.updateAction')}
             </span>
           </Button>
-        </ChangeNameDrawer>
+        </EditNameDrawer>
       </AccountCardRow>
       <AccountCardRow label={t('account:userCard.email.label')}>
         <p className="flex-1 truncate underline-offset-4">
@@ -72,6 +75,27 @@ export const UserCard = () => {
             <span className="text-xs text-muted-foreground">--</span>
           )}
         </p>
+      </AccountCardRow>
+      <AccountCardRow label={t('account:userCard.phone.label')}>
+        <EditPhoneDrawer>
+          <Button variant="link" size="sm" className="-my-1.5">
+            <span className="truncate">
+              {session.data?.user.phone || (
+                <span className="text-xs text-muted-foreground">--</span>
+              )}
+            </span>
+            <PenLineIcon className="size-3" />
+            <span className="sr-only">
+              {t('account:userCard.phone.updateAction')}
+            </span>
+          </Button>
+        </EditPhoneDrawer>
+      </AccountCardRow>
+      <AccountCardRow
+        label={t('account:userCard.autoAccept.label')}
+        className="sm:items-center"
+      >
+        <AutoAcceptToggle />
       </AccountCardRow>
     </Card>
   );

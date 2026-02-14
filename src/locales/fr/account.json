@@ -11,15 +11,35 @@
     "email": {
       "label": "Email",
       "notVerified": "Non vérifié"
+    },
+    "phone": {
+      "label": "Téléphone",
+      "updateAction": "Modifier votre numéro de téléphone"
+    },
+    "autoAccept": {
+      "label": "Acceptation auto.",
+      "description": "Accepter automatiquement les demandes de trajet"
     }
   },
   "locationsLink": "Lieux",
-  "changeNameDrawer": {
+  "editNameDrawer": {
     "title": "Modifier votre nom",
     "description": "Formulaire pour modifier votre nom",
     "label": "Nom",
     "submitButton": "Modifier",
     "successMessage": "Nom mis à jour",
     "errorMessage": "Échec de la mise à jour de votre nom"
+  },
+  "editPhoneDrawer": {
+    "title": "Modifier votre numéro de téléphone",
+    "description": "Formulaire pour modifier votre numéro de téléphone",
+    "label": "Numéro de téléphone",
+    "submitButton": "Modifier",
+    "successMessage": "Numéro de téléphone mis à jour",
+    "errorMessage": "Échec de la mise à jour de votre numéro de téléphone"
+  },
+  "autoAccept": {
+    "successMessage": "Acceptation automatique mise à jour",
+    "errorMessage": "Échec de la mise à jour de l'acceptation automatique"
   }
 }

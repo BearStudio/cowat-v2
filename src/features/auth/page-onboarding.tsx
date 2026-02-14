@@ -44,6 +44,7 @@ export const PageOnboarding = () => {
     resolver: zodResolver(zFormFieldsOnboarding()),
     values: {
       name: session.data?.user.name ?? '',
+      phone: session.data?.user.phone ?? '',
     },
   });
 
@@ -92,6 +93,17 @@ export const PageOnboarding = () => {
             type="text"
             control={form.control}
             name="name"
+            size="lg"
+          />
+        </FormField>
+        <FormField>
+          <FormFieldLabel>
+            {t('auth:common.phone.onboardingLabel')}
+          </FormFieldLabel>
+          <FormFieldController
+            type="tel"
+            control={form.control}
+            name="phone"
             size="lg"
           />
         </FormField>

@@ -26,19 +26,19 @@ import {
 } from '@/components/ui/responsive-drawer';
 
 import {
-  FormFieldsAccountUpdateName,
-  zFormFieldsAccountUpdateName,
+  FormFieldsAccountUpdatePhone,
+  zFormFieldsAccountUpdatePhone,
 } from '@/features/account/schema';
 import { authClient } from '@/features/auth/client';
 
-export const ChangeNameDrawer = (props: { children: ReactElement }) => {
+export const EditPhoneDrawer = (props: { children: ReactElement }) => {
   const { t } = useTranslation(['account']);
   const [open, setOpen] = useState(false);
   const session = authClient.useSession();
-  const form = useForm<FormFieldsAccountUpdateName>({
-    resolver: zodResolver(zFormFieldsAccountUpdateName()),
+  const form = useForm<FormFieldsAccountUpdatePhone>({
+    resolver: zodResolver(zFormFieldsAccountUpdatePhone()),
     values: {
-      name: session.data?.user.name ?? '',
+      phone: session.data?.user.phone ?? '',
     },
   });
 
@@ -46,11 +46,11 @@ export const ChangeNameDrawer = (props: { children: ReactElement }) => {
     orpc.account.updateInfo.mutationOptions({
       onSuccess: async () => {
         await session.refetch();
-        toast.success(t('account:changeNameDrawer.successMessage'));
+        toast.success(t('account:editPhoneDrawer.successMessage'));
         form.reset();
         setOpen(false);
       },
-      onError: () => toast.error(t('account:changeNameDrawer.errorMessage')),
+      onError: () => toast.error(t('account:editPhoneDrawer.errorMessage')),
     })
   );
 
@@ -67,28 +67,32 @@ export const ChangeNameDrawer = (props: { children: ReactElement }) => {
       <ResponsiveDrawerContent className="sm:max-w-xs">
         <Form
           {...form}
-          onSubmit={async ({ name }) => {
-            updateUser.mutate({ name });
+          onSubmit={async ({ phone }) => {
+            updateUser.mutate({
+              name: session.data?.user.name ?? '',
+              phone,
+              autoAccept: session.data?.user.autoAccept ?? false,
+            });
           }}
           className="flex flex-col gap-4"
         >
           <ResponsiveDrawerHeader>
             <ResponsiveDrawerTitle>
-              {t('account:changeNameDrawer.title')}
+              {t('account:editPhoneDrawer.title')}
             </ResponsiveDrawerTitle>
             <ResponsiveDrawerDescription className="sr-only">
-              {t('account:changeNameDrawer.description')}
+              {t('account:editPhoneDrawer.description')}
             </ResponsiveDrawerDescription>
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody>
             <FormField>
               <FormFieldLabel className="sr-only">
-                {t('account:changeNameDrawer.label')}
+                {t('account:editPhoneDrawer.label')}
               </FormFieldLabel>
               <FormFieldController
                 control={form.control}
-                type="text"
-                name="name"
+                type="tel"
+                name="phone"
                 size="lg"
                 autoFocus
               />
@@ -101,7 +105,7 @@ export const ChangeNameDrawer = (props: { children: ReactElement }) => {
               size="lg"
               loading={updateUser.isPending}
             >
-              {t('account:changeNameDrawer.submitButton')}
+              {t('account:editPhoneDrawer.submitButton')}
             </Button>
           </ResponsiveDrawerFooter>
         </Form>

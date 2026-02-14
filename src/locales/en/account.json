@@ -11,15 +11,35 @@
     "email": {
       "label": "Email",
       "notVerified": "Not Verified"
+    },
+    "phone": {
+      "label": "Phone",
+      "updateAction": "Update your phone number"
+    },
+    "autoAccept": {
+      "label": "Auto-accept",
+      "description": "Automatically accept ride requests"
     }
   },
   "locationsLink": "Locations",
-  "changeNameDrawer": {
+  "editNameDrawer": {
     "title": "Update your name",
     "description": "Form to update your name",
     "label": "Name",
     "submitButton": "Update",
     "successMessage": "Name updated",
     "errorMessage": "Failed to update your name"
+  },
+  "editPhoneDrawer": {
+    "title": "Update your phone number",
+    "description": "Form to update your phone number",
+    "label": "Phone number",
+    "submitButton": "Update",
+    "successMessage": "Phone number updated",
+    "errorMessage": "Failed to update your phone number"
+  },
+  "autoAccept": {
+    "successMessage": "Auto-accept updated",
+    "errorMessage": "Failed to update auto-accept"
   }
 }

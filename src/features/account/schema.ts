@@ -9,3 +9,11 @@ export const zFormFieldsAccountUpdateName = () =>
   z.object({
     name: zu.fieldText.required(),
   });
+
+export type FormFieldsAccountUpdatePhone = z.infer<
+  ReturnType<typeof zFormFieldsAccountUpdatePhone>
+>;
+export const zFormFieldsAccountUpdatePhone = () =>
+  z.object({
+    phone: zu.fieldText.nullish(),
+  });
