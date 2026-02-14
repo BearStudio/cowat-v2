@@ -1,7 +1,8 @@
 import type { Meta } from '@storybook/react-vite';
 
-import { RequestCard } from '@/features/booking/request-card';
 import { BookingForDriver } from '@/features/booking/schema';
+
+import { RequestCard } from '@/features/booking/request-card';
 
 export default {
   title: 'Feature/Booking/RequestCard',
