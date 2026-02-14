@@ -56,13 +56,24 @@ describe('booking router', () => {
     it('should succeed for an authenticated user', async () => {
       mockDb.stop.findUnique.mockResolvedValue({ commuteId: 'commute-1' });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
-      mockDb.passengersOnStops.create.mockResolvedValue(mockBookingFromDb);
+      mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
 
       const result = await call(bookingRouter.request, requestInput);
 
       expect(result).toEqual(mockBookingFromDb);
-      expect(mockDb.passengersOnStops.create).toHaveBeenCalledWith({
-        data: {
+      expect(mockDb.passengersOnStops.upsert).toHaveBeenCalledWith({
+        where: {
+          passengerId_stopId: {
+            passengerId: mockUser.id,
+            stopId: requestInput.stopId,
+          },
+        },
+        update: {
+          status: 'REQUESTED',
+          tripType: requestInput.tripType,
+          comment: requestInput.comment,
+        },
+        create: {
           ...requestInput,
           passengerId: mockUser.id,
         },

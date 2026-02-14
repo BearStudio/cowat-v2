@@ -45,8 +45,19 @@ export default {
         });
       }
 
-      return await context.db.passengersOnStops.create({
-        data: {
+      return await context.db.passengersOnStops.upsert({
+        where: {
+          passengerId_stopId: {
+            passengerId: context.user.id,
+            stopId: input.stopId,
+          },
+        },
+        update: {
+          status: 'REQUESTED',
+          tripType: input.tripType,
+          comment: input.comment,
+        },
+        create: {
           ...input,
           passengerId: context.user.id,
         },
