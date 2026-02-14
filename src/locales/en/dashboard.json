@@ -16,15 +16,18 @@
     "comment": "Comment",
     "commentPlaceholder": "Optional comment...",
     "submitButton": "Book",
-    "successMessage": "Booking request sent"
+    "successMessage": "Booking request sent",
+    "errorMessage": "Failed to send booking request. Please try again."
   },
   "cancelBooking": {
     "confirmDescription": "You are about to cancel your booking.",
-    "successMessage": "Booking cancelled"
+    "successMessage": "Booking cancelled",
+    "errorMessage": "Failed to cancel booking. Please try again."
   },
   "cancelCommute": {
     "confirmDescription": "You are about to cancel this commute.",
     "confirmDescriptionWithPassengers": "This commute has passengers. Are you sure you want to cancel it?",
-    "successMessage": "Commute cancelled"
+    "successMessage": "Commute cancelled",
+    "errorMessage": "Failed to cancel commute. Please try again."
   }
 }

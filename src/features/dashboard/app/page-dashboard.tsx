@@ -53,6 +53,7 @@ export const PageDashboard = () => {
           type: 'all',
         });
       },
+      onError: () => toast.error(t('dashboard:cancelCommute.errorMessage')),
     })
   );
 
@@ -65,6 +66,7 @@ export const PageDashboard = () => {
           type: 'all',
         });
       },
+      onError: () => toast.error(t('dashboard:cancelBooking.errorMessage')),
     })
   );
 

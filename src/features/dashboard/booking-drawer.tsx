@@ -60,6 +60,7 @@ export const BookingDrawer = (props: {
         form.reset();
         props.onOpenChange(false);
       },
+      onError: () => toast.error(t('dashboard:booking.errorMessage')),
     })
   );
 
