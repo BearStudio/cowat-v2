@@ -35,7 +35,7 @@ describe('account router', () => {
   });
 
   describe('updateInfo', () => {
-    const updateInput = { name: 'Updated Name' };
+    const updateInput = { name: 'Updated Name', autoAccept: false };
 
     it('should succeed for an authenticated user', async () => {
       await expect(

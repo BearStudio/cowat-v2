@@ -39,6 +39,8 @@ export default {
     .input(
       zUser().pick({
         name: true,
+        phone: true,
+        autoAccept: true,
       })
     )
     .output(z.void())
@@ -48,6 +50,8 @@ export default {
         where: { id: context.user.id },
         data: {
           name: input.name ?? '',
+          phone: input.phone ?? null,
+          autoAccept: input.autoAccept,
         },
       });
     }),

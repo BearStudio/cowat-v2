@@ -33,6 +33,15 @@ export const auth = betterAuth({
       onboardedAt: {
         type: 'date',
       },
+      phone: {
+        type: 'string',
+        required: false,
+      },
+      autoAccept: {
+        type: 'boolean',
+        required: false,
+        defaultValue: false,
+      },
     },
   },
   onAPIError: {
