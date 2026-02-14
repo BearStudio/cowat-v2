@@ -18,8 +18,7 @@ export default {
     })
     .input(zBookingRequest())
     .output(zBooking())
-    .handler(async ({ context, input }) => {
-      // TODO: implement
+    .handler(async ({ context: _context, input: _input }) => {
       throw new Error('Not implemented');
     }),
 
@@ -31,8 +30,7 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context, input }) => {
-      // TODO: implement
+    .handler(async ({ context: _context, input: _input }) => {
       throw new Error('Not implemented');
     }),
 
@@ -44,8 +42,7 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context, input }) => {
-      // TODO: implement
+    .handler(async ({ context: _context, input: _input }) => {
       throw new Error('Not implemented');
     }),
 
@@ -57,8 +54,7 @@ export default {
     })
     .input(z.object({ id: z.string() }))
     .output(z.void())
-    .handler(async ({ context, input }) => {
-      // TODO: implement
+    .handler(async ({ context: _context, input: _input }) => {
       throw new Error('Not implemented');
     }),
 
@@ -83,8 +79,7 @@ export default {
         total: z.number(),
       })
     )
-    .handler(async ({ context, input }) => {
-      // TODO: implement
+    .handler(async ({ context: _context, input: _input }) => {
       throw new Error('Not implemented');
     }),
 };
