@@ -11,5 +11,10 @@
     "refuseConfirmDescription": "You are about to refuse this ride request.",
     "acceptSuccess": "Request accepted",
     "refuseSuccess": "Request refused"
+  },
+  "requests": {
+    "title": "Booking Requests",
+    "loadMore": "Load more",
+    "emptyState": "No pending booking requests"
   }
 }
