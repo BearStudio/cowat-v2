@@ -17,7 +17,12 @@
     "commentPlaceholder": "Optional comment...",
     "submitButton": "Book",
     "successMessage": "Booking request sent",
-    "errorMessage": "Failed to send booking request. Please try again."
+    "autoAcceptedMessage": "Booking confirmed",
+    "errorMessage": "Failed to send booking request. Please try again.",
+    "status": {
+      "REQUESTED": "Pending",
+      "ACCEPTED": "Confirmed"
+    }
   },
   "cancelBooking": {
     "confirmDescription": "You are about to cancel your booking.",

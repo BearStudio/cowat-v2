@@ -53,8 +53,11 @@ describe('booking router', () => {
       comment: 'Pick me up please',
     };
 
-    it('should succeed for an authenticated user', async () => {
-      mockDb.stop.findUnique.mockResolvedValue({ commuteId: 'commute-1' });
+    it('should create a REQUESTED booking when driver has autoAccept disabled', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({
+        commuteId: 'commute-1',
+        commute: { driver: { autoAccept: false } },
+      });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
 
@@ -75,6 +78,42 @@ describe('booking router', () => {
         },
         create: {
           ...requestInput,
+          status: 'REQUESTED',
+          passengerId: mockUser.id,
+        },
+      });
+    });
+
+    it('should auto-accept booking when driver has autoAccept enabled', async () => {
+      const autoAcceptedBooking = {
+        ...mockBookingFromDb,
+        status: 'ACCEPTED' as const,
+      };
+      mockDb.stop.findUnique.mockResolvedValue({
+        commuteId: 'commute-1',
+        commute: { driver: { autoAccept: true } },
+      });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.upsert.mockResolvedValue(autoAcceptedBooking);
+
+      const result = await call(bookingRouter.request, requestInput);
+
+      expect(result).toEqual(autoAcceptedBooking);
+      expect(mockDb.passengersOnStops.upsert).toHaveBeenCalledWith({
+        where: {
+          passengerId_stopId: {
+            passengerId: mockUser.id,
+            stopId: requestInput.stopId,
+          },
+        },
+        update: {
+          status: 'ACCEPTED',
+          tripType: requestInput.tripType,
+          comment: requestInput.comment,
+        },
+        create: {
+          ...requestInput,
+          status: 'ACCEPTED',
           passengerId: mockUser.id,
         },
       });

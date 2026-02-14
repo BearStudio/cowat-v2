@@ -51,8 +51,14 @@ export const BookingDrawer = (props: {
 
   const bookingRequest = useMutation(
     orpc.booking.request.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        toast.success(t('dashboard:booking.successMessage'));
+      onSuccess: async (data, _variables, _onMutateResult, context) => {
+        toast.success(
+          t(
+            data.status === 'ACCEPTED'
+              ? 'dashboard:booking.autoAcceptedMessage'
+              : 'dashboard:booking.successMessage'
+          )
+        );
         await context.client.invalidateQueries({
           queryKey: orpc.commute.getByDate.key(),
           type: 'all',
