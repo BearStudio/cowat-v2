@@ -1,0 +1,29 @@
+{
+  "title": "Dashboard",
+  "newCommuteAction": "New Commute",
+  "today": "Today",
+  "noCommutesForDay": "No commutes for this day",
+  "noCommutesForWeek": "No commutes this week",
+  "booking": {
+    "title": "Book a ride",
+    "selectStop": "Select a stop",
+    "tripType": "Trip type",
+    "tripTypeOptions": {
+      "ROUND": "Round trip",
+      "ONEWAY": "One way",
+      "RETURN": "Return only"
+    },
+    "comment": "Comment",
+    "commentPlaceholder": "Optional comment...",
+    "submitButton": "Book",
+    "successMessage": "Booking request sent"
+  },
+  "cancelBooking": {
+    "confirmDescription": "You are about to cancel your booking.",
+    "successMessage": "Booking cancelled"
+  },
+  "cancelCommute": {
+    "confirmDescription": "You are about to cancel this commute.",
+    "successMessage": "Commute cancelled"
+  }
+}

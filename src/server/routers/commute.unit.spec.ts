@@ -140,22 +140,29 @@ describe('commute router', () => {
   });
 
   describe('getByDate', () => {
-    it('should return commutes for the given date', async () => {
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteFromDb]);
+    const dateRange = {
+      from: new Date('2025-06-15'),
+      to: new Date('2025-06-22'),
+    };
 
-      const result = await call(commuteRouter.getByDate, {
-        date: new Date('2025-06-15'),
-      });
+    it('should return enriched commutes for the given date range', async () => {
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
 
-      expect(result).toEqual([mockCommuteFromDb]);
+      const result = await call(commuteRouter.getByDate, dateRange);
+
+      expect(result).toEqual([mockCommuteEnrichedFromDb]);
+      expect(mockDb.commute.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { date: { gte: dateRange.from, lt: dateRange.to } },
+          orderBy: { date: 'asc' },
+        })
+      );
     });
 
-    it('should return empty array when no commutes found', async () => {
+    it('should return empty array when no commutes in range', async () => {
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      const result = await call(commuteRouter.getByDate, {
-        date: new Date('2025-06-15'),
-      });
+      const result = await call(commuteRouter.getByDate, dateRange);
 
       expect(result).toEqual([]);
     });
@@ -164,7 +171,7 @@ describe('commute router', () => {
       mockGetSession.mockResolvedValue(null);
 
       await expect(
-        call(commuteRouter.getByDate, { date: new Date('2025-06-15') })
+        call(commuteRouter.getByDate, dateRange)
       ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
     });
   });
