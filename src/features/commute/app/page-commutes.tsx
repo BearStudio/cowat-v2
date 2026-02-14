@@ -1,25 +1,18 @@
-import { Collapsible } from '@base-ui/react/collapsible';
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import { ChevronDown, PlusIcon, Trash2 } from 'lucide-react';
+import { PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { match } from 'ts-pattern';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  CardCommute,
+  CardCommuteContent,
+  CardCommuteHeader,
+  CardCommuteTrigger,
+} from '@/components/ui/card-commute';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataListEmptyState,
@@ -30,6 +23,8 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
+import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
+import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import {
   PageLayout,
   PageLayoutContent,
@@ -116,141 +111,55 @@ export const PageCommutes = () => {
                 const isDriver = session.data?.user.id === item.driverId;
 
                 return (
-                  <Collapsible.Root key={item.id}>
-                    <Card>
-                      <Collapsible.Trigger
-                        render={<CardHeader />}
-                        className="cursor-pointer [&[data-panel-open]_.chevron-icon]:rotate-180"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Avatar size="sm">
-                            <AvatarImage src={item.driver.image ?? undefined} />
-                            <AvatarFallback
-                              variant="boring"
-                              name={item.driver.name ?? '?'}
-                            />
-                          </Avatar>
-                          <CardTitle>
-                            {dayjs(item.date).format('DD/MM/YYYY')}
-                          </CardTitle>
-                          <Badge
-                            variant={match(item.status)
-                              .returnType<
-                                'positive' | 'warning' | 'secondary'
-                              >()
-                              .with('ON_TIME', () => 'positive')
-                              .with('DELAYED', () => 'warning')
-                              .otherwise(() => 'secondary')}
-                            size="sm"
-                          >
-                            {item.status}
-                          </Badge>
-                        </div>
-                        <CardDescription>
-                          {item.driver.name}
-                          {' · '}
-                          {t(`commute:list.type.${item.type}`)}
-                          {' · '}
-                          {t('commute:list.availableSeats', {
-                            available,
-                            total: item.seats,
-                          })}
-                        </CardDescription>
-                        <CardAction>
-                          <div className="flex items-center gap-1">
-                            {isDriver && (
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <ConfirmResponsiveDrawer
-                                  description={t(
-                                    'commute:list.cancelConfirmDescription'
-                                  )}
-                                  confirmText={t('common:actions.delete')}
-                                  confirmVariant="destructive"
-                                  onConfirm={() =>
-                                    commuteCancel.mutateAsync({ id: item.id })
-                                  }
+                  <CardCommute key={item.id}>
+                    <CardCommuteTrigger>
+                      <CardCommuteHeader
+                        driver={item.driver}
+                        date={item.date}
+                        status={item.status}
+                        type={item.type}
+                        availableSeats={available}
+                        totalSeats={item.seats}
+                        actions={
+                          isDriver && (
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <ConfirmResponsiveDrawer
+                                description={t(
+                                  'commute:list.cancelConfirmDescription'
+                                )}
+                                confirmText={t('common:actions.delete')}
+                                confirmVariant="destructive"
+                                onConfirm={() =>
+                                  commuteCancel.mutateAsync({ id: item.id })
+                                }
+                              >
+                                <ResponsiveIconButton
+                                  variant="ghost"
+                                  size="sm"
+                                  label={t('common:actions.delete')}
                                 >
-                                  <ResponsiveIconButton
-                                    variant="ghost"
-                                    size="sm"
-                                    label={t('common:actions.delete')}
-                                  >
-                                    <Trash2 />
-                                  </ResponsiveIconButton>
-                                </ConfirmResponsiveDrawer>
-                              </div>
-                            )}
-                            <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
-                          </div>
-                        </CardAction>
-                      </Collapsible.Trigger>
-                      <Collapsible.Panel className="overflow-hidden transition-all data-[ending-style]:h-0 data-[starting-style]:h-0">
-                        <CardContent>
-                          <div className="flex flex-col gap-2">
-                            {item.comment && (
-                              <p className="text-sm text-muted-foreground">
-                                {item.comment}
-                              </p>
-                            )}
-                            {item.stops.length > 0 && (
-                              <div className="flex flex-col gap-1">
-                                <p className="text-sm font-medium">
-                                  {t('commute:list.stopsLabel')}
-                                </p>
-                                {item.stops.map((stop, index) => (
-                                  <div
-                                    key={stop.id}
-                                    className="flex items-center gap-2 text-sm text-muted-foreground"
-                                  >
-                                    <span className="font-medium">
-                                      {index + 1}.
-                                    </span>
-                                    <span>{stop.location.name}</span>
-                                    <span>·</span>
-                                    <span>{stop.outwardTime}</span>
-                                    {stop.inwardTime && (
-                                      <>
-                                        <span>·</span>
-                                        <span>{stop.inwardTime}</span>
-                                      </>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            {acceptedPassengers.size > 0 && (
-                              <div className="flex flex-col gap-1">
-                                <p className="text-sm font-medium">
-                                  {t('commute:list.passengersLabel')}
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                  {[...acceptedPassengers.values()].map(
-                                    (passenger) => (
-                                      <div
-                                        key={passenger.id}
-                                        className="flex items-center gap-1.5 text-sm text-muted-foreground"
-                                      >
-                                        <Avatar size="sm">
-                                          <AvatarImage
-                                            src={passenger.image ?? undefined}
-                                          />
-                                          <AvatarFallback
-                                            variant="boring"
-                                            name={passenger.name ?? '?'}
-                                          />
-                                        </Avatar>
-                                        <span>{passenger.name}</span>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Collapsible.Panel>
-                    </Card>
-                  </Collapsible.Root>
+                                  <Trash2 />
+                                </ResponsiveIconButton>
+                              </ConfirmResponsiveDrawer>
+                            </div>
+                          )
+                        }
+                      />
+                    </CardCommuteTrigger>
+                    <CardCommuteContent>
+                      <div className="flex flex-col gap-2">
+                        {item.comment && (
+                          <p className="text-sm text-muted-foreground">
+                            {item.comment}
+                          </p>
+                        )}
+                        <CardCommuteStopsList stops={item.stops} />
+                        <CardCommutePassengersList
+                          passengers={[...acceptedPassengers.values()]}
+                        />
+                      </div>
+                    </CardCommuteContent>
+                  </CardCommute>
                 );
               })}
               {commutesQuery.hasNextPage && (
