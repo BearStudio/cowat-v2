@@ -3,9 +3,7 @@
     "label": "Language",
     "values": {
       "en": "English",
-      "fr": "French",
-      "ar": "Arabic",
-      "sw": "Swahili"
+      "fr": "French"
     }
   },
   "themes": {
