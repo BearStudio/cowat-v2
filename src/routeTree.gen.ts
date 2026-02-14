@@ -23,6 +23,7 @@ import { Route as ManagerDashboardIndexRouteImport } from './routes/manager/dash
 import { Route as ManagerAccountIndexRouteImport } from './routes/manager/account.index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
+import { Route as AppDashboardIndexRouteImport } from './routes/app/dashboard.index'
 import { Route as AppCommutesIndexRouteImport } from './routes/app/commutes/index'
 import { Route as AppAccountIndexRouteImport } from './routes/app/account/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
@@ -110,6 +111,11 @@ const LoginErrorIndexRoute = LoginErrorIndexRouteImport.update({
   id: '/error/',
   path: '/error/',
   getParentRoute: () => LoginRouteRoute,
+} as any)
+const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppCommutesIndexRoute = AppCommutesIndexRouteImport.update({
   id: '/commutes/',
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account/': typeof AppAccountIndexRoute
   '/app/commutes/': typeof AppCommutesIndexRoute
+  '/app/dashboard/': typeof AppDashboardIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account': typeof AppAccountIndexRoute
   '/app/commutes': typeof AppCommutesIndexRoute
+  '/app/dashboard': typeof AppDashboardIndexRoute
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
   '/manager/account': typeof ManagerAccountIndexRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account/': typeof AppAccountIndexRoute
   '/app/commutes/': typeof AppCommutesIndexRoute
+  '/app/dashboard/': typeof AppDashboardIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/api/rpc/$'
     | '/app/account/'
     | '/app/commutes/'
+    | '/app/dashboard/'
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/api/rpc/$'
     | '/app/account'
     | '/app/commutes'
+    | '/app/dashboard'
     | '/login/error'
     | '/login/verify'
     | '/manager/account'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/api/rpc/$'
     | '/app/account/'
     | '/app/commutes/'
+    | '/app/dashboard/'
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
@@ -512,6 +524,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginErrorIndexRouteImport
       parentRoute: typeof LoginRouteRoute
     }
+    '/app/dashboard/': {
+      id: '/app/dashboard/'
+      path: '/dashboard'
+      fullPath: '/app/dashboard/'
+      preLoaderRoute: typeof AppDashboardIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/commutes/': {
       id: '/app/commutes/'
       path: '/commutes'
@@ -638,6 +657,7 @@ interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppAccountIndexRoute: typeof AppAccountIndexRoute
   AppCommutesIndexRoute: typeof AppCommutesIndexRoute
+  AppDashboardIndexRoute: typeof AppDashboardIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
   AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
@@ -648,6 +668,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppAccountIndexRoute: AppAccountIndexRoute,
   AppCommutesIndexRoute: AppCommutesIndexRoute,
+  AppDashboardIndexRoute: AppDashboardIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
   AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
@@ -739,12 +760,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
