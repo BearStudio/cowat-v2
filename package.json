@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Cowat web application",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "postinstall": "run-p gen:prisma gen:build-info",
@@ -69,6 +69,7 @@
     "@tanstack/zod-adapter": "1.157.16",
     "@uidotdev/usehooks": "2.4.1",
     "better-auth": "1.4.17",
+    "better-result": "^2.7.0",
     "boring-avatars": "2.0.4",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -122,7 +123,6 @@
     "@vitest/browser-playwright": "4.0.18",
     "@vueless/storybook-dark-mode": "10.0.7",
     "babel-plugin-react-compiler": "1.0.0",
-    "code-inspector-plugin": "1.4.1",
     "cpy": "12.1.0",
     "cross-env": "10.1.0",
     "dotenv-cli": "11.0.0",

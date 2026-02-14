@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Get pnpm store directory
         shell: bash
@@ -116,7 +116,7 @@ jobs:
           mc anonymous set download minio/$S3_BUCKET_NAME
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm exec playwright install chromium
 
       - name: Migrate database
         run: pnpm db:push

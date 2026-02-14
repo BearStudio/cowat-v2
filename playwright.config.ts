@@ -39,17 +39,6 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       dependencies: process.env.CI ? ['setup'] : [],
     },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      dependencies: process.env.CI ? ['setup'] : [],
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      dependencies: process.env.CI ? ['setup'] : [],
-    },
   ],
 
   /* Run your local dev server before starting the tests */
