@@ -35,6 +35,7 @@ export default defineConfig({
     // eslint-disable-next-line sonarjs/slow-regex
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
+      // We keep only chromium for now for faster feedback loop
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       dependencies: process.env.CI ? ['setup'] : [],
