@@ -1,0 +1,15 @@
+{
+  "request": {
+    "tripType": {
+      "ROUND": "Aller-retour",
+      "ONEWAY": "Aller simple",
+      "RETURN": "Retour uniquement"
+    },
+    "commentLabel": "Commentaire",
+    "acceptButton": "Accepter",
+    "refuseButton": "Refuser",
+    "refuseConfirmDescription": "Vous êtes sur le point de refuser cette demande de trajet.",
+    "acceptSuccess": "Demande acceptée",
+    "refuseSuccess": "Demande refusée"
+  }
+}
