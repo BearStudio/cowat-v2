@@ -1,0 +1,21 @@
+{
+  "list": {
+    "title": "Maeneo",
+    "newAction": "Eneo Jipya",
+    "mapsAction": "Ramani",
+    "deleteConfirmDescription": "Unakaribia kufuta eneo hili.",
+    "deleteSuccessMessage": "Eneo limefutwa",
+    "loadMore": "Pakia zaidi"
+  },
+  "new": {
+    "title": "Eneo Jipya",
+    "submitButton": "Unda"
+  },
+  "update": {
+    "submitButton": "Hifadhi"
+  },
+  "form": {
+    "name": "Jina",
+    "address": "Anwani"
+  }
+}

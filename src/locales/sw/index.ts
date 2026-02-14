@@ -7,6 +7,7 @@ import common from './common.json' with { type: 'json' };
 import components from './components.json' with { type: 'json' };
 import emails from './emails.json' with { type: 'json' };
 import layout from './layout.json' with { type: 'json' };
+import location from './location.json' with { type: 'json' };
 import user from './user.json' with { type: 'json' };
 
 export default {
@@ -17,5 +18,6 @@ export default {
   components,
   emails,
   layout,
+  location,
   user,
 } as const;
