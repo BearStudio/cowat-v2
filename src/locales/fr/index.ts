@@ -2,6 +2,7 @@ import 'dayjs/locale/fr.js';
 
 import account from './account.json' with { type: 'json' };
 import auth from './auth.json' with { type: 'json' };
+import booking from './booking.json' with { type: 'json' };
 import buildInfo from './build-info.json' with { type: 'json' };
 import common from './common.json' with { type: 'json' };
 import commute from './commute.json' with { type: 'json' };
@@ -15,6 +16,7 @@ import user from './user.json' with { type: 'json' };
 export default {
   account,
   auth,
+  booking,
   buildInfo,
   commute,
   common,

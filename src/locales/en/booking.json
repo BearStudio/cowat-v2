@@ -1,0 +1,15 @@
+{
+  "request": {
+    "tripType": {
+      "ROUND": "Round trip",
+      "ONEWAY": "One way",
+      "RETURN": "Return only"
+    },
+    "commentLabel": "Comment",
+    "acceptButton": "Accept",
+    "refuseButton": "Refuse",
+    "refuseConfirmDescription": "You are about to refuse this ride request.",
+    "acceptSuccess": "Request accepted",
+    "refuseSuccess": "Request refused"
+  }
+}
