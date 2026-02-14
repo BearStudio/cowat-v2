@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Cowat web application",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "postinstall": "run-p gen:prisma gen:build-info",
