@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+
 import { authClient } from '@/features/auth/client';
 import { AUTH_EMAIL_OTP_MOCKED } from '@/features/auth/config';
 
