@@ -33,6 +33,7 @@
     "stopIndex": "Arrêt {{index}}",
     "location": "Lieu",
     "locationPlaceholder": "Sélectionner un lieu...",
+    "roundTrip": "Aller-retour",
     "outwardTime": "Heure aller",
     "inwardTime": "Heure retour",
     "errors": {

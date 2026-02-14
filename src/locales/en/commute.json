@@ -33,6 +33,7 @@
     "stopIndex": "Stop {{index}}",
     "location": "Location",
     "locationPlaceholder": "Select a location...",
+    "roundTrip": "Round trip",
     "outwardTime": "Outward time",
     "inwardTime": "Inward time",
     "errors": {

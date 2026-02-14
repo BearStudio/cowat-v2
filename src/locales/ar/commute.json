@@ -33,6 +33,7 @@
     "stopIndex": "محطة {{index}}",
     "location": "الموقع",
     "locationPlaceholder": "اختر موقعاً...",
+    "roundTrip": "ذهاب وإياب",
     "outwardTime": "وقت الذهاب",
     "inwardTime": "وقت الإياب",
     "errors": {

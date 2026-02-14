@@ -10,9 +10,10 @@ import {
 } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 import type { FormFieldsCommute } from '@/features/commute/schema';
-import { zCommuteType } from '@/features/commute/schema';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 export const FormCommute = () => {
@@ -25,11 +26,6 @@ export const FormCommute = () => {
   });
 
   const today = dayjs().startOf('day').toDate();
-
-  const commuteTypeOptions = zCommuteType().options.map((value) => ({
-    label: t(`commute:form.typeOptions.${value}`),
-    value,
-  }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -46,28 +42,39 @@ export const FormCommute = () => {
         />
       </FormField>
 
-      <div className="grid grid-cols-2 gap-4">
-        <FormField>
-          <FormFieldLabel>{t('commute:form.seats')}</FormFieldLabel>
-          <FormFieldController
-            type="number"
-            control={form.control}
-            name="seats"
-            min={1}
-            buttons="mobile"
-          />
-        </FormField>
+      <FormField>
+        <FormFieldLabel>{t('commute:form.seats')}</FormFieldLabel>
+        <FormFieldController
+          type="number"
+          control={form.control}
+          name="seats"
+          min={1}
+          buttons="mobile"
+        />
+      </FormField>
 
-        <FormField>
-          <FormFieldLabel>{t('commute:form.type')}</FormFieldLabel>
-          <FormFieldController
-            type="select"
-            control={form.control}
-            name="type"
-            items={commuteTypeOptions}
-          />
-        </FormField>
-      </div>
+      <FormFieldController
+        type="custom"
+        control={form.control}
+        name="type"
+        render={({ field }) => (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={field.value === 'ROUND'}
+              onCheckedChange={(checked) =>
+                field.onChange(checked ? 'ROUND' : 'ONEWAY')
+              }
+            />
+            <Label
+              onClick={() =>
+                field.onChange(field.value === 'ROUND' ? 'ONEWAY' : 'ROUND')
+              }
+            >
+              {t('commute:form.roundTrip')}
+            </Label>
+          </div>
+        )}
+      />
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -106,6 +113,7 @@ export const FormCommute = () => {
               <FormFieldLocationSelect
                 control={form.control}
                 name={`stops.${index}.locationId`}
+                setValue={form.setValue}
               />
               <StopTimeFields index={index} />
             </CardContent>

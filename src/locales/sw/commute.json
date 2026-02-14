@@ -33,6 +33,7 @@
     "stopIndex": "Kituo {{index}}",
     "location": "Mahali",
     "locationPlaceholder": "Chagua mahali...",
+    "roundTrip": "Kwenda na kurudi",
     "outwardTime": "Saa ya kwenda",
     "inwardTime": "Saa ya kurudi",
     "errors": {
