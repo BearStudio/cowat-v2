@@ -154,6 +154,24 @@ export default {
       });
     }),
 
+  pendingRequestCount: protectedProcedure({ permission: null })
+    .route({
+      method: 'GET',
+      path: '/bookings/pending-count',
+      tags,
+    })
+    .input(z.void())
+    .output(z.object({ count: z.number() }))
+    .handler(async ({ context }) => {
+      const count = await context.db.passengersOnStops.count({
+        where: {
+          status: 'REQUESTED',
+          stop: { commute: { driverId: context.user.id } },
+        },
+      });
+      return { count };
+    }),
+
   getRequestsForDriver: protectedProcedure({ permission: null })
     .route({
       method: 'GET',
