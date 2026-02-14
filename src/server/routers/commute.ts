@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import {
   zCommute,
+  zCommuteEnriched,
   zCommuteType,
   zStop,
   zStopInput,
@@ -94,13 +95,43 @@ export default {
     )
     .output(
       z.object({
-        items: z.array(zCommute().extend({ stops: z.array(zStop()) })),
+        items: z.array(zCommuteEnriched()),
         nextCursor: z.string().optional(),
         total: z.number(),
       })
     )
     .handler(async ({ context, input }) => {
-      const where = { driverId: context.user.id };
+      const where = {
+        OR: [
+          { driverId: context.user.id },
+          {
+            stops: {
+              some: {
+                passengers: {
+                  some: { passengerId: context.user.id },
+                },
+              },
+            },
+          },
+        ],
+      };
+
+      const include = {
+        driver: { select: { id: true, name: true, image: true } },
+        stops: {
+          orderBy: { order: 'asc' as const },
+          include: {
+            location: { select: { id: true, name: true } },
+            passengers: {
+              include: {
+                passenger: {
+                  select: { id: true, name: true, image: true },
+                },
+              },
+            },
+          },
+        },
+      };
 
       const [total, items] = await Promise.all([
         context.db.commute.count({ where }),
@@ -109,7 +140,7 @@ export default {
           cursor: input.cursor ? { id: input.cursor } : undefined,
           orderBy: { createdAt: 'desc' },
           where,
-          include: { stops: true },
+          include,
         }),
       ]);
 

@@ -12,7 +12,10 @@
       "ONEWAY": "Kwenda tu"
     },
     "stops_one": "kituo {{count}}",
-    "stops_other": "vituo {{count}}"
+    "stops_other": "vituo {{count}}",
+    "stopsLabel": "Vituo",
+    "availableSeats": "{{available}}/{{total}} viti vinapatikana",
+    "passengersLabel": "Abiria"
   },
   "new": {
     "title": "Safari mpya",

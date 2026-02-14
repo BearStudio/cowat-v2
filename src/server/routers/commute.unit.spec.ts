@@ -18,6 +18,12 @@ const mockStop = {
   updatedAt: now,
 };
 
+const mockStopEnriched = {
+  ...mockStop,
+  location: { id: 'location-1', name: 'Office' },
+  passengers: [],
+};
+
 const mockCommuteFromDb = {
   id: 'commute-1',
   date: new Date('2025-06-15'),
@@ -30,6 +36,12 @@ const mockCommuteFromDb = {
   createdAt: now,
   updatedAt: now,
   stops: [mockStop],
+};
+
+const mockCommuteEnrichedFromDb = {
+  ...mockCommuteFromDb,
+  driver: { id: mockUser.id, name: mockUser.name, image: null },
+  stops: [mockStopEnriched],
 };
 
 describe('commute router', () => {
@@ -160,12 +172,12 @@ describe('commute router', () => {
   describe('getMyCommutes', () => {
     it('should return paginated commutes for the current user', async () => {
       mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
 
       const result = await call(commuteRouter.getMyCommutes, {});
 
       expect(result).toEqual({
-        items: [mockCommuteFromDb],
+        items: [mockCommuteEnrichedFromDb],
         nextCursor: undefined,
         total: 1,
       });
@@ -173,7 +185,7 @@ describe('commute router', () => {
 
     it('should return nextCursor when there are more items than limit', async () => {
       const commutes = Array.from({ length: 4 }, (_, i) => ({
-        ...mockCommuteFromDb,
+        ...mockCommuteEnrichedFromDb,
         id: `commute-${i + 1}`,
       }));
       mockDb.commute.count.mockResolvedValue(10);
@@ -188,14 +200,14 @@ describe('commute router', () => {
 
     it('should not return nextCursor when items fit within limit', async () => {
       mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
 
       const result = await call(commuteRouter.getMyCommutes, { limit: 5 });
 
       expect(result.nextCursor).toBeUndefined();
     });
 
-    it('should only query commutes for the authenticated user', async () => {
+    it('should query commutes where user is driver or passenger', async () => {
       mockDb.commute.count.mockResolvedValue(0);
       mockDb.commute.findMany.mockResolvedValue([]);
 
@@ -203,9 +215,20 @@ describe('commute router', () => {
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({
-            driverId: mockUser.id,
-          }),
+          where: {
+            OR: [
+              { driverId: mockUser.id },
+              {
+                stops: {
+                  some: {
+                    passengers: {
+                      some: { passengerId: mockUser.id },
+                    },
+                  },
+                },
+              },
+            ],
+          },
         })
       );
     });

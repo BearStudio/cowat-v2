@@ -3,6 +3,9 @@ import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import { zLocation } from '@/features/location/schema';
+import { zUser } from '@/features/user/schema';
+
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
 export type CommuteType = z.infer<ReturnType<typeof zCommuteType>>;
 
@@ -69,4 +72,36 @@ export const zFormFieldsCommute = () =>
     stops: z
       .array(zFormFieldsStopInput())
       .min(1, t('commute:form.errors.stopsMin')),
+  });
+
+export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
+export const zUserSummary = () =>
+  zUser().pick({ id: true, name: true, image: true });
+
+export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
+export const zLocationSummary = () =>
+  zLocation().pick({ id: true, name: true });
+
+export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
+export const zStopPassenger = () =>
+  z.object({
+    id: z.string(),
+    status: z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']),
+    tripType: z.enum(['ROUND', 'ONEWAY', 'RETURN']),
+    comment: z.string().nullish(),
+    passenger: zUserSummary(),
+  });
+
+export type StopEnriched = z.infer<ReturnType<typeof zStopEnriched>>;
+export const zStopEnriched = () =>
+  zStop().extend({
+    location: zLocationSummary(),
+    passengers: z.array(zStopPassenger()),
+  });
+
+export type CommuteEnriched = z.infer<ReturnType<typeof zCommuteEnriched>>;
+export const zCommuteEnriched = () =>
+  zCommute().extend({
+    driver: zUserSummary(),
+    stops: z.array(zStopEnriched()),
   });

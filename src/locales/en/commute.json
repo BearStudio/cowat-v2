@@ -12,7 +12,10 @@
       "ONEWAY": "One way"
     },
     "stops_one": "{{count}} stop",
-    "stops_other": "{{count}} stops"
+    "stops_other": "{{count}} stops",
+    "stopsLabel": "Stops",
+    "availableSeats": "{{available}}/{{total}} seats available",
+    "passengersLabel": "Passengers"
   },
   "new": {
     "title": "New Commute",

@@ -12,7 +12,10 @@
       "ONEWAY": "ذهاب فقط"
     },
     "stops_one": "محطة {{count}}",
-    "stops_other": "{{count}} محطات"
+    "stops_other": "{{count}} محطات",
+    "stopsLabel": "المحطات",
+    "availableSeats": "{{available}}/{{total}} مقاعد متاحة",
+    "passengersLabel": "الركاب"
   },
   "new": {
     "title": "رحلة جديدة",

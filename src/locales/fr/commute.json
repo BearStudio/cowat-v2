@@ -12,7 +12,10 @@
       "ONEWAY": "Aller simple"
     },
     "stops_one": "{{count}} arrêt",
-    "stops_other": "{{count}} arrêts"
+    "stops_other": "{{count}} arrêts",
+    "stopsLabel": "Arrêts",
+    "availableSeats": "{{available}}/{{total}} places disponibles",
+    "passengersLabel": "Passagers"
   },
   "new": {
     "title": "Nouveau trajet",
