@@ -12,8 +12,11 @@ import { PreventNavigation } from '@/components/prevent-navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { FormLocation } from '@/features/location/app/form-location';
-import { zFormFieldsLocation } from '@/features/location/schema';
+import { FormCommute } from '@/features/commute/app/form-commute';
+import {
+  FormFieldsCommute,
+  zFormFieldsCommute,
+} from '@/features/commute/schema';
 import {
   PageLayout,
   PageLayoutContent,
@@ -21,23 +24,25 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocationNew = () => {
-  const { t } = useTranslation(['location']);
+export const PageCommuteNew = () => {
+  const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const form = useForm({
-    resolver: zodResolver(zFormFieldsLocation()),
-    values: {
-      name: '',
-      address: '',
+  const form = useForm<FormFieldsCommute>({
+    resolver: zodResolver(zFormFieldsCommute()),
+    defaultValues: {
+      seats: 1,
+      type: 'ROUND',
+      comment: null,
+      stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
     },
   });
 
-  const locationCreate = useMutation(
-    orpc.location.create.mutationOptions({
+  const commuteCreate = useMutation(
+    orpc.commute.create.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         await context.client.invalidateQueries({
-          queryKey: orpc.location.getAll.key(),
+          queryKey: orpc.commute.getMyCommutes.key(),
           type: 'all',
         });
 
@@ -45,7 +50,7 @@ export const PageLocationNew = () => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/locations',
+            to: '/app/commutes',
             replace: true,
             ignoreBlocker: true,
           });
@@ -63,7 +68,13 @@ export const PageLocationNew = () => {
       <Form
         {...form}
         onSubmit={(values) => {
-          locationCreate.mutate(values);
+          commuteCreate.mutate({
+            ...values,
+            stops: values.stops.map((stop, index) => ({
+              ...stop,
+              order: index,
+            })),
+          });
         }}
       >
         <PageLayout>
@@ -74,20 +85,20 @@ export const PageLocationNew = () => {
                 size="sm"
                 type="submit"
                 className="min-w-20"
-                loading={locationCreate.isPending}
+                loading={commuteCreate.isPending}
               >
-                {t('location:new.submitButton')}
+                {t('commute:new.submitButton')}
               </Button>
             }
           >
             <PageLayoutTopBarTitle>
-              {t('location:new.title')}
+              {t('commute:new.title')}
             </PageLayoutTopBarTitle>
           </PageLayoutTopBar>
           <PageLayoutContent>
             <Card>
               <CardContent>
-                <FormLocation />
+                <FormCommute />
               </CardContent>
             </Card>
           </PageLayoutContent>

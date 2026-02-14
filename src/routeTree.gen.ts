@@ -23,6 +23,7 @@ import { Route as ManagerDashboardIndexRouteImport } from './routes/manager/dash
 import { Route as ManagerAccountIndexRouteImport } from './routes/manager/account.index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
+import { Route as AppCommutesIndexRouteImport } from './routes/app/commutes/index'
 import { Route as AppAccountIndexRouteImport } from './routes/app/account/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiRestSplatRouteImport } from './routes/api/rest.$'
@@ -31,6 +32,7 @@ import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users/new.index'
 import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
+import { Route as AppCommutesNewIndexRouteImport } from './routes/app/commutes/new.index'
 import { Route as AppAccountLocationsIndexRouteImport } from './routes/app/account/locations/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
@@ -109,6 +111,11 @@ const LoginErrorIndexRoute = LoginErrorIndexRouteImport.update({
   path: '/error/',
   getParentRoute: () => LoginRouteRoute,
 } as any)
+const AppCommutesIndexRoute = AppCommutesIndexRouteImport.update({
+  id: '/commutes/',
+  path: '/commutes/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppAccountIndexRoute = AppAccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -148,6 +155,11 @@ const ManagerUsersIdIndexRoute = ManagerUsersIdIndexRouteImport.update({
   id: '/users/$id/',
   path: '/users/$id/',
   getParentRoute: () => ManagerRouteRoute,
+} as any)
+const AppCommutesNewIndexRoute = AppCommutesNewIndexRouteImport.update({
+  id: '/commutes/new/',
+  path: '/commutes/new/',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppAccountLocationsIndexRoute =
   AppAccountLocationsIndexRouteImport.update({
@@ -205,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account/': typeof AppAccountIndexRoute
+  '/app/commutes/': typeof AppCommutesIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
@@ -214,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
@@ -233,6 +247,7 @@ export interface FileRoutesByTo {
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account': typeof AppAccountIndexRoute
+  '/app/commutes': typeof AppCommutesIndexRoute
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
   '/manager/account': typeof ManagerAccountIndexRoute
@@ -242,6 +257,7 @@ export interface FileRoutesByTo {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new': typeof AppCommutesNewIndexRoute
   '/manager/users/$id': typeof ManagerUsersIdIndexRoute
   '/manager/users/new': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
@@ -265,6 +281,7 @@ export interface FileRoutesById {
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/account/': typeof AppAccountIndexRoute
+  '/app/commutes/': typeof AppCommutesIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
@@ -274,6 +291,7 @@ export interface FileRoutesById {
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
+  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
@@ -298,6 +316,7 @@ export interface FileRouteTypes {
     | '/api/rest/$'
     | '/api/rpc/$'
     | '/app/account/'
+    | '/app/commutes/'
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
@@ -307,6 +326,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations/'
+    | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/locations/new/'
@@ -326,6 +346,7 @@ export interface FileRouteTypes {
     | '/api/rest/$'
     | '/api/rpc/$'
     | '/app/account'
+    | '/app/commutes'
     | '/login/error'
     | '/login/verify'
     | '/manager/account'
@@ -335,6 +356,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations'
+    | '/app/commutes/new'
     | '/manager/users/$id'
     | '/manager/users/new'
     | '/app/account/locations/new'
@@ -357,6 +379,7 @@ export interface FileRouteTypes {
     | '/api/rest/$'
     | '/api/rpc/$'
     | '/app/account/'
+    | '/app/commutes/'
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
@@ -366,6 +389,7 @@ export interface FileRouteTypes {
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/account/locations/'
+    | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/locations/new/'
@@ -488,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginErrorIndexRouteImport
       parentRoute: typeof LoginRouteRoute
     }
+    '/app/commutes/': {
+      id: '/app/commutes/'
+      path: '/commutes'
+      fullPath: '/app/commutes/'
+      preLoaderRoute: typeof AppCommutesIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/account/': {
       id: '/app/account/'
       path: '/account'
@@ -544,6 +575,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerUsersIdIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
+    '/app/commutes/new/': {
+      id: '/app/commutes/new/'
+      path: '/commutes/new'
+      fullPath: '/app/commutes/new/'
+      preLoaderRoute: typeof AppCommutesNewIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/account/locations/': {
       id: '/app/account/locations/'
       path: '/account/locations'
@@ -599,7 +637,9 @@ declare module '@tanstack/react-router' {
 interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppAccountIndexRoute: typeof AppAccountIndexRoute
+  AppCommutesIndexRoute: typeof AppCommutesIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
+  AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
   AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
@@ -607,7 +647,9 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppAccountIndexRoute: AppAccountIndexRoute,
+  AppCommutesIndexRoute: AppCommutesIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
+  AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
   AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }

@@ -15,6 +15,7 @@ export const fieldComponents = {
   textarea: FieldTextarea,
   email: FieldText,
   tel: FieldText,
+  time: FieldText,
   select: FieldSelect,
   combobox: FieldCombobox,
   'combobox-multiple': FieldComboboxMultiple,

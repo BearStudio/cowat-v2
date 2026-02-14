@@ -41,11 +41,6 @@ export async function createCommutes() {
           seats: faker.number.int({ min: 1, max: 4 }),
           type,
           status: 'UNKNOWN',
-          outwardTime: `${faker.number.int({ min: 6, max: 9 }).toString().padStart(2, '0')}:${faker.helpers.arrayElement(['00', '15', '30', '45'])}`,
-          inwardTime:
-            type === 'ROUND'
-              ? `${faker.number.int({ min: 16, max: 19 }).toString().padStart(2, '0')}:${faker.helpers.arrayElement(['00', '15', '30', '45'])}`
-              : null,
           driverId: driver.id,
         },
       });
@@ -56,7 +51,11 @@ export async function createCommutes() {
         const stop = await db.stop.create({
           data: {
             order,
-            time: `${faker.number.int({ min: 6, max: 10 }).toString().padStart(2, '0')}:${faker.helpers.arrayElement(['00', '15', '30', '45'])}`,
+            outwardTime: `${faker.number.int({ min: 6, max: 10 }).toString().padStart(2, '0')}:${faker.helpers.arrayElement(['00', '15', '30', '45'])}`,
+            inwardTime:
+              type === 'ROUND'
+                ? `${faker.number.int({ min: 16, max: 19 }).toString().padStart(2, '0')}:${faker.helpers.arrayElement(['00', '15', '30', '45'])}`
+                : null,
             commuteId: commute.id,
             locationId: locations[order]!.id,
           },

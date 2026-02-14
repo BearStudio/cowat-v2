@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "Safari",
+    "newAction": "Safari mpya",
+    "cancelConfirmDescription": "Unakaribia kufuta safari hii.",
+    "cancelSuccessMessage": "Safari imefutwa",
+    "loadMore": "Pakia zaidi",
+    "seats_one": "kiti {{count}}",
+    "seats_other": "viti {{count}}",
+    "type": {
+      "ROUND": "Kwenda na kurudi",
+      "ONEWAY": "Kwenda tu"
+    },
+    "stops_one": "kituo {{count}}",
+    "stops_other": "vituo {{count}}",
+    "stopsLabel": "Vituo",
+    "availableSeats": "{{available}}/{{total}} viti vinapatikana",
+    "passengersLabel": "Abiria"
+  },
+  "new": {
+    "title": "Safari mpya",
+    "submitButton": "Unda"
+  },
+  "form": {
+    "date": "Tarehe",
+    "seats": "Viti",
+    "type": "Aina",
+    "typeOptions": {
+      "ROUND": "Kwenda na kurudi",
+      "ONEWAY": "Kwenda tu"
+    },
+    "comment": "Maoni",
+    "commentPlaceholder": "Maoni ya hiari...",
+    "stops": "Vituo",
+    "addStop": "Ongeza kituo",
+    "stopIndex": "Kituo {{index}}",
+    "location": "Mahali",
+    "locationPlaceholder": "Chagua mahali...",
+    "roundTrip": "Kwenda na kurudi",
+    "outwardTime": "Saa ya kwenda",
+    "inwardTime": "Saa ya kurudi",
+    "errors": {
+      "seatsMin": "Angalau kiti 1 kinahitajika",
+      "stopsMin": "Angalau kituo 1 kinahitajika"
+    }
+  }
+}
