@@ -19,6 +19,7 @@ import { AVAILABLE_LANGUAGES } from '@/lib/i18n/constants';
 
 import { PageError } from '@/components/errors/page-error';
 
+import { ActionsDevtoolPanel } from '@/devtools/actions';
 import { MailDevDevtoolPanel } from '@/devtools/maildev';
 import { EnvHint } from '@/features/devtools/env-hint';
 import { Providers } from '@/providers';
@@ -105,7 +106,7 @@ function RootComponent() {
         <Outlet />
         <TanStackDevtools
           config={{
-            openHotkey: [], // Disable keyboard shortcut
+            openHotkey: ['Shift', '.'], // Disable keyboard shortcut
           }}
           plugins={[
             { name: 'Tanstack Query', render: <ReactQueryDevtoolsPanel /> },
@@ -116,6 +117,10 @@ function RootComponent() {
             {
               name: 'MailDev iframe',
               render: <MailDevDevtoolPanel />,
+            },
+            {
+              name: 'Dev Actions',
+              render: <ActionsDevtoolPanel />,
             },
           ]}
         />
