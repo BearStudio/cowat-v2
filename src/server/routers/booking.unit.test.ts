@@ -163,6 +163,22 @@ describe('booking router', () => {
         code: 'UNAUTHORIZED',
       });
     });
+
+    it.each(['ACCEPTED', 'REFUSED', 'CANCELED'] as const)(
+      'should throw BAD_REQUEST when booking status is %s',
+      async (status) => {
+        mockDb.passengersOnStops.findUnique.mockResolvedValue({
+          ...mockBookingWithStop,
+          status,
+        });
+
+        await expect(
+          call(bookingRouter.accept, acceptInput)
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+        });
+      }
+    );
   });
 
   describe('refuse', () => {
@@ -216,6 +232,22 @@ describe('booking router', () => {
         code: 'UNAUTHORIZED',
       });
     });
+
+    it.each(['ACCEPTED', 'REFUSED', 'CANCELED'] as const)(
+      'should throw BAD_REQUEST when booking status is %s',
+      async (status) => {
+        mockDb.passengersOnStops.findUnique.mockResolvedValue({
+          ...mockBookingWithStop,
+          status,
+        });
+
+        await expect(
+          call(bookingRouter.refuse, refuseInput)
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+        });
+      }
+    );
   });
 
   describe('cancel', () => {
@@ -258,6 +290,18 @@ describe('booking router', () => {
       });
     });
 
+    it('should succeed when booking status is ACCEPTED', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue({
+        ...mockBookingFromDb,
+        status: 'ACCEPTED',
+      });
+      mockDb.passengersOnStops.update.mockResolvedValue(undefined);
+
+      await expect(
+        call(bookingRouter.cancel, cancelInput)
+      ).resolves.toBeUndefined();
+    });
+
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
@@ -267,6 +311,22 @@ describe('booking router', () => {
         code: 'UNAUTHORIZED',
       });
     });
+
+    it.each(['REFUSED', 'CANCELED'] as const)(
+      'should throw BAD_REQUEST when booking status is %s',
+      async (status) => {
+        mockDb.passengersOnStops.findUnique.mockResolvedValue({
+          ...mockBookingFromDb,
+          status,
+        });
+
+        await expect(
+          call(bookingRouter.cancel, cancelInput)
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+        });
+      }
+    );
   });
 
   describe('getRequestsForDriver', () => {
