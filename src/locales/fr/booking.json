@@ -11,5 +11,10 @@
     "refuseConfirmDescription": "Vous êtes sur le point de refuser cette demande de trajet.",
     "acceptSuccess": "Demande acceptée",
     "refuseSuccess": "Demande refusée"
+  },
+  "requests": {
+    "title": "Demandes de réservation",
+    "loadMore": "Charger plus",
+    "emptyState": "Aucune demande de réservation en attente"
   }
 }
