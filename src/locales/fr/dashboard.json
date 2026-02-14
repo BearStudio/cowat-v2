@@ -1,0 +1,33 @@
+{
+  "title": "Tableau de bord",
+  "newCommuteAction": "Nouveau trajet",
+  "today": "Aujourd'hui",
+  "noCommutesForDay": "Aucun trajet pour ce jour",
+  "noCommutesForWeek": "Aucun trajet cette semaine",
+  "booking": {
+    "title": "Réserver un trajet",
+    "selectStop": "Sélectionner un arrêt",
+    "tripType": "Type de trajet",
+    "tripTypeOptions": {
+      "ROUND": "Aller-retour",
+      "ONEWAY": "Aller simple",
+      "RETURN": "Retour uniquement"
+    },
+    "comment": "Commentaire",
+    "commentPlaceholder": "Commentaire optionnel...",
+    "submitButton": "Réserver",
+    "successMessage": "Demande de réservation envoyée",
+    "errorMessage": "Échec de l'envoi de la demande de réservation. Veuillez réessayer."
+  },
+  "cancelBooking": {
+    "confirmDescription": "Vous êtes sur le point d'annuler votre réservation.",
+    "successMessage": "Réservation annulée",
+    "errorMessage": "Échec de l'annulation de la réservation. Veuillez réessayer."
+  },
+  "cancelCommute": {
+    "confirmDescription": "Vous êtes sur le point d'annuler ce trajet.",
+    "confirmDescriptionWithPassengers": "Ce trajet a des passagers. Êtes-vous sûr de vouloir l'annuler ?",
+    "successMessage": "Trajet annulé",
+    "errorMessage": "Échec de l'annulation du trajet. Veuillez réessayer."
+  }
+}

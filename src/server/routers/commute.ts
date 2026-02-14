@@ -70,12 +70,28 @@ export default {
       path: '/commutes/by-date',
       tags,
     })
-    .input(z.object({ date: z.date() }))
-    .output(z.array(zCommute().extend({ stops: z.array(zStop()) })))
+    .input(z.object({ from: z.date(), to: z.date() }))
+    .output(z.array(zCommuteEnriched()))
     .handler(async ({ context, input }) => {
       return await context.db.commute.findMany({
-        where: { date: input.date },
-        include: { stops: true },
+        where: { date: { gte: input.from, lt: input.to } },
+        orderBy: { date: 'asc' },
+        include: {
+          driver: { select: { id: true, name: true, image: true } },
+          stops: {
+            orderBy: { order: 'asc' },
+            include: {
+              location: { select: { id: true, name: true } },
+              passengers: {
+                include: {
+                  passenger: {
+                    select: { id: true, name: true, image: true },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
     }),
 

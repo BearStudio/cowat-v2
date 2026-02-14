@@ -17,7 +17,7 @@ export const Providers = (props: { children: ReactNode }) => {
     >
       <QueryClientProvider>
         {props.children}
-        <Sonner />
+        <Sonner richColors />
       </QueryClientProvider>
     </ThemeProvider>
   );

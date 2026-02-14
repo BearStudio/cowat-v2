@@ -1,15 +1,22 @@
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type CardCommuteStopsListProps = {
-  stops: Array<{
-    id: string;
-    location: { name: string };
-    outwardTime: string;
-    inwardTime?: string | null;
-  }>;
+type Stop = {
+  id: string;
+  location: { name: string };
+  outwardTime: string;
+  inwardTime?: string | null;
 };
 
-export const CardCommuteStopsList = ({ stops }: CardCommuteStopsListProps) => {
+type CardCommuteStopsListProps = {
+  stops: Array<Stop>;
+  renderActions?: (stop: Stop) => ReactNode;
+};
+
+export const CardCommuteStopsList = ({
+  stops,
+  renderActions,
+}: CardCommuteStopsListProps) => {
   const { t } = useTranslation(['commute']);
 
   if (stops.length === 0) return null;
@@ -32,6 +39,7 @@ export const CardCommuteStopsList = ({ stops }: CardCommuteStopsListProps) => {
               <span>{stop.inwardTime}</span>
             </>
           )}
+          {renderActions?.(stop)}
         </div>
       ))}
     </div>

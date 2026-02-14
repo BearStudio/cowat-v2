@@ -11,7 +11,7 @@ import {
 
 export const MAIN_NAV_LINKS = linkOptions([
   {
-    labelTranslationKey: 'layout:nav.home',
+    labelTranslationKey: 'layout:nav.dashboard',
     icon: IconHouseDuotone,
     iconActive: IconHouseFill,
     to: '/app',

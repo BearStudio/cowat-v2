@@ -6,6 +6,7 @@ import buildInfo from './build-info.json' with { type: 'json' };
 import common from './common.json' with { type: 'json' };
 import commute from './commute.json' with { type: 'json' };
 import components from './components.json' with { type: 'json' };
+import dashboard from './dashboard.json' with { type: 'json' };
 import emails from './emails.json' with { type: 'json' };
 import layout from './layout.json' with { type: 'json' };
 import location from './location.json' with { type: 'json' };
@@ -18,6 +19,7 @@ export default {
   commute,
   common,
   components,
+  dashboard,
   emails,
   layout,
   location,
