@@ -20,10 +20,13 @@ export default {
     .input(zBookingRequest())
     .output(zBooking())
     .handler(async ({ context, input }) => {
-      // Find the commute this stop belongs to
+      // Find the commute this stop belongs to, including driver's autoAccept setting
       const stop = await context.db.stop.findUnique({
         where: { id: input.stopId },
-        select: { commuteId: true },
+        select: {
+          commuteId: true,
+          commute: { select: { driver: { select: { autoAccept: true } } } },
+        },
       });
 
       if (!stop) {
@@ -45,6 +48,8 @@ export default {
         });
       }
 
+      const status = stop.commute.driver.autoAccept ? 'ACCEPTED' : 'REQUESTED';
+
       return await context.db.passengersOnStops.upsert({
         where: {
           passengerId_stopId: {
@@ -53,12 +58,13 @@ export default {
           },
         },
         update: {
-          status: 'REQUESTED',
+          status,
           tripType: input.tripType,
           comment: input.comment,
         },
         create: {
           ...input,
+          status,
           passengerId: context.user.id,
         },
       });

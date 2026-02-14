@@ -17,7 +17,7 @@ import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button
 
 import { authClient } from '@/features/auth/client';
 import { CommuteEnriched } from '@/features/commute/schema';
-import { BookingDrawer } from '@/features/dashboard/booking-drawer';
+import { BookingDrawer } from '@/features/booking/booking-drawer';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import {
   PageLayout,

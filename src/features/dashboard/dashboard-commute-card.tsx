@@ -2,6 +2,7 @@ import { UseMutationResult } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   CardCommute,
@@ -114,20 +115,34 @@ export const DashboardCommuteCard = ({
               );
               if (userBooking) {
                 return (
-                  <ConfirmResponsiveDrawer
-                    description={t(
-                      'dashboard:cancelBooking.confirmDescription'
-                    )}
-                    confirmText={t('common:actions.delete')}
-                    confirmVariant="destructive"
-                    onConfirm={() =>
-                      bookingCancel.mutateAsync({ id: userBooking.id })
-                    }
-                  >
-                    <Button size="xs" variant="destructive">
-                      {t('common:actions.cancel')}
-                    </Button>
-                  </ConfirmResponsiveDrawer>
+                  <div className="flex items-center gap-1.5">
+                    <Badge
+                      size="xs"
+                      variant={
+                        userBooking.status === 'ACCEPTED'
+                          ? 'positive'
+                          : 'warning'
+                      }
+                    >
+                      {t(
+                        `dashboard:booking.status.${userBooking.status as 'REQUESTED' | 'ACCEPTED'}`
+                      )}
+                    </Badge>
+                    <ConfirmResponsiveDrawer
+                      description={t(
+                        'dashboard:cancelBooking.confirmDescription'
+                      )}
+                      confirmText={t('common:actions.delete')}
+                      confirmVariant="destructive"
+                      onConfirm={() =>
+                        bookingCancel.mutateAsync({ id: userBooking.id })
+                      }
+                    >
+                      <Button size="xs" variant="destructive">
+                        {t('common:actions.cancel')}
+                      </Button>
+                    </ConfirmResponsiveDrawer>
+                  </div>
                 );
               }
               if (hasBookingOnCommute) return null;
