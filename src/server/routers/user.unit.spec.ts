@@ -40,6 +40,8 @@ const mockUserFromDb = {
   emailVerified: true,
   role: 'user' as const,
   image: null,
+  phone: null,
+  autoAccept: false,
   createdAt: now,
   updatedAt: now,
   onboardedAt: null,
