@@ -12,6 +12,7 @@ import dashboard from './dashboard.json' with { type: 'json' };
 import emails from './emails.json' with { type: 'json' };
 import layout from './layout.json' with { type: 'json' };
 import location from './location.json' with { type: 'json' };
+import stats from './stats.json' with { type: 'json' };
 import user from './user.json' with { type: 'json' };
 
 export default {
@@ -27,5 +28,6 @@ export default {
   emails,
   layout,
   location,
+  stats,
   user,
 } as const;

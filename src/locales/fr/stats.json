@@ -1,0 +1,24 @@
+{
+  "manager": {
+    "title": "Statistiques",
+    "rankings": {
+      "bestDrivers": "Meilleurs conducteurs",
+      "bestDriversDescription": "Plus de trajets créés",
+      "bestPassengers": "Meilleurs passagers",
+      "bestPassengersDescription": "Plus de réservations effectuées",
+      "mostTemplates": "Plus de modèles",
+      "mostTemplatesDescription": "Plus de modèles de trajet créés",
+      "mostStops": "Plus d'arrêts",
+      "mostStopsDescription": "Plus d'arrêts sur les trajets"
+    },
+    "table": {
+      "title": "Tous les utilisateurs",
+      "description": "Vue d'ensemble de tous les utilisateurs et leur activité",
+      "user": "Utilisateur",
+      "commutes": "Trajets",
+      "bookings": "Réservations",
+      "templates": "Modèles",
+      "stops": "Arrêts"
+    }
+  }
+}
