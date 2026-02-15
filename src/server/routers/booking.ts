@@ -26,7 +26,21 @@ export default {
         where: { id: input.stopId },
         select: {
           commuteId: true,
-          commute: { select: { driver: { select: { autoAccept: true } } } },
+          commute: {
+            select: {
+              date: true,
+              type: true,
+              driver: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  autoAccept: true,
+                  slackMemberId: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -51,7 +65,7 @@ export default {
 
       const status = stop.commute.driver.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
-      return await context.db.passengersOnStops.upsert({
+      const booking = await context.db.passengersOnStops.upsert({
         where: {
           passengerId_stopId: {
             passengerId: context.user.id,
@@ -69,6 +83,25 @@ export default {
           passengerId: context.user.id,
         },
       });
+
+      const { driver } = stop.commute;
+      context.notify({
+        type: 'booking.requested',
+        recipient: {
+          userId: driver.id,
+          name: driver.name,
+          email: driver.email,
+          slackMemberId: driver.slackMemberId,
+        },
+        payload: {
+          passengerName: context.user.name,
+          commuteDate: stop.commute.date,
+          commuteType: stop.commute.type,
+          status,
+        },
+      });
+
+      return booking;
     }),
 
   accept: protectedProcedure({ permission: null })
@@ -82,7 +115,12 @@ export default {
     .handler(async ({ context, input }) => {
       const booking = await context.db.passengersOnStops.findUnique({
         where: { id: input.id },
-        include: { stop: { include: { commute: true } } },
+        include: {
+          passenger: {
+            select: { id: true, name: true, email: true, slackMemberId: true },
+          },
+          stop: { include: { commute: true } },
+        },
       });
 
       if (!booking) {
@@ -99,6 +137,21 @@ export default {
         where: { id: input.id },
         data: { status: 'ACCEPTED' },
       });
+
+      context.notify({
+        type: 'booking.accepted',
+        recipient: {
+          userId: booking.passenger.id,
+          name: booking.passenger.name,
+          email: booking.passenger.email,
+          slackMemberId: booking.passenger.slackMemberId,
+        },
+        payload: {
+          driverName: context.user.name,
+          commuteDate: booking.stop.commute.date,
+          commuteType: booking.stop.commute.type,
+        },
+      });
     }),
 
   refuse: protectedProcedure({ permission: null })
@@ -112,7 +165,12 @@ export default {
     .handler(async ({ context, input }) => {
       const booking = await context.db.passengersOnStops.findUnique({
         where: { id: input.id },
-        include: { stop: { include: { commute: true } } },
+        include: {
+          passenger: {
+            select: { id: true, name: true, email: true, slackMemberId: true },
+          },
+          stop: { include: { commute: true } },
+        },
       });
 
       if (!booking) {
@@ -129,6 +187,21 @@ export default {
         where: { id: input.id },
         data: { status: 'REFUSED' },
       });
+
+      context.notify({
+        type: 'booking.refused',
+        recipient: {
+          userId: booking.passenger.id,
+          name: booking.passenger.name,
+          email: booking.passenger.email,
+          slackMemberId: booking.passenger.slackMemberId,
+        },
+        payload: {
+          driverName: context.user.name,
+          commuteDate: booking.stop.commute.date,
+          commuteType: booking.stop.commute.type,
+        },
+      });
     }),
 
   cancel: protectedProcedure({ permission: null })
@@ -142,6 +215,24 @@ export default {
     .handler(async ({ context, input }) => {
       const booking = await context.db.passengersOnStops.findUnique({
         where: { id: input.id },
+        include: {
+          stop: {
+            include: {
+              commute: {
+                include: {
+                  driver: {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      slackMemberId: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!booking) {
@@ -157,6 +248,22 @@ export default {
       await context.db.passengersOnStops.update({
         where: { id: input.id },
         data: { status: 'CANCELED' },
+      });
+
+      const { driver } = booking.stop.commute;
+      context.notify({
+        type: 'booking.canceled',
+        recipient: {
+          userId: driver.id,
+          name: driver.name,
+          email: driver.email,
+          slackMemberId: driver.slackMemberId,
+        },
+        payload: {
+          passengerName: context.user.name,
+          commuteDate: booking.stop.commute.date,
+          commuteType: booking.stop.commute.type,
+        },
       });
     }),
 

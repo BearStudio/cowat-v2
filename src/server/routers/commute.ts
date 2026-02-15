@@ -32,7 +32,7 @@ export default {
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
       const { stops, ...commuteData } = input;
-      return await context.db.commute.create({
+      const commute = await context.db.commute.create({
         data: {
           ...commuteData,
           driverId: context.user.id,
@@ -42,6 +42,30 @@ export default {
         },
         include: { stops: true },
       });
+
+      const users = await context.db.user.findMany({
+        where: { id: { not: context.user.id } },
+        select: { id: true, name: true, email: true, slackMemberId: true },
+      });
+
+      for (const user of users) {
+        context.notify({
+          type: 'commute.created',
+          recipient: {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            slackMemberId: user.slackMemberId,
+          },
+          payload: {
+            driverName: context.user.name,
+            commuteDate: input.date,
+            commuteType: input.type,
+          },
+        });
+      }
+
+      return commute;
     }),
 
   getById: protectedProcedure({ permission: null })
@@ -201,7 +225,7 @@ export default {
 
       const { id, stops, ...data } = input;
 
-      return await context.db.commute.update({
+      const commute = await context.db.commute.update({
         where: { id },
         data: {
           ...data,
@@ -214,6 +238,37 @@ export default {
         },
         include: { stops: true },
       });
+
+      const affectedPassengers = await context.db.passengersOnStops.findMany({
+        where: {
+          stop: { commuteId: id },
+          status: { in: ['REQUESTED', 'ACCEPTED'] },
+        },
+        include: {
+          passenger: {
+            select: { id: true, name: true, email: true, slackMemberId: true },
+          },
+        },
+      });
+
+      for (const booking of affectedPassengers) {
+        context.notify({
+          type: 'commute.updated',
+          recipient: {
+            userId: booking.passenger.id,
+            name: booking.passenger.name,
+            email: booking.passenger.email,
+            slackMemberId: booking.passenger.slackMemberId,
+          },
+          payload: {
+            driverName: context.user.name,
+            commuteDate: existing.date,
+            commuteType: existing.type,
+          },
+        });
+      }
+
+      return commute;
     }),
 
   cancel: protectedProcedure({ permission: null })
@@ -237,8 +292,37 @@ export default {
         throw new ORPCError('FORBIDDEN');
       }
 
+      const affectedPassengers = await context.db.passengersOnStops.findMany({
+        where: {
+          stop: { commuteId: input.id },
+          status: { in: ['REQUESTED', 'ACCEPTED'] },
+        },
+        include: {
+          passenger: {
+            select: { id: true, name: true, email: true, slackMemberId: true },
+          },
+        },
+      });
+
       await context.db.commute.delete({
         where: { id: input.id },
       });
+
+      for (const booking of affectedPassengers) {
+        context.notify({
+          type: 'commute.canceled',
+          recipient: {
+            userId: booking.passenger.id,
+            name: booking.passenger.name,
+            email: booking.passenger.email,
+            slackMemberId: booking.passenger.slackMemberId,
+          },
+          payload: {
+            driverName: context.user.name,
+            commuteDate: existing.date,
+            commuteType: existing.type,
+          },
+        });
+      }
     }),
 };
