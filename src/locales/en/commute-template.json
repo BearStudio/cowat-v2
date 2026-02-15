@@ -1,0 +1,12 @@
+{
+  "list": {
+    "title": "Commute Templates",
+    "newAction": "New Template",
+    "deleteConfirmDescription": "You are about to delete this template.",
+    "deleteSuccessMessage": "Template deleted",
+    "emptyState": "No templates yet",
+    "loadMore": "Load more",
+    "stops": "{{count}} stop",
+    "stops_other": "{{count}} stops"
+  }
+}

@@ -22,6 +22,7 @@
     }
   },
   "locationsLink": "Locations",
+  "commuteTemplatesLink": "Commute Templates",
   "editNameDrawer": {
     "title": "Update your name",
     "description": "Form to update your name",

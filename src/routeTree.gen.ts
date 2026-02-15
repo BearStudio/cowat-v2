@@ -35,6 +35,7 @@ import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users
 import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
 import { Route as AppCommutesNewIndexRouteImport } from './routes/app/commutes/new.index'
 import { Route as AppAccountLocationsIndexRouteImport } from './routes/app/account/locations/index'
+import { Route as AppAccountCommuteTemplatesIndexRouteImport } from './routes/app/account/commute-templates/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
@@ -173,6 +174,12 @@ const AppAccountLocationsIndexRoute =
     path: '/account/locations/',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppAccountCommuteTemplatesIndexRoute =
+  AppAccountCommuteTemplatesIndexRouteImport.update({
+    id: '/account/commute-templates/',
+    path: '/account/commute-templates/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 const ApiOpenapiAuthSchemaRoute = ApiOpenapiAuthSchemaRouteImport.update({
   id: '/schema',
   path: '/schema',
@@ -233,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
+  '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
@@ -264,6 +272,7 @@ export interface FileRoutesByTo {
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
+  '/app/account/commute-templates': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new': typeof AppCommutesNewIndexRoute
   '/manager/users/$id': typeof ManagerUsersIdIndexRoute
@@ -299,6 +308,7 @@ export interface FileRoutesById {
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
+  '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
+    | '/app/account/commute-templates/'
     | '/app/account/locations/'
     | '/app/commutes/new/'
     | '/manager/users/$id/'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
+    | '/app/account/commute-templates'
     | '/app/account/locations'
     | '/app/commutes/new'
     | '/manager/users/$id'
@@ -400,6 +412,7 @@ export interface FileRouteTypes {
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
+    | '/app/account/commute-templates/'
     | '/app/account/locations/'
     | '/app/commutes/new/'
     | '/manager/users/$id/'
@@ -608,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountLocationsIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/account/commute-templates/': {
+      id: '/app/account/commute-templates/'
+      path: '/account/commute-templates'
+      fullPath: '/app/account/commute-templates/'
+      preLoaderRoute: typeof AppAccountCommuteTemplatesIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/api/openapi/auth/schema': {
       id: '/api/openapi/auth/schema'
       path: '/schema'
@@ -658,6 +678,7 @@ interface AppRouteRouteChildren {
   AppAccountIndexRoute: typeof AppAccountIndexRoute
   AppCommutesIndexRoute: typeof AppCommutesIndexRoute
   AppRequestsIndexRoute: typeof AppRequestsIndexRoute
+  AppAccountCommuteTemplatesIndexRoute: typeof AppAccountCommuteTemplatesIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
   AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
@@ -669,6 +690,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountIndexRoute: AppAccountIndexRoute,
   AppCommutesIndexRoute: AppCommutesIndexRoute,
   AppRequestsIndexRoute: AppRequestsIndexRoute,
+  AppAccountCommuteTemplatesIndexRoute: AppAccountCommuteTemplatesIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
   AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,

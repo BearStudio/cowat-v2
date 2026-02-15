@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { ChevronRightIcon, MapPinIcon } from 'lucide-react';
+import { ChevronRightIcon, MapPinIcon, RepeatIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,14 @@ export const PageAccount = () => {
           >
             <MapPinIcon className="size-5 text-muted-foreground" />
             <span className="flex-1">{t('account:locationsLink')}</span>
+            <ChevronRightIcon className="size-4 text-muted-foreground" />
+          </Link>
+          <Link
+            to="/app/account/commute-templates"
+            className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+          >
+            <RepeatIcon className="size-5 text-muted-foreground" />
+            <span className="flex-1">{t('account:commuteTemplatesLink')}</span>
             <ChevronRightIcon className="size-4 text-muted-foreground" />
           </Link>
           <DisplayPreferences />

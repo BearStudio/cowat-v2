@@ -1,0 +1,12 @@
+{
+  "list": {
+    "title": "Modèles de trajet",
+    "newAction": "Nouveau modèle",
+    "deleteConfirmDescription": "Vous êtes sur le point de supprimer ce modèle.",
+    "deleteSuccessMessage": "Modèle supprimé",
+    "emptyState": "Aucun modèle pour le moment",
+    "loadMore": "Charger plus",
+    "stops": "{{count}} arrêt",
+    "stops_other": "{{count}} arrêts"
+  }
+}
