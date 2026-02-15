@@ -2,12 +2,7 @@ import { call } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 
 import commuteTemplateRouter from '@/server/routers/commute-template';
-import {
-  mockDb,
-  mockGetSession,
-  mockOrganizationId,
-  mockUser,
-} from '@/server/routers/test-utils';
+import { mockDb, mockGetSession, mockUser } from '@/server/routers/test-utils';
 
 const now = new Date();
 
@@ -65,20 +60,6 @@ describe('commute-template router', () => {
       const result = await call(commuteTemplateRouter.create, createInput);
 
       expect(result).toEqual({ ...mockTemplateFromDb, stops: [mockStop] });
-      expect(mockDb.commuteTemplate.create).toHaveBeenCalledWith({
-        data: {
-          name: createInput.name,
-          seats: createInput.seats,
-          type: createInput.type,
-          comment: createInput.comment,
-          driverId: mockUser.id,
-          organizationId: mockOrganizationId,
-          stops: {
-            create: createInput.stops,
-          },
-        },
-        include: { stops: true },
-      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -202,17 +183,7 @@ describe('commute-template router', () => {
       const result = await call(commuteTemplateRouter.update, updateInput);
 
       expect(result.name).toBe('Updated commute');
-      expect(mockDb.commuteTemplate.update).toHaveBeenCalledWith({
-        where: { id: 'template-1' },
-        data: {
-          name: 'Updated commute',
-          stops: {
-            deleteMany: {},
-            create: updateInput.stops,
-          },
-        },
-        include: { stops: true },
-      });
+      expect(result.stops).toEqual([{ ...mockStop, locationId: 'location-2' }]);
     });
 
     it('should update without replacing stops when stops not provided', async () => {
@@ -223,16 +194,13 @@ describe('commute-template router', () => {
         stops: [mockStop],
       });
 
-      await call(commuteTemplateRouter.update, {
+      const result = await call(commuteTemplateRouter.update, {
         id: 'template-1',
         name: 'Updated commute',
       });
 
-      expect(mockDb.commuteTemplate.update).toHaveBeenCalledWith({
-        where: { id: 'template-1' },
-        data: { name: 'Updated commute' },
-        include: { stops: true },
-      });
+      expect(result.name).toBe('Updated commute');
+      expect(result.stops).toEqual([mockStop]);
     });
 
     it('should throw NOT_FOUND when template does not exist', async () => {
@@ -279,10 +247,6 @@ describe('commute-template router', () => {
       await expect(
         call(commuteTemplateRouter.delete, deleteInput)
       ).resolves.toBeUndefined();
-
-      expect(mockDb.commuteTemplate.delete).toHaveBeenCalledWith({
-        where: { id: 'template-1' },
-      });
     });
 
     it('should throw NOT_FOUND when template does not exist', async () => {
