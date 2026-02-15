@@ -1,9 +1,10 @@
 import { Result } from 'better-result';
 
-import { envServer } from '@/env/server';
-import { getSlackTemplate } from '@/features/slack/templates';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
+
+import { envServer } from '@/env/server';
+import { getSlackTemplate } from '@/features/slack/templates';
 import { getSlackApp } from '@/server/slack';
 
 import type { NotificationChannel } from '../types';

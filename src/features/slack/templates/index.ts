@@ -1,5 +1,6 @@
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
+
 import type { NotificationEvent } from '@/server/notifications/types';
 
 import {

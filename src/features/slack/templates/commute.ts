@@ -1,4 +1,5 @@
 import type { LanguageKey } from '@/lib/i18n/constants';
+
 import type {
   CommuteCanceledEvent,
   CommuteCreatedEvent,

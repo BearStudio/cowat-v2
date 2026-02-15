@@ -1,6 +1,7 @@
-import type { CommuteType } from '@/features/commute/schema';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
+
+import type { CommuteType } from '@/features/commute/schema';
 import en from '@/locales/en/notifications.json' with { type: 'json' };
 import fr from '@/locales/fr/notifications.json' with { type: 'json' };
 import type { NotificationEvent } from '@/server/notifications/types';
