@@ -22,6 +22,11 @@
     "title": "New Commute",
     "submitButton": "Create"
   },
+  "templatePicker": {
+    "title": "My templates",
+    "emptyState": "Save time: create a template",
+    "fromScratch": "Create from scratch"
+  },
   "form": {
     "date": "Date",
     "seats": "Seats",
