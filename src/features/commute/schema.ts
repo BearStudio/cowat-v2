@@ -1,8 +1,13 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import {
+  isInwardAfterOutward,
+  isTimeInFuture,
+} from '@/features/commute/form-commute-rules';
 import { zLocation } from '@/features/location/schema';
 import { zUser } from '@/features/user/schema';
 
@@ -61,18 +66,62 @@ export const zFormFieldsStopInput = () =>
 
 export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
-  z.object({
-    date: z.date({ error: t('common:errors.required') }),
-    seats: z
-      .number({ error: t('common:errors.required') })
-      .int()
-      .min(1, t('commute:form.errors.seatsMin')),
-    type: zCommuteType(),
-    comment: zu.fieldText.nullish(),
-    stops: z
-      .array(zFormFieldsStopInput())
-      .min(1, t('commute:form.errors.stopsMin')),
-  });
+  z
+    .object({
+      date: z.date({ error: t('common:errors.required') }),
+      seats: z
+        .number({ error: t('common:errors.required') })
+        .int()
+        .min(1, t('commute:form.errors.seatsMin')),
+      type: zCommuteType(),
+      comment: zu.fieldText.nullish(),
+      stops: z
+        .array(zFormFieldsStopInput())
+        .min(1, t('commute:form.errors.stopsMin')),
+    })
+    .superRefine((data, ctx) => {
+      const isToday = dayjs(data.date).isToday();
+
+      data.stops.forEach((stop, index) => {
+        if (
+          isToday &&
+          stop.outwardTime &&
+          !isTimeInFuture(data.date, stop.outwardTime)
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.outwardInPast'),
+            path: ['stops', index, 'outwardTime'],
+          });
+        }
+
+        if (
+          data.type === 'ROUND' &&
+          stop.inwardTime &&
+          stop.outwardTime &&
+          !isInwardAfterOutward(stop.outwardTime, stop.inwardTime)
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.inwardBeforeOutward'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+
+        if (
+          isToday &&
+          data.type === 'ROUND' &&
+          stop.inwardTime &&
+          !isTimeInFuture(data.date, stop.inwardTime)
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.inwardInPast'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+      });
+    });
 
 export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
 export const zUserSummary = () =>

@@ -89,7 +89,7 @@ export const FormFieldError = <
       )}
       {...rest}
     >
-      <AlertCircleIcon size="1em" className="my-0.5 flex-none" />
+      <AlertCircleIcon size="1em" className="my-0.75 flex-none" />
       {errorMessage}
     </div>
   );

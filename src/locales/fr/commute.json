@@ -45,9 +45,13 @@
     "roundTrip": "Aller-retour",
     "outwardTime": "Heure aller",
     "inwardTime": "Heure retour",
+    "todayWarning": "Vous créez un trajet pour aujourd'hui. Vérifiez que les horaires sont encore valides.",
     "errors": {
       "seatsMin": "Au moins 1 place requise",
-      "stopsMin": "Au moins 1 arrêt requis"
+      "stopsMin": "Au moins 1 arrêt requis",
+      "inwardBeforeOutward": "L'heure retour doit être après l'heure aller",
+      "inwardInPast": "L'heure retour doit être dans le futur",
+      "outwardInPast": "L'heure aller doit être dans le futur"
     }
   }
 }
