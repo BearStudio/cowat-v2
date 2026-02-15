@@ -8,14 +8,15 @@ import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
+import {
+  CardCommute,
+  CardCommuteContent,
+  CardCommuteTrigger,
+} from '@/components/ui/card-commute';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
-  DataList,
-  DataListCell,
   DataListErrorState,
   DataListLoadingState,
-  DataListRow,
-  DataListText,
 } from '@/components/ui/datalist';
 import {
   Empty,
@@ -26,6 +27,8 @@ import {
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
+import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
 import {
   PageLayout,
   PageLayoutContent,
@@ -102,67 +105,74 @@ export const PageCommuteTemplates = () => {
             </Empty>
           ))
           .match('default', ({ items }) => (
-            <DataList>
+            <div className="flex flex-col gap-3">
               {items.map((item) => (
-                <DataListRow key={item.id} role="row" withHover>
-                  <DataListCell>
-                    <DataListText className="font-medium">
-                      <Link
-                        to={
-                          '/app/account/commute-templates/$id/update' as never
-                        }
-                        params={{ id: item.id } as never}
-                      >
-                        {item.name}
-                        <span className="absolute inset-0" />
-                      </Link>
-                    </DataListText>
-                    <DataListText className="text-xs text-muted-foreground">
-                      {item.type} &middot;{' '}
-                      {t('commuteTemplate:list.stops', {
-                        count: item._count.stops,
-                      })}{' '}
-                      &middot; {item.seats} seats
-                    </DataListText>
-                  </DataListCell>
-                  <DataListCell className="flex-none">
-                    <ConfirmResponsiveDrawer
-                      description={t(
-                        'commuteTemplate:list.deleteConfirmDescription'
-                      )}
-                      confirmText={t('common:actions.delete')}
-                      confirmVariant="destructive"
-                      onConfirm={() =>
-                        templateDelete.mutateAsync({ id: item.id })
+                <CardCommute key={item.id}>
+                  <CardCommuteTrigger>
+                    <CardCommuteTemplateHeader
+                      name={
+                        <Link
+                          to={
+                            '/app/account/commute-templates/$id/update' as never
+                          }
+                          params={{ id: item.id } as never}
+                          className="relative z-10"
+                        >
+                          {item.name}
+                        </Link>
                       }
-                    >
-                      <ResponsiveIconButton
-                        variant="ghost"
-                        size="sm"
-                        className="relative z-10"
-                        label={t('common:actions.delete')}
-                      >
-                        <Trash2 />
-                      </ResponsiveIconButton>
-                    </ConfirmResponsiveDrawer>
-                  </DataListCell>
-                </DataListRow>
+                      type={item.type}
+                      stopsCount={item.stops.length}
+                      seats={item.seats}
+                      actions={
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <ConfirmResponsiveDrawer
+                            description={t(
+                              'commuteTemplate:list.deleteConfirmDescription'
+                            )}
+                            confirmText={t('common:actions.delete')}
+                            confirmVariant="destructive"
+                            onConfirm={() =>
+                              templateDelete.mutateAsync({ id: item.id })
+                            }
+                          >
+                            <ResponsiveIconButton
+                              variant="ghost"
+                              size="sm"
+                              label={t('common:actions.delete')}
+                            >
+                              <Trash2 />
+                            </ResponsiveIconButton>
+                          </ConfirmResponsiveDrawer>
+                        </div>
+                      }
+                    />
+                  </CardCommuteTrigger>
+                  <CardCommuteContent>
+                    <div className="flex flex-col gap-2">
+                      {item.comment && (
+                        <p className="text-sm text-muted-foreground">
+                          {item.comment}
+                        </p>
+                      )}
+                      <CardCommuteStopsList stops={item.stops} />
+                    </div>
+                  </CardCommuteContent>
+                </CardCommute>
               ))}
               {templatesQuery.hasNextPage && (
-                <DataListRow>
-                  <DataListCell className="flex-none">
-                    <Button
-                      size="xs"
-                      variant="secondary"
-                      onClick={() => templatesQuery.fetchNextPage()}
-                      loading={templatesQuery.isFetchingNextPage}
-                    >
-                      {t('commuteTemplate:list.loadMore')}
-                    </Button>
-                  </DataListCell>
-                </DataListRow>
+                <div className="flex justify-center">
+                  <Button
+                    size="xs"
+                    variant="secondary"
+                    onClick={() => templatesQuery.fetchNextPage()}
+                    loading={templatesQuery.isFetchingNextPage}
+                  >
+                    {t('commuteTemplate:list.loadMore')}
+                  </Button>
+                </div>
               )}
-            </DataList>
+            </div>
           ))
           .exhaustive()}
       </PageLayoutContent>

@@ -7,7 +7,9 @@
     "emptyState": "Aucun modèle pour le moment",
     "loadMore": "Charger plus",
     "stops": "{{count}} arrêt",
-    "stops_other": "{{count}} arrêts"
+    "stops_other": "{{count}} arrêts",
+    "seats": "{{count}} place",
+    "seats_other": "{{count}} places"
   },
   "new": {
     "title": "Nouveau modèle",

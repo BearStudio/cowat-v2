@@ -7,7 +7,9 @@
     "emptyState": "No templates yet",
     "loadMore": "Load more",
     "stops": "{{count}} stop",
-    "stops_other": "{{count}} stops"
+    "stops_other": "{{count}} stops",
+    "seats": "{{count}} seat",
+    "seats_other": "{{count}} seats"
   },
   "new": {
     "title": "New Template",
