@@ -1,0 +1,17 @@
+{
+  "booking": {
+    "requested": "New booking request from {{passengerName}} for your {{commuteType}} commute on {{date}}.",
+    "accepted": "{{driverName}} accepted your booking for the {{commuteType}} commute on {{date}}.",
+    "refused": "{{driverName}} declined your booking for the {{commuteType}} commute on {{date}}.",
+    "canceled": "{{passengerName}} canceled their booking on your {{commuteType}} commute on {{date}}."
+  },
+  "commute": {
+    "created": "{{driver}} created a new {{commuteType}} commute on {{date}}.",
+    "updated": "{{driverName}} updated the {{commuteType}} commute on {{date}}.",
+    "canceled": "{{driverName}} canceled the {{commuteType}} commute on {{date}}."
+  },
+  "commuteType": {
+    "ROUND": "round-trip",
+    "ONEWAY": "one-way"
+  }
+}

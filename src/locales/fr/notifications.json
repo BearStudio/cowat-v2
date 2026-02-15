@@ -1,0 +1,17 @@
+{
+  "booking": {
+    "requested": "Nouvelle demande de réservation de {{passengerName}} pour votre trajet {{commuteType}} du {{date}}.",
+    "accepted": "{{driverName}} a accepté votre réservation pour le trajet {{commuteType}} du {{date}}.",
+    "refused": "{{driverName}} a refusé votre réservation pour le trajet {{commuteType}} du {{date}}.",
+    "canceled": "{{passengerName}} a annulé sa réservation sur votre trajet {{commuteType}} du {{date}}."
+  },
+  "commute": {
+    "created": "{{driver}} a créé un nouveau trajet {{commuteType}} le {{date}}.",
+    "updated": "{{driverName}} a mis à jour le trajet {{commuteType}} du {{date}}.",
+    "canceled": "{{driverName}} a annulé le trajet {{commuteType}} du {{date}}."
+  },
+  "commuteType": {
+    "ROUND": "aller-retour",
+    "ONEWAY": "aller simple"
+  }
+}
