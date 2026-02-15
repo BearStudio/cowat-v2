@@ -42,5 +42,14 @@
   "autoAccept": {
     "successMessage": "Auto-accept updated",
     "errorMessage": "Failed to update auto-accept"
+  },
+  "notificationPreferences": {
+    "title": "Notification Preferences",
+    "successMessage": "Notification preferences updated",
+    "errorMessage": "Failed to update notification preferences",
+    "slack": {
+      "label": "Slack",
+      "description": "Receive notifications via Slack DM"
+    }
   }
 }

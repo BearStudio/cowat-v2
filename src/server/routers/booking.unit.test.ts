@@ -26,6 +26,7 @@ const mockBookingWithStop = {
     id: 'passenger-1',
     name: 'Passenger',
     email: 'passenger@test.com',
+    notificationPreferences: [],
   },
   stop: {
     commute: {
@@ -46,6 +47,7 @@ const mockBookingWithDriver = {
         id: 'driver-1',
         name: 'Driver',
         email: 'driver@test.com',
+        notificationPreferences: [],
       },
     },
   },
@@ -78,7 +80,7 @@ describe('booking router', () => {
     it('should create a REQUESTED booking when driver has autoAccept disabled', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
-        commute: { driver: { autoAccept: false } },
+        commute: { driver: { autoAccept: false, notificationPreferences: [] } },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
@@ -113,7 +115,7 @@ describe('booking router', () => {
       };
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
-        commute: { driver: { autoAccept: true } },
+        commute: { driver: { autoAccept: true, notificationPreferences: [] } },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.upsert.mockResolvedValue(autoAcceptedBooking);

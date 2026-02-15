@@ -9,6 +9,7 @@ export type Recipient = {
   name: string;
   email: string;
   phone?: string | null;
+  disabledChannels?: string[];
 };
 
 type CommutePayload = {

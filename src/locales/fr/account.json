@@ -42,5 +42,14 @@
   "autoAccept": {
     "successMessage": "Acceptation automatique mise à jour",
     "errorMessage": "Échec de la mise à jour de l'acceptation automatique"
+  },
+  "notificationPreferences": {
+    "title": "Préférences de notification",
+    "successMessage": "Préférences de notification mises à jour",
+    "errorMessage": "Échec de la mise à jour des préférences de notification",
+    "slack": {
+      "label": "Slack",
+      "description": "Recevoir les notifications par message Slack"
+    }
   }
 }

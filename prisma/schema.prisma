@@ -53,6 +53,10 @@ enum TripType {
   RETURN
 }
 
+enum NotificationChannel {
+  SLACK
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String
@@ -73,10 +77,11 @@ model User {
   banExpires  DateTime?
   onboardedAt DateTime?
 
-  locations         Location[]
-  commutes          Commute[]
-  passengerBookings PassengersOnStops[]
-  commuteTemplates  CommuteTemplate[]
+  locations                Location[]
+  commutes                 Commute[]
+  passengerBookings        PassengersOnStops[]
+  commuteTemplates         CommuteTemplate[]
+  notificationPreferences  NotificationPreference[]
 
   @@unique([email])
   @@map("user")
@@ -236,4 +241,17 @@ model TemplateStop {
 
   @@index([templateId])
   @@map("template_stop")
+}
+
+model NotificationPreference {
+  id        String              @id @default(cuid())
+  enabled   Boolean             @default(true)
+  channel   NotificationChannel
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  userId    String
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channel])
+  @@map("notification_preference")
 }

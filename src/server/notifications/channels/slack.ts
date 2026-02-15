@@ -72,6 +72,15 @@ export function createSlackChannel(
         return;
       }
 
+      // Skip DM if recipient opted out of Slack notifications
+      if (event.recipient.disabledChannels?.includes('slack')) {
+        logger.info(
+          { userId: event.recipient.userId, eventType: event.type },
+          'Slack: recipient opted out of Slack DMs, skipping'
+        );
+        return;
+      }
+
       const text = getSlackTemplate(event, { locale });
 
       // All other events → DM the recipient
