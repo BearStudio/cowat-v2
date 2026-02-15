@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { PenLineIcon } from 'lucide-react';
+import { useState } from 'react';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import { FormCommute } from '@/features/commute/app/form-commute';
+import { TemplatePicker } from '@/features/commute/app/template-picker';
 import {
   FormFieldsCommute,
   zFormFieldsCommute,
@@ -24,18 +27,22 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
+  seats: 1,
+  type: 'ROUND',
+  comment: null,
+  stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
+};
+
 export const PageCommuteNew = () => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
+  const [showForm, setShowForm] = useState(false);
+
   const form = useForm<FormFieldsCommute>({
     resolver: zodResolver(zFormFieldsCommute()),
-    defaultValues: {
-      seats: 1,
-      type: 'ROUND',
-      comment: null,
-      stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   const commuteCreate = useMutation(
@@ -58,6 +65,34 @@ export const PageCommuteNew = () => {
       },
     })
   );
+
+  if (!showForm) {
+    return (
+      <PageLayout>
+        <PageLayoutTopBar startActions={<BackButton />}>
+          <PageLayoutTopBarTitle>
+            {t('commute:new.title')}
+          </PageLayoutTopBarTitle>
+        </PageLayoutTopBar>
+        <PageLayoutContent containerClassName="gap-4">
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => setShowForm(true)}
+          >
+            <PenLineIcon />
+            {t('commute:templatePicker.fromScratch')}
+          </Button>
+          <TemplatePicker
+            onSelect={(data) => {
+              form.reset({ ...DEFAULT_VALUES, ...data });
+              setShowForm(true);
+            }}
+          />
+        </PageLayoutContent>
+      </PageLayout>
+    );
+  }
 
   return (
     <>

@@ -22,6 +22,11 @@
     "title": "Nouveau trajet",
     "submitButton": "Créer"
   },
+  "templatePicker": {
+    "title": "Mes modèles",
+    "emptyState": "Gagnez du temps : créez un modèle",
+    "fromScratch": "Créer de zéro"
+  },
   "form": {
     "date": "Date",
     "seats": "Places",

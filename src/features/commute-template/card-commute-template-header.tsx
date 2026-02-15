@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next';
-
 import { CardAction, CardDescription, CardTitle } from '@/components/ui/card';
+
+import { CommuteTemplateSummary } from '@/features/commute-template/commute-template-summary';
 
 type CardCommuteTemplateHeaderProps = {
   name: React.ReactNode;
@@ -17,19 +17,17 @@ export const CardCommuteTemplateHeader = ({
   seats,
   actions,
 }: CardCommuteTemplateHeaderProps) => {
-  const { t } = useTranslation(['commuteTemplate']);
-
   return (
     <>
       <div className="flex items-center gap-2">
         <CardTitle>{name}</CardTitle>
       </div>
       <CardDescription>
-        {type}
-        {' · '}
-        {t('commuteTemplate:list.stops', { count: stopsCount })}
-        {' · '}
-        {t('commuteTemplate:list.seats', { count: seats })}
+        <CommuteTemplateSummary
+          type={type}
+          stopsCount={stopsCount}
+          seats={seats}
+        />
       </CardDescription>
       {actions && <CardAction>{actions}</CardAction>}
     </>
