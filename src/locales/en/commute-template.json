@@ -8,5 +8,21 @@
     "loadMore": "Load more",
     "stops": "{{count}} stop",
     "stops_other": "{{count}} stops"
+  },
+  "new": {
+    "title": "New Template",
+    "submitButton": "Create"
+  },
+  "form": {
+    "name": "Name",
+    "seats": "Seats",
+    "roundTrip": "Round trip",
+    "outwardTime": "Outward time",
+    "inwardTime": "Inward time",
+    "comment": "Comment",
+    "commentPlaceholder": "Optional comment...",
+    "stops": "Stops",
+    "addStop": "Add stop",
+    "stopIndex": "Stop {{index}}"
   }
 }

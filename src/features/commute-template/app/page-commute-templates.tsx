@@ -75,7 +75,7 @@ export const PageCommuteTemplates = () => {
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
-            to={'/app/account/commute-templates/new' as never}
+            to="/app/account/commute-templates/new"
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>

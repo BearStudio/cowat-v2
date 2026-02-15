@@ -8,5 +8,21 @@
     "loadMore": "Charger plus",
     "stops": "{{count}} arrêt",
     "stops_other": "{{count}} arrêts"
+  },
+  "new": {
+    "title": "Nouveau modèle",
+    "submitButton": "Créer"
+  },
+  "form": {
+    "name": "Nom",
+    "seats": "Places",
+    "roundTrip": "Aller-retour",
+    "outwardTime": "Heure aller",
+    "inwardTime": "Heure retour",
+    "comment": "Commentaire",
+    "commentPlaceholder": "Commentaire optionnel...",
+    "stops": "Arrêts",
+    "addStop": "Ajouter un arrêt",
+    "stopIndex": "Arrêt {{index}}"
   }
 }

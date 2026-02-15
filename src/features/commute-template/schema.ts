@@ -28,8 +28,8 @@ export const zFormFieldsCommuteTemplate = () =>
     name: zu.fieldText.required(),
     seats: z.number().int().min(1),
     type: zCommuteType(),
-    outwardTime: z.string(),
-    inwardTime: z.string().nullish(),
+    outwardTime: zu.fieldText.required(),
+    inwardTime: zu.fieldText.nullish(),
     comment: zu.fieldText.nullish(),
     stops: z.array(zFormFieldsTemplateStopInput()).min(1),
   });
@@ -39,7 +39,7 @@ export type FormFieldsTemplateStopInput = z.infer<
 >;
 export const zFormFieldsTemplateStopInput = () =>
   z.object({
-    locationId: z.string(),
+    locationId: zu.fieldText.required(),
     order: z.number().int().min(0),
   });
 
