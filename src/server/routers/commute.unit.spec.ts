@@ -121,15 +121,30 @@ describe('commute router', () => {
 
   describe('getById', () => {
     it('should return a commute with stops when found', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
 
       const result = await call(commuteRouter.getById, { id: 'commute-1' });
 
       expect(result).toEqual(mockCommuteFromDb);
     });
 
+    it('should scope query by organizationId', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+
+      await call(commuteRouter.getById, { id: 'commute-1' });
+
+      expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: 'commute-1',
+            organizationId: mockOrganizationId,
+          }),
+        })
+      );
+    });
+
     it('should throw NOT_FOUND when commute does not exist', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(null);
+      mockDb.commute.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteRouter.getById, { id: 'nonexistent' })
@@ -268,7 +283,7 @@ describe('commute router', () => {
     };
 
     it('should update a commute and return it', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
       const updatedCommute = {
         ...mockCommuteFromDb,
         seats: 4,
@@ -282,8 +297,25 @@ describe('commute router', () => {
       expect(result).toEqual(updatedCommute);
     });
 
+    it('should scope lookup by organizationId', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.update.mockResolvedValue(mockCommuteFromDb);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+
+      await call(commuteRouter.update, updateInput);
+
+      expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: 'commute-1',
+            organizationId: mockOrganizationId,
+          }),
+        })
+      );
+    });
+
     it('should throw NOT_FOUND when commute does not exist', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(null);
+      mockDb.commute.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteRouter.update, updateInput)
@@ -291,7 +323,7 @@ describe('commute router', () => {
     });
 
     it('should throw FORBIDDEN when user is not the driver', async () => {
-      mockDb.commute.findUnique.mockResolvedValue({
+      mockDb.commute.findFirst.mockResolvedValue({
         ...mockCommuteFromDb,
         driverId: 'other-user',
       });
@@ -310,7 +342,7 @@ describe('commute router', () => {
     });
 
     it('should throw INTERNAL_SERVER_ERROR on unexpected errors', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
       mockDb.commute.update.mockRejectedValue(new Error('DB connection lost'));
 
       await expect(
@@ -321,7 +353,7 @@ describe('commute router', () => {
 
   describe('cancel', () => {
     it('should soft-delete a commute', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.commute.delete.mockResolvedValue(mockCommuteFromDb);
 
@@ -330,8 +362,25 @@ describe('commute router', () => {
       ).resolves.toBeUndefined();
     });
 
+    it('should scope lookup by organizationId', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+      mockDb.commute.delete.mockResolvedValue(mockCommuteFromDb);
+
+      await call(commuteRouter.cancel, { id: 'commute-1' });
+
+      expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: 'commute-1',
+            organizationId: mockOrganizationId,
+          }),
+        })
+      );
+    });
+
     it('should throw NOT_FOUND when commute does not exist', async () => {
-      mockDb.commute.findUnique.mockResolvedValue(null);
+      mockDb.commute.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteRouter.cancel, { id: 'nonexistent' })
@@ -339,7 +388,7 @@ describe('commute router', () => {
     });
 
     it('should throw FORBIDDEN when user is not the driver', async () => {
-      mockDb.commute.findUnique.mockResolvedValue({
+      mockDb.commute.findFirst.mockResolvedValue({
         ...mockCommuteFromDb,
         driverId: 'other-user',
       });

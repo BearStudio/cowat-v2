@@ -66,8 +66,8 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const commute = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const commute = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
         include: { stops: true },
       });
 
@@ -208,8 +208,8 @@ export default {
     )
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {
@@ -287,8 +287,8 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {

@@ -41,7 +41,15 @@ export default {
                 commutes: {
                   where: { organizationId: orgId },
                 },
-                passengerBookings: true,
+                passengerBookings: {
+                  where: {
+                    stop: {
+                      commute: {
+                        organizationId: orgId,
+                      },
+                    },
+                  },
+                },
                 commuteTemplates: {
                   where: { organizationId: orgId },
                 },
