@@ -51,7 +51,11 @@ export default {
     )
     .output(
       z.object({
-        items: z.array(zCommuteTemplate()),
+        items: z.array(
+          zCommuteTemplate().extend({
+            _count: z.object({ stops: z.number() }),
+          })
+        ),
         nextCursor: z.string().optional(),
         total: z.number(),
       })
@@ -66,6 +70,7 @@ export default {
           cursor: input.cursor ? { id: input.cursor } : undefined,
           orderBy: { name: 'asc' },
           where,
+          include: { _count: { select: { stops: true } } },
         }),
       ]);
 
@@ -122,8 +127,6 @@ export default {
         name: z.string().optional(),
         seats: z.number().int().min(1).optional(),
         type: z.enum(['ROUND', 'ONEWAY']).optional(),
-        outwardTime: z.string().optional(),
-        inwardTime: z.string().nullish(),
         comment: z.string().nullish(),
         stops: z.array(zFormFieldsTemplateStopInput()).min(1).optional(),
       })

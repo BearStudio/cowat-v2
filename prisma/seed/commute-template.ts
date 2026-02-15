@@ -31,8 +31,6 @@ export async function createCommuteTemplates() {
         name: 'Daily commute',
         seats: 3,
         type: 'ROUND',
-        outwardTime: '08:00',
-        inwardTime: '18:00',
         driverId: user.id,
       },
     });
@@ -42,6 +40,8 @@ export async function createCommuteTemplates() {
       await db.templateStop.create({
         data: {
           order,
+          outwardTime: '08:00',
+          inwardTime: '18:00',
           templateId: template.id,
           locationId: locations[order]!.id,
         },

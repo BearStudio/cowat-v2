@@ -24,8 +24,6 @@ export const FormCommuteTemplate = () => {
     name: 'stops',
   });
 
-  const commuteType = useWatch({ control: form.control, name: 'type' });
-
   return (
     <div className="flex flex-col gap-4">
       <FormField>
@@ -72,31 +70,6 @@ export const FormCommuteTemplate = () => {
         )}
       />
 
-      <div className="grid grid-cols-2 gap-3">
-        <FormField>
-          <FormFieldLabel>
-            {t('commuteTemplate:form.outwardTime')}
-          </FormFieldLabel>
-          <FormFieldController
-            type="time"
-            control={form.control}
-            name="outwardTime"
-          />
-        </FormField>
-        {commuteType === 'ROUND' && (
-          <FormField>
-            <FormFieldLabel>
-              {t('commuteTemplate:form.inwardTime')}
-            </FormFieldLabel>
-            <FormFieldController
-              type="time"
-              control={form.control}
-              name="inwardTime"
-            />
-          </FormField>
-        )}
-      </div>
-
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">
@@ -106,7 +79,14 @@ export const FormCommuteTemplate = () => {
             type="button"
             variant="secondary"
             size="xs"
-            onClick={() => append({ locationId: '', order: 0 })}
+            onClick={() =>
+              append({
+                locationId: '',
+                order: 0,
+                outwardTime: '',
+                inwardTime: null,
+              })
+            }
           >
             <PlusIcon className="size-3" />
             {t('commuteTemplate:form.addStop')}
@@ -130,12 +110,13 @@ export const FormCommuteTemplate = () => {
                 </Button>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-col gap-3">
               <FormFieldLocationSelect
                 control={form.control}
                 name={`stops.${index}.locationId`}
                 setValue={form.setValue}
               />
+              <StopTimeFields index={index} />
             </CardContent>
           </Card>
         ))}
@@ -150,6 +131,37 @@ export const FormCommuteTemplate = () => {
           placeholder={t('commuteTemplate:form.commentPlaceholder')}
         />
       </FormField>
+    </div>
+  );
+};
+
+const StopTimeFields = ({ index }: { index: number }) => {
+  const { t } = useTranslation(['commuteTemplate']);
+  const form = useFormContext<FormFieldsCommuteTemplate>();
+  const commuteType = useWatch({ control: form.control, name: 'type' });
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <FormField>
+        <FormFieldLabel>{t('commuteTemplate:form.outwardTime')}</FormFieldLabel>
+        <FormFieldController
+          type="time"
+          control={form.control}
+          name={`stops.${index}.outwardTime`}
+        />
+      </FormField>
+      {commuteType === 'ROUND' && (
+        <FormField>
+          <FormFieldLabel>
+            {t('commuteTemplate:form.inwardTime')}
+          </FormFieldLabel>
+          <FormFieldController
+            type="time"
+            control={form.control}
+            name={`stops.${index}.inwardTime`}
+          />
+        </FormField>
+      )}
     </div>
   );
 };

@@ -11,8 +11,6 @@ const mockTemplateFromDb = {
   name: 'Morning commute',
   seats: 3,
   type: 'ROUND' as const,
-  outwardTime: '08:00',
-  inwardTime: '18:00',
   comment: null,
   isDeleted: false,
   createdAt: now,
@@ -23,6 +21,8 @@ const mockTemplateFromDb = {
 const mockStop = {
   id: 'stop-1',
   order: 0,
+  outwardTime: '08:00',
+  inwardTime: '18:00',
   templateId: 'template-1',
   locationId: 'location-1',
   createdAt: now,
@@ -40,10 +40,15 @@ describe('commute-template router', () => {
       name: 'Morning commute',
       seats: 3,
       type: 'ROUND' as const,
-      outwardTime: '08:00',
-      inwardTime: '18:00',
       comment: null,
-      stops: [{ locationId: 'location-1', order: 0 }],
+      stops: [
+        {
+          locationId: 'location-1',
+          order: 0,
+          outwardTime: '08:00',
+          inwardTime: '18:00',
+        },
+      ],
     };
 
     it('should create a template with stops', async () => {
@@ -60,8 +65,6 @@ describe('commute-template router', () => {
           name: createInput.name,
           seats: createInput.seats,
           type: createInput.type,
-          outwardTime: createInput.outwardTime,
-          inwardTime: createInput.inwardTime,
           comment: createInput.comment,
           driverId: mockUser.id,
           stops: {
@@ -84,14 +87,21 @@ describe('commute-template router', () => {
   });
 
   describe('getAll', () => {
+    const mockTemplateWithCount = {
+      ...mockTemplateFromDb,
+      _count: { stops: 1 },
+    };
+
     it('should return paginated templates for the driver', async () => {
       mockDb.commuteTemplate.count.mockResolvedValue(1);
-      mockDb.commuteTemplate.findMany.mockResolvedValue([mockTemplateFromDb]);
+      mockDb.commuteTemplate.findMany.mockResolvedValue([
+        mockTemplateWithCount,
+      ]);
 
       const result = await call(commuteTemplateRouter.getAll, {});
 
       expect(result).toEqual({
-        items: [mockTemplateFromDb],
+        items: [mockTemplateWithCount],
         nextCursor: undefined,
         total: 1,
       });
@@ -99,7 +109,7 @@ describe('commute-template router', () => {
 
     it('should handle pagination with cursor', async () => {
       const templates = Array.from({ length: 3 }, (_, i) => ({
-        ...mockTemplateFromDb,
+        ...mockTemplateWithCount,
         id: `template-${i}`,
       }));
       mockDb.commuteTemplate.count.mockResolvedValue(5);
@@ -165,7 +175,14 @@ describe('commute-template router', () => {
     const updateInput = {
       id: 'template-1',
       name: 'Updated commute',
-      stops: [{ locationId: 'location-2', order: 0 }],
+      stops: [
+        {
+          locationId: 'location-2',
+          order: 0,
+          outwardTime: '09:00',
+          inwardTime: '17:00',
+        },
+      ],
     };
 
     it('should update template fields and replace stops', async () => {
