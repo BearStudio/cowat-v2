@@ -17,9 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ManagerIndexRouteImport } from './routes/manager/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as InvitationsIdRouteImport } from './routes/invitations/$id'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ManagerUsersIndexRouteImport } from './routes/manager/users/index'
 import { Route as ManagerStatsIndexRouteImport } from './routes/manager/stats.index'
+import { Route as ManagerOrganizationsIndexRouteImport } from './routes/manager/organizations/index'
 import { Route as ManagerAccountIndexRouteImport } from './routes/manager/account.index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
@@ -33,6 +35,8 @@ import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users/new.index'
 import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
+import { Route as ManagerOrganizationsNewIndexRouteImport } from './routes/manager/organizations/new.index'
+import { Route as ManagerOrganizationsIdIndexRouteImport } from './routes/manager/organizations/$id.index'
 import { Route as AppCommutesNewIndexRouteImport } from './routes/app/commutes/new.index'
 import { Route as AppAccountLocationsIndexRouteImport } from './routes/app/account/locations/index'
 import { Route as AppAccountCommuteTemplatesIndexRouteImport } from './routes/app/account/commute-templates/index'
@@ -85,6 +89,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const InvitationsIdRoute = InvitationsIdRouteImport.update({
+  id: '/invitations/$id',
+  path: '/invitations/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiUploadRoute = ApiUploadRouteImport.update({
   id: '/api/upload',
   path: '/api/upload',
@@ -100,6 +109,12 @@ const ManagerStatsIndexRoute = ManagerStatsIndexRouteImport.update({
   path: '/stats/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
+const ManagerOrganizationsIndexRoute =
+  ManagerOrganizationsIndexRouteImport.update({
+    id: '/organizations/',
+    path: '/organizations/',
+    getParentRoute: () => ManagerRouteRoute,
+  } as any)
 const ManagerAccountIndexRoute = ManagerAccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -165,6 +180,18 @@ const ManagerUsersIdIndexRoute = ManagerUsersIdIndexRouteImport.update({
   path: '/users/$id/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
+const ManagerOrganizationsNewIndexRoute =
+  ManagerOrganizationsNewIndexRouteImport.update({
+    id: '/organizations/new/',
+    path: '/organizations/new/',
+    getParentRoute: () => ManagerRouteRoute,
+  } as any)
+const ManagerOrganizationsIdIndexRoute =
+  ManagerOrganizationsIdIndexRouteImport.update({
+    id: '/organizations/$id/',
+    path: '/organizations/$id/',
+    getParentRoute: () => ManagerRouteRoute,
+  } as any)
 const AppCommutesNewIndexRoute = AppCommutesNewIndexRouteImport.update({
   id: '/commutes/new/',
   path: '/commutes/new/',
@@ -235,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/manager': typeof ManagerRouteRouteWithChildren
   '/logout': typeof LogoutRoute
   '/api/upload': typeof ApiUploadRoute
+  '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
@@ -249,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
+  '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/stats/': typeof ManagerStatsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
@@ -257,6 +286,8 @@ export interface FileRoutesByFullPath {
   '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
+  '/manager/organizations/$id/': typeof ManagerOrganizationsIdIndexRoute
+  '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
@@ -269,6 +300,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/logout': typeof LogoutRoute
   '/api/upload': typeof ApiUploadRoute
+  '/invitations/$id': typeof InvitationsIdRoute
   '/app': typeof AppIndexRoute
   '/login': typeof LoginIndexRoute
   '/manager': typeof ManagerIndexRoute
@@ -283,6 +315,7 @@ export interface FileRoutesByTo {
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
   '/manager/account': typeof ManagerAccountIndexRoute
+  '/manager/organizations': typeof ManagerOrganizationsIndexRoute
   '/manager/stats': typeof ManagerStatsIndexRoute
   '/manager/users': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
@@ -291,6 +324,8 @@ export interface FileRoutesByTo {
   '/app/account/commute-templates': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new': typeof AppCommutesNewIndexRoute
+  '/manager/organizations/$id': typeof ManagerOrganizationsIdIndexRoute
+  '/manager/organizations/new': typeof ManagerOrganizationsNewIndexRoute
   '/manager/users/$id': typeof ManagerUsersIdIndexRoute
   '/manager/users/new': typeof ManagerUsersNewIndexRoute
   '/app/account/commute-templates/new': typeof AppAccountCommuteTemplatesNewIndexRoute
@@ -307,6 +342,7 @@ export interface FileRoutesById {
   '/manager': typeof ManagerRouteRouteWithChildren
   '/logout': typeof LogoutRoute
   '/api/upload': typeof ApiUploadRoute
+  '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
@@ -321,6 +357,7 @@ export interface FileRoutesById {
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
+  '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/stats/': typeof ManagerStatsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
@@ -329,6 +366,8 @@ export interface FileRoutesById {
   '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
   '/app/account/locations/': typeof AppAccountLocationsIndexRoute
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
+  '/manager/organizations/$id/': typeof ManagerOrganizationsIdIndexRoute
+  '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
   '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
@@ -346,6 +385,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/logout'
     | '/api/upload'
+    | '/invitations/$id'
     | '/app/'
     | '/login/'
     | '/manager/'
@@ -360,6 +400,7 @@ export interface FileRouteTypes {
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
+    | '/manager/organizations/'
     | '/manager/stats/'
     | '/manager/users/'
     | '/api/dev/email/$template'
@@ -368,6 +409,8 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates/'
     | '/app/account/locations/'
     | '/app/commutes/new/'
+    | '/manager/organizations/$id/'
+    | '/manager/organizations/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/commute-templates/new/'
@@ -380,6 +423,7 @@ export interface FileRouteTypes {
     | '/'
     | '/logout'
     | '/api/upload'
+    | '/invitations/$id'
     | '/app'
     | '/login'
     | '/manager'
@@ -394,6 +438,7 @@ export interface FileRouteTypes {
     | '/login/error'
     | '/login/verify'
     | '/manager/account'
+    | '/manager/organizations'
     | '/manager/stats'
     | '/manager/users'
     | '/api/dev/email/$template'
@@ -402,6 +447,8 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates'
     | '/app/account/locations'
     | '/app/commutes/new'
+    | '/manager/organizations/$id'
+    | '/manager/organizations/new'
     | '/manager/users/$id'
     | '/manager/users/new'
     | '/app/account/commute-templates/new'
@@ -417,6 +464,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/logout'
     | '/api/upload'
+    | '/invitations/$id'
     | '/app/'
     | '/login/'
     | '/manager/'
@@ -431,6 +479,7 @@ export interface FileRouteTypes {
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
+    | '/manager/organizations/'
     | '/manager/stats/'
     | '/manager/users/'
     | '/api/dev/email/$template'
@@ -439,6 +488,8 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates/'
     | '/app/account/locations/'
     | '/app/commutes/new/'
+    | '/manager/organizations/$id/'
+    | '/manager/organizations/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
     | '/app/account/commute-templates/new/'
@@ -455,6 +506,7 @@ export interface RootRouteChildren {
   ManagerRouteRoute: typeof ManagerRouteRouteWithChildren
   LogoutRoute: typeof LogoutRoute
   ApiUploadRoute: typeof ApiUploadRoute
+  InvitationsIdRoute: typeof InvitationsIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiOpenapiAppRoute: typeof ApiOpenapiAppRouteWithChildren
   ApiOpenapiAuthRoute: typeof ApiOpenapiAuthRouteWithChildren
@@ -521,6 +573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/invitations/$id': {
+      id: '/invitations/$id'
+      path: '/invitations/$id'
+      fullPath: '/invitations/$id'
+      preLoaderRoute: typeof InvitationsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/upload': {
       id: '/api/upload'
       path: '/api/upload'
@@ -540,6 +599,13 @@ declare module '@tanstack/react-router' {
       path: '/stats'
       fullPath: '/manager/stats/'
       preLoaderRoute: typeof ManagerStatsIndexRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/organizations/': {
+      id: '/manager/organizations/'
+      path: '/organizations'
+      fullPath: '/manager/organizations/'
+      preLoaderRoute: typeof ManagerOrganizationsIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
     '/manager/account/': {
@@ -631,6 +697,20 @@ declare module '@tanstack/react-router' {
       path: '/users/$id'
       fullPath: '/manager/users/$id/'
       preLoaderRoute: typeof ManagerUsersIdIndexRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/organizations/new/': {
+      id: '/manager/organizations/new/'
+      path: '/organizations/new'
+      fullPath: '/manager/organizations/new/'
+      preLoaderRoute: typeof ManagerOrganizationsNewIndexRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
+    '/manager/organizations/$id/': {
+      id: '/manager/organizations/$id/'
+      path: '/organizations/$id'
+      fullPath: '/manager/organizations/$id/'
+      preLoaderRoute: typeof ManagerOrganizationsIdIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
     '/app/commutes/new/': {
@@ -766,8 +846,11 @@ const LoginRouteRouteWithChildren = LoginRouteRoute._addFileChildren(
 interface ManagerRouteRouteChildren {
   ManagerIndexRoute: typeof ManagerIndexRoute
   ManagerAccountIndexRoute: typeof ManagerAccountIndexRoute
+  ManagerOrganizationsIndexRoute: typeof ManagerOrganizationsIndexRoute
   ManagerStatsIndexRoute: typeof ManagerStatsIndexRoute
   ManagerUsersIndexRoute: typeof ManagerUsersIndexRoute
+  ManagerOrganizationsIdIndexRoute: typeof ManagerOrganizationsIdIndexRoute
+  ManagerOrganizationsNewIndexRoute: typeof ManagerOrganizationsNewIndexRoute
   ManagerUsersIdIndexRoute: typeof ManagerUsersIdIndexRoute
   ManagerUsersNewIndexRoute: typeof ManagerUsersNewIndexRoute
   ManagerUsersIdUpdateIndexRoute: typeof ManagerUsersIdUpdateIndexRoute
@@ -776,8 +859,11 @@ interface ManagerRouteRouteChildren {
 const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
   ManagerIndexRoute: ManagerIndexRoute,
   ManagerAccountIndexRoute: ManagerAccountIndexRoute,
+  ManagerOrganizationsIndexRoute: ManagerOrganizationsIndexRoute,
   ManagerStatsIndexRoute: ManagerStatsIndexRoute,
   ManagerUsersIndexRoute: ManagerUsersIndexRoute,
+  ManagerOrganizationsIdIndexRoute: ManagerOrganizationsIdIndexRoute,
+  ManagerOrganizationsNewIndexRoute: ManagerOrganizationsNewIndexRoute,
   ManagerUsersIdIndexRoute: ManagerUsersIdIndexRoute,
   ManagerUsersNewIndexRoute: ManagerUsersNewIndexRoute,
   ManagerUsersIdUpdateIndexRoute: ManagerUsersIdUpdateIndexRoute,
@@ -818,6 +904,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManagerRouteRoute: ManagerRouteRouteWithChildren,
   LogoutRoute: LogoutRoute,
   ApiUploadRoute: ApiUploadRoute,
+  InvitationsIdRoute: InvitationsIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiOpenapiAppRoute: ApiOpenapiAppRouteWithChildren,
   ApiOpenapiAuthRoute: ApiOpenapiAuthRouteWithChildren,

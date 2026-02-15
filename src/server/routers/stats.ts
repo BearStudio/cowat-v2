@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 import { zStatsUser } from '@/features/stats/schema';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 
 const tags = ['stats'];
 
 export default {
-  getAll: protectedProcedure({
+  getAll: organizationProcedure({
     permission: {
       user: ['list'],
     },
@@ -24,8 +24,16 @@ export default {
     .handler(async ({ context }) => {
       context.logger.info('Getting stats from database');
 
+      // Get org member user IDs
+      const orgMembers = await context.db.member.findMany({
+        where: { organizationId: context.organizationId },
+        select: { userId: true },
+      });
+      const memberUserIds = orgMembers.map((m) => m.userId);
+
       const [usersWithCounts, commutesWithStops] = await Promise.all([
         context.db.user.findMany({
+          where: { id: { in: memberUserIds } },
           select: {
             id: true,
             name: true,
@@ -33,14 +41,19 @@ export default {
             image: true,
             _count: {
               select: {
-                commutes: true,
+                commutes: {
+                  where: { organizationId: context.organizationId },
+                },
                 passengerBookings: true,
-                commuteTemplates: true,
+                commuteTemplates: {
+                  where: { organizationId: context.organizationId },
+                },
               },
             },
           },
         }),
         context.db.commute.findMany({
+          where: { organizationId: context.organizationId },
           select: {
             driverId: true,
             _count: {

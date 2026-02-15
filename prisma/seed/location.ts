@@ -23,7 +23,7 @@ const LOCATIONS = [
   },
 ] as const;
 
-export async function createLocations() {
+export async function createLocations(organizationId: string) {
   console.log(`⏳ Seeding locations`);
 
   let createdCounter = 0;
@@ -39,7 +39,7 @@ export async function createLocations() {
 
     for (const loc of LOCATIONS) {
       await db.location.create({
-        data: { ...loc, userId: user.id },
+        data: { ...loc, userId: user.id, organizationId },
       });
       createdCounter += 1;
     }

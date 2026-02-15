@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
 import { Prisma } from '@/server/db/generated/client';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 
 const tags = ['locations'];
 
 export default {
-  create: protectedProcedure({
+  create: organizationProcedure({
     permission: null,
   })
     .route({
@@ -23,11 +23,12 @@ export default {
         data: {
           ...input,
           userId: context.user.id,
+          organizationId: context.organizationId,
         },
       });
     }),
 
-  getAll: protectedProcedure({
+  getAll: organizationProcedure({
     permission: null,
   })
     .route({
@@ -53,6 +54,7 @@ export default {
     .handler(async ({ context, input }) => {
       const where = {
         userId: context.user.id,
+        organizationId: context.organizationId,
       } satisfies Prisma.LocationWhereInput;
 
       const [total, items] = await Promise.all([
@@ -74,7 +76,7 @@ export default {
       return { items, nextCursor, total };
     }),
 
-  getById: protectedProcedure({
+  getById: organizationProcedure({
     permission: null,
   })
     .route({
@@ -89,8 +91,8 @@ export default {
     )
     .output(zLocation())
     .handler(async ({ context, input }) => {
-      const location = await context.db.location.findUnique({
-        where: { id: input.id },
+      const location = await context.db.location.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!location) {
@@ -100,7 +102,7 @@ export default {
       return location;
     }),
 
-  update: protectedProcedure({
+  update: organizationProcedure({
     permission: null,
   })
     .route({
@@ -117,22 +119,24 @@ export default {
     )
     .output(zLocation())
     .handler(async ({ context, input }) => {
-      const updated = await context.db.location.update({
+      const existing = await context.db.location.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
+      });
+
+      if (!existing) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return await context.db.location.update({
         where: { id: input.id },
         data: {
           name: input.name,
           address: input.address,
         },
       });
-
-      if (!updated) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      return updated;
     }),
 
-  delete: protectedProcedure({
+  delete: organizationProcedure({
     permission: null,
   })
     .route({
@@ -147,12 +151,16 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const deleted = await context.db.location.delete({
-        where: { id: input.id },
+      const existing = await context.db.location.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
-      if (!deleted) {
+      if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
+
+      await context.db.location.delete({
+        where: { id: input.id },
+      });
     }),
 };

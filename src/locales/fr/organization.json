@@ -1,0 +1,68 @@
+{
+  "switcher": {
+    "label": "Organisation",
+    "switchTo": "Passer à {{name}}"
+  },
+  "noOrganization": {
+    "title": "Aucune organisation",
+    "description": "Vous devez être invité dans une organisation pour utiliser Cowat. Veuillez contacter votre administrateur.",
+    "signOut": "Se déconnecter"
+  },
+  "invitation": {
+    "accepting": "Acceptation de l'invitation...",
+    "accepted": "Invitation acceptée",
+    "error": "Impossible d'accepter l'invitation",
+    "expired": "Cette invitation a expiré ou n'est plus valide.",
+    "backToApp": "Aller à l'application"
+  },
+  "members": {
+    "title": "Membres",
+    "invite": "Inviter un membre",
+    "email": "Adresse email",
+    "role": "Rôle",
+    "remove": "Retirer",
+    "leave": "Quitter l'organisation",
+    "leaveConfirm": "Êtes-vous sûr de vouloir quitter cette organisation ?",
+    "roles": {
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre"
+    }
+  },
+  "invitations": {
+    "title": "Invitations en attente",
+    "cancel": "Annuler",
+    "empty": "Aucune invitation en attente"
+  },
+  "create": {
+    "title": "Créer une organisation",
+    "name": "Nom",
+    "slug": "Slug",
+    "owner": "Propriétaire",
+    "submit": "Créer"
+  },
+  "list": {
+    "title": "Organisations",
+    "empty": "Aucune organisation"
+  },
+  "manager": {
+    "list": {
+      "newButton": "Nouvelle organisation",
+      "searchResults": "{{total}} résultat(s) pour \"{{searchTerm}}\"",
+      "loadMore": "Charger plus",
+      "showing": "Affichage de {{count}} sur {{total}}"
+    },
+    "new": {
+      "createError": "Impossible de créer l'organisation"
+    },
+    "detail": {
+      "memberCount_one": "{{count}} membre",
+      "memberCount_other": "{{count}} membres",
+      "createdAt": "Créée le {{time}}",
+      "noMembers": "Aucun membre",
+      "expiresAt": "Expire {{time}}",
+      "invitationCancelled": "Invitation annulée",
+      "cancelInvitationError": "Impossible d'annuler l'invitation"
+    }
+  }
+}

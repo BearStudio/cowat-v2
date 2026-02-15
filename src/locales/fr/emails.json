@@ -6,5 +6,13 @@
     "intro": "Pour vérifier votre identité, entrez le code suivant :",
     "validityTime": "Ce code ne sera valide que pour les {{expiration}} prochaines minutes.",
     "ignoreHelper": "Si vous n'avez pas essayé de vous connecter, vous pouvez ignorer cet email en toute sécurité."
+  },
+  "orgInvitation": {
+    "subject": "Vous avez été invité à rejoindre {{organizationName}}",
+    "preview": "Rejoignez {{organizationName}} sur Cowat",
+    "title": "Invitation à une organisation",
+    "intro": "{{inviterName}} vous a invité à rejoindre {{organizationName}} sur Cowat.",
+    "acceptButton": "Accepter l'invitation",
+    "ignoreHelper": "Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet email en toute sécurité."
   }
 }
