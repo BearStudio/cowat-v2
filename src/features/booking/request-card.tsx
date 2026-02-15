@@ -31,10 +31,16 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     orpc.booking.accept.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         toast.success(t('booking:request.acceptSuccess'));
-        await context.client.invalidateQueries({
-          queryKey: orpc.booking.getRequestsForDriver.key(),
-          type: 'all',
-        });
+        await Promise.all([
+          context.client.invalidateQueries({
+            queryKey: orpc.booking.getRequestsForDriver.key(),
+            type: 'all',
+          }),
+          context.client.invalidateQueries({
+            queryKey: orpc.booking.pendingRequestCount.key(),
+            type: 'all',
+          }),
+        ]);
       },
     })
   );
@@ -43,10 +49,16 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     orpc.booking.refuse.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         toast.success(t('booking:request.refuseSuccess'));
-        await context.client.invalidateQueries({
-          queryKey: orpc.booking.getRequestsForDriver.key(),
-          type: 'all',
-        });
+        await Promise.all([
+          context.client.invalidateQueries({
+            queryKey: orpc.booking.getRequestsForDriver.key(),
+            type: 'all',
+          }),
+          context.client.invalidateQueries({
+            queryKey: orpc.booking.pendingRequestCount.key(),
+            type: 'all',
+          }),
+        ]);
       },
     })
   );

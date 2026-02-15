@@ -410,6 +410,31 @@ describe('booking router', () => {
       });
     });
 
+    it('should filter out requests for past dates', async () => {
+      mockDb.passengersOnStops.count.mockResolvedValue(1);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        mockBookingForDriver,
+      ]);
+
+      await call(bookingRouter.getRequestsForDriver, {});
+
+      const expectedWhere = expect.objectContaining({
+        status: 'REQUESTED',
+        stop: {
+          commute: {
+            driverId: mockUser.id,
+            date: { gte: expect.any(Date) },
+          },
+        },
+      });
+      expect(mockDb.passengersOnStops.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
+      expect(mockDb.passengersOnStops.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere })
+      );
+    });
+
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
@@ -435,6 +460,44 @@ describe('booking router', () => {
       expect(result.items).toHaveLength(2);
       expect(result.nextCursor).toBe('booking-2');
       expect(result.total).toBe(5);
+    });
+  });
+
+  describe('pendingRequestCount', () => {
+    it('should return the count of pending requests', async () => {
+      mockDb.passengersOnStops.count.mockResolvedValue(3);
+
+      const result = await call(bookingRouter.pendingRequestCount, undefined);
+
+      expect(result).toEqual({ count: 3 });
+    });
+
+    it('should filter out requests for past dates', async () => {
+      mockDb.passengersOnStops.count.mockResolvedValue(0);
+
+      await call(bookingRouter.pendingRequestCount, undefined);
+
+      expect(mockDb.passengersOnStops.count).toHaveBeenCalledWith({
+        where: {
+          status: 'REQUESTED',
+          stop: {
+            commute: {
+              driverId: mockUser.id,
+              date: { gte: expect.any(Date) },
+            },
+          },
+        },
+      });
+    });
+
+    it('should throw UNAUTHORIZED when user is not authenticated', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      await expect(
+        call(bookingRouter.pendingRequestCount, undefined)
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      });
     });
   });
 });

@@ -280,7 +280,12 @@ export default {
       const count = await context.db.passengersOnStops.count({
         where: {
           status: 'REQUESTED',
-          stop: { commute: { driverId: context.user.id } },
+          stop: {
+            commute: {
+              driverId: context.user.id,
+              date: { gte: new Date() },
+            },
+          },
         },
       });
       return { count };
@@ -313,6 +318,7 @@ export default {
         stop: {
           commute: {
             driverId: context.user.id,
+            date: { gte: new Date() },
           },
         },
       } satisfies Prisma.PassengersOnStopsWhereInput;

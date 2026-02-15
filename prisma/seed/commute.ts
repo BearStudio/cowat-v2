@@ -4,17 +4,10 @@ import { db } from '@/server/db';
 
 import { SEED_EMAILS } from './user';
 
-/**
- * Returns Monday 00:00 of the current ISO week.
- */
-function getWeekStart(): Date {
+function getToday(): Date {
   const now = new Date();
-  const day = now.getDay(); // 0=Sun … 6=Sat
-  const diff = day === 0 ? -6 : 1 - day; // shift to Monday
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
+  now.setHours(0, 0, 0, 0);
+  return now;
 }
 
 function addDays(date: Date, days: number): Date {
@@ -38,7 +31,7 @@ export async function createCommutes() {
     )
   ).filter((u): u is { id: string } => u !== null);
 
-  const weekStart = getWeekStart();
+  const today = getToday();
 
   for (const driver of seedUsers) {
     const locations = await db.location.findMany({
@@ -52,13 +45,13 @@ export async function createCommutes() {
     });
     if (existingCount > 0) continue;
 
-    // Create one commute per weekday (Mon-Fri) for each seed user
-    for (let dayOffset = 0; dayOffset < 5; dayOffset++) {
+    // Create one commute per day for the next 7 days (today + 6)
+    for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
       const type = faker.helpers.arrayElement(['ROUND', 'ONEWAY'] as const);
 
       const commute = await db.commute.create({
         data: {
-          date: addDays(weekStart, dayOffset),
+          date: addDays(today, dayOffset),
           seats: faker.number.int({ min: 1, max: 4 }),
           type,
           status: 'UNKNOWN',
