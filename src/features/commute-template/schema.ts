@@ -11,6 +11,8 @@ export const zCommuteTemplate = () =>
     name: zu.fieldText.required(),
     seats: z.number().int().min(1),
     type: zCommuteType(),
+    outwardTime: z.string(),
+    inwardTime: z.string().nullish(),
     comment: z.string().nullish(),
     isDeleted: z.boolean(),
     createdAt: z.date(),
@@ -26,6 +28,8 @@ export const zFormFieldsCommuteTemplate = () =>
     name: zu.fieldText.required(),
     seats: z.number().int().min(1),
     type: zCommuteType(),
+    outwardTime: z.string(),
+    inwardTime: z.string().nullish(),
     comment: zu.fieldText.nullish(),
     stops: z.array(zFormFieldsTemplateStopInput()).min(1),
   });
@@ -35,10 +39,8 @@ export type FormFieldsTemplateStopInput = z.infer<
 >;
 export const zFormFieldsTemplateStopInput = () =>
   z.object({
-    locationId: zu.fieldText.required(),
+    locationId: z.string(),
     order: z.number().int().min(0),
-    outwardTime: zu.fieldText.required(),
-    inwardTime: zu.fieldText.nullish(),
   });
 
 export type TemplateStop = z.infer<ReturnType<typeof zTemplateStop>>;
@@ -46,8 +48,6 @@ export const zTemplateStop = () =>
   z.object({
     id: z.string(),
     order: z.number().int().min(0),
-    outwardTime: z.string(),
-    inwardTime: z.string().nullish(),
     templateId: z.string(),
     locationId: z.string(),
     createdAt: z.date(),
