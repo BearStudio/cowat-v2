@@ -8,6 +8,7 @@ import {
 } from 'react';
 
 import { parseStringToDate } from '@/lib/dayjs/parse-string-to-date';
+import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 
 import { Input } from '@/components/ui/input';
 
@@ -45,7 +46,7 @@ export const useDatePickerInputManagement = (
     setInputValue(e.currentTarget.value);
     const date = dayjs(e.currentTarget.value, dateFormat);
     if (date.isValid()) {
-      const dateValue = date.startOf('day').toDate();
+      const dateValue = toNoonUTC(date.startOf('day').toDate());
       onChange(dateValue);
     }
   };
@@ -75,7 +76,7 @@ export const useDatePickerInputManagement = (
       return;
     }
 
-    onChange(date.toDate());
+    onChange(toNoonUTC(date.toDate()));
     setInputValue(date.format(dateFormat));
   };
 
