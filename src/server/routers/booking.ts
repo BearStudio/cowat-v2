@@ -37,7 +37,10 @@ export default {
                   name: true,
                   email: true,
                   autoAccept: true,
-                  slackMemberId: true,
+                  notificationPreferences: {
+                    where: { enabled: false },
+                    select: { channel: true },
+                  },
                 },
               },
             },
@@ -92,7 +95,9 @@ export default {
           userId: driver.id,
           name: driver.name,
           email: driver.email,
-          slackMemberId: driver.slackMemberId,
+          disabledChannels: driver.notificationPreferences.map((p) =>
+            p.channel.toLowerCase()
+          ),
         },
         payload: {
           passengerName: context.user.name,
@@ -118,7 +123,15 @@ export default {
         where: { id: input.id },
         include: {
           passenger: {
-            select: { id: true, name: true, email: true, slackMemberId: true },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
+            },
           },
           stop: { include: { commute: true } },
         },
@@ -145,7 +158,9 @@ export default {
           userId: booking.passenger.id,
           name: booking.passenger.name,
           email: booking.passenger.email,
-          slackMemberId: booking.passenger.slackMemberId,
+          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
+            p.channel.toLowerCase()
+          ),
         },
         payload: {
           driverName: context.user.name,
@@ -168,7 +183,15 @@ export default {
         where: { id: input.id },
         include: {
           passenger: {
-            select: { id: true, name: true, email: true, slackMemberId: true },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
+            },
           },
           stop: { include: { commute: true } },
         },
@@ -195,7 +218,9 @@ export default {
           userId: booking.passenger.id,
           name: booking.passenger.name,
           email: booking.passenger.email,
-          slackMemberId: booking.passenger.slackMemberId,
+          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
+            p.channel.toLowerCase()
+          ),
         },
         payload: {
           driverName: context.user.name,
@@ -226,7 +251,10 @@ export default {
                       id: true,
                       name: true,
                       email: true,
-                      slackMemberId: true,
+                      notificationPreferences: {
+                        where: { enabled: false },
+                        select: { channel: true },
+                      },
                     },
                   },
                 },
@@ -258,7 +286,9 @@ export default {
           userId: driver.id,
           name: driver.name,
           email: driver.email,
-          slackMemberId: driver.slackMemberId,
+          disabledChannels: driver.notificationPreferences.map((p) =>
+            p.channel.toLowerCase()
+          ),
         },
         payload: {
           passengerName: context.user.name,

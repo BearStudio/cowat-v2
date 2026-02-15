@@ -9,7 +9,7 @@ export type Recipient = {
   name: string;
   email: string;
   phone?: string | null;
-  slackMemberId?: string | null;
+  disabledChannels?: string[];
 };
 
 type CommutePayload = {
@@ -52,9 +52,9 @@ export type BookingCanceledEvent = {
 
 export type CommuteCreatedEvent = {
   type: 'commute.created';
-  recipient: Recipient;
   payload: CommutePayload & {
     driverName: string;
+    driverEmail: string;
   };
 };
 
