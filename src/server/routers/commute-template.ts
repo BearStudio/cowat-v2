@@ -8,6 +8,7 @@ import {
   zTemplateStop,
   zTemplateStopWithLocation,
 } from '@/features/commute-template/schema';
+import { Prisma } from '@/server/db/generated/client';
 import { protectedProcedure } from '@/server/orpc';
 
 const tags = ['commute-templates'];
@@ -61,7 +62,9 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = { driverId: context.user.id };
+      const where = {
+        driverId: context.user.id,
+      } satisfies Prisma.CommuteTemplateWhereInput;
 
       const [total, items] = await Promise.all([
         context.db.commuteTemplate.count({ where }),

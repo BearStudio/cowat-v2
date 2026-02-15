@@ -2,6 +2,7 @@ import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
+import { Prisma } from '@/server/db/generated/client';
 import { protectedProcedure } from '@/server/orpc';
 
 const tags = ['locations'];
@@ -50,7 +51,9 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = { userId: context.user.id };
+      const where = {
+        userId: context.user.id,
+      } satisfies Prisma.LocationWhereInput;
 
       const [total, items] = await Promise.all([
         context.db.location.count({ where }),

@@ -176,7 +176,7 @@ export default {
             },
           },
         },
-      };
+      } satisfies Prisma.CommuteInclude;
 
       const [total, items] = await Promise.all([
         context.db.commute.count({ where }),
