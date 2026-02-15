@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { PlusIcon } from 'lucide-react';
+import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -13,6 +13,12 @@ import {
   DataListErrorState,
   DataListLoadingState,
 } from '@/components/ui/datalist';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
@@ -132,9 +138,16 @@ export const PageDashboard = () => {
                     </div>
 
                     {dayCommutes.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">
-                        {t('dashboard:noCommutesForDay')}
-                      </p>
+                      <Empty className="p-6">
+                        <EmptyHeader>
+                          <EmptyMedia variant="icon">
+                            <CalendarIcon />
+                          </EmptyMedia>
+                          <EmptyTitle className="text-sm">
+                            {t('dashboard:noCommutesForDay')}
+                          </EmptyTitle>
+                        </EmptyHeader>
+                      </Empty>
                     ) : (
                       <div className="flex flex-col gap-3">
                         {dayCommutes.map((item) => (

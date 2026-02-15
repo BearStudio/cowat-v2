@@ -1,15 +1,21 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { InboxIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
 import {
-  DataListEmptyState,
   DataListErrorState,
   DataListLoadingState,
 } from '@/components/ui/datalist';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
 import { RequestCard } from '@/features/booking/request-card';
 import {
@@ -55,9 +61,14 @@ export const PageRequests = () => {
             <DataListErrorState retry={() => requestsQuery.refetch()} />
           ))
           .match('empty', () => (
-            <DataListEmptyState>
-              {t('booking:requests.emptyState')}
-            </DataListEmptyState>
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <InboxIcon />
+                </EmptyMedia>
+                <EmptyTitle>{t('booking:requests.emptyState')}</EmptyTitle>
+              </EmptyHeader>
+            </Empty>
           ))
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">

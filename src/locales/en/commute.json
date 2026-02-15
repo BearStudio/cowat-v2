@@ -4,6 +4,7 @@
     "newAction": "New Commute",
     "cancelConfirmDescription": "You are about to cancel this commute.",
     "cancelSuccessMessage": "Commute cancelled",
+    "emptyState": "No commutes yet",
     "loadMore": "Load more",
     "seats_one": "{{count}} seat",
     "seats_other": "{{count}} seats",

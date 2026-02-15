@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { PlusIcon, Trash2 } from 'lucide-react';
+import { CarIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -15,10 +15,15 @@ import {
 } from '@/components/ui/card-commute';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
-  DataListEmptyState,
   DataListErrorState,
   DataListLoadingState,
 } from '@/components/ui/datalist';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
@@ -89,7 +94,16 @@ export const PageCommutes = () => {
           .match('error', () => (
             <DataListErrorState retry={() => commutesQuery.refetch()} />
           ))
-          .match('empty', () => <DataListEmptyState />)
+          .match('empty', () => (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <CarIcon />
+                </EmptyMedia>
+                <EmptyTitle>{t('commute:list.emptyState')}</EmptyTitle>
+              </EmptyHeader>
+            </Empty>
+          ))
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => {

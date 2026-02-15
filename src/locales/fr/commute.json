@@ -4,6 +4,7 @@
     "newAction": "Nouveau trajet",
     "cancelConfirmDescription": "Vous êtes sur le point d'annuler ce trajet.",
     "cancelSuccessMessage": "Trajet annulé",
+    "emptyState": "Aucun trajet pour le moment",
     "loadMore": "Charger plus",
     "seats_one": "{{count}} place",
     "seats_other": "{{count}} places",
