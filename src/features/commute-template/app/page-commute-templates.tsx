@@ -75,7 +75,6 @@ export const PageCommuteTemplates = () => {
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
-            // TODO: remove cast when route is created
             to={'/app/account/commute-templates/new' as never}
           >
             <PlusIcon />
@@ -109,7 +108,6 @@ export const PageCommuteTemplates = () => {
                   <DataListCell>
                     <DataListText className="font-medium">
                       <Link
-                        // TODO: remove casts when route is created
                         to={
                           '/app/account/commute-templates/$id/update' as never
                         }
