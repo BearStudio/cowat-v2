@@ -119,7 +119,7 @@ describe('location router', () => {
 
   describe('getById', () => {
     it('should return a location when found', async () => {
-      mockDb.location.findUnique.mockResolvedValue(mockLocationFromDb);
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
 
       const result = await call(locationRouter.getById, { id: 'location-1' });
 
@@ -127,7 +127,7 @@ describe('location router', () => {
     });
 
     it('should throw NOT_FOUND when location does not exist', async () => {
-      mockDb.location.findUnique.mockResolvedValue(null);
+      mockDb.location.findFirst.mockResolvedValue(null);
 
       await expect(
         call(locationRouter.getById, { id: 'nonexistent' })
@@ -137,7 +137,7 @@ describe('location router', () => {
     });
 
     it('should not require any specific permission', async () => {
-      mockDb.location.findUnique.mockResolvedValue(mockLocationFromDb);
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
 
       await call(locationRouter.getById, { id: 'location-1' });
 
@@ -164,6 +164,7 @@ describe('location router', () => {
 
     it('should update a location and return it', async () => {
       const updated = { ...mockLocationFromDb, ...updateInput };
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
       mockDb.location.update.mockResolvedValue(updated);
 
       const result = await call(locationRouter.update, updateInput);
@@ -172,7 +173,7 @@ describe('location router', () => {
     });
 
     it('should throw NOT_FOUND when location does not exist', async () => {
-      mockDb.location.update.mockResolvedValue(null);
+      mockDb.location.findFirst.mockResolvedValue(null);
 
       await expect(
         call(locationRouter.update, updateInput)
@@ -182,6 +183,7 @@ describe('location router', () => {
     });
 
     it('should not require any specific permission', async () => {
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
       mockDb.location.update.mockResolvedValue({
         ...mockLocationFromDb,
         ...updateInput,
@@ -205,6 +207,7 @@ describe('location router', () => {
 
   describe('delete', () => {
     it('should soft-delete a location', async () => {
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
       mockDb.location.delete.mockResolvedValue({
         ...mockLocationFromDb,
         isDeleted: true,
@@ -216,7 +219,7 @@ describe('location router', () => {
     });
 
     it('should throw NOT_FOUND when location does not exist', async () => {
-      mockDb.location.delete.mockResolvedValue(null);
+      mockDb.location.findFirst.mockResolvedValue(null);
 
       await expect(
         call(locationRouter.delete, { id: 'nonexistent' })
@@ -226,6 +229,7 @@ describe('location router', () => {
     });
 
     it('should not require any specific permission', async () => {
+      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
       mockDb.location.delete.mockResolvedValue({
         ...mockLocationFromDb,
         isDeleted: true,

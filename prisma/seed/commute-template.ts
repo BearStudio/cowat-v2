@@ -2,7 +2,7 @@ import { db } from '@/server/db';
 
 import { SEED_EMAILS } from './user';
 
-export async function createCommuteTemplates() {
+export async function createCommuteTemplates(organizationId: string) {
   console.log(`⏳ Seeding commute templates`);
 
   let templatesCreated = 0;
@@ -32,6 +32,7 @@ export async function createCommuteTemplates() {
         seats: 3,
         type: 'ROUND',
         driverId: user.id,
+        organizationId,
       },
     });
     templatesCreated += 1;

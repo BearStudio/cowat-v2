@@ -8,12 +8,12 @@ import {
 } from '@/features/booking/schema';
 import { validateStatusTransition } from '@/features/booking/status-machine';
 import { Prisma } from '@/server/db/generated/client';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 
 const tags = ['bookings'];
 
 export default {
-  request: protectedProcedure({ permission: null })
+  request: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/bookings/request',
@@ -29,6 +29,7 @@ export default {
           commuteId: true,
           commute: {
             select: {
+              organizationId: true,
               date: true,
               type: true,
               driver: {
@@ -48,7 +49,7 @@ export default {
         },
       });
 
-      if (!stop) {
+      if (!stop || stop.commute.organizationId !== context.organizationId) {
         throw new ORPCError('NOT_FOUND');
       }
 
@@ -110,7 +111,7 @@ export default {
       return booking;
     }),
 
-  accept: protectedProcedure({ permission: null })
+  accept: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/bookings/{id}/accept',
@@ -170,7 +171,7 @@ export default {
       });
     }),
 
-  refuse: protectedProcedure({ permission: null })
+  refuse: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/bookings/{id}/refuse',
@@ -230,7 +231,7 @@ export default {
       });
     }),
 
-  cancel: protectedProcedure({ permission: null })
+  cancel: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/bookings/{id}/cancel',
@@ -298,7 +299,7 @@ export default {
       });
     }),
 
-  pendingRequestCount: protectedProcedure({ permission: null })
+  pendingRequestCount: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/bookings/pending-count',
@@ -313,6 +314,7 @@ export default {
           stop: {
             commute: {
               driverId: context.user.id,
+              organizationId: context.organizationId,
               date: { gte: new Date() },
             },
           },
@@ -321,7 +323,7 @@ export default {
       return { count };
     }),
 
-  getRequestsForDriver: protectedProcedure({ permission: null })
+  getRequestsForDriver: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/bookings/driver-requests',
@@ -348,6 +350,7 @@ export default {
         stop: {
           commute: {
             driverId: context.user.id,
+            organizationId: context.organizationId,
             date: { gte: new Date() },
           },
         },

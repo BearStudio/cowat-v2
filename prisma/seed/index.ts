@@ -1,15 +1,17 @@
 import { db } from '@/server/db';
 
-import { createCommuteTemplates } from './commute-template';
 import { createCommutes } from './commute';
+import { createCommuteTemplates } from './commute-template';
 import { createLocations } from './location';
+import { createOrganization } from './organization';
 import { createUsers } from './user';
 
 async function main() {
   await createUsers();
-  await createLocations();
-  await createCommutes();
-  await createCommuteTemplates();
+  const orgId = await createOrganization();
+  await createLocations(orgId);
+  await createCommutes(orgId);
+  await createCommuteTemplates(orgId);
 }
 
 main()

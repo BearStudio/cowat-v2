@@ -9,6 +9,7 @@ import { NotificationPreferences } from '@/features/account/notification-prefere
 import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
+import { OrgSwitcher } from '@/features/organization/org-switcher';
 import {
   PageLayout,
   PageLayoutContent,
@@ -27,6 +28,9 @@ export const PageAccount = () => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         <div className="flex flex-col gap-4">
+          <div className="md:hidden">
+            <OrgSwitcher />
+          </div>
           <UserCard />
           <Link
             to="/app/account/locations"

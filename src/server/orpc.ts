@@ -220,3 +220,24 @@ export const protectedProcedure = ({
       },
     });
   });
+
+export const organizationProcedure = ({
+  permission,
+}: {
+  permission: Permission | null;
+}) =>
+  protectedProcedure({ permission }).use(async ({ context, next }) => {
+    const organizationId = context.session.activeOrganizationId;
+
+    if (!organizationId) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'No active organization',
+      });
+    }
+
+    return await next({
+      context: {
+        organizationId,
+      },
+    });
+  });

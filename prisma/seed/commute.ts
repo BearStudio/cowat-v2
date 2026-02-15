@@ -16,7 +16,7 @@ function addDays(date: Date, days: number): Date {
   return d;
 }
 
-export async function createCommutes() {
+export async function createCommutes(organizationId: string) {
   console.log(`⏳ Seeding commutes, stops, and passenger bookings`);
 
   let commutesCreated = 0;
@@ -56,6 +56,7 @@ export async function createCommutes() {
           type,
           status: 'UNKNOWN',
           driverId: driver.id,
+          organizationId,
         },
       });
       commutesCreated += 1;

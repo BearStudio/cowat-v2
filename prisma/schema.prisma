@@ -83,6 +83,9 @@ model User {
   commuteTemplates         CommuteTemplate[]
   notificationPreferences  NotificationPreference[]
 
+  members     Member[]
+  invitations Invitation[]
+
   @@unique([email])
   @@map("user")
 }
@@ -100,8 +103,11 @@ model Session {
 
   impersonatedBy String?
 
+  activeOrganizationId String?
+
   @@unique([token])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
@@ -121,6 +127,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
@@ -132,42 +139,49 @@ model Verification {
   updatedAt  DateTime? @updatedAt
 
   @@map("verification")
+  @@index([identifier])
 }
 
 model Location {
-  id            String         @id @default(cuid())
-  name          String
-  address       String
-  latitude      Float?
-  longitude     Float?
-  isDeleted     Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  userId        String
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stops         Stop[]
-  templateStops TemplateStop[]
+  id             String         @id @default(cuid())
+  name           String
+  address        String
+  latitude       Float?
+  longitude      Float?
+  isDeleted      Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stops          Stop[]
+  templateStops  TemplateStop[]
 
   @@index([userId])
+  @@index([organizationId])
   @@map("location")
 }
 
 model Commute {
-  id        String        @id @default(cuid())
-  date      DateTime      @db.Date
-  seats     Int
-  type      CommuteType
-  status    CommuteStatus @default(UNKNOWN)
-  delay     Int?
-  comment   String?
-  isDeleted Boolean       @default(false)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  driverId  String
-  driver    User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  stops     Stop[]
+  id             String        @id @default(cuid())
+  date           DateTime      @db.Date
+  seats          Int
+  type           CommuteType
+  status         CommuteStatus @default(UNKNOWN)
+  delay          Int?
+  comment        String?
+  isDeleted      Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  driverId       String
+  driver         User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stops          Stop[]
 
   @@index([driverId, date])
+  @@index([organizationId])
   @@map("commute")
 }
 
@@ -212,18 +226,21 @@ model PassengersOnStops {
 }
 
 model CommuteTemplate {
-  id        String         @id @default(cuid())
-  name      String
-  seats     Int
-  type      CommuteType
-  comment   String?
-  isDeleted Boolean        @default(false)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  driverId  String
-  driver    User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  stops     TemplateStop[]
+  id             String         @id @default(cuid())
+  name           String
+  seats          Int
+  type           CommuteType
+  comment        String?
+  isDeleted      Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  driverId       String
+  driver         User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stops          TemplateStop[]
 
+  @@index([organizationId])
   @@map("commute_template")
 }
 
@@ -254,4 +271,52 @@ model NotificationPreference {
 
   @@unique([userId, channel])
   @@map("notification_preference")
+}
+
+model Organization {
+  id               String            @id
+  name             String
+  slug             String
+  logo             String?
+  createdAt        DateTime
+  metadata         String?
+  members          Member[]
+  invitations      Invitation[]
+  locations        Location[]
+  commutes         Commute[]
+  commuteTemplates CommuteTemplate[]
+
+  @@unique([slug])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  createdAt      DateTime
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String       @default("pending")
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitation")
 }

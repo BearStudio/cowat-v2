@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Logo } from '@/components/brand/logo';
 
+import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { MAIN_NAV_LINKS, NavLinkItem } from '@/layout/app/main-nav-config';
 
 export const MainNavDesktop = () => {
@@ -20,9 +21,12 @@ export const MainNavDesktop = () => {
         style={{ height: HEIGHT }}
       >
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4">
-          <Link to="/app">
-            <Logo className="w-24" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/app">
+              <Logo className="w-24" />
+            </Link>
+            <OrgSwitcher />
+          </div>
           <nav className="flex gap-0.5">
             {MAIN_NAV_LINKS.map(({ labelTranslationKey, ...item }) => (
               <Item key={item.to} {...item}>

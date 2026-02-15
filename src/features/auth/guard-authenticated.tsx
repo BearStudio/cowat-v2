@@ -7,6 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/features/auth/client';
 import { PageOnboarding } from '@/features/auth/page-onboarding';
 import { Permission, Role } from '@/features/auth/permissions';
+import { GuardOrganization } from '@/features/organization/guard-organization';
 
 export const GuardAuthenticated = ({
   children,
@@ -55,5 +56,5 @@ export const GuardAuthenticated = ({
     return <PageError type="403" />;
   }
 
-  return <>{children}</>;
+  return <GuardOrganization>{children}</GuardOrganization>;
 };

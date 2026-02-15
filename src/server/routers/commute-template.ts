@@ -9,12 +9,12 @@ import {
   zTemplateStopWithLocation,
 } from '@/features/commute-template/schema';
 import { Prisma } from '@/server/db/generated/client';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 
 const tags = ['commute-templates'];
 
 export default {
-  create: protectedProcedure({ permission: null })
+  create: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/commute-templates',
@@ -28,6 +28,7 @@ export default {
         data: {
           ...templateData,
           driverId: context.user.id,
+          organizationId: context.organizationId,
           stops: {
             create: stops,
           },
@@ -36,7 +37,7 @@ export default {
       });
     }),
 
-  getAll: protectedProcedure({ permission: null })
+  getAll: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/commute-templates',
@@ -64,6 +65,7 @@ export default {
     .handler(async ({ context, input }) => {
       const where = {
         driverId: context.user.id,
+        organizationId: context.organizationId,
       } satisfies Prisma.CommuteTemplateWhereInput;
 
       const [total, items] = await Promise.all([
@@ -93,7 +95,7 @@ export default {
       return { items, nextCursor, total };
     }),
 
-  getById: protectedProcedure({ permission: null })
+  getById: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/commute-templates/{id}',
@@ -106,8 +108,8 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const template = await context.db.commuteTemplate.findUnique({
-        where: { id: input.id },
+      const template = await context.db.commuteTemplate.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
         include: {
           stops: {
             orderBy: { order: 'asc' },
@@ -125,7 +127,7 @@ export default {
       return template;
     }),
 
-  update: protectedProcedure({ permission: null })
+  update: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/commute-templates/{id}',
@@ -143,8 +145,8 @@ export default {
     )
     .output(zCommuteTemplate().extend({ stops: z.array(zTemplateStop()) }))
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commuteTemplate.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commuteTemplate.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {
@@ -172,7 +174,7 @@ export default {
       });
     }),
 
-  delete: protectedProcedure({ permission: null })
+  delete: organizationProcedure({ permission: null })
     .route({
       method: 'DELETE',
       path: '/commute-templates/{id}',
@@ -181,8 +183,8 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commuteTemplate.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commuteTemplate.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {

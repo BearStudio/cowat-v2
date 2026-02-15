@@ -1,6 +1,7 @@
 import { db } from '@/server/db';
 
 import { createCommutes } from './commute';
+import { getDefaultOrgId } from './organization';
 
 /**
  * Deletes all existing commutes (cascading stops + bookings) and re-seeds
@@ -17,7 +18,8 @@ async function main() {
 
   console.log('✅ Cleared');
 
-  await createCommutes();
+  const orgId = await getDefaultOrgId();
+  await createCommutes(orgId);
 }
 
 main()

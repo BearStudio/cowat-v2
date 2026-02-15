@@ -9,12 +9,12 @@ import {
   zStopInput,
 } from '@/features/commute/schema';
 import { Prisma } from '@/server/db/generated/browser';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 
 const tags = ['commutes'];
 
 export default {
-  create: protectedProcedure({ permission: null })
+  create: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/commutes',
@@ -36,6 +36,7 @@ export default {
         data: {
           ...commuteData,
           driverId: context.user.id,
+          organizationId: context.organizationId,
           stops: {
             create: stops,
           },
@@ -56,7 +57,7 @@ export default {
       return commute;
     }),
 
-  getById: protectedProcedure({ permission: null })
+  getById: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/commutes/{id}',
@@ -65,8 +66,8 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const commute = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const commute = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
         include: { stops: true },
       });
 
@@ -77,7 +78,7 @@ export default {
       return commute;
     }),
 
-  getByDate: protectedProcedure({ permission: null })
+  getByDate: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/commutes/by-date',
@@ -87,7 +88,10 @@ export default {
     .output(z.array(zCommuteEnriched()))
     .handler(async ({ context, input }) => {
       return await context.db.commute.findMany({
-        where: { date: { gte: input.from, lt: input.to } },
+        where: {
+          date: { gte: input.from, lt: input.to },
+          organizationId: context.organizationId,
+        },
         orderBy: { date: 'asc' },
         include: {
           driver: { select: { id: true, name: true, image: true } },
@@ -108,7 +112,7 @@ export default {
       });
     }),
 
-  getMyCommutes: protectedProcedure({ permission: null })
+  getMyCommutes: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/commutes/mine',
@@ -134,6 +138,7 @@ export default {
       today.setHours(0, 0, 0, 0);
 
       const where = {
+        organizationId: context.organizationId,
         date: { gte: today },
         OR: [
           { driverId: context.user.id },
@@ -186,7 +191,7 @@ export default {
       return { items, nextCursor, total };
     }),
 
-  update: protectedProcedure({ permission: null })
+  update: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/commutes/{id}',
@@ -203,8 +208,8 @@ export default {
     )
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {
@@ -273,7 +278,7 @@ export default {
       return commute;
     }),
 
-  cancel: protectedProcedure({ permission: null })
+  cancel: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/commutes/{id}/cancel',
@@ -282,8 +287,8 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commute.findUnique({
-        where: { id: input.id },
+      const existing = await context.db.commute.findFirst({
+        where: { id: input.id, organizationId: context.organizationId },
       });
 
       if (!existing) {

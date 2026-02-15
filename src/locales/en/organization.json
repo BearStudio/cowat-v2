@@ -1,0 +1,70 @@
+{
+  "switcher": {
+    "label": "Organization",
+    "switchTo": "Switch to {{name}}"
+  },
+  "noOrganization": {
+    "title": "No organization",
+    "description": "You need to be invited to an organization to use Cowat. Please contact your administrator.",
+    "signOut": "Sign out"
+  },
+  "invitation": {
+    "accepting": "Accepting invitation...",
+    "accepted": "Invitation accepted",
+    "error": "Failed to accept invitation",
+    "expired": "This invitation has expired or is no longer valid.",
+    "backToApp": "Go to app"
+  },
+  "members": {
+    "title": "Members",
+    "invite": "Invite member",
+    "email": "Email address",
+    "role": "Role",
+    "remove": "Remove",
+    "leave": "Leave organization",
+    "leaveConfirm": "Are you sure you want to leave this organization?",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    }
+  },
+  "invitations": {
+    "title": "Pending invitations",
+    "cancel": "Cancel",
+    "empty": "No pending invitations"
+  },
+  "create": {
+    "title": "Create organization",
+    "name": "Name",
+    "slug": "Slug",
+    "owner": "Owner",
+    "submit": "Create"
+  },
+  "list": {
+    "title": "Organizations",
+    "empty": "No organizations yet"
+  },
+  "manager": {
+    "list": {
+      "newButton": "New organization",
+      "searchResults": "{{total}} result(s) for \"{{searchTerm}}\"",
+      "loadMore": "Load more",
+      "showing": "Showing {{count}} of {{total}}"
+    },
+    "new": {
+      "createError": "Failed to create organization"
+    },
+    "detail": {
+      "memberCount_one": "{{count}} member",
+      "memberCount_other": "{{count}} members",
+      "createdAt": "Created {{time}}",
+      "noMembers": "No members",
+      "expiresAt": "Expires {{time}}",
+      "invitationCancelled": "Invitation cancelled",
+      "cancelInvitationError": "Failed to cancel invitation",
+      "invitationSent": "Invitation sent",
+      "invitationError": "Failed to send invitation"
+    }
+  }
+}

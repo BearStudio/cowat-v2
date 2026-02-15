@@ -72,11 +72,10 @@ export default {
       )
     )
     .handler(async ({ context }) => {
-      const prefs = await context.db.notificationPreference.findMany({
+      return await context.db.notificationPreference.findMany({
         where: { userId: context.user.id },
         select: { channel: true, enabled: true },
       });
-      return prefs;
     }),
 
   updateNotificationPreference: protectedProcedure({

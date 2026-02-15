@@ -2,7 +2,12 @@ import { call } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 
 import bookingRouter from '@/server/routers/booking';
-import { mockDb, mockGetSession, mockUser } from '@/server/routers/test-utils';
+import {
+  mockDb,
+  mockGetSession,
+  mockOrganizationId,
+  mockUser,
+} from '@/server/routers/test-utils';
 
 const now = new Date();
 
@@ -80,7 +85,10 @@ describe('booking router', () => {
     it('should create a REQUESTED booking when driver has autoAccept disabled', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
-        commute: { driver: { autoAccept: false, notificationPreferences: [] } },
+        commute: {
+          organizationId: mockOrganizationId,
+          driver: { autoAccept: false, notificationPreferences: [] },
+        },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
@@ -115,7 +123,10 @@ describe('booking router', () => {
       };
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
-        commute: { driver: { autoAccept: true, notificationPreferences: [] } },
+        commute: {
+          organizationId: mockOrganizationId,
+          driver: { autoAccept: true, notificationPreferences: [] },
+        },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
       mockDb.passengersOnStops.upsert.mockResolvedValue(autoAcceptedBooking);
@@ -154,7 +165,10 @@ describe('booking router', () => {
     });
 
     it('should throw CONFLICT when user already has a booking on this commute', async () => {
-      mockDb.stop.findUnique.mockResolvedValue({ commuteId: 'commute-1' });
+      mockDb.stop.findUnique.mockResolvedValue({
+        commuteId: 'commute-1',
+        commute: { organizationId: mockOrganizationId },
+      });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(mockBookingFromDb);
 
       await expect(
@@ -423,6 +437,7 @@ describe('booking router', () => {
         stop: {
           commute: {
             driverId: mockUser.id,
+            organizationId: mockOrganizationId,
             date: { gte: expect.any(Date) },
           },
         },
@@ -483,6 +498,7 @@ describe('booking router', () => {
           stop: {
             commute: {
               driverId: mockUser.id,
+              organizationId: mockOrganizationId,
               date: { gte: expect.any(Date) },
             },
           },

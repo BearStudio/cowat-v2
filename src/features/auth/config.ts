@@ -1,3 +1,4 @@
 export const AUTH_SIGNUP_ENABLED = true;
 export const AUTH_EMAIL_OTP_MOCKED = '000000';
 export const AUTH_EMAIL_OTP_EXPIRATION_IN_MINUTES = 5;
+export const AUTH_INVITATION_EXPIRATION_IN_SECONDS = 60 * 60 * 24 * 7; // 7 days
