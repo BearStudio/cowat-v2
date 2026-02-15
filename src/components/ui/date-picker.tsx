@@ -2,6 +2,8 @@ import { CalendarIcon } from 'lucide-react';
 import { ComponentProps } from 'react';
 import { useDisclosure } from 'react-use-disclosure';
 
+import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
+
 import { Calendar } from '@/components/ui/calendar';
 import { DateInput } from '@/components/ui/date-input';
 import { InputGroupButton } from '@/components/ui/input-group';
@@ -43,7 +45,7 @@ export const DatePicker = ({
                 mode="single"
                 selected={props.value ?? undefined}
                 onSelect={(date) => {
-                  props.onChange?.(date ?? null);
+                  props.onChange?.(date ? toNoonUTC(date) : null);
                   datePicker.close();
                 }}
                 defaultMonth={props.value ?? undefined}

@@ -59,7 +59,7 @@ function DrawerContent({
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
           className={cn(
-            'group/drawer-content absolute flex h-auto flex-col bg-background',
+            'group/drawer-content absolute flex h-auto flex-col bg-background pb-12',
             'transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
             'data-swiping:duration-0 data-swiping:select-none',
