@@ -1,6 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
 import { PlusIcon, RepeatIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,11 +24,12 @@ type TemplateData = Pick<
 >;
 
 export const TemplatePicker = ({
+  orgSlug,
   onSelect,
 }: {
+  orgSlug: string;
   onSelect: (data: TemplateData) => void;
 }) => {
-  const { orgSlug } = useParams({ strict: false });
   const { t } = useTranslation(['commute', 'commuteTemplate']);
 
   const templatesQuery = useQuery(
@@ -86,7 +86,7 @@ export const TemplatePicker = ({
             <EmptyContent>
               <ButtonLink
                 to="/app/$orgSlug/account/commute-templates/new"
-                params={{ orgSlug: orgSlug! }}
+                params={{ orgSlug }}
                 variant="secondary"
                 size="sm"
               >

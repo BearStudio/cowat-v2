@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import {
   BookOpenIcon,
   ChevronsUpDownIcon,
@@ -39,13 +39,12 @@ import { WithPermissions } from '@/features/auth/with-permission';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
 
-export function NavUser() {
+export function NavUser({ orgSlug }: { orgSlug: string }) {
   const { t } = useTranslation(['common', 'auth', 'layout']);
   const { isMobile } = useSidebar();
   const session = authClient.useSession();
   const { setOpenMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
-  const { orgSlug } = useParams({ strict: false });
 
   const user = {
     avatar: session.data?.user.image ?? undefined,
@@ -103,7 +102,7 @@ export function NavUser() {
                 render={
                   <Link
                     to="/manager/$orgSlug/account"
-                    params={{ orgSlug: orgSlug! }}
+                    params={{ orgSlug }}
                     onClick={() => setOpenMobile(false)}
                   />
                 }

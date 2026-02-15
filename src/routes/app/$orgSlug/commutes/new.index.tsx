@@ -19,6 +19,7 @@ export const Route = createFileRoute('/app/$orgSlug/commutes/new/')({
 });
 
 function RouteComponent() {
+  const params = Route.useParams();
   const search = Route.useSearch();
-  return <PageCommuteNew search={search} />;
+  return <PageCommuteNew params={params} search={search} />;
 }

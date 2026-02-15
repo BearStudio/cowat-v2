@@ -17,6 +17,7 @@ export const Route = createFileRoute('/manager/$orgSlug/users/')({
 });
 
 function RouteComponent() {
+  const params = Route.useParams();
   const search = Route.useSearch();
-  return <PageUsers search={search} />;
+  return <PageUsers params={params} search={search} />;
 }

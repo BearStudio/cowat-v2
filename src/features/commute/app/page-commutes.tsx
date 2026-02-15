@@ -1,6 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
 import { CarIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -38,9 +37,12 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommutes = () => {
+export const PageCommutes = ({
+  params: { orgSlug },
+}: {
+  params: { orgSlug: string };
+}) => {
   const { t } = useTranslation(['commute', 'common']);
-  const { orgSlug } = useParams({ strict: false });
   const session = authClient.useSession();
 
   const commutesQuery = useInfiniteQuery(
@@ -83,7 +85,7 @@ export const PageCommutes = () => {
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            params={{ orgSlug: orgSlug! }}
+            params={{ orgSlug }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>

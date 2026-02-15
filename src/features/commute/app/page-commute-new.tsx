@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
@@ -34,11 +34,16 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
   stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
 };
 
-export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
+export const PageCommuteNew = ({
+  params: { orgSlug },
+  search,
+}: {
+  params: { orgSlug: string };
+  search: { date?: Date };
+}) => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const { orgSlug } = useParams({ strict: false });
   const [showForm, setShowForm] = useState(false);
 
   const form = useForm<FormFieldsCommute>({
@@ -59,7 +64,7 @@ export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
         } else {
           router.navigate({
             to: '/app/$orgSlug/commutes',
-            params: { orgSlug: orgSlug! },
+            params: { orgSlug },
             replace: true,
             ignoreBlocker: true,
           });
@@ -86,6 +91,7 @@ export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
             {t('commute:templatePicker.fromScratch')}
           </Button>
           <TemplatePicker
+            orgSlug={orgSlug}
             onSelect={(data) => {
               form.reset({ ...DEFAULT_VALUES, date: search.date, ...data });
               setShowForm(true);

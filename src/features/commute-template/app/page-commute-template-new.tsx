@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -24,11 +24,14 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommuteTemplateNew = () => {
+export const PageCommuteTemplateNew = ({
+  params: { orgSlug },
+}: {
+  params: { orgSlug: string };
+}) => {
   const { t } = useTranslation(['commuteTemplate']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const { orgSlug } = useParams({ strict: false });
   const form = useForm<FormFieldsCommuteTemplate>({
     resolver: zodResolver(zFormFieldsCommuteTemplate()),
     defaultValues: {
@@ -52,7 +55,7 @@ export const PageCommuteTemplateNew = () => {
         } else {
           router.navigate({
             to: '/app/$orgSlug/account/commute-templates',
-            params: { orgSlug: orgSlug! },
+            params: { orgSlug },
             replace: true,
             ignoreBlocker: true,
           });

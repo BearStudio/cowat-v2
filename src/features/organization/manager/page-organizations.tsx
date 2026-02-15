@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Link, useParams, useRouter } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { BuildingIcon, PlusIcon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -31,11 +31,12 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageOrganizations = (props: {
+  params: { orgSlug: string };
   search: { searchTerm?: string };
 }) => {
   const { t } = useTranslation(['organization']);
   const router = useRouter();
-  const { orgSlug } = useParams({ strict: false });
+  const { orgSlug } = props.params;
 
   const searchInputProps = {
     value: props.search.searchTerm ?? '',
@@ -84,7 +85,7 @@ export const PageOrganizations = (props: {
             variant="secondary"
             size="sm"
             to="/manager/$orgSlug/organizations/new"
-            params={{ orgSlug: orgSlug! }}
+            params={{ orgSlug }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -145,7 +146,7 @@ export const PageOrganizations = (props: {
                       <DataListText className="font-medium">
                         <Link
                           to="/manager/$orgSlug/organizations/$id"
-                          params={{ orgSlug: orgSlug!, id: item.id }}
+                          params={{ orgSlug, id: item.id }}
                         >
                           {item.name}
                           <span className="absolute inset-0" />

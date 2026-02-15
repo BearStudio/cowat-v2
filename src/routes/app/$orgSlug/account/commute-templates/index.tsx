@@ -9,5 +9,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  return <PageCommuteTemplates />;
+  const params = Route.useParams();
+  return <PageCommuteTemplates params={params} />;
 }

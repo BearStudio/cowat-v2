@@ -7,5 +7,6 @@ export const Route = createFileRoute('/app/$orgSlug/commutes/')({
 });
 
 function RouteComponent() {
-  return <PageCommutes />;
+  const params = Route.useParams();
+  return <PageCommutes params={params} />;
 }

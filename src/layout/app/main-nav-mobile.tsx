@@ -1,14 +1,13 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { getMainNavLinks, NavLinkItem } from '@/layout/app/main-nav-config';
 
 const HEIGHT = 'calc(64px + env(safe-area-inset-bottom))';
 
-export const MainNavMobile = () => {
+export const MainNavMobile = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['layout']);
-  const { orgSlug } = useParams({ strict: false });
-  const navLinks = getMainNavLinks(orgSlug ?? '');
+  const navLinks = getMainNavLinks(orgSlug);
   return (
     <div className="md:hidden">
       <div
