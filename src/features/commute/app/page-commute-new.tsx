@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
@@ -38,6 +38,7 @@ export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
+  const { orgSlug } = useParams({ strict: false });
   const [showForm, setShowForm] = useState(false);
 
   const form = useForm<FormFieldsCommute>({
@@ -57,7 +58,8 @@ export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/commutes',
+            to: '/app/$orgSlug/commutes',
+            params: { orgSlug: orgSlug! },
             replace: true,
             ignoreBlocker: true,
           });

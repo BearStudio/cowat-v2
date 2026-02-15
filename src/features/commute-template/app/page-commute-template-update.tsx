@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ export const PageCommuteTemplateUpdate = (props: {
   const { t } = useTranslation(['commuteTemplate']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
+  const { orgSlug } = useParams({ strict: false });
 
   const templateQuery = useQuery(
     orpc.commuteTemplate.getById.queryOptions({
@@ -59,7 +60,8 @@ export const PageCommuteTemplateUpdate = (props: {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/commute-templates',
+            to: '/app/$orgSlug/account/commute-templates',
+            params: { orgSlug: orgSlug! },
             replace: true,
             ignoreBlocker: true,
           });

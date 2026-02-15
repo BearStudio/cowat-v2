@@ -1,5 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -35,6 +36,7 @@ import {
 
 export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
+  const { orgSlug } = useParams({ strict: false });
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
   const [bookingStopId, setBookingStopId] = useState<string | null>(null);
@@ -103,7 +105,8 @@ export const PageDashboard = () => {
             label={t('dashboard:newCommuteAction')}
             variant="secondary"
             size="sm"
-            to="/app/commutes/new"
+            to="/app/$orgSlug/commutes/new"
+            params={{ orgSlug: orgSlug! }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -143,7 +146,8 @@ export const PageDashboard = () => {
                         variant="ghost"
                         size={isToday ? 'sm' : 'xs'}
                         className="ml-auto"
-                        to="/app/commutes/new"
+                        to="/app/$orgSlug/commutes/new"
+                        params={{ orgSlug: orgSlug! }}
                         search={{ date: day.toDate() }}
                       >
                         <PlusIcon />

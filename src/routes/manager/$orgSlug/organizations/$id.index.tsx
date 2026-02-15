@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { PageOrganization } from '@/features/organization/manager/page-organization';
 
-export const Route = createFileRoute('/manager/organizations/$id/')({
+export const Route = createFileRoute('/manager/$orgSlug/organizations/$id/')({
   component: RouteComponent,
 });
 

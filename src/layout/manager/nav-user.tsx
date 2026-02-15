@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import {
   BookOpenIcon,
   ChevronsUpDownIcon,
@@ -45,6 +45,7 @@ export function NavUser() {
   const session = authClient.useSession();
   const { setOpenMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
+  const { orgSlug } = useParams({ strict: false });
 
   const user = {
     avatar: session.data?.user.image ?? undefined,
@@ -101,7 +102,8 @@ export function NavUser() {
               <DropdownMenuItem
                 render={
                   <Link
-                    to="/manager/account"
+                    to="/manager/$orgSlug/account"
+                    params={{ orgSlug: orgSlug! }}
                     onClick={() => setOpenMobile(false)}
                   />
                 }

@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -25,6 +25,7 @@ export const PageLocationNew = () => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
+  const { orgSlug } = useParams({ strict: false });
   const form = useForm({
     resolver: zodResolver(zFormFieldsLocation()),
     values: {
@@ -45,7 +46,8 @@ export const PageLocationNew = () => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/locations',
+            to: '/app/$orgSlug/account/locations',
+            params: { orgSlug: orgSlug! },
             replace: true,
             ignoreBlocker: true,
           });

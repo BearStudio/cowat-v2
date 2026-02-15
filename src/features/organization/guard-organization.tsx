@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { ReactNode, useEffect } from 'react';
 
 import { orpc } from '@/lib/orpc/client';
@@ -8,7 +9,14 @@ import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/features/auth/client';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
 
-const useAutoSetActiveOrg = () => {
+export const GuardOrganization = ({
+  orgSlug,
+  children,
+}: {
+  orgSlug?: string;
+  children?: ReactNode;
+}) => {
+  const navigate = useNavigate();
   const session = authClient.useSession();
   const activeOrgId = session.data?.session?.activeOrganizationId;
 
@@ -17,22 +25,23 @@ const useAutoSetActiveOrg = () => {
     enabled: !!session.data?.user,
   });
 
+  const targetOrg = orgSlug
+    ? orgsQuery.data?.find((org) => org.slug === orgSlug)
+    : orgsQuery.data?.[0];
+
+  // Set the target org as active if it's not already
   useEffect(() => {
-    if (orgsQuery.data && orgsQuery.data.length > 0 && !activeOrgId) {
-      const firstOrg = orgsQuery.data[0];
-      if (firstOrg) {
-        authClient.organization.setActive({
-          organizationId: firstOrg.id,
-        });
-      }
+    if (targetOrg && targetOrg.id !== activeOrgId) {
+      authClient.organization.setActive({ organizationId: targetOrg.id });
     }
-  }, [orgsQuery.data, activeOrgId]);
+  }, [targetOrg, activeOrgId]);
 
-  return { orgsQuery, activeOrgId };
-};
-
-export const GuardOrganization = ({ children }: { children?: ReactNode }) => {
-  const { orgsQuery, activeOrgId } = useAutoSetActiveOrg();
+  // Redirect to /app if slug doesn't match any user org
+  useEffect(() => {
+    if (orgSlug && orgsQuery.data && !targetOrg) {
+      navigate({ to: '/app', replace: true });
+    }
+  }, [orgSlug, orgsQuery.data, targetOrg, navigate]);
 
   if (orgsQuery.isPending) {
     return <Spinner full className="opacity-60" />;
@@ -42,7 +51,11 @@ export const GuardOrganization = ({ children }: { children?: ReactNode }) => {
     return <PageNoOrganization />;
   }
 
-  if (!activeOrgId) {
+  if (!targetOrg) {
+    return <Spinner full className="opacity-60" />;
+  }
+
+  if (targetOrg.id !== activeOrgId) {
     return <Spinner full className="opacity-60" />;
   }
 

@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useParams, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
 import { FormStateSubscribe, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,7 @@ export const PageLocationUpdate = (props: { params: { id: string } }) => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
+  const { orgSlug } = useParams({ strict: false });
 
   const locationQuery = useQuery(
     orpc.location.getById.queryOptions({ input: { id: props.params.id } })
@@ -52,7 +53,8 @@ export const PageLocationUpdate = (props: { params: { id: string } }) => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/locations',
+            to: '/app/$orgSlug/account/locations',
+            params: { orgSlug: orgSlug! },
             replace: true,
             ignoreBlocker: true,
           });

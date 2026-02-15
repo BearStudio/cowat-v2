@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BuildingIcon,
@@ -32,6 +32,7 @@ import { NavUser } from '@/layout/manager/nav-user';
 
 export const NavSidebar = (props: { children?: ReactNode }) => {
   const { t } = useTranslation(['layout']);
+  const { orgSlug } = useParams({ strict: false });
   return (
     <SidebarProvider>
       <Sidebar>
@@ -42,7 +43,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
                 <SidebarMenuButton
                   className="h-auto"
                   render={
-                    <Link to="/manager">
+                    <Link to="/manager/$orgSlug" params={{ orgSlug: orgSlug! }}>
                       <span>
                         <Logo className="w-24 group-data-[collapsible=icon]:w-18" />
                       </span>
@@ -71,7 +72,10 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <Link to="/manager/stats">
+                  <Link
+                    to="/manager/$orgSlug/stats"
+                    params={{ orgSlug: orgSlug! }}
+                  >
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
@@ -102,7 +106,10 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <Link to="/manager/users">
+                    <Link
+                      to="/manager/$orgSlug/users"
+                      params={{ orgSlug: orgSlug! }}
+                    >
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}
@@ -117,7 +124,10 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
                     </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link to="/manager/organizations">
+                    <Link
+                      to="/manager/$orgSlug/organizations"
+                      params={{ orgSlug: orgSlug! }}
+                    >
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}

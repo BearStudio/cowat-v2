@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { BuildingIcon, CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +21,7 @@ export const OrgSwitcher = () => {
   const { t } = useTranslation(['organization']);
   const session = authClient.useSession();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const orgsQuery = useQuery(
     orpc.organization.getMyOrganizations.queryOptions()
@@ -28,11 +30,23 @@ export const OrgSwitcher = () => {
   const activeOrgId = session.data?.session?.activeOrganizationId;
   const activeOrg = orgsQuery.data?.find((org) => org.id === activeOrgId);
 
-  const handleSwitch = async (organizationId: string) => {
-    if (organizationId === activeOrgId) return;
+  const handleSwitch = async (org: { id: string; slug: string }) => {
+    if (org.id === activeOrgId) return;
 
-    await authClient.organization.setActive({ organizationId });
+    await authClient.organization.setActive({ organizationId: org.id });
     await session.refetch();
+
+    // If in app or manager route, navigate to the new org's URL
+    const currentPath = router.state.location.pathname;
+    const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
+    if (currentPath.match(orgSlugPattern)) {
+      const newPath = currentPath.replace(
+        orgSlugPattern,
+        (_, prefix) => `/${prefix}/${org.slug}`
+      );
+      router.navigate({ to: newPath as string, replace: true });
+    }
+
     // Invalidate all queries since data is org-scoped
     await queryClient.invalidateQueries();
   };
@@ -66,7 +80,7 @@ export const OrgSwitcher = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {orgsQuery.data.map((org) => (
-            <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org.id)}>
+            <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org)}>
               <span className="flex-1 truncate">{org.name}</span>
               {org.id === activeOrgId && (
                 <CheckIcon className="size-4 text-primary" />
