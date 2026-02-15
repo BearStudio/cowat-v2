@@ -33,10 +33,8 @@ export const PageCommuteTemplateNew = () => {
     defaultValues: {
       seats: 1,
       type: 'ROUND',
-      outwardTime: '',
-      inwardTime: null,
       comment: null,
-      stops: [{ locationId: '', order: 0 }],
+      stops: [{ locationId: '', order: 0, outwardTime: '', inwardTime: null }],
     },
   });
 

@@ -118,10 +118,11 @@ export const PageCommuteTemplates = () => {
                       </Link>
                     </DataListText>
                     <DataListText className="text-xs text-muted-foreground">
-                      {item.type} &middot; {item.outwardTime}
-                      {item.inwardTime
-                        ? ` / ${item.inwardTime}`
-                        : ''} &middot; {item.seats} seats
+                      {item.type} &middot;{' '}
+                      {t('commuteTemplate:list.stops', {
+                        count: item._count.stops,
+                      })}{' '}
+                      &middot; {item.seats} seats
                     </DataListText>
                   </DataListCell>
                   <DataListCell className="flex-none">
