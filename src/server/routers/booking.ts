@@ -7,6 +7,7 @@ import {
   zBookingRequest,
 } from '@/features/booking/schema';
 import { validateStatusTransition } from '@/features/booking/status-machine';
+import { Prisma } from '@/server/db/generated/client';
 import { protectedProcedure } from '@/server/orpc';
 
 const tags = ['bookings'];
@@ -314,7 +315,7 @@ export default {
             driverId: context.user.id,
           },
         },
-      };
+      } satisfies Prisma.PassengersOnStopsWhereInput;
 
       const include = {
         passenger: { select: { id: true, name: true, image: true } },
@@ -333,7 +334,7 @@ export default {
             },
           },
         },
-      };
+      } satisfies Prisma.PassengersOnStopsInclude;
 
       const [total, items] = await Promise.all([
         context.db.passengersOnStops.count({ where }),
