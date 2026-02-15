@@ -19,6 +19,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import { ButtonLink } from '@/components/ui/button-link';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
@@ -127,14 +128,28 @@ export const PageDashboard = () => {
                 return (
                   <div key={key} className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-sm font-semibold">
+                      <h2
+                        className={
+                          isToday
+                            ? 'text-base font-bold'
+                            : 'text-sm font-semibold'
+                        }
+                      >
                         {day.format('dddd DD/MM')}
                       </h2>
                       {isToday && (
-                        <Badge variant="positive" size="sm">
-                          {t('dashboard:today')}
-                        </Badge>
+                        <Badge variant="positive">{t('dashboard:today')}</Badge>
                       )}
+                      <ButtonLink
+                        variant="ghost"
+                        size={isToday ? 'sm' : 'xs'}
+                        className="ml-auto"
+                        to="/app/commutes/new"
+                        search={{ date: day.toDate() }}
+                      >
+                        <PlusIcon />
+                        {t('dashboard:newCommuteAction')}
+                      </ButtonLink>
                     </div>
 
                     {dayCommutes.length === 0 ? (

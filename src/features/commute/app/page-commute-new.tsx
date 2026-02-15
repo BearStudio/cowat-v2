@@ -34,7 +34,7 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
   stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
 };
 
-export const PageCommuteNew = () => {
+export const PageCommuteNew = ({ date }: { date?: Date }) => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -42,7 +42,7 @@ export const PageCommuteNew = () => {
 
   const form = useForm<FormFieldsCommute>({
     resolver: zodResolver(zFormFieldsCommute()),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: { ...DEFAULT_VALUES, date },
   });
 
   const commuteCreate = useMutation(
@@ -85,7 +85,7 @@ export const PageCommuteNew = () => {
           </Button>
           <TemplatePicker
             onSelect={(data) => {
-              form.reset({ ...DEFAULT_VALUES, ...data });
+              form.reset({ ...DEFAULT_VALUES, date, ...data });
               setShowForm(true);
             }}
           />
