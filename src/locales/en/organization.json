@@ -62,7 +62,9 @@
       "noMembers": "No members",
       "expiresAt": "Expires {{time}}",
       "invitationCancelled": "Invitation cancelled",
-      "cancelInvitationError": "Failed to cancel invitation"
+      "cancelInvitationError": "Failed to cancel invitation",
+      "invitationSent": "Invitation sent",
+      "invitationError": "Failed to send invitation"
     }
   }
 }

@@ -302,6 +302,33 @@ export default {
       return result;
     }),
 
+  adminInviteMember: protectedProcedure({
+    permission: { user: ['create'] },
+  })
+    .route({
+      method: 'POST',
+      path: '/organizations/{organizationId}/invite',
+      tags,
+    })
+    .input(
+      z.object({
+        organizationId: z.string(),
+        email: z.string().email(),
+        role: z.enum(['admin', 'member']).prefault('member'),
+      })
+    )
+    .output(z.void())
+    .handler(async ({ input }) => {
+      await auth.api.createInvitation({
+        headers: getRequestHeaders(),
+        body: {
+          email: input.email,
+          role: input.role,
+          organizationId: input.organizationId,
+        },
+      });
+    }),
+
   inviteMember: organizationProcedure({ permission: null })
     .route({
       method: 'POST',

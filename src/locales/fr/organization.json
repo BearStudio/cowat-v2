@@ -62,7 +62,9 @@
       "noMembers": "Aucun membre",
       "expiresAt": "Expire {{time}}",
       "invitationCancelled": "Invitation annulée",
-      "cancelInvitationError": "Impossible d'annuler l'invitation"
+      "cancelInvitationError": "Impossible d'annuler l'invitation",
+      "invitationSent": "Invitation envoyée",
+      "invitationError": "Impossible d'envoyer l'invitation"
     }
   }
 }

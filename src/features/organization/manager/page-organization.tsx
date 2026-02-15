@@ -1,4 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ORPCError } from '@orpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -6,16 +7,23 @@ import {
   AlertCircleIcon,
   BuildingIcon,
   MailIcon,
+  PlusIcon,
   UsersIcon,
   XIcon,
 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
 import { PageError } from '@/components/errors/page-error';
+import { Form } from '@/components/form/form';
+import { FormField } from '@/components/form/form-field';
+import { FormFieldController } from '@/components/form/form-field-controller';
+import { FormFieldLabel } from '@/components/form/form-field-label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -202,6 +210,75 @@ const OrgMembers = (props: {
   );
 };
 
+const zInviteForm = z.object({
+  email: z.string().email(),
+  role: z.enum(['admin', 'member']),
+});
+
+const InviteForm = (props: { orgId: string }) => {
+  const { t } = useTranslation(['organization']);
+  const queryClient = useQueryClient();
+
+  const form = useForm<z.infer<typeof zInviteForm>>({
+    resolver: zodResolver(zInviteForm),
+    defaultValues: { email: '', role: 'member' },
+  });
+
+  const invite = useMutation({
+    mutationFn: (data: z.infer<typeof zInviteForm>) =>
+      orpc.organization.adminInviteMember.call({
+        organizationId: props.orgId,
+        ...data,
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: orpc.organization.getById.key({
+          input: { id: props.orgId },
+        }),
+      });
+      toast.success(t('organization:manager.detail.invitationSent'));
+      form.reset();
+    },
+    onError: () => {
+      toast.error(t('organization:manager.detail.invitationError'));
+    },
+  });
+
+  return (
+    <Form
+      {...form}
+      onSubmit={(data) => invite.mutate(data)}
+      className="flex items-end gap-2"
+    >
+      <FormField className="flex-1">
+        <FormFieldLabel>{t('organization:members.email')}</FormFieldLabel>
+        <FormFieldController
+          control={form.control}
+          type="email"
+          name="email"
+          placeholder="user@example.com"
+        />
+      </FormField>
+      <FormField>
+        <FormFieldLabel>{t('organization:members.role')}</FormFieldLabel>
+        <FormFieldController
+          control={form.control}
+          type="select"
+          name="role"
+          items={[
+            { label: t('organization:members.roles.member'), value: 'member' },
+            { label: t('organization:members.roles.admin'), value: 'admin' },
+          ]}
+        />
+      </FormField>
+      <Button type="submit" size="sm" loading={invite.isPending}>
+        <PlusIcon className="size-4" />
+        {t('organization:members.invite')}
+      </Button>
+    </Form>
+  );
+};
+
 const OrgInvitations = (props: {
   orgId: string;
   invitations: Array<{
@@ -232,63 +309,66 @@ const OrgInvitations = (props: {
   });
 
   return (
-    <DataList>
-      <DataListRow>
-        <DataListCell>
-          <h2 className="text-sm font-medium">
-            {t('organization:invitations.title')}
-          </h2>
-        </DataListCell>
-      </DataListRow>
-      {!props.invitations.length ? (
-        <DataListEmptyState className="min-h-20">
-          {t('organization:invitations.empty')}
-        </DataListEmptyState>
-      ) : (
-        props.invitations.map((invitation) => (
-          <DataListRow
-            key={invitation.id}
-            className="max-md:flex-col max-md:py-2 max-md:[&>div]:py-1"
-          >
-            <DataListCell className="flex-none">
-              <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
-                <MailIcon className="size-4 text-neutral-500" />
-              </div>
-            </DataListCell>
-            <DataListCell>
-              <DataListText className="font-medium">
-                {invitation.email}
-              </DataListText>
-              <DataListText className="text-xs text-muted-foreground">
-                {t('organization:manager.detail.expiresAt', {
-                  time: dayjs(invitation.expiresAt).fromNow(),
-                })}
-              </DataListText>
-            </DataListCell>
-            <DataListCell className="flex-none">
-              {invitation.role && (
-                <Badge variant="secondary">
-                  {t(
-                    // @ts-expect-error -- dynamic i18n key
-                    `organization:members.roles.${invitation.role}`
-                  )}
-                </Badge>
-              )}
-            </DataListCell>
-            <DataListCell className="flex-none">
-              <Button
-                size="xs"
-                variant="ghost"
-                loading={cancelInvitation.isPending}
-                onClick={() => cancelInvitation.mutate(invitation.id)}
-              >
-                <XIcon className="size-3" />
-                {t('organization:invitations.cancel')}
-              </Button>
-            </DataListCell>
-          </DataListRow>
-        ))
-      )}
-    </DataList>
+    <div className="flex flex-col gap-4">
+      <InviteForm orgId={props.orgId} />
+      <DataList>
+        <DataListRow>
+          <DataListCell>
+            <h2 className="text-sm font-medium">
+              {t('organization:invitations.title')}
+            </h2>
+          </DataListCell>
+        </DataListRow>
+        {!props.invitations.length ? (
+          <DataListEmptyState className="min-h-20">
+            {t('organization:invitations.empty')}
+          </DataListEmptyState>
+        ) : (
+          props.invitations.map((invitation) => (
+            <DataListRow
+              key={invitation.id}
+              className="max-md:flex-col max-md:py-2 max-md:[&>div]:py-1"
+            >
+              <DataListCell className="flex-none">
+                <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
+                  <MailIcon className="size-4 text-neutral-500" />
+                </div>
+              </DataListCell>
+              <DataListCell>
+                <DataListText className="font-medium">
+                  {invitation.email}
+                </DataListText>
+                <DataListText className="text-xs text-muted-foreground">
+                  {t('organization:manager.detail.expiresAt', {
+                    time: dayjs(invitation.expiresAt).fromNow(),
+                  })}
+                </DataListText>
+              </DataListCell>
+              <DataListCell className="flex-none">
+                {invitation.role && (
+                  <Badge variant="secondary">
+                    {t(
+                      // @ts-expect-error -- dynamic i18n key
+                      `organization:members.roles.${invitation.role}`
+                    )}
+                  </Badge>
+                )}
+              </DataListCell>
+              <DataListCell className="flex-none">
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  loading={cancelInvitation.isPending}
+                  onClick={() => cancelInvitation.mutate(invitation.id)}
+                >
+                  <XIcon className="size-3" />
+                  {t('organization:invitations.cancel')}
+                </Button>
+              </DataListCell>
+            </DataListRow>
+          ))
+        )}
+      </DataList>
+    </div>
   );
 };

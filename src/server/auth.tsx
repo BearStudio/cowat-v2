@@ -112,7 +112,7 @@ export const auth = betterAuth({
               language={getUserLanguage()}
               organizationName={org.name}
               inviterName={inviter.user.name}
-              acceptUrl={`${envClient.VITE_BASE_URL}/app/invitations/${invitation.id}`}
+              acceptUrl={`${envClient.VITE_BASE_URL}/invitations/${invitation.id}`}
             />
           ),
         });

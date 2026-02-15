@@ -7,6 +7,7 @@ import { orpc } from '@/lib/orpc/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -59,18 +60,20 @@ export const OrgSwitcher = () => {
         <ChevronsUpDownIcon className="size-4 shrink-0 text-neutral-400" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-56" align="start" sideOffset={4}>
-        <DropdownMenuLabel>
-          {t('organization:switcher.label')}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {orgsQuery.data.map((org) => (
-          <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org.id)}>
-            <span className="flex-1 truncate">{org.name}</span>
-            {org.id === activeOrgId && (
-              <CheckIcon className="size-4 text-primary" />
-            )}
-          </DropdownMenuItem>
-        ))}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            {t('organization:switcher.label')}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {orgsQuery.data.map((org) => (
+            <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org.id)}>
+              <span className="flex-1 truncate">{org.name}</span>
+              {org.id === activeOrgId && (
+                <CheckIcon className="size-4 text-primary" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
