@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { ExternalLinkIcon, MapPinIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -33,9 +33,12 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocations = () => {
+export const PageLocations = ({
+  params: { orgSlug },
+}: {
+  params: { orgSlug: string };
+}) => {
   const { t } = useTranslation(['location', 'common']);
-  const { orgSlug } = useParams({ strict: false });
 
   const locationsQuery = useInfiniteQuery(
     orpc.location.getAll.infiniteOptions({
@@ -77,7 +80,7 @@ export const PageLocations = () => {
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/locations/new"
-            params={{ orgSlug: orgSlug! }}
+            params={{ orgSlug }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -111,7 +114,7 @@ export const PageLocations = () => {
                     <DataListText className="font-medium">
                       <Link
                         to="/app/$orgSlug/account/locations/$id/update"
-                        params={{ orgSlug: orgSlug!, id: item.id }}
+                        params={{ orgSlug, id: item.id }}
                       >
                         {item.name}
                         <span className="absolute inset-0" />

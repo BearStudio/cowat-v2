@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { Logo } from '@/components/brand/logo';
@@ -6,10 +6,9 @@ import { Logo } from '@/components/brand/logo';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { getMainNavLinks, NavLinkItem } from '@/layout/app/main-nav-config';
 
-export const MainNavDesktop = () => {
+export const MainNavDesktop = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['layout']);
-  const { orgSlug } = useParams({ strict: false });
-  const navLinks = getMainNavLinks(orgSlug ?? '');
+  const navLinks = getMainNavLinks(orgSlug);
   const HEIGHT = 'calc(56px + env(safe-area-inset-top))';
   return (
     <div className="hidden md:flex">
@@ -24,7 +23,7 @@ export const MainNavDesktop = () => {
       >
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <Link to="/app/$orgSlug" params={{ orgSlug: orgSlug ?? '' }}>
+            <Link to="/app/$orgSlug" params={{ orgSlug }}>
               <Logo className="w-24" />
             </Link>
             <OrgSwitcher />

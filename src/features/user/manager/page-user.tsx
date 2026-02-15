@@ -6,12 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import {
-  Link,
-  useCanGoBack,
-  useParams,
-  useRouter,
-} from '@tanstack/react-router';
+import { Link, useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -54,13 +49,15 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageUser = (props: { params: { id: string } }) => {
+export const PageUser = (props: {
+  params: { orgSlug: string; id: string };
+}) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const session = authClient.useSession();
   const { t } = useTranslation(['user']);
-  const { orgSlug } = useParams({ strict: false });
+  const { orgSlug } = props.params;
   const userQuery = useQuery(
     orpc.user.getById.queryOptions({
       input: { id: props.params.id },
@@ -186,7 +183,7 @@ export const PageUser = (props: { params: { id: string } }) => {
                     <WithPermissions permissions={[{ user: ['set-role'] }]}>
                       <Link
                         to="/manager/$orgSlug/users/$id/update"
-                        params={{ orgSlug: orgSlug!, ...props.params }}
+                        params={props.params}
                         className="-m-2 self-start"
                       >
                         <Button

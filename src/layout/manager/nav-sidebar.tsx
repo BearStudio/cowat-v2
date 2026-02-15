@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BuildingIcon,
@@ -30,9 +30,12 @@ import { WithPermissions } from '@/features/auth/with-permission';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
 
-export const NavSidebar = (props: { children?: ReactNode }) => {
+export const NavSidebar = (props: {
+  orgSlug: string;
+  children?: ReactNode;
+}) => {
   const { t } = useTranslation(['layout']);
-  const { orgSlug } = useParams({ strict: false });
+  const { orgSlug } = props;
   return (
     <SidebarProvider>
       <Sidebar>
@@ -43,7 +46,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
                 <SidebarMenuButton
                   className="h-auto"
                   render={
-                    <Link to="/manager/$orgSlug" params={{ orgSlug: orgSlug! }}>
+                    <Link to="/manager/$orgSlug" params={{ orgSlug }}>
                       <span>
                         <Logo className="w-24 group-data-[collapsible=icon]:w-18" />
                       </span>
@@ -72,10 +75,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <Link
-                    to="/manager/$orgSlug/stats"
-                    params={{ orgSlug: orgSlug! }}
-                  >
+                  <Link to="/manager/$orgSlug/stats" params={{ orgSlug }}>
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
@@ -106,10 +106,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <Link
-                      to="/manager/$orgSlug/users"
-                      params={{ orgSlug: orgSlug! }}
-                    >
+                    <Link to="/manager/$orgSlug/users" params={{ orgSlug }}>
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}
@@ -126,7 +123,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
                   <SidebarMenuItem>
                     <Link
                       to="/manager/$orgSlug/organizations"
-                      params={{ orgSlug: orgSlug! }}
+                      params={{ orgSlug }}
                     >
                       {({ isActive }) => (
                         <SidebarMenuButton
@@ -147,7 +144,7 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
           </WithPermissions>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser />
+          <NavUser orgSlug={orgSlug} />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>{props.children}</SidebarInset>

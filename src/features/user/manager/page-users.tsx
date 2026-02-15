@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Link, useParams, useRouter } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,10 +32,13 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageUsers = (props: { search: { searchTerm?: string } }) => {
+export const PageUsers = (props: {
+  params: { orgSlug: string };
+  search: { searchTerm?: string };
+}) => {
   const { t } = useTranslation(['user']);
   const router = useRouter();
-  const { orgSlug } = useParams({ strict: false });
+  const { orgSlug } = props.params;
 
   const searchInputProps = {
     value: props.search.searchTerm ?? '',
@@ -84,7 +87,7 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
             variant="secondary"
             size="sm"
             to="/manager/$orgSlug/users/new"
-            params={{ orgSlug: orgSlug! }}
+            params={{ orgSlug }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -152,7 +155,7 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
                       <DataListText className="font-medium">
                         <Link
                           to="/manager/$orgSlug/users/$id"
-                          params={{ orgSlug: orgSlug!, id: item.id }}
+                          params={{ orgSlug, id: item.id }}
                         >
                           {item.name}
                           <span className="absolute inset-0" />

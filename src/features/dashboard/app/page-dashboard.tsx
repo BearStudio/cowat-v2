@@ -1,6 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -34,9 +33,12 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageDashboard = () => {
+export const PageDashboard = ({
+  params: { orgSlug },
+}: {
+  params: { orgSlug: string };
+}) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
-  const { orgSlug } = useParams({ strict: false });
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
   const [bookingStopId, setBookingStopId] = useState<string | null>(null);
@@ -106,7 +108,7 @@ export const PageDashboard = () => {
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            params={{ orgSlug: orgSlug! }}
+            params={{ orgSlug }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -147,7 +149,7 @@ export const PageDashboard = () => {
                         size={isToday ? 'sm' : 'xs'}
                         className="ml-auto"
                         to="/app/$orgSlug/commutes/new"
-                        params={{ orgSlug: orgSlug! }}
+                        params={{ orgSlug }}
                         search={{ date: day.toDate() }}
                       >
                         <PlusIcon />
