@@ -17,6 +17,7 @@ import {
   FormFieldsCommuteTemplate,
   zFormFieldsCommuteTemplate,
 } from '@/features/commute-template/schema';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -27,7 +28,7 @@ import {
 export const PageCommuteTemplateNew = ({
   params: { orgSlug },
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
 }) => {
   const { t } = useTranslation(['commuteTemplate']);
   const router = useRouter();

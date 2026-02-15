@@ -10,17 +10,14 @@ import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
   PageLayoutTopBar,
 } from '@/layout/app/page-layout';
 
-export const PageAccount = ({
-  params: { orgSlug },
-}: {
-  params: { orgSlug: string };
-}) => {
+export const PageAccount = ({ params: { orgSlug } }: { params: OrgParams }) => {
   const { t } = useTranslation(['account']);
 
   return (

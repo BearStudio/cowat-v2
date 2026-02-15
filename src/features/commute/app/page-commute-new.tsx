@@ -20,6 +20,7 @@ import {
   FormFieldsCommute,
   zFormFieldsCommute,
 } from '@/features/commute/schema';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -38,7 +39,7 @@ export const PageCommuteNew = ({
   params: { orgSlug },
   search,
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
   search: { date?: Date };
 }) => {
   const { t } = useTranslation(['commute']);

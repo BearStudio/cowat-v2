@@ -25,6 +25,7 @@ import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -35,7 +36,7 @@ import {
 export const PageCommuteTemplates = ({
   params: { orgSlug },
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
 }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();

@@ -30,6 +30,7 @@ import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button
 import { authClient } from '@/features/auth/client';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -40,7 +41,7 @@ import {
 export const PageCommutes = ({
   params: { orgSlug },
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
   const session = authClient.useSession();

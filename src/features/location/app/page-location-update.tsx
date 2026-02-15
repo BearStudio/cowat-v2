@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { FormLocation } from '@/features/location/app/form-location';
 import { zFormFieldsLocation } from '@/features/location/schema';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -25,7 +26,7 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageLocationUpdate = (props: {
-  params: { orgSlug: string; id: string };
+  params: OrgParams & { id: string };
 }) => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
