@@ -8,6 +8,7 @@ import {
   zStop,
   zStopInput,
 } from '@/features/commute/schema';
+import { Prisma } from '@/server/db/generated/browser';
 import { protectedProcedure } from '@/server/orpc';
 
 const tags = ['commutes'];
@@ -124,13 +125,13 @@ export default {
             stops: {
               some: {
                 passengers: {
-                  some: { passengerId: context.user.id },
+                  some: { passengerId: context.user.id, status: 'ACCEPTED' },
                 },
               },
             },
           },
         ],
-      };
+      } satisfies Prisma.CommuteWhereInput;
 
       const include = {
         driver: { select: { id: true, name: true, image: true } },

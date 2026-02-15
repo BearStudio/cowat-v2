@@ -229,7 +229,7 @@ describe('commute router', () => {
                 stops: {
                   some: {
                     passengers: {
-                      some: { passengerId: mockUser.id },
+                      some: { passengerId: mockUser.id, status: 'ACCEPTED' },
                     },
                   },
                 },

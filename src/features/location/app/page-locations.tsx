@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { ExternalLinkIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { ExternalLinkIcon, MapPinIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -12,12 +12,17 @@ import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-draw
 import {
   DataList,
   DataListCell,
-  DataListEmptyState,
   DataListErrorState,
   DataListLoadingState,
   DataListRow,
   DataListText,
 } from '@/components/ui/datalist';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
@@ -81,90 +86,95 @@ export const PageLocations = () => {
         </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
-        <DataList>
-          {ui
-            .match('pending', () => <DataListLoadingState />)
-            .match('error', () => (
-              <DataListErrorState retry={() => locationsQuery.refetch()} />
-            ))
-            .match('empty', () => <DataListEmptyState />)
-            .match('default', ({ items }) => (
-              <>
-                {items.map((item) => (
-                  <DataListRow key={item.id} role="row" withHover>
-                    <DataListCell>
-                      <DataListText className="font-medium">
-                        <Link
-                          to="/app/account/locations/$id/update"
-                          params={{ id: item.id }}
-                        >
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </Link>
-                      </DataListText>
-                      <DataListText className="text-xs text-muted-foreground">
-                        {item.address}
-                      </DataListText>
-                    </DataListCell>
-                    <DataListCell className="flex-none">
+        {ui
+          .match('pending', () => <DataListLoadingState />)
+          .match('error', () => (
+            <DataListErrorState retry={() => locationsQuery.refetch()} />
+          ))
+          .match('empty', () => (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MapPinIcon />
+                </EmptyMedia>
+                <EmptyTitle>{t('location:list.emptyState')}</EmptyTitle>
+              </EmptyHeader>
+            </Empty>
+          ))
+          .match('default', ({ items }) => (
+            <DataList>
+              {items.map((item) => (
+                <DataListRow key={item.id} role="row" withHover>
+                  <DataListCell>
+                    <DataListText className="font-medium">
+                      <Link
+                        to="/app/account/locations/$id/update"
+                        params={{ id: item.id }}
+                      >
+                        {item.name}
+                        <span className="absolute inset-0" />
+                      </Link>
+                    </DataListText>
+                    <DataListText className="text-xs text-muted-foreground">
+                      {item.address}
+                    </DataListText>
+                  </DataListCell>
+                  <DataListCell className="flex-none">
+                    <ResponsiveIconButton
+                      variant="ghost"
+                      size="sm"
+                      nativeButton={false}
+                      className="relative z-10"
+                      label={t('location:list.mapsAction')}
+                      render={
+                        <a
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(item.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        />
+                      }
+                    >
+                      <ExternalLinkIcon className="size-4" />
+                    </ResponsiveIconButton>
+                  </DataListCell>
+                  <DataListCell className="flex-none">
+                    <ConfirmResponsiveDrawer
+                      description={t('location:list.deleteConfirmDescription')}
+                      confirmText={t('common:actions.delete')}
+                      confirmVariant="destructive"
+                      onConfirm={() =>
+                        locationDelete.mutateAsync({ id: item.id })
+                      }
+                    >
                       <ResponsiveIconButton
                         variant="ghost"
                         size="sm"
-                        nativeButton={false}
                         className="relative z-10"
-                        label={t('location:list.mapsAction')}
-                        render={
-                          <a
-                            href={`https://www.google.com/maps/search/${encodeURIComponent(item.address)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          />
-                        }
+                        label={t('common:actions.delete')}
                       >
-                        <ExternalLinkIcon className="size-4" />
+                        <Trash2 />
                       </ResponsiveIconButton>
-                    </DataListCell>
-                    <DataListCell className="flex-none">
-                      <ConfirmResponsiveDrawer
-                        description={t(
-                          'location:list.deleteConfirmDescription'
-                        )}
-                        confirmText={t('common:actions.delete')}
-                        confirmVariant="destructive"
-                        onConfirm={() =>
-                          locationDelete.mutateAsync({ id: item.id })
-                        }
-                      >
-                        <ResponsiveIconButton
-                          variant="ghost"
-                          size="sm"
-                          className="relative z-10"
-                          label={t('common:actions.delete')}
-                        >
-                          <Trash2 />
-                        </ResponsiveIconButton>
-                      </ConfirmResponsiveDrawer>
-                    </DataListCell>
-                  </DataListRow>
-                ))}
-                {locationsQuery.hasNextPage && (
-                  <DataListRow>
-                    <DataListCell className="flex-none">
-                      <Button
-                        size="xs"
-                        variant="secondary"
-                        onClick={() => locationsQuery.fetchNextPage()}
-                        loading={locationsQuery.isFetchingNextPage}
-                      >
-                        {t('location:list.loadMore')}
-                      </Button>
-                    </DataListCell>
-                  </DataListRow>
-                )}
-              </>
-            ))
-            .exhaustive()}
-        </DataList>
+                    </ConfirmResponsiveDrawer>
+                  </DataListCell>
+                </DataListRow>
+              ))}
+              {locationsQuery.hasNextPage && (
+                <DataListRow>
+                  <DataListCell className="flex-none">
+                    <Button
+                      size="xs"
+                      variant="secondary"
+                      onClick={() => locationsQuery.fetchNextPage()}
+                      loading={locationsQuery.isFetchingNextPage}
+                    >
+                      {t('location:list.loadMore')}
+                    </Button>
+                  </DataListCell>
+                </DataListRow>
+              )}
+            </DataList>
+          ))
+          .exhaustive()}
       </PageLayoutContent>
     </PageLayout>
   );
