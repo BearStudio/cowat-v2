@@ -7,27 +7,6 @@
     "emptyState": "No templates yet",
     "loadMore": "Load more",
     "stops": "{{count}} stop",
-    "stops_other": "{{count}} stops",
-    "seats": "{{count}} seat",
-    "seats_other": "{{count}} seats"
-  },
-  "new": {
-    "title": "New Template",
-    "submitButton": "Create"
-  },
-  "update": {
-    "submitButton": "Save"
-  },
-  "form": {
-    "name": "Name",
-    "seats": "Seats",
-    "roundTrip": "Round trip",
-    "outwardTime": "Outward time",
-    "inwardTime": "Inward time",
-    "comment": "Comment",
-    "commentPlaceholder": "Optional comment...",
-    "stops": "Stops",
-    "addStop": "Add stop",
-    "stopIndex": "Stop {{index}}"
+    "stops_other": "{{count}} stops"
   }
 }

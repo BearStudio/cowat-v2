@@ -7,27 +7,6 @@
     "emptyState": "Aucun modèle pour le moment",
     "loadMore": "Charger plus",
     "stops": "{{count}} arrêt",
-    "stops_other": "{{count}} arrêts",
-    "seats": "{{count}} place",
-    "seats_other": "{{count}} places"
-  },
-  "new": {
-    "title": "Nouveau modèle",
-    "submitButton": "Créer"
-  },
-  "update": {
-    "submitButton": "Enregistrer"
-  },
-  "form": {
-    "name": "Nom",
-    "seats": "Places",
-    "roundTrip": "Aller-retour",
-    "outwardTime": "Heure aller",
-    "inwardTime": "Heure retour",
-    "comment": "Commentaire",
-    "commentPlaceholder": "Commentaire optionnel...",
-    "stops": "Arrêts",
-    "addStop": "Ajouter un arrêt",
-    "stopIndex": "Arrêt {{index}}"
+    "stops_other": "{{count}} arrêts"
   }
 }

@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { PlusIcon, RepeatIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -8,11 +8,14 @@ import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
+  DataList,
+  DataListCell,
   DataListErrorState,
   DataListLoadingState,
+  DataListRow,
+  DataListText,
 } from '@/components/ui/datalist';
 import {
   Empty,
@@ -23,8 +26,6 @@ import {
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
-import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
 import {
   PageLayout,
   PageLayoutContent,
@@ -34,7 +35,6 @@ import {
 
 export const PageCommuteTemplates = () => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
-  const navigate = useNavigate();
 
   const templatesQuery = useInfiniteQuery(
     orpc.commuteTemplate.getAll.infiniteOptions({
@@ -75,7 +75,8 @@ export const PageCommuteTemplates = () => {
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/account/commute-templates/new"
+            // TODO: remove cast when route is created
+            to={'/app/account/commute-templates/new' as never}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -102,73 +103,67 @@ export const PageCommuteTemplates = () => {
             </Empty>
           ))
           .match('default', ({ items }) => (
-            <div className="flex flex-col gap-3">
+            <DataList>
               {items.map((item) => (
-                <Card
-                  key={item.id}
-                  className="cursor-pointer"
-                  onClick={() =>
-                    navigate({
-                      to: '/app/account/commute-templates/$id/update' as never,
-                      params: { id: item.id } as never,
-                    })
-                  }
-                >
-                  <CardHeader>
-                    <CardCommuteTemplateHeader
-                      name={item.name}
-                      type={item.type}
-                      stopsCount={item.stops.length}
-                      seats={item.seats}
-                      actions={
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <ConfirmResponsiveDrawer
-                            description={t(
-                              'commuteTemplate:list.deleteConfirmDescription'
-                            )}
-                            confirmText={t('common:actions.delete')}
-                            confirmVariant="destructive"
-                            onConfirm={() =>
-                              templateDelete.mutateAsync({ id: item.id })
-                            }
-                          >
-                            <ResponsiveIconButton
-                              variant="ghost"
-                              size="sm"
-                              label={t('common:actions.delete')}
-                            >
-                              <Trash2 />
-                            </ResponsiveIconButton>
-                          </ConfirmResponsiveDrawer>
-                        </div>
-                      }
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col gap-2">
-                      {item.comment && (
-                        <p className="text-sm text-muted-foreground">
-                          {item.comment}
-                        </p>
+                <DataListRow key={item.id} role="row" withHover>
+                  <DataListCell>
+                    <DataListText className="font-medium">
+                      <Link
+                        // TODO: remove casts when route is created
+                        to={
+                          '/app/account/commute-templates/$id/update' as never
+                        }
+                        params={{ id: item.id } as never}
+                      >
+                        {item.name}
+                        <span className="absolute inset-0" />
+                      </Link>
+                    </DataListText>
+                    <DataListText className="text-xs text-muted-foreground">
+                      {item.type} &middot; {item.outwardTime}
+                      {item.inwardTime
+                        ? ` / ${item.inwardTime}`
+                        : ''} &middot; {item.seats} seats
+                    </DataListText>
+                  </DataListCell>
+                  <DataListCell className="flex-none">
+                    <ConfirmResponsiveDrawer
+                      description={t(
+                        'commuteTemplate:list.deleteConfirmDescription'
                       )}
-                      <CardCommuteStopsList stops={item.stops} />
-                    </div>
-                  </CardContent>
-                </Card>
+                      confirmText={t('common:actions.delete')}
+                      confirmVariant="destructive"
+                      onConfirm={() =>
+                        templateDelete.mutateAsync({ id: item.id })
+                      }
+                    >
+                      <ResponsiveIconButton
+                        variant="ghost"
+                        size="sm"
+                        className="relative z-10"
+                        label={t('common:actions.delete')}
+                      >
+                        <Trash2 />
+                      </ResponsiveIconButton>
+                    </ConfirmResponsiveDrawer>
+                  </DataListCell>
+                </DataListRow>
               ))}
               {templatesQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => templatesQuery.fetchNextPage()}
-                    loading={templatesQuery.isFetchingNextPage}
-                  >
-                    {t('commuteTemplate:list.loadMore')}
-                  </Button>
-                </div>
+                <DataListRow>
+                  <DataListCell className="flex-none">
+                    <Button
+                      size="xs"
+                      variant="secondary"
+                      onClick={() => templatesQuery.fetchNextPage()}
+                      loading={templatesQuery.isFetchingNextPage}
+                    >
+                      {t('commuteTemplate:list.loadMore')}
+                    </Button>
+                  </DataListCell>
+                </DataListRow>
               )}
-            </div>
+            </DataList>
           ))
           .exhaustive()}
       </PageLayoutContent>
