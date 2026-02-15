@@ -43,6 +43,7 @@ import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/
 import { Route as AppAccountLocationsNewIndexRouteImport } from './routes/app/account/locations/new.index'
 import { Route as AppAccountCommuteTemplatesNewIndexRouteImport } from './routes/app/account/commute-templates/new.index'
 import { Route as AppAccountLocationsIdUpdateIndexRouteImport } from './routes/app/account/locations/$id.update.index'
+import { Route as AppAccountCommuteTemplatesIdUpdateIndexRouteImport } from './routes/app/account/commute-templates/$id.update.index'
 
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
@@ -220,6 +221,12 @@ const AppAccountLocationsIdUpdateIndexRoute =
     path: '/account/locations/$id/update/',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppAccountCommuteTemplatesIdUpdateIndexRoute =
+  AppAccountCommuteTemplatesIdUpdateIndexRouteImport.update({
+    id: '/account/commute-templates/$id/update/',
+    path: '/account/commute-templates/$id/update/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/commute-templates/$id/update/': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
   '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesByTo {
@@ -288,6 +296,7 @@ export interface FileRoutesByTo {
   '/app/account/commute-templates/new': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/commute-templates/$id/update': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
   '/app/account/locations/$id/update': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesById {
@@ -325,6 +334,7 @@ export interface FileRoutesById {
   '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
+  '/app/account/commute-templates/$id/update/': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
   '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRouteTypes {
@@ -363,6 +373,7 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
+    | '/app/account/commute-templates/$id/update/'
     | '/app/account/locations/$id/update/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates/new'
     | '/app/account/locations/new'
     | '/manager/users/$id/update'
+    | '/app/account/commute-templates/$id/update'
     | '/app/account/locations/$id/update'
   id:
     | '__root__'
@@ -432,6 +444,7 @@ export interface FileRouteTypes {
     | '/app/account/commute-templates/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
+    | '/app/account/commute-templates/$id/update/'
     | '/app/account/locations/$id/update/'
   fileRoutesById: FileRoutesById
 }
@@ -690,6 +703,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountLocationsIdUpdateIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/account/commute-templates/$id/update/': {
+      id: '/app/account/commute-templates/$id/update/'
+      path: '/account/commute-templates/$id/update'
+      fullPath: '/app/account/commute-templates/$id/update/'
+      preLoaderRoute: typeof AppAccountCommuteTemplatesIdUpdateIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
@@ -703,6 +723,7 @@ interface AppRouteRouteChildren {
   AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
   AppAccountCommuteTemplatesNewIndexRoute: typeof AppAccountCommuteTemplatesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
+  AppAccountCommuteTemplatesIdUpdateIndexRoute: typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
   AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
 
@@ -717,6 +738,8 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountCommuteTemplatesNewIndexRoute:
     AppAccountCommuteTemplatesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
+  AppAccountCommuteTemplatesIdUpdateIndexRoute:
+    AppAccountCommuteTemplatesIdUpdateIndexRoute,
   AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }
 

@@ -15,6 +15,9 @@
     "title": "New Template",
     "submitButton": "Create"
   },
+  "update": {
+    "submitButton": "Save"
+  },
   "form": {
     "name": "Name",
     "seats": "Seats",

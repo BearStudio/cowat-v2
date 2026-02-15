@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon, RepeatIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -8,11 +8,7 @@ import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
-import {
-  CardCommute,
-  CardCommuteContent,
-  CardCommuteTrigger,
-} from '@/components/ui/card-commute';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataListErrorState,
@@ -38,6 +34,7 @@ import {
 
 export const PageCommuteTemplates = () => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
+  const navigate = useNavigate();
 
   const templatesQuery = useInfiniteQuery(
     orpc.commuteTemplate.getAll.infiniteOptions({
@@ -107,20 +104,19 @@ export const PageCommuteTemplates = () => {
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => (
-                <CardCommute key={item.id}>
-                  <CardCommuteTrigger>
+                <Card
+                  key={item.id}
+                  className="cursor-pointer"
+                  onClick={() =>
+                    navigate({
+                      to: '/app/account/commute-templates/$id/update' as never,
+                      params: { id: item.id } as never,
+                    })
+                  }
+                >
+                  <CardHeader>
                     <CardCommuteTemplateHeader
-                      name={
-                        <Link
-                          to={
-                            '/app/account/commute-templates/$id/update' as never
-                          }
-                          params={{ id: item.id } as never}
-                          className="relative z-10"
-                        >
-                          {item.name}
-                        </Link>
-                      }
+                      name={item.name}
                       type={item.type}
                       stopsCount={item.stops.length}
                       seats={item.seats}
@@ -147,8 +143,8 @@ export const PageCommuteTemplates = () => {
                         </div>
                       }
                     />
-                  </CardCommuteTrigger>
-                  <CardCommuteContent>
+                  </CardHeader>
+                  <CardContent>
                     <div className="flex flex-col gap-2">
                       {item.comment && (
                         <p className="text-sm text-muted-foreground">
@@ -157,8 +153,8 @@ export const PageCommuteTemplates = () => {
                       )}
                       <CardCommuteStopsList stops={item.stops} />
                     </div>
-                  </CardCommuteContent>
-                </CardCommute>
+                  </CardContent>
+                </Card>
               ))}
               {templatesQuery.hasNextPage && (
                 <div className="flex justify-center">

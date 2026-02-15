@@ -15,6 +15,9 @@
     "title": "Nouveau modèle",
     "submitButton": "Créer"
   },
+  "update": {
+    "submitButton": "Enregistrer"
+  },
   "form": {
     "name": "Nom",
     "seats": "Places",
