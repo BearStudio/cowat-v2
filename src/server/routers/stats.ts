@@ -24,16 +24,13 @@ export default {
     .handler(async ({ context }) => {
       context.logger.info('Getting stats from database');
 
-      // Get org member user IDs
-      const orgMembers = await context.db.member.findMany({
-        where: { organizationId: context.organizationId },
-        select: { userId: true },
-      });
-      const memberUserIds = orgMembers.map((m) => m.userId);
+      const orgId = context.organizationId;
 
       const [usersWithCounts, commutesWithStops] = await Promise.all([
         context.db.user.findMany({
-          where: { id: { in: memberUserIds } },
+          where: {
+            members: { some: { organizationId: orgId } },
+          },
           select: {
             id: true,
             name: true,
@@ -42,18 +39,18 @@ export default {
             _count: {
               select: {
                 commutes: {
-                  where: { organizationId: context.organizationId },
+                  where: { organizationId: orgId },
                 },
                 passengerBookings: true,
                 commuteTemplates: {
-                  where: { organizationId: context.organizationId },
+                  where: { organizationId: orgId },
                 },
               },
             },
           },
         }),
         context.db.commute.findMany({
-          where: { organizationId: context.organizationId },
+          where: { organizationId: orgId },
           select: {
             driverId: true,
             _count: {

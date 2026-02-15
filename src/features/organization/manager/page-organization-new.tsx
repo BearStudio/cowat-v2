@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -10,15 +10,11 @@ import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
 import { Form } from '@/components/form';
-import {
-  FormField,
-  FormFieldController,
-  FormFieldLabel,
-} from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
+import { FormOrganization } from '@/features/organization/manager/form-organization';
 import {
   PageLayout,
   PageLayoutContent,
@@ -32,19 +28,13 @@ const zFormFieldsOrg = z.object({
   ownerUserId: z.string().min(1),
 });
 
-type FormFieldsOrg = z.infer<typeof zFormFieldsOrg>;
+export type FormFieldsOrg = z.infer<typeof zFormFieldsOrg>;
 
 export const PageOrganizationNew = () => {
   const { t } = useTranslation(['organization']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const queryClient = useQueryClient();
-
-  const usersQuery = useQuery(
-    orpc.user.getAll.queryOptions({
-      input: { limit: 100 },
-    })
-  );
 
   const form = useForm<FormFieldsOrg>({
     resolver: zodResolver(zFormFieldsOrg),
@@ -105,45 +95,7 @@ export const PageOrganizationNew = () => {
           <PageLayoutContent>
             <Card>
               <CardContent>
-                <div className="flex flex-col gap-4">
-                  <FormField>
-                    <FormFieldLabel>
-                      {t('organization:create.name')}
-                    </FormFieldLabel>
-                    <FormFieldController
-                      type="text"
-                      control={form.control}
-                      name="name"
-                      autoFocus
-                    />
-                  </FormField>
-                  <FormField>
-                    <FormFieldLabel>
-                      {t('organization:create.slug')}
-                    </FormFieldLabel>
-                    <FormFieldController
-                      type="text"
-                      control={form.control}
-                      name="slug"
-                    />
-                  </FormField>
-                  <FormField>
-                    <FormFieldLabel>
-                      {t('organization:create.owner')}
-                    </FormFieldLabel>
-                    <FormFieldController
-                      type="select"
-                      control={form.control}
-                      name="ownerUserId"
-                      items={
-                        usersQuery.data?.items.map((user) => ({
-                          value: user.id,
-                          label: `${user.name} (${user.email})`,
-                        })) ?? []
-                      }
-                    />
-                  </FormField>
-                </div>
+                <FormOrganization />
               </CardContent>
             </Card>
           </PageLayoutContent>

@@ -13,6 +13,7 @@ import { envServer } from '@/env/server';
 import {
   AUTH_EMAIL_OTP_EXPIRATION_IN_MINUTES,
   AUTH_EMAIL_OTP_MOCKED,
+  AUTH_INVITATION_EXPIRATION_IN_SECONDS,
   AUTH_SIGNUP_ENABLED,
 } from '@/features/auth/config';
 import { permissions } from '@/features/auth/permissions';
@@ -94,7 +95,7 @@ export const auth = betterAuth({
       allowUserToCreateOrganization: false,
       organizationLimit: 100,
       membershipLimit: 200,
-      invitationExpiresIn: 60 * 60 * 24 * 7, // 7 days
+      invitationExpiresIn: AUTH_INVITATION_EXPIRATION_IN_SECONDS,
       async sendInvitationEmail({
         email,
         organization: org,
