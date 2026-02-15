@@ -26,7 +26,6 @@ const mockBookingWithStop = {
     id: 'passenger-1',
     name: 'Passenger',
     email: 'passenger@test.com',
-    slackMemberId: null,
   },
   stop: {
     commute: {
@@ -47,7 +46,6 @@ const mockBookingWithDriver = {
         id: 'driver-1',
         name: 'Driver',
         email: 'driver@test.com',
-        slackMemberId: null,
       },
     },
   },

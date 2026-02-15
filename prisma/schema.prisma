@@ -66,7 +66,6 @@ model User {
 
   phone         String?
   autoAccept    Boolean  @default(false)
-  slackMemberId String?
 
   role        UserRole?
   banned      Boolean?

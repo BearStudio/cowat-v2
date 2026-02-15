@@ -23,6 +23,9 @@ export const envServer = createEnv({
     GITHUB_CLIENT_ID: zOptionalWithReplaceMe(),
     GITHUB_CLIENT_SECRET: zOptionalWithReplaceMe(),
 
+    SLACK_BOT_TOKEN: zOptionalWithReplaceMe(),
+    SLACK_DEFAULT_CHANNEL: zOptionalWithReplaceMe(),
+
     EMAIL_SERVER: z.url(),
     EMAIL_FROM: z.string(),
 

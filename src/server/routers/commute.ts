@@ -43,27 +43,15 @@ export default {
         include: { stops: true },
       });
 
-      const users = await context.db.user.findMany({
-        where: { id: { not: context.user.id } },
-        select: { id: true, name: true, email: true, slackMemberId: true },
+      context.notify({
+        type: 'commute.created',
+        payload: {
+          driverName: context.user.name,
+          driverEmail: context.user.email,
+          commuteDate: input.date,
+          commuteType: input.type,
+        },
       });
-
-      for (const user of users) {
-        context.notify({
-          type: 'commute.created',
-          recipient: {
-            userId: user.id,
-            name: user.name,
-            email: user.email,
-            slackMemberId: user.slackMemberId,
-          },
-          payload: {
-            driverName: context.user.name,
-            commuteDate: input.date,
-            commuteType: input.type,
-          },
-        });
-      }
 
       return commute;
     }),
@@ -250,7 +238,7 @@ export default {
         },
         include: {
           passenger: {
-            select: { id: true, name: true, email: true, slackMemberId: true },
+            select: { id: true, name: true, email: true },
           },
         },
       });
@@ -262,7 +250,6 @@ export default {
             userId: booking.passenger.id,
             name: booking.passenger.name,
             email: booking.passenger.email,
-            slackMemberId: booking.passenger.slackMemberId,
           },
           payload: {
             driverName: context.user.name,
@@ -303,7 +290,7 @@ export default {
         },
         include: {
           passenger: {
-            select: { id: true, name: true, email: true, slackMemberId: true },
+            select: { id: true, name: true, email: true },
           },
         },
       });
@@ -319,7 +306,6 @@ export default {
             userId: booking.passenger.id,
             name: booking.passenger.name,
             email: booking.passenger.email,
-            slackMemberId: booking.passenger.slackMemberId,
           },
           payload: {
             driverName: context.user.name,

@@ -1,9 +1,11 @@
+import { slackChannel } from './channels/slack';
 import { terminalChannel } from './channels/terminal';
 import { Notifier } from './notifier';
 
 export type { NotificationEvent, Recipient } from './types';
 
-export const notifier = new Notifier().register(terminalChannel);
+export const notifier = new Notifier()
+  .register(terminalChannel)
+  .register(slackChannel);
 // .register(emailChannel)    — future
-// .register(slackChannel)    — future
 // .register(pushChannel)     — future

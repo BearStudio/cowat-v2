@@ -8,13 +8,14 @@ export const terminalChannel: NotificationChannel = {
   },
 
   async send(event, logger) {
+    const recipient =
+      'recipient' in event
+        ? `${event.recipient.name} (${event.recipient.email})`
+        : 'broadcast';
+
     logger.info(
-      {
-        eventType: event.type,
-        recipient: event.recipient.name,
-        payload: event.payload,
-      },
-      `[NOTIFY] ${event.type} → ${event.recipient.name} (${event.recipient.email})`
+      { eventType: event.type, recipient, payload: event.payload },
+      `[NOTIFY] ${event.type} → ${recipient}`
     );
   },
 };
