@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { ChevronRightIcon, MapPinIcon, RepeatIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +18,7 @@ import {
 
 export const PageAccount = () => {
   const { t } = useTranslation(['account']);
+  const { orgSlug } = useParams({ strict: false });
 
   return (
     <PageLayout>
@@ -33,7 +34,8 @@ export const PageAccount = () => {
           </div>
           <UserCard />
           <Link
-            to="/app/account/locations"
+            to="/app/$orgSlug/account/locations"
+            params={{ orgSlug: orgSlug! }}
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
           >
             <MapPinIcon className="size-5 text-muted-foreground" />
@@ -41,7 +43,8 @@ export const PageAccount = () => {
             <ChevronRightIcon className="size-4 text-muted-foreground" />
           </Link>
           <Link
-            to="/app/account/commute-templates"
+            to="/app/$orgSlug/account/commute-templates"
+            params={{ orgSlug: orgSlug! }}
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
           >
             <RepeatIcon className="size-5 text-muted-foreground" />

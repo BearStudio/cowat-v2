@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { PageUsers } from '@/features/user/manager/page-users';
 
-export const Route = createFileRoute('/manager/users/')({
+export const Route = createFileRoute('/manager/$orgSlug/users/')({
   component: RouteComponent,
   validateSearch: zodValidator(
     z.object({

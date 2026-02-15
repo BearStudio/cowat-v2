@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { PageOrganizations } from '@/features/organization/manager/page-organizations';
 
-export const Route = createFileRoute('/manager/organizations/')({
+export const Route = createFileRoute('/manager/$orgSlug/organizations/')({
   component: RouteComponent,
   validateSearch: zodValidator(
     z.object({

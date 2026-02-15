@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { PlusIcon, RepeatIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -35,6 +35,7 @@ import {
 export const PageCommuteTemplates = () => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
+  const { orgSlug } = useParams({ strict: false });
 
   const templatesQuery = useInfiniteQuery(
     orpc.commuteTemplate.getAll.infiniteOptions({
@@ -75,7 +76,8 @@ export const PageCommuteTemplates = () => {
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/account/commute-templates/new"
+            to="/app/$orgSlug/account/commute-templates/new"
+            params={{ orgSlug: orgSlug! }}
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -109,8 +111,8 @@ export const PageCommuteTemplates = () => {
                   className="cursor-pointer"
                   onClick={() =>
                     navigate({
-                      to: '/app/account/commute-templates/$id/update' as never,
-                      params: { id: item.id } as never,
+                      to: '/app/$orgSlug/account/commute-templates/$id/update' as never,
+                      params: { orgSlug: orgSlug!, id: item.id } as never,
                     })
                   }
                 >

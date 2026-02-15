@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { PageLocationNew } from '@/features/location/app/page-location-new';
 
-export const Route = createFileRoute('/app/account/locations/new/')({
+export const Route = createFileRoute('/app/$orgSlug/account/locations/new/')({
   component: RouteComponent,
 });
 
