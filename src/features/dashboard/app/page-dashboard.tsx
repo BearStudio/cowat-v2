@@ -26,6 +26,7 @@ import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
 import { CommuteEnriched } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -36,7 +37,7 @@ import {
 export const PageDashboard = ({
   params: { orgSlug },
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
 }) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
   const session = authClient.useSession();

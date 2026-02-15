@@ -23,6 +23,7 @@ import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button
 import { SearchButton } from '@/components/ui/search-button';
 import { SearchInput } from '@/components/ui/search-input';
 
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -31,7 +32,7 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageOrganizations = (props: {
-  params: { orgSlug: string };
+  params: OrgParams;
   search: { searchTerm?: string };
 }) => {
   const { t } = useTranslation(['organization']);

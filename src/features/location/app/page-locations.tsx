@@ -26,6 +26,7 @@ import {
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -36,7 +37,7 @@ import {
 export const PageLocations = ({
   params: { orgSlug },
 }: {
-  params: { orgSlug: string };
+  params: OrgParams;
 }) => {
   const { t } = useTranslation(['location', 'common']);
 

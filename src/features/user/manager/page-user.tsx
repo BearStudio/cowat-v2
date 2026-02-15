@@ -42,6 +42,7 @@ import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
+import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -49,9 +50,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageUser = (props: {
-  params: { orgSlug: string; id: string };
-}) => {
+export const PageUser = (props: { params: OrgParams & { id: string } }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const canGoBack = useCanGoBack();
