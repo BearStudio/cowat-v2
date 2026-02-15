@@ -22,9 +22,33 @@ const mockBookingFromDb = {
 
 const mockBookingWithStop = {
   ...mockBookingFromDb,
+  passenger: {
+    id: 'passenger-1',
+    name: 'Passenger',
+    email: 'passenger@test.com',
+    slackMemberId: null,
+  },
   stop: {
     commute: {
       driverId: mockUser.id,
+      date: now,
+      type: 'ROUND' as const,
+    },
+  },
+};
+
+const mockBookingWithDriver = {
+  ...mockBookingFromDb,
+  stop: {
+    commute: {
+      date: now,
+      type: 'ROUND' as const,
+      driver: {
+        id: 'driver-1',
+        name: 'Driver',
+        email: 'driver@test.com',
+        slackMemberId: null,
+      },
     },
   },
 };
@@ -293,7 +317,9 @@ describe('booking router', () => {
     const cancelInput = { id: 'booking-1' };
 
     it('should succeed for the passenger', async () => {
-      mockDb.passengersOnStops.findUnique.mockResolvedValue(mockBookingFromDb);
+      mockDb.passengersOnStops.findUnique.mockResolvedValue(
+        mockBookingWithDriver
+      );
       mockDb.passengersOnStops.update.mockResolvedValue(undefined);
 
       await expect(
@@ -318,7 +344,7 @@ describe('booking router', () => {
 
     it('should throw FORBIDDEN when user is not the passenger', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue({
-        ...mockBookingFromDb,
+        ...mockBookingWithDriver,
         passengerId: 'other-user',
       });
 
@@ -331,7 +357,7 @@ describe('booking router', () => {
 
     it('should succeed when booking status is ACCEPTED', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue({
-        ...mockBookingFromDb,
+        ...mockBookingWithDriver,
         status: 'ACCEPTED',
       });
       mockDb.passengersOnStops.update.mockResolvedValue(undefined);
@@ -355,7 +381,7 @@ describe('booking router', () => {
       'should throw BAD_REQUEST when booking status is %s',
       async (status) => {
         mockDb.passengersOnStops.findUnique.mockResolvedValue({
-          ...mockBookingFromDb,
+          ...mockBookingWithDriver,
           status,
         });
 

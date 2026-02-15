@@ -63,6 +63,7 @@ describe('commute router', () => {
 
     it('should create a commute with stops and return it', async () => {
       mockDb.commute.create.mockResolvedValue(mockCommuteFromDb);
+      mockDb.user.findMany.mockResolvedValue([]);
 
       const result = await call(commuteRouter.create, createInput);
 
@@ -264,6 +265,7 @@ describe('commute router', () => {
         comment: 'Updated comment',
       };
       mockDb.commute.update.mockResolvedValue(updatedCommute);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
 
       const result = await call(commuteRouter.update, updateInput);
 
@@ -310,6 +312,7 @@ describe('commute router', () => {
   describe('cancel', () => {
     it('should soft-delete a commute', async () => {
       mockDb.commute.findUnique.mockResolvedValue(mockCommuteFromDb);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.commute.delete.mockResolvedValue(mockCommuteFromDb);
 
       await expect(
