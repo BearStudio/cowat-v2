@@ -57,7 +57,6 @@ export const PageUser = (props: {
   const canGoBack = useCanGoBack();
   const session = authClient.useSession();
   const { t } = useTranslation(['user']);
-  const { orgSlug } = props.params;
   const userQuery = useQuery(
     orpc.user.getById.queryOptions({
       input: { id: props.params.id },
