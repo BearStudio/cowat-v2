@@ -64,8 +64,8 @@
   --spacing-safe-left: env(safe-area-inset-left);
   --spacing-safe-right: env(safe-area-inset-right);
 
-  --text-2xs: 0.625rem;
-  --text-3xs: 0.5rem;
+  --text-2xs: 0.6875rem;
+  --text-3xs: 0.5625rem;
 
   --breakpoint-2xs: 24rem; /* 384px */
   --breakpoint-xs: 32rem; /* 512px */
@@ -102,7 +102,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.875rem;
   --sidebar: var(--color-white);
   --sidebar-foreground: var(--color-neutral-600);
   --sidebar-primary: var(--color-neutral-900);
