@@ -2,11 +2,7 @@ import { call } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 
 import statsRouter from '@/server/routers/stats';
-import {
-  mockDb,
-  mockGetSession,
-  mockOrganizationId,
-} from '@/server/routers/test-utils';
+import { mockDb, mockGetSession } from '@/server/routers/test-utils';
 
 const mockUserFromDb = {
   id: 'user-1',
@@ -42,83 +38,62 @@ describe('stats router', () => {
       ]);
     });
 
-    it('should scope user query by organizationId', async () => {
+    it('should return empty users when no users exist', async () => {
       mockDb.user.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, undefined);
 
-      expect(mockDb.user.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            members: { some: { organizationId: mockOrganizationId } },
-          },
-        })
-      );
+      expect(result.users).toEqual([]);
     });
 
-    it('should scope passengerBookings count by organizationId', async () => {
-      mockDb.user.findMany.mockResolvedValue([]);
-      mockDb.commute.findMany.mockResolvedValue([]);
+    it('should compute stopCount from commutes', async () => {
+      mockDb.user.findMany.mockResolvedValue([mockUserFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([
+        { driverId: 'user-1', _count: { stops: 5 } },
+      ]);
 
-      await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, undefined);
 
-      expect(mockDb.user.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          select: expect.objectContaining({
-            _count: {
-              select: expect.objectContaining({
-                passengerBookings: {
-                  where: {
-                    stop: {
-                      commute: {
-                        organizationId: mockOrganizationId,
-                      },
-                    },
-                  },
-                },
-              }),
-            },
-          }),
-        })
-      );
+      expect(result.users[0]!.stopCount).toBe(5);
     });
 
-    it('should scope commute counts by organizationId', async () => {
-      mockDb.user.findMany.mockResolvedValue([]);
-      mockDb.commute.findMany.mockResolvedValue([]);
+    it('should sum stopCount across multiple commutes for the same driver', async () => {
+      mockDb.user.findMany.mockResolvedValue([mockUserFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([
+        { driverId: 'user-1', _count: { stops: 3 } },
+        { driverId: 'user-1', _count: { stops: 4 } },
+      ]);
 
-      await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, undefined);
 
-      expect(mockDb.user.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          select: expect.objectContaining({
-            _count: {
-              select: expect.objectContaining({
-                commutes: {
-                  where: { organizationId: mockOrganizationId },
-                },
-                commuteTemplates: {
-                  where: { organizationId: mockOrganizationId },
-                },
-              }),
-            },
-          }),
-        })
-      );
+      expect(result.users[0]!.stopCount).toBe(7);
     });
 
-    it('should scope commute findMany by organizationId', async () => {
-      mockDb.user.findMany.mockResolvedValue([]);
+    it('should return stats for multiple users', async () => {
+      const secondUser = {
+        id: 'user-2',
+        name: 'Other User',
+        email: 'other@example.com',
+        image: null,
+        _count: { commutes: 0, passengerBookings: 1, commuteTemplates: 0 },
+      };
+      mockDb.user.findMany.mockResolvedValue([mockUserFromDb, secondUser]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, undefined);
 
-      expect(mockDb.commute.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { organizationId: mockOrganizationId },
-        })
-      );
+      expect(result.users).toHaveLength(2);
+      expect(result.users[1]).toEqual({
+        id: 'user-2',
+        name: 'Other User',
+        email: 'other@example.com',
+        image: null,
+        commuteCount: 0,
+        bookingCount: 1,
+        templateCount: 0,
+        stopCount: 0,
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
