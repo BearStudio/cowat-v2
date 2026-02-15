@@ -208,32 +208,32 @@ model PassengersOnStops {
 }
 
 model CommuteTemplate {
-  id          String         @id @default(cuid())
-  name        String
-  seats       Int
-  type        CommuteType
-  outwardTime String
-  inwardTime  String?
-  comment     String?
-  isDeleted   Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  driverId    String
-  driver      User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  stops       TemplateStop[]
+  id        String         @id @default(cuid())
+  name      String
+  seats     Int
+  type      CommuteType
+  comment   String?
+  isDeleted Boolean        @default(false)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  driverId  String
+  driver    User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  stops     TemplateStop[]
 
   @@map("commute_template")
 }
 
 model TemplateStop {
-  id         String          @id @default(cuid())
-  order      Int             @default(0)
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-  templateId String
-  template   CommuteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  locationId String
-  location   Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  id          String          @id @default(cuid())
+  order       Int             @default(0)
+  outwardTime String
+  inwardTime  String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  templateId  String
+  template    CommuteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  locationId  String
+  location    Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
 
   @@index([templateId])
   @@map("template_stop")

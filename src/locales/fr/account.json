@@ -22,6 +22,7 @@
     }
   },
   "locationsLink": "Lieux",
+  "commuteTemplatesLink": "Modèles de trajet",
   "editNameDrawer": {
     "title": "Modifier votre nom",
     "description": "Formulaire pour modifier votre nom",

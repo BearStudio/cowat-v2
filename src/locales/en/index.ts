@@ -6,6 +6,7 @@ import booking from './booking.json' with { type: 'json' };
 import buildInfo from './build-info.json' with { type: 'json' };
 import common from './common.json' with { type: 'json' };
 import commute from './commute.json' with { type: 'json' };
+import commuteTemplate from './commute-template.json' with { type: 'json' };
 import components from './components.json' with { type: 'json' };
 import dashboard from './dashboard.json' with { type: 'json' };
 import emails from './emails.json' with { type: 'json' };
@@ -19,6 +20,7 @@ export default {
   booking,
   buildInfo,
   commute,
+  commuteTemplate,
   common,
   components,
   dashboard,
