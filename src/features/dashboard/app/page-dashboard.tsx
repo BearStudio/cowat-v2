@@ -39,14 +39,14 @@ export const PageDashboard = () => {
   const currentUserId = session.data?.user.id ?? '';
   const [bookingStopId, setBookingStopId] = useState<string | null>(null);
 
-  const weekStart = dayjs().startOf('isoWeek');
-  const weekEnd = weekStart.add(7, 'day');
+  const today = dayjs().startOf('day');
+  const rangeEnd = today.add(7, 'day');
 
   const commutesQuery = useQuery(
     orpc.commute.getByDate.queryOptions({
       input: {
-        from: weekStart.toDate(),
-        to: weekEnd.toDate(),
+        from: today.toDate(),
+        to: rangeEnd.toDate(),
       },
     })
   );
@@ -86,9 +86,8 @@ export const PageDashboard = () => {
     commutesByDay.set(key, existing);
   }
 
-  // Generate all 7 days (Mon-Sun)
-  const days = Array.from({ length: 7 }, (_, i) => weekStart.add(i, 'day'));
-  const today = dayjs().format('YYYY-MM-DD');
+  // Generate 7 days starting from today
+  const days = Array.from({ length: 7 }, (_, i) => today.add(i, 'day'));
 
   const ui = getUiState((set) => {
     if (commutesQuery.status === 'pending') return set('pending');
@@ -122,7 +121,7 @@ export const PageDashboard = () => {
             <div className="flex flex-col gap-6">
               {days.map((day) => {
                 const key = day.format('YYYY-MM-DD');
-                const isToday = key === today;
+                const isToday = day.isToday();
                 const dayCommutes = commutesByDay.get(key) ?? [];
 
                 return (

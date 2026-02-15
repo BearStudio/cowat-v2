@@ -224,6 +224,7 @@ describe('commute router', () => {
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
+            date: { gte: expect.any(Date) },
             OR: [
               { driverId: mockUser.id },
               {

@@ -142,7 +142,11 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
       const where = {
+        date: { gte: today },
         OR: [
           { driverId: context.user.id },
           {
@@ -179,7 +183,7 @@ export default {
         context.db.commute.findMany({
           take: input.limit + 1,
           cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { date: 'asc' },
           where,
           include,
         }),
