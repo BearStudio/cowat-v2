@@ -40,7 +40,11 @@ export const mockDb: MockedDb = new Proxy({} as ExplicitAny, {
 });
 
 export const mockUser = { id: 'user-1', name: 'Test User' };
-export const mockSession = { id: 'session-1' };
+export const mockOrganizationId = 'org-1';
+export const mockSession = {
+  id: 'session-1',
+  activeOrganizationId: mockOrganizationId,
+};
 
 export function setupAuthenticatedUser() {
   mockGetSession.mockResolvedValue({

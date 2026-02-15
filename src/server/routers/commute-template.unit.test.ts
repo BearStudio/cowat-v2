@@ -2,7 +2,12 @@ import { call } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 
 import commuteTemplateRouter from '@/server/routers/commute-template';
-import { mockDb, mockGetSession, mockUser } from '@/server/routers/test-utils';
+import {
+  mockDb,
+  mockGetSession,
+  mockOrganizationId,
+  mockUser,
+} from '@/server/routers/test-utils';
 
 const now = new Date();
 
@@ -67,6 +72,7 @@ describe('commute-template router', () => {
           type: createInput.type,
           comment: createInput.comment,
           driverId: mockUser.id,
+          organizationId: mockOrganizationId,
           stops: {
             create: createInput.stops,
           },
@@ -135,7 +141,7 @@ describe('commute-template router', () => {
 
   describe('getById', () => {
     it('should return a template with stops and locations', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue({
+      mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
         stops: [mockStopWithLocation],
       });
@@ -151,7 +157,7 @@ describe('commute-template router', () => {
     });
 
     it('should throw NOT_FOUND when template does not exist', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(null);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteTemplateRouter.getById, { id: 'nonexistent' })
@@ -186,7 +192,7 @@ describe('commute-template router', () => {
     };
 
     it('should update template fields and replace stops', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(mockTemplateFromDb);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(mockTemplateFromDb);
       mockDb.commuteTemplate.update.mockResolvedValue({
         ...mockTemplateFromDb,
         name: 'Updated commute',
@@ -210,7 +216,7 @@ describe('commute-template router', () => {
     });
 
     it('should update without replacing stops when stops not provided', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(mockTemplateFromDb);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(mockTemplateFromDb);
       mockDb.commuteTemplate.update.mockResolvedValue({
         ...mockTemplateFromDb,
         name: 'Updated commute',
@@ -230,7 +236,7 @@ describe('commute-template router', () => {
     });
 
     it('should throw NOT_FOUND when template does not exist', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(null);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteTemplateRouter.update, updateInput)
@@ -240,7 +246,7 @@ describe('commute-template router', () => {
     });
 
     it('should throw FORBIDDEN when user is not the owner', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue({
+      mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
         driverId: 'other-user',
       });
@@ -267,7 +273,7 @@ describe('commute-template router', () => {
     const deleteInput = { id: 'template-1' };
 
     it('should soft-delete the template', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(mockTemplateFromDb);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(mockTemplateFromDb);
       mockDb.commuteTemplate.delete.mockResolvedValue(undefined);
 
       await expect(
@@ -280,7 +286,7 @@ describe('commute-template router', () => {
     });
 
     it('should throw NOT_FOUND when template does not exist', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue(null);
+      mockDb.commuteTemplate.findFirst.mockResolvedValue(null);
 
       await expect(
         call(commuteTemplateRouter.delete, deleteInput)
@@ -290,7 +296,7 @@ describe('commute-template router', () => {
     });
 
     it('should throw FORBIDDEN when user is not the owner', async () => {
-      mockDb.commuteTemplate.findUnique.mockResolvedValue({
+      mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
         driverId: 'other-user',
       });

@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 
 import { Prisma } from '@/server/db/generated/client';
 import commuteRouter from '@/server/routers/commute';
-import { mockDb, mockGetSession, mockUser } from '@/server/routers/test-utils';
+import {
+  mockDb,
+  mockGetSession,
+  mockOrganizationId,
+  mockUser,
+} from '@/server/routers/test-utils';
 
 const now = new Date();
 
@@ -154,7 +159,10 @@ describe('commute router', () => {
       expect(result).toEqual([mockCommuteEnrichedFromDb]);
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { date: { gte: dateRange.from, lt: dateRange.to } },
+          where: {
+            date: { gte: dateRange.from, lt: dateRange.to },
+            organizationId: mockOrganizationId,
+          },
           orderBy: { date: 'asc' },
         })
       );
@@ -224,6 +232,7 @@ describe('commute router', () => {
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
+            organizationId: mockOrganizationId,
             date: { gte: expect.any(Date) },
             OR: [
               { driverId: mockUser.id },
