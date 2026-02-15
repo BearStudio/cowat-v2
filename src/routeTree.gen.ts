@@ -41,6 +41,7 @@ import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/ap
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
 import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
 import { Route as AppAccountLocationsNewIndexRouteImport } from './routes/app/account/locations/new.index'
+import { Route as AppAccountCommuteTemplatesNewIndexRouteImport } from './routes/app/account/commute-templates/new.index'
 import { Route as AppAccountLocationsIdUpdateIndexRouteImport } from './routes/app/account/locations/$id.update.index'
 
 const LogoutRoute = LogoutRouteImport.update({
@@ -207,6 +208,12 @@ const AppAccountLocationsNewIndexRoute =
     path: '/account/locations/new/',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppAccountCommuteTemplatesNewIndexRoute =
+  AppAccountCommuteTemplatesNewIndexRouteImport.update({
+    id: '/account/commute-templates/new/',
+    path: '/account/commute-templates/new/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 const AppAccountLocationsIdUpdateIndexRoute =
   AppAccountLocationsIdUpdateIndexRouteImport.update({
     id: '/account/locations/$id/update/',
@@ -245,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
+  '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
   '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/app/commutes/new': typeof AppCommutesNewIndexRoute
   '/manager/users/$id': typeof ManagerUsersIdIndexRoute
   '/manager/users/new': typeof ManagerUsersNewIndexRoute
+  '/app/account/commute-templates/new': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
   '/app/account/locations/$id/update': typeof AppAccountLocationsIdUpdateIndexRoute
@@ -313,6 +322,7 @@ export interface FileRoutesById {
   '/app/commutes/new/': typeof AppCommutesNewIndexRoute
   '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
   '/manager/users/new/': typeof ManagerUsersNewIndexRoute
+  '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
   '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
   '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
+    | '/app/account/commute-templates/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
     | '/app/account/locations/$id/update/'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/app/commutes/new'
     | '/manager/users/$id'
     | '/manager/users/new'
+    | '/app/account/commute-templates/new'
     | '/app/account/locations/new'
     | '/manager/users/$id/update'
     | '/app/account/locations/$id/update'
@@ -417,6 +429,7 @@ export interface FileRouteTypes {
     | '/app/commutes/new/'
     | '/manager/users/$id/'
     | '/manager/users/new/'
+    | '/app/account/commute-templates/new/'
     | '/app/account/locations/new/'
     | '/manager/users/$id/update/'
     | '/app/account/locations/$id/update/'
@@ -663,6 +676,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountLocationsNewIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/account/commute-templates/new/': {
+      id: '/app/account/commute-templates/new/'
+      path: '/account/commute-templates/new'
+      fullPath: '/app/account/commute-templates/new/'
+      preLoaderRoute: typeof AppAccountCommuteTemplatesNewIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/account/locations/$id/update/': {
       id: '/app/account/locations/$id/update/'
       path: '/account/locations/$id/update'
@@ -681,6 +701,7 @@ interface AppRouteRouteChildren {
   AppAccountCommuteTemplatesIndexRoute: typeof AppAccountCommuteTemplatesIndexRoute
   AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
   AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
+  AppAccountCommuteTemplatesNewIndexRoute: typeof AppAccountCommuteTemplatesNewIndexRoute
   AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
   AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
@@ -693,6 +714,8 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountCommuteTemplatesIndexRoute: AppAccountCommuteTemplatesIndexRoute,
   AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
   AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
+  AppAccountCommuteTemplatesNewIndexRoute:
+    AppAccountCommuteTemplatesNewIndexRoute,
   AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
   AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }
