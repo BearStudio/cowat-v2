@@ -14,6 +14,6 @@ export const Route = createFileRoute('/app/commutes/new/')({
 });
 
 function RouteComponent() {
-  const { date } = Route.useSearch();
-  return <PageCommuteNew date={date} />;
+  const search = Route.useSearch();
+  return <PageCommuteNew search={search} />;
 }
