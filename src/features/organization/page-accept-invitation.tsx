@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,9 @@ export const PageAcceptInvitation = ({
   const navigate = useNavigate();
   const session = authClient.useSession();
 
-  const acceptInvitation = useMutation({
+  const hasMutatedRef = useRef(false);
+
+  const { mutate, isPending, isIdle, isError } = useMutation({
     mutationFn: async () => {
       const result = await authClient.organization.acceptInvitation({
         invitationId,
@@ -39,14 +41,11 @@ export const PageAcceptInvitation = ({
   });
 
   useEffect(() => {
-    if (
-      session.data?.user &&
-      !acceptInvitation.isPending &&
-      acceptInvitation.isIdle
-    ) {
-      acceptInvitation.mutate();
+    if (session.data?.user && !hasMutatedRef.current) {
+      hasMutatedRef.current = true;
+      mutate();
     }
-  }, [session.data?.user]);
+  }, [session.data?.user, mutate]);
 
   // Redirect to login if not authenticated
   if (!session.isPending && !session.data?.user) {
@@ -58,11 +57,7 @@ export const PageAcceptInvitation = ({
     return null;
   }
 
-  if (
-    acceptInvitation.isPending ||
-    acceptInvitation.isIdle ||
-    session.isPending
-  ) {
+  if (isPending || isIdle || session.isPending) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <Spinner className="opacity-60" />
@@ -73,7 +68,7 @@ export const PageAcceptInvitation = ({
     );
   }
 
-  if (acceptInvitation.isError) {
+  if (isError) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
         <XCircleIcon className="text-red-500 size-12" />
