@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { CardAction, CardDescription, CardTitle } from '@/components/ui/card';
@@ -31,7 +32,12 @@ export const CardCommuteTemplateHeader = ({
         {' · '}
         {t('commuteTemplate:list.seats', { count: seats })}
       </CardDescription>
-      {actions && <CardAction>{actions}</CardAction>}
+      <CardAction>
+        <div className="flex items-center gap-1">
+          {actions}
+          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
+        </div>
+      </CardAction>
     </>
   );
 };

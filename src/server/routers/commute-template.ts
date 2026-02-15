@@ -53,7 +53,7 @@ export default {
       z.object({
         items: z.array(
           zCommuteTemplate().extend({
-            _count: z.object({ stops: z.number() }),
+            stops: z.array(zTemplateStopWithLocation()),
           })
         ),
         nextCursor: z.string().optional(),
@@ -70,7 +70,14 @@ export default {
           cursor: input.cursor ? { id: input.cursor } : undefined,
           orderBy: { name: 'asc' },
           where,
-          include: { _count: { select: { stops: true } } },
+          include: {
+            stops: {
+              orderBy: { order: 'asc' },
+              include: {
+                location: { select: { id: true, name: true } },
+              },
+            },
+          },
         }),
       ]);
 

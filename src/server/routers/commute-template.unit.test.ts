@@ -87,21 +87,21 @@ describe('commute-template router', () => {
   });
 
   describe('getAll', () => {
-    const mockTemplateWithCount = {
+    const mockTemplateWithStops = {
       ...mockTemplateFromDb,
-      _count: { stops: 1 },
+      stops: [mockStopWithLocation],
     };
 
     it('should return paginated templates for the driver', async () => {
       mockDb.commuteTemplate.count.mockResolvedValue(1);
       mockDb.commuteTemplate.findMany.mockResolvedValue([
-        mockTemplateWithCount,
+        mockTemplateWithStops,
       ]);
 
       const result = await call(commuteTemplateRouter.getAll, {});
 
       expect(result).toEqual({
-        items: [mockTemplateWithCount],
+        items: [mockTemplateWithStops],
         nextCursor: undefined,
         total: 1,
       });
@@ -109,7 +109,7 @@ describe('commute-template router', () => {
 
     it('should handle pagination with cursor', async () => {
       const templates = Array.from({ length: 3 }, (_, i) => ({
-        ...mockTemplateWithCount,
+        ...mockTemplateWithStops,
         id: `template-${i}`,
       }));
       mockDb.commuteTemplate.count.mockResolvedValue(5);
