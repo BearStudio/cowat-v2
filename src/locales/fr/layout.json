@@ -9,6 +9,7 @@
     "account": "Compte",
     "home": "Accueil",
     "apiDocumentation": "Documentation API",
-    "openApp": "Ouvrir l'application"
+    "openApp": "Ouvrir l'application",
+    "stats": "Statistiques"
   }
 }

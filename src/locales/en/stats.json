@@ -1,0 +1,24 @@
+{
+  "manager": {
+    "title": "Stats",
+    "rankings": {
+      "bestDrivers": "Best Drivers",
+      "bestDriversDescription": "Most commutes created",
+      "bestPassengers": "Best Passengers",
+      "bestPassengersDescription": "Most bookings made",
+      "mostTemplates": "Most Templates",
+      "mostTemplatesDescription": "Most commute templates created",
+      "mostStops": "Most Stops",
+      "mostStopsDescription": "Most stops across commutes"
+    },
+    "table": {
+      "title": "All Users",
+      "description": "Overview of all users and their activity",
+      "user": "User",
+      "commutes": "Commutes",
+      "bookings": "Bookings",
+      "templates": "Templates",
+      "stops": "Stops"
+    }
+  }
+}

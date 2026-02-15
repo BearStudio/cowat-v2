@@ -9,6 +9,7 @@
     "requests": "Requests",
     "account": "Account",
     "openApp": "Open App",
-    "apiDocumentation": "API Documentation"
+    "apiDocumentation": "API Documentation",
+    "stats": "Stats"
   }
 }

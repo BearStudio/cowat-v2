@@ -19,7 +19,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ManagerUsersIndexRouteImport } from './routes/manager/users/index'
-import { Route as ManagerDashboardIndexRouteImport } from './routes/manager/dashboard.index'
+import { Route as ManagerStatsIndexRouteImport } from './routes/manager/stats.index'
 import { Route as ManagerAccountIndexRouteImport } from './routes/manager/account.index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
@@ -95,9 +95,9 @@ const ManagerUsersIndexRoute = ManagerUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
-const ManagerDashboardIndexRoute = ManagerDashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
+const ManagerStatsIndexRoute = ManagerStatsIndexRouteImport.update({
+  id: '/stats/',
+  path: '/stats/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
 const ManagerAccountIndexRoute = ManagerAccountIndexRouteImport.update({
@@ -249,7 +249,7 @@ export interface FileRoutesByFullPath {
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
-  '/manager/dashboard/': typeof ManagerDashboardIndexRoute
+  '/manager/stats/': typeof ManagerStatsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
@@ -283,7 +283,7 @@ export interface FileRoutesByTo {
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
   '/manager/account': typeof ManagerAccountIndexRoute
-  '/manager/dashboard': typeof ManagerDashboardIndexRoute
+  '/manager/stats': typeof ManagerStatsIndexRoute
   '/manager/users': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
@@ -321,7 +321,7 @@ export interface FileRoutesById {
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
   '/manager/account/': typeof ManagerAccountIndexRoute
-  '/manager/dashboard/': typeof ManagerDashboardIndexRoute
+  '/manager/stats/': typeof ManagerStatsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
@@ -360,7 +360,7 @@ export interface FileRouteTypes {
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
-    | '/manager/dashboard/'
+    | '/manager/stats/'
     | '/manager/users/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
@@ -394,7 +394,7 @@ export interface FileRouteTypes {
     | '/login/error'
     | '/login/verify'
     | '/manager/account'
-    | '/manager/dashboard'
+    | '/manager/stats'
     | '/manager/users'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
@@ -431,7 +431,7 @@ export interface FileRouteTypes {
     | '/login/error/'
     | '/login/verify/'
     | '/manager/account/'
-    | '/manager/dashboard/'
+    | '/manager/stats/'
     | '/manager/users/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
@@ -535,11 +535,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerUsersIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
-    '/manager/dashboard/': {
-      id: '/manager/dashboard/'
-      path: '/dashboard'
-      fullPath: '/manager/dashboard/'
-      preLoaderRoute: typeof ManagerDashboardIndexRouteImport
+    '/manager/stats/': {
+      id: '/manager/stats/'
+      path: '/stats'
+      fullPath: '/manager/stats/'
+      preLoaderRoute: typeof ManagerStatsIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
     '/manager/account/': {
@@ -766,7 +766,7 @@ const LoginRouteRouteWithChildren = LoginRouteRoute._addFileChildren(
 interface ManagerRouteRouteChildren {
   ManagerIndexRoute: typeof ManagerIndexRoute
   ManagerAccountIndexRoute: typeof ManagerAccountIndexRoute
-  ManagerDashboardIndexRoute: typeof ManagerDashboardIndexRoute
+  ManagerStatsIndexRoute: typeof ManagerStatsIndexRoute
   ManagerUsersIndexRoute: typeof ManagerUsersIndexRoute
   ManagerUsersIdIndexRoute: typeof ManagerUsersIdIndexRoute
   ManagerUsersNewIndexRoute: typeof ManagerUsersNewIndexRoute
@@ -776,7 +776,7 @@ interface ManagerRouteRouteChildren {
 const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
   ManagerIndexRoute: ManagerIndexRoute,
   ManagerAccountIndexRoute: ManagerAccountIndexRoute,
-  ManagerDashboardIndexRoute: ManagerDashboardIndexRoute,
+  ManagerStatsIndexRoute: ManagerStatsIndexRoute,
   ManagerUsersIndexRoute: ManagerUsersIndexRoute,
   ManagerUsersIdIndexRoute: ManagerUsersIdIndexRoute,
   ManagerUsersNewIndexRoute: ManagerUsersNewIndexRoute,

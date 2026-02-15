@@ -6,6 +6,7 @@ import commuteRouter from './routers/commute';
 import commuteTemplateRouter from './routers/commute-template';
 import configRouter from './routers/config';
 import locationRouter from './routers/location';
+import statsRouter from './routers/stats';
 import userRouter from './routers/user';
 
 export type Router = typeof router;
@@ -17,6 +18,7 @@ export const router = {
   commute: commuteRouter,
   commuteTemplate: commuteTemplateRouter,
   location: locationRouter,
+  stats: statsRouter,
   user: userRouter,
   config: configRouter,
 };

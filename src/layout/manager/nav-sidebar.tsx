@@ -1,10 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import {
-  LayoutDashboardIcon,
-  PanelLeftIcon,
-  UsersIcon,
-  XIcon,
-} from 'lucide-react';
+import { BarChart3Icon, PanelLeftIcon, UsersIcon, XIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -66,14 +61,14 @@ export const NavSidebar = (props: { children?: ReactNode }) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <Link to="/manager/dashboard">
+                  <Link to="/manager/stats">
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
                         render={
                           <span>
-                            <LayoutDashboardIcon />
-                            <span>{t('layout:nav.dashboard')}</span>
+                            <BarChart3Icon />
+                            <span>{t('layout:nav.stats')}</span>
                           </span>
                         }
                       />
