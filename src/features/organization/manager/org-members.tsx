@@ -40,10 +40,7 @@ export const OrgMembers = (props: {
         </DataListEmptyState>
       ) : (
         props.members.map((member) => (
-          <DataListRow
-            key={member.id}
-            className="max-md:flex-col max-md:py-2 max-md:[&>div]:py-1"
-          >
+          <DataListRow key={member.id} className="">
             <DataListCell className="flex-none">
               <Avatar>
                 <AvatarImage

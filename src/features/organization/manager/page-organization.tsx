@@ -29,14 +29,23 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageOrganization = (props: { params: { id: string } }) => {
+export const PageOrganization = (props: { params?: { id: string } }) => {
   const { t } = useTranslation(['organization']);
+  const id = props.params?.id;
 
-  const orgQuery = useQuery(
-    orpc.organization.getById.queryOptions({
-      input: { id: props.params.id },
-    })
-  );
+  const orgByIdQuery = useQuery({
+    ...orpc.organization.getById.queryOptions({
+      input: { id: id! },
+    }),
+    enabled: !!id,
+  });
+
+  const activeOrgQuery = useQuery({
+    ...orpc.organization.getActiveOrganization.queryOptions(),
+    enabled: !id,
+  });
+
+  const orgQuery = id ? orgByIdQuery : activeOrgQuery;
 
   const ui = getUiState((set) => {
     if (orgQuery.status === 'pending') return set('pending');
@@ -53,7 +62,7 @@ export const PageOrganization = (props: { params: { id: string } }) => {
 
   return (
     <PageLayout>
-      <PageLayoutTopBar startActions={<BackButton />}>
+      <PageLayoutTopBar startActions={id ? <BackButton /> : undefined}>
         <PageLayoutTopBarTitle>
           {ui
             .match('pending', () => <Skeleton className="h-4 w-48" />)
@@ -70,8 +79,8 @@ export const PageOrganization = (props: { params: { id: string } }) => {
           .match('not-found', () => <PageError type="404" />)
           .match('error', () => <PageError type="unknown-server-error" />)
           .match('default', ({ org }) => (
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-start">
-              <Card className="flex-1">
+            <div className="flex flex-col gap-4">
+              <Card>
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
@@ -90,21 +99,18 @@ export const PageOrganization = (props: { params: { id: string } }) => {
                       count: org.members.length,
                     })}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {t('organization:manager.detail.createdAt', {
-                      time: dayjs(org.createdAt).format('DD/MM/YYYY'),
-                    })}
-                  </span>
+                  {'createdAt' in org && (
+                    <span className="text-xs text-muted-foreground">
+                      {t('organization:manager.detail.createdAt', {
+                        time: dayjs(org.createdAt as Date).format('DD/MM/YYYY'),
+                      })}
+                    </span>
+                  )}
                 </CardContent>
               </Card>
 
-              <div className="flex flex-2 flex-col gap-4">
-                <OrgMembers orgId={props.params.id} members={org.members} />
-                <OrgInvitations
-                  orgId={props.params.id}
-                  invitations={org.invitations}
-                />
-              </div>
+              <OrgInvitations orgId={org.id} invitations={org.invitations} />
+              <OrgMembers orgId={org.id} members={org.members} />
             </div>
           ))
           .exhaustive()}

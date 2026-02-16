@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageActiveOrganization } from '@/features/organization/manager/page-active-organization';
+import { PageOrganization } from '@/features/organization/manager/page-organization';
 
 export const Route = createFileRoute('/manager/$orgSlug/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <PageActiveOrganization />;
+  return <PageOrganization />;
 }
