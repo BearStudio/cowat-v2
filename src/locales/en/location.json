@@ -10,10 +10,13 @@
   },
   "new": {
     "title": "New Location",
-    "submitButton": "Create"
+    "submitButton": "Create",
+    "successMessage": "Location created"
   },
   "update": {
-    "submitButton": "Save"
+    "title": "Edit Location",
+    "submitButton": "Save",
+    "successMessage": "Location updated"
   },
   "form": {
     "name": "Name",

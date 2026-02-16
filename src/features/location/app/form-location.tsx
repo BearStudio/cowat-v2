@@ -27,7 +27,7 @@ export const FormLocation = () => {
       <FormField>
         <FormFieldLabel>{t('location:form.address')}</FormFieldLabel>
         <FormFieldController
-          type="text"
+          type="textarea"
           control={form.control}
           name="address"
         />
