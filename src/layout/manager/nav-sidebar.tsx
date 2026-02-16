@@ -121,10 +121,7 @@ export const NavSidebar = (props: {
                     </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link
-                      to="/manager/$orgSlug/organizations"
-                      params={{ orgSlug }}
-                    >
+                    <Link to="/manager/organizations">
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}

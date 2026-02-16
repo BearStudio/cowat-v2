@@ -39,7 +39,11 @@ export const OrgSwitcher = () => {
     // If in app or manager route, navigate to the new org's URL
     const currentPath = router.state.location.pathname;
     const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
-    if (currentPath.match(orgSlugPattern)) {
+    // Don't replace the slug on non-org-scoped routes like /manager/organizations
+    if (
+      currentPath.match(orgSlugPattern) &&
+      !currentPath.startsWith('/manager/organizations')
+    ) {
       const newPath = currentPath.replace(
         orgSlugPattern,
         (_, prefix) => `/${prefix}/${org.slug}`
