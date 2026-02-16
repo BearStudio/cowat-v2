@@ -11,7 +11,7 @@ function RouteComponent() {
   const { orgSlug } = Route.useParams();
   return (
     <GuardOrganization orgSlug={orgSlug}>
-      <Layout orgSlug={orgSlug}>
+      <Layout>
         <Outlet />
       </Layout>
     </GuardOrganization>

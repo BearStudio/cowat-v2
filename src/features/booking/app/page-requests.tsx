@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/empty';
 
 import { RequestCard } from '@/features/booking/request-card';
-import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -26,7 +25,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageRequests = (_props: { params: OrgParams }) => {
+export const PageRequests = () => {
   const { t } = useTranslation(['booking']);
 
   const requestsQuery = useInfiniteQuery(

@@ -7,6 +7,5 @@ export const Route = createFileRoute('/app/$orgSlug/account/')({
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageAccount params={params} />;
+  return <PageAccount />;
 }

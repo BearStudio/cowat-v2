@@ -31,11 +31,11 @@ import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
 
 export const NavSidebar = (props: {
-  orgSlug: string;
   children?: ReactNode;
+  orgSlug: string;
 }) => {
   const { t } = useTranslation(['layout']);
-  const { orgSlug } = props;
+  const orgSlug = props.orgSlug;
   return (
     <SidebarProvider>
       <Sidebar>

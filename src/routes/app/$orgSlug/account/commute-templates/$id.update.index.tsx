@@ -9,6 +9,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageCommuteTemplateUpdate params={params} />;
+  const { id, orgSlug } = Route.useParams();
+  return <PageCommuteTemplateUpdate id={id} orgSlug={orgSlug} />;
 }

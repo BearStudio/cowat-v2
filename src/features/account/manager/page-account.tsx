@@ -6,7 +6,6 @@ import { DisplayPreferences } from '@/features/account/display-preferences';
 import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
-import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -14,7 +13,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageAccount = (_props: { params: OrgParams }) => {
+export const PageAccount = () => {
   const { t } = useTranslation(['account']);
   return (
     <PageLayout>

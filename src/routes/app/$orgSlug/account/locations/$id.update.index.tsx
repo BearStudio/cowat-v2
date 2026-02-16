@@ -9,6 +9,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageLocationUpdate params={params} />;
+  const { id, orgSlug } = Route.useParams();
+  return <PageLocationUpdate id={id} orgSlug={orgSlug} />;
 }

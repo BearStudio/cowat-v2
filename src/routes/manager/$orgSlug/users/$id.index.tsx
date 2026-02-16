@@ -7,6 +7,6 @@ export const Route = createFileRoute('/manager/$orgSlug/users/$id/')({
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageUser params={params} />;
+  const { id } = Route.useParams();
+  return <PageUser id={id} />;
 }

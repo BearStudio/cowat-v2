@@ -9,6 +9,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageCommuteTemplateNew params={params} />;
+  const { orgSlug } = Route.useParams();
+  return <PageCommuteTemplateNew orgSlug={orgSlug} />;
 }

@@ -20,7 +20,6 @@ import {
   FormFieldsCommute,
   zFormFieldsCommute,
 } from '@/features/commute/schema';
-import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -36,11 +35,11 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
 };
 
 export const PageCommuteNew = ({
-  params: { orgSlug },
   search,
+  orgSlug,
 }: {
-  params: OrgParams;
   search: { date?: Date };
+  orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
@@ -92,7 +91,6 @@ export const PageCommuteNew = ({
             {t('commute:templatePicker.fromScratch')}
           </Button>
           <TemplatePicker
-            orgSlug={orgSlug}
             onSelect={(data) => {
               form.reset({ ...DEFAULT_VALUES, date: search.date, ...data });
               setShowForm(true);

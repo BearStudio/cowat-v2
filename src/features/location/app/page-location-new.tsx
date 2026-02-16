@@ -14,7 +14,6 @@ import { Card, CardContent } from '@/components/ui/card';
 
 import { FormLocation } from '@/features/location/app/form-location';
 import { zFormFieldsLocation } from '@/features/location/schema';
-import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -22,11 +21,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocationNew = ({
-  params: { orgSlug },
-}: {
-  params: OrgParams;
-}) => {
+export const PageLocationNew = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();

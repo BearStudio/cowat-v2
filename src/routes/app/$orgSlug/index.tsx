@@ -7,6 +7,5 @@ export const Route = createFileRoute('/app/$orgSlug/')({
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageDashboard params={params} />;
+  return <PageDashboard />;
 }

@@ -7,6 +7,6 @@ export const Route = createFileRoute('/app/$orgSlug/account/locations/new/')({
 });
 
 function RouteComponent() {
-  const params = Route.useParams();
-  return <PageLocationNew params={params} />;
+  const { orgSlug } = Route.useParams();
+  return <PageLocationNew orgSlug={orgSlug} />;
 }

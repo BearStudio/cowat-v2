@@ -21,11 +21,10 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
-import type { OrgParams } from '@/features/organization/org-params';
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -33,11 +32,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommuteTemplates = ({
-  params: { orgSlug },
-}: {
-  params: OrgParams;
-}) => {
+export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
 
@@ -76,15 +71,14 @@ export const PageCommuteTemplates = ({
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/commute-templates/new"
-            params={{ orgSlug }}
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>

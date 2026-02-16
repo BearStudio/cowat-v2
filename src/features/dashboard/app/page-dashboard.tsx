@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc/client';
 
 import { Badge } from '@/components/ui/badge';
-import { ButtonLink } from '@/components/ui/button-link';
 import {
   DataListErrorState,
   DataListLoadingState,
@@ -20,13 +19,15 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
 import { CommuteEnriched } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
-import type { OrgParams } from '@/features/organization/org-params';
+import {
+  OrgButtonLink,
+  OrgResponsiveIconButtonLink,
+} from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -34,11 +35,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageDashboard = ({
-  params: { orgSlug },
-}: {
-  params: OrgParams;
-}) => {
+export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
@@ -104,15 +101,14 @@ export const PageDashboard = ({
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('dashboard:newCommuteAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            params={{ orgSlug }}
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>
@@ -145,17 +141,16 @@ export const PageDashboard = ({
                       {isToday && (
                         <Badge variant="positive">{t('dashboard:today')}</Badge>
                       )}
-                      <ButtonLink
+                      <OrgButtonLink
                         variant="ghost"
                         size={isToday ? 'sm' : 'xs'}
                         className="ml-auto"
                         to="/app/$orgSlug/commutes/new"
-                        params={{ orgSlug }}
                         search={{ date: day.toDate() }}
                       >
                         <PlusIcon />
                         {t('dashboard:newCommuteAction')}
-                      </ButtonLink>
+                      </OrgButtonLink>
                     </div>
 
                     {dayCommutes.length === 0 ? (

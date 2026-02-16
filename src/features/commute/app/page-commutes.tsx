@@ -25,12 +25,11 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import type { OrgParams } from '@/features/organization/org-params';
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -38,11 +37,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommutes = ({
-  params: { orgSlug },
-}: {
-  params: OrgParams;
-}) => {
+export const PageCommutes = () => {
   const { t } = useTranslation(['commute', 'common']);
   const session = authClient.useSession();
 
@@ -81,15 +76,14 @@ export const PageCommutes = ({
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('commute:list.newAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            params={{ orgSlug }}
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
