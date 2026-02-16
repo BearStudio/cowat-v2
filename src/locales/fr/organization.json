@@ -38,6 +38,7 @@
     "title": "Créer une organisation",
     "name": "Nom",
     "slug": "Slug",
+    "slugHelper": "Identifiant unique utilisé dans les URLs",
     "owner": "Propriétaire",
     "submit": "Créer"
   },
