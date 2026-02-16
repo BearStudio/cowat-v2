@@ -35,7 +35,7 @@ export const NavSidebar = (props: {
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['layout']);
-  const orgSlug = props.orgSlug;
+  const { orgSlug } = props;
   return (
     <SidebarProvider>
       <Sidebar>

@@ -10,7 +10,7 @@ export const Route = createFileRoute('/manager/$orgSlug')({
 function RouteComponent() {
   const { orgSlug } = Route.useParams();
   return (
-    <GuardOrganization orgSlug={orgSlug}>
+    <GuardOrganization orgSlug={orgSlug} fallbackRedirect="/manager">
       <Layout orgSlug={orgSlug}>
         <Outlet />
       </Layout>

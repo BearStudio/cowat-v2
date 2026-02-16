@@ -9,9 +9,11 @@ import { useOrganizations } from '@/features/organization/use-organizations';
 
 export const GuardOrganization = ({
   orgSlug,
+  fallbackRedirect = '/app',
   children,
 }: {
   orgSlug?: string;
+  fallbackRedirect?: string;
   children?: ReactNode;
 }) => {
   const navigate = useNavigate();
@@ -28,12 +30,12 @@ export const GuardOrganization = ({
     }
   }, [targetOrg, activeOrgId]);
 
-  // Redirect to /app if slug doesn't match any user org
+  // Redirect if slug doesn't match any user org
   useEffect(() => {
     if (orgSlug && organizations && !targetOrg) {
-      navigate({ to: '/app', replace: true });
+      navigate({ to: fallbackRedirect, replace: true });
     }
-  }, [orgSlug, organizations, targetOrg, navigate]);
+  }, [orgSlug, organizations, targetOrg, navigate, fallbackRedirect]);
 
   if (isPending) {
     return <Spinner full className="opacity-60" />;
