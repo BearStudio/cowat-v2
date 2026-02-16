@@ -1,13 +1,10 @@
 import { getUiState } from '@bearstudio/ui-state';
-import { ORPCError } from '@orpc/client';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { AlertCircleIcon, BuildingIcon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { BackButton } from '@/components/back-button';
 import { PageError } from '@/components/errors/page-error';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -29,44 +26,26 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageOrganization = (props: { params?: { id: string } }) => {
+export const PageOrganization = () => {
   const { t } = useTranslation(['organization']);
-  const id = props.params?.id;
 
-  const orgByIdQuery = useQuery({
-    ...orpc.organization.getById.queryOptions({
-      input: { id: id! },
-    }),
-    enabled: !!id,
-  });
-
-  const activeOrgQuery = useQuery({
-    ...orpc.organization.getActiveOrganization.queryOptions(),
-    enabled: !id,
-  });
-
-  const orgQuery = id ? orgByIdQuery : activeOrgQuery;
+  const orgQuery = useQuery(
+    orpc.organization.getActiveOrganization.queryOptions()
+  );
 
   const ui = getUiState((set) => {
     if (orgQuery.status === 'pending') return set('pending');
-    if (
-      orgQuery.status === 'error' &&
-      orgQuery.error instanceof ORPCError &&
-      orgQuery.error.code === 'NOT_FOUND'
-    )
-      return set('not-found');
     if (orgQuery.status === 'error') return set('error');
-
     return set('default', { org: orgQuery.data });
   });
 
   return (
     <PageLayout>
-      <PageLayoutTopBar startActions={id ? <BackButton /> : undefined}>
+      <PageLayoutTopBar>
         <PageLayoutTopBarTitle>
           {ui
             .match('pending', () => <Skeleton className="h-4 w-48" />)
-            .match(['not-found', 'error'], () => (
+            .match('error', () => (
               <AlertCircleIcon className="size-4 text-muted-foreground" />
             ))
             .match('default', ({ org }) => <>{org.name}</>)
@@ -76,7 +55,6 @@ export const PageOrganization = (props: { params?: { id: string } }) => {
       <PageLayoutContent>
         {ui
           .match('pending', () => <Spinner full />)
-          .match('not-found', () => <PageError type="404" />)
           .match('error', () => <PageError type="unknown-server-error" />)
           .match('default', ({ org }) => (
             <div className="flex flex-col gap-4">
@@ -99,13 +77,6 @@ export const PageOrganization = (props: { params?: { id: string } }) => {
                       count: org.members.length,
                     })}
                   </Badge>
-                  {'createdAt' in org && (
-                    <span className="text-xs text-muted-foreground">
-                      {t('organization:manager.detail.createdAt', {
-                        time: dayjs(org.createdAt as Date).format('DD/MM/YYYY'),
-                      })}
-                    </span>
-                  )}
                 </CardContent>
               </Card>
 
