@@ -143,8 +143,8 @@ export const PageOrganizations = (props: {
                     <DataListCell>
                       <DataListText className="font-medium">
                         <Link
-                          to="/manager/$orgSlug/organizations/$id"
-                          params={{ orgSlug: item.slug, id: item.id }}
+                          to="/manager/$orgSlug"
+                          params={{ orgSlug: item.slug }}
                         >
                           {item.name}
                           <span className="absolute inset-0" />
