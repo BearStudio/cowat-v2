@@ -464,17 +464,21 @@ describe('booking router', () => {
         mockBookingForDriverRaw,
       ]);
 
-      const result = await call(bookingRouter.getRequestsForDriver, {});
+      await call(bookingRouter.getRequestsForDriver, {});
 
-      const expectedWhere = expect.objectContaining({
-        status: 'REQUESTED',
-        stop: {
-          commute: {
-            driverMemberId: mockMemberId,
-            date: { gte: expect.any(Date) },
-          },
-        },
-      });
+      expect(mockDb.passengersOnStops.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'REQUESTED',
+            stop: {
+              commute: {
+                driverMemberId: mockMemberId,
+                date: { gte: expect.any(Date) },
+              },
+            },
+          }),
+        })
+      );
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -517,7 +521,7 @@ describe('booking router', () => {
     it('should filter by driverMemberId', async () => {
       mockDb.passengersOnStops.count.mockResolvedValue(0);
 
-      const result = await call(bookingRouter.pendingRequestCount, undefined);
+      await call(bookingRouter.pendingRequestCount, undefined);
 
       expect(mockDb.passengersOnStops.count).toHaveBeenCalledWith({
         where: {

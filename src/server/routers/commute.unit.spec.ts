@@ -140,7 +140,7 @@ describe('commute router', () => {
     it('should scope query by organizationId via driver relation', async () => {
       mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
 
-      const result = await call(commuteRouter.getById, { id: 'commute-1' });
+      await call(commuteRouter.getById, { id: 'commute-1' });
 
       expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -251,7 +251,7 @@ describe('commute router', () => {
       mockDb.commute.count.mockResolvedValue(0);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      const result = await call(commuteRouter.getMyCommutes, {});
+      await call(commuteRouter.getMyCommutes, {});
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -319,7 +319,7 @@ describe('commute router', () => {
       mockDb.commute.update.mockResolvedValue(updatedCommute);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
 
-      const result = await call(commuteRouter.update, updateInput);
+      await call(commuteRouter.update, updateInput);
 
       expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -384,7 +384,7 @@ describe('commute router', () => {
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.commute.delete.mockResolvedValue(mockCommuteFromDb);
 
-      const result = await call(commuteRouter.cancel, { id: 'commute-1' });
+      await call(commuteRouter.cancel, { id: 'commute-1' });
 
       expect(mockDb.commute.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({

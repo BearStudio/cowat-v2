@@ -50,7 +50,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      const result = await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, undefined);
 
       expect(mockDb.member.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -92,7 +92,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      const result = await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, undefined);
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
