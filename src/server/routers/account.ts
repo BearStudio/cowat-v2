@@ -64,11 +64,10 @@ export default {
     .input(z.void())
     .output(z.object({ autoAccept: z.boolean() }))
     .handler(async ({ context }) => {
-      const member = await context.db.member.findUniqueOrThrow({
+      return await context.db.member.findUniqueOrThrow({
         where: { id: context.memberId },
         select: { autoAccept: true },
       });
-      return member;
     }),
 
   updateAutoAccept: organizationProcedure({ permission: null })

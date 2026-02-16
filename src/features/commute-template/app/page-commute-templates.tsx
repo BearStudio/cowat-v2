@@ -109,8 +109,8 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                   className="cursor-pointer"
                   onClick={() =>
                     navigate({
-                      to: '/app/$orgSlug/account/commute-templates/$id/update' as never,
-                      params: { orgSlug, id: item.id } as never,
+                      to: '/app/$orgSlug/account/commute-templates/$id/update',
+                      params: { orgSlug, id: item.id },
                     })
                   }
                 >
