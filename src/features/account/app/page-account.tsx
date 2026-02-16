@@ -9,8 +9,8 @@ import { NotificationPreferences } from '@/features/account/notification-prefere
 import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
-import { OrgSwitcher } from '@/features/organization/org-switcher';
 import type { OrgParams } from '@/features/organization/org-params';
+import { OrgSwitcher } from '@/features/organization/org-switcher';
 import {
   PageLayout,
   PageLayoutContent,
