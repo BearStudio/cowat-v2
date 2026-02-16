@@ -39,7 +39,7 @@ import { WithPermissions } from '@/features/auth/with-permission';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
 
-export function NavUser() {
+export function NavUser(props: { orgSlug: string }) {
   const { t } = useTranslation(['common', 'auth', 'layout']);
   const { isMobile } = useSidebar();
   const session = authClient.useSession();
@@ -101,7 +101,8 @@ export function NavUser() {
               <DropdownMenuItem
                 render={
                   <Link
-                    to="/manager/account"
+                    to="/manager/$orgSlug/account"
+                    params={{ orgSlug: props.orgSlug }}
                     onClick={() => setOpenMobile(false)}
                   />
                 }

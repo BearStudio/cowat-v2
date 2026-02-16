@@ -1,48 +1,55 @@
-import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { ReactNode, useEffect } from 'react';
-
-import { orpc } from '@/lib/orpc/client';
 
 import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
+import { useOrganizations } from '@/features/organization/use-organizations';
 
-const useAutoSetActiveOrg = () => {
-  const session = authClient.useSession();
-  const activeOrgId = session.data?.session?.activeOrganizationId;
+export const GuardOrganization = ({
+  orgSlug,
+  fallbackRedirect = '/app',
+  children,
+}: {
+  orgSlug?: string;
+  fallbackRedirect?: string;
+  children?: ReactNode;
+}) => {
+  const navigate = useNavigate();
+  const { organizations, activeOrgId, isPending } = useOrganizations();
 
-  const orgsQuery = useQuery({
-    ...orpc.organization.getMyOrganizations.queryOptions(),
-    enabled: !!session.data?.user,
-  });
+  const targetOrg = orgSlug
+    ? organizations?.find((org) => org.slug === orgSlug)
+    : organizations?.[0];
 
+  // Set the target org as active if it's not already
   useEffect(() => {
-    if (orgsQuery.data && orgsQuery.data.length > 0 && !activeOrgId) {
-      const firstOrg = orgsQuery.data[0];
-      if (firstOrg) {
-        authClient.organization.setActive({
-          organizationId: firstOrg.id,
-        });
-      }
+    if (targetOrg && targetOrg.id !== activeOrgId) {
+      authClient.organization.setActive({ organizationId: targetOrg.id });
     }
-  }, [orgsQuery.data, activeOrgId]);
+  }, [targetOrg, activeOrgId]);
 
-  return { orgsQuery, activeOrgId };
-};
+  // Redirect if slug doesn't match any user org
+  useEffect(() => {
+    if (orgSlug && organizations && !targetOrg) {
+      navigate({ to: fallbackRedirect, replace: true });
+    }
+  }, [orgSlug, organizations, targetOrg, navigate, fallbackRedirect]);
 
-export const GuardOrganization = ({ children }: { children?: ReactNode }) => {
-  const { orgsQuery, activeOrgId } = useAutoSetActiveOrg();
-
-  if (orgsQuery.isPending) {
+  if (isPending) {
     return <Spinner full className="opacity-60" />;
   }
 
-  if (!orgsQuery.data || orgsQuery.data.length === 0) {
+  if (!organizations || organizations.length === 0) {
     return <PageNoOrganization />;
   }
 
-  if (!activeOrgId) {
+  if (!targetOrg) {
+    return <Spinner full className="opacity-60" />;
+  }
+
+  if (targetOrg.id !== activeOrgId) {
     return <Spinner full className="opacity-60" />;
   }
 

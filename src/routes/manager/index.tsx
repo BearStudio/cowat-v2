@@ -1,12 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+
+import { OrgRedirect } from '@/features/organization/org-redirect';
 
 export const Route = createFileRoute('/manager/')({
   component: RouteComponent,
-  beforeLoad: () => {
-    throw redirect({ to: '/manager/users' });
-  },
 });
 
 function RouteComponent() {
-  return null;
+  return <OrgRedirect to="/manager/$orgSlug/users" />;
 }

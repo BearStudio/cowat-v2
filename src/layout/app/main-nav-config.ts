@@ -13,36 +13,40 @@ import {
 
 import { NavBadge } from '@/layout/app/nav-badge';
 
-export const MAIN_NAV_LINKS = linkOptions([
+export const mainNavLinks = linkOptions([
   {
     labelTranslationKey: 'layout:nav.dashboard',
     icon: IconHouseDuotone,
     iconActive: IconHouseFill,
-    to: '/app',
+    from: '/app/$orgSlug' as const,
+    to: '/app/$orgSlug',
     activeOptions: { exact: true },
   },
   {
     labelTranslationKey: 'layout:nav.commutes',
     icon: IconCarDuotone,
     iconActive: IconCarFill,
-    to: '/app/commutes',
+    from: '/app/$orgSlug' as const,
+    to: '/app/$orgSlug/commutes',
   },
   {
     labelTranslationKey: 'layout:nav.requests',
     icon: IconBellDuotone,
     iconActive: IconBellFill,
     badge: NavBadge,
-    to: '/app/requests',
+    from: '/app/$orgSlug' as const,
+    to: '/app/$orgSlug/requests',
   },
   {
     labelTranslationKey: 'layout:nav.account',
     icon: IconUserCircleDuotone,
     iconActive: IconUserCircleFill,
-    to: '/app/account',
+    from: '/app/$orgSlug' as const,
+    to: '/app/$orgSlug/account',
   },
 ]);
 
 export type NavLinkItem = Omit<
-  (typeof MAIN_NAV_LINKS)[number],
+  (typeof mainNavLinks)[number],
   'labelTranslationKey'
 > & { children?: React.ReactNode; badge?: React.ComponentType };

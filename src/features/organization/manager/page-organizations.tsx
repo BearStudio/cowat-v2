@@ -31,6 +31,7 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageOrganizations = (props: {
+  orgSlug: string;
   search: { searchTerm?: string };
 }) => {
   const { t } = useTranslation(['organization']);
@@ -142,8 +143,8 @@ export const PageOrganizations = (props: {
                     <DataListCell>
                       <DataListText className="font-medium">
                         <Link
-                          to="/manager/organizations/$id"
-                          params={{ id: item.id }}
+                          to="/manager/$orgSlug/organizations/$id"
+                          params={{ orgSlug: props.orgSlug, id: item.id }}
                         >
                           {item.name}
                           <span className="absolute inset-0" />

@@ -28,7 +28,8 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageCommuteTemplateUpdate = (props: {
-  params: { id: string };
+  id: string;
+  orgSlug: string;
 }) => {
   const { t } = useTranslation(['commuteTemplate']);
   const router = useRouter();
@@ -36,7 +37,7 @@ export const PageCommuteTemplateUpdate = (props: {
 
   const templateQuery = useQuery(
     orpc.commuteTemplate.getById.queryOptions({
-      input: { id: props.params.id },
+      input: { id: props.id },
     })
   );
 
@@ -46,7 +47,7 @@ export const PageCommuteTemplateUpdate = (props: {
         await Promise.all([
           context.client.invalidateQueries({
             queryKey: orpc.commuteTemplate.getById.key({
-              input: { id: props.params.id },
+              input: { id: props.id },
             }),
           }),
           context.client.invalidateQueries({
@@ -59,7 +60,8 @@ export const PageCommuteTemplateUpdate = (props: {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/commute-templates',
+            to: '/app/$orgSlug/account/commute-templates',
+            params: { orgSlug: props.orgSlug },
             replace: true,
             ignoreBlocker: true,
           });
@@ -102,7 +104,7 @@ export const PageCommuteTemplateUpdate = (props: {
         {...form}
         onSubmit={(values) => {
           templateUpdate.mutate({
-            id: props.params.id,
+            id: props.id,
             ...values,
             stops: values.stops.map((stop, index) => ({
               ...stop,

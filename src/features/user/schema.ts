@@ -22,7 +22,6 @@ export const zUser = () =>
     role: zRole().nullish(),
     image: z.string().nullish(),
     phone: zu.fieldText.nullish(),
-    autoAccept: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
     onboardedAt: z.date().nullish(),

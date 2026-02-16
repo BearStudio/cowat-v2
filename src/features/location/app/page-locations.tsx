@@ -1,6 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { ExternalLinkIcon, MapPinIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -24,8 +23,9 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -71,14 +71,14 @@ export const PageLocations = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('location:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/account/locations/new"
+            to="/app/$orgSlug/account/locations/new"
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
@@ -107,13 +107,13 @@ export const PageLocations = () => {
                 <DataListRow key={item.id} role="row" withHover>
                   <DataListCell>
                     <DataListText className="font-medium">
-                      <Link
-                        to="/app/account/locations/$id/update"
+                      <OrgLink
+                        to="/app/$orgSlug/account/locations/$id/update"
                         params={{ id: item.id }}
                       >
                         {item.name}
                         <span className="absolute inset-0" />
-                      </Link>
+                      </OrgLink>
                     </DataListText>
                     <DataListText className="text-xs text-muted-foreground">
                       {item.address}

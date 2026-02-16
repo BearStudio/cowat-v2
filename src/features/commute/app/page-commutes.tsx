@@ -25,11 +25,11 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { authClient } from '@/features/auth/client';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -76,14 +76,14 @@ export const PageCommutes = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('commute:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/commutes/new"
+            to="/app/$orgSlug/commutes/new"
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
@@ -122,7 +122,7 @@ export const PageCommutes = () => {
                   }
                 }
                 const available = item.seats - acceptedPassengers.size;
-                const isDriver = session.data?.user.id === item.driverId;
+                const isDriver = session.data?.user.id === item.driver.id;
 
                 return (
                   <CardCommute key={item.id}>

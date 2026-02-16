@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import accountRouter from '@/server/routers/account';
 import {
+  mockDb,
   mockGetSession,
   mockUserHasPermission,
 } from '@/server/routers/test-utils';
@@ -35,7 +36,7 @@ describe('account router', () => {
   });
 
   describe('updateInfo', () => {
-    const updateInput = { name: 'Updated Name', autoAccept: false };
+    const updateInput = { name: 'Updated Name' };
 
     it('should succeed for an authenticated user', async () => {
       await expect(
@@ -54,6 +55,48 @@ describe('account router', () => {
 
       await expect(
         call(accountRouter.updateInfo, updateInput)
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      });
+    });
+  });
+
+  describe('getAutoAccept', () => {
+    it('should return autoAccept for the current member', async () => {
+      mockDb.member.findUniqueOrThrow.mockResolvedValue({
+        autoAccept: true,
+      });
+
+      const result = await call(accountRouter.getAutoAccept, undefined);
+
+      expect(result).toEqual({ autoAccept: true });
+    });
+
+    it('should throw UNAUTHORIZED when user is not authenticated', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      await expect(
+        call(accountRouter.getAutoAccept, undefined)
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      });
+    });
+  });
+
+  describe('updateAutoAccept', () => {
+    it('should update autoAccept for the current member', async () => {
+      mockDb.member.update.mockResolvedValue(undefined);
+
+      await expect(
+        call(accountRouter.updateAutoAccept, { autoAccept: true })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw UNAUTHORIZED when user is not authenticated', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      await expect(
+        call(accountRouter.updateAutoAccept, { autoAccept: true })
       ).rejects.toMatchObject({
         code: 'UNAUTHORIZED',
       });

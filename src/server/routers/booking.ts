@@ -29,18 +29,23 @@ export default {
           commuteId: true,
           commute: {
             select: {
-              organizationId: true,
+              driverMemberId: true,
               date: true,
               type: true,
               driver: {
                 select: {
-                  id: true,
-                  name: true,
-                  email: true,
+                  organizationId: true,
                   autoAccept: true,
                   notificationPreferences: {
                     where: { enabled: false },
                     select: { channel: true },
+                  },
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                    },
                   },
                 },
               },
@@ -49,14 +54,17 @@ export default {
         },
       });
 
-      if (!stop || stop.commute.organizationId !== context.organizationId) {
+      if (
+        !stop ||
+        stop.commute.driver.organizationId !== context.organizationId
+      ) {
         throw new ORPCError('NOT_FOUND');
       }
 
       // Check if user already has an active booking on any stop of this commute
       const existingBooking = await context.db.passengersOnStops.findFirst({
         where: {
-          passengerId: context.user.id,
+          passengerMemberId: context.memberId,
           status: { in: ['REQUESTED', 'ACCEPTED'] },
           stop: { commuteId: stop.commuteId },
         },
@@ -68,12 +76,14 @@ export default {
         });
       }
 
-      const status = stop.commute.driver.autoAccept ? 'ACCEPTED' : 'REQUESTED';
+      const driverMember = stop.commute.driver;
+      const driverUser = driverMember.user;
+      const status = driverMember.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
       const booking = await context.db.passengersOnStops.upsert({
         where: {
-          passengerId_stopId: {
-            passengerId: context.user.id,
+          passengerMemberId_stopId: {
+            passengerMemberId: context.memberId,
             stopId: input.stopId,
           },
         },
@@ -85,18 +95,17 @@ export default {
         create: {
           ...input,
           status,
-          passengerId: context.user.id,
+          passengerMemberId: context.memberId,
         },
       });
 
-      const { driver } = stop.commute;
       context.notify({
         type: 'booking.requested',
         recipient: {
-          userId: driver.id,
-          name: driver.name,
-          email: driver.email,
-          disabledChannels: driver.notificationPreferences.map((p) =>
+          userId: driverUser.id,
+          name: driverUser.name,
+          email: driverUser.email,
+          disabledChannels: driverMember.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },
@@ -124,13 +133,17 @@ export default {
         where: { id: input.id },
         include: {
           passenger: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
+            include: {
               notificationPreferences: {
                 where: { enabled: false },
                 select: { channel: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
               },
             },
           },
@@ -142,7 +155,7 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.stop.commute.driverId !== context.user.id) {
+      if (booking.stop.commute.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -153,12 +166,13 @@ export default {
         data: { status: 'ACCEPTED' },
       });
 
+      const passengerUser = booking.passenger.user;
       context.notify({
         type: 'booking.accepted',
         recipient: {
-          userId: booking.passenger.id,
-          name: booking.passenger.name,
-          email: booking.passenger.email,
+          userId: passengerUser.id,
+          name: passengerUser.name,
+          email: passengerUser.email,
           disabledChannels: booking.passenger.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
@@ -184,13 +198,17 @@ export default {
         where: { id: input.id },
         include: {
           passenger: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
+            include: {
               notificationPreferences: {
                 where: { enabled: false },
                 select: { channel: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
               },
             },
           },
@@ -202,7 +220,7 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.stop.commute.driverId !== context.user.id) {
+      if (booking.stop.commute.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -213,12 +231,13 @@ export default {
         data: { status: 'REFUSED' },
       });
 
+      const passengerUser = booking.passenger.user;
       context.notify({
         type: 'booking.refused',
         recipient: {
-          userId: booking.passenger.id,
-          name: booking.passenger.name,
-          email: booking.passenger.email,
+          userId: passengerUser.id,
+          name: passengerUser.name,
+          email: passengerUser.email,
           disabledChannels: booking.passenger.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
@@ -248,13 +267,17 @@ export default {
               commute: {
                 include: {
                   driver: {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
+                    include: {
                       notificationPreferences: {
                         where: { enabled: false },
                         select: { channel: true },
+                      },
+                      user: {
+                        select: {
+                          id: true,
+                          name: true,
+                          email: true,
+                        },
                       },
                     },
                   },
@@ -269,7 +292,7 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.passengerId !== context.user.id) {
+      if (booking.passengerMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -280,14 +303,15 @@ export default {
         data: { status: 'CANCELED' },
       });
 
-      const { driver } = booking.stop.commute;
+      const driverMember = booking.stop.commute.driver;
+      const driverUser = driverMember.user;
       context.notify({
         type: 'booking.canceled',
         recipient: {
-          userId: driver.id,
-          name: driver.name,
-          email: driver.email,
-          disabledChannels: driver.notificationPreferences.map((p) =>
+          userId: driverUser.id,
+          name: driverUser.name,
+          email: driverUser.email,
+          disabledChannels: driverMember.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },
@@ -313,8 +337,7 @@ export default {
           status: 'REQUESTED',
           stop: {
             commute: {
-              driverId: context.user.id,
-              organizationId: context.organizationId,
+              driverMemberId: context.memberId,
               date: { gte: new Date() },
             },
           },
@@ -349,15 +372,16 @@ export default {
         status: 'REQUESTED' as const,
         stop: {
           commute: {
-            driverId: context.user.id,
-            organizationId: context.organizationId,
+            driverMemberId: context.memberId,
             date: { gte: new Date() },
           },
         },
       } satisfies Prisma.PassengersOnStopsWhereInput;
 
       const include = {
-        passenger: { select: { id: true, name: true, image: true } },
+        passenger: {
+          include: { user: { select: { id: true, name: true, image: true } } },
+        },
         stop: {
           select: {
             id: true,
@@ -375,7 +399,7 @@ export default {
         },
       } satisfies Prisma.PassengersOnStopsInclude;
 
-      const [total, items] = await Promise.all([
+      const [total, rawItems] = await Promise.all([
         context.db.passengersOnStops.count({ where }),
         context.db.passengersOnStops.findMany({
           take: input.limit + 1,
@@ -387,10 +411,15 @@ export default {
       ]);
 
       let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
+      if (rawItems.length > input.limit) {
+        const nextItem = rawItems.pop();
         nextCursor = nextItem?.id;
       }
+
+      const items = rawItems.map((item) => ({
+        ...item,
+        passenger: item.passenger.user,
+      }));
 
       return { items, nextCursor, total };
     }),

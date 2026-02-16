@@ -32,14 +32,19 @@ export async function createLocations(organizationId: string) {
     const user = await db.user.findUnique({ where: { email } });
     if (!user) continue;
 
+    const member = await db.member.findFirst({
+      where: { userId: user.id, organizationId },
+    });
+    if (!member) continue;
+
     const existingCount = await db.location.count({
-      where: { userId: user.id },
+      where: { memberId: member.id },
     });
     if (existingCount > 0) continue;
 
     for (const loc of LOCATIONS) {
       await db.location.create({
-        data: { ...loc, userId: user.id, organizationId },
+        data: { ...loc, memberId: member.id },
       });
       createdCounter += 1;
     }

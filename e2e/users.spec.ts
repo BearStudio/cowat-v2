@@ -6,7 +6,7 @@ test.describe('User management as user', () => {
   test.use({ storageState: USER_FILE });
 
   test('Should not have access', async ({ page }) => {
-    await page.to('/manager/users');
+    await page.to('/manager');
 
     await expect(
       page.getByText("You don't have access to this page")
@@ -18,7 +18,7 @@ test.describe('User management as manager', () => {
   test.use({ storageState: ADMIN_FILE });
 
   test.beforeEach(async ({ page }) => {
-    await page.to('/manager/users');
+    await page.to('/manager');
   });
 
   test('Create a user', async ({ page }) => {
@@ -28,12 +28,12 @@ test.describe('User management as manager', () => {
     const uniqueEmail = `new-user-${randomId}@user.com`;
 
     // Fill the form
-    await page.waitForURL('/manager/users/new');
+    await page.waitForURL('**/manager/*/users/new');
     await page.getByLabel('Name').fill('New user');
     await page.getByLabel('Email').fill(uniqueEmail);
     await page.getByText('Create').click();
 
-    await page.waitForURL('/manager/users');
+    await page.waitForURL('**/manager/*/users');
     await page.getByPlaceholder('Search...').fill('new-user');
     await expect(page.getByText(uniqueEmail)).toBeVisible();
   });

@@ -69,19 +69,12 @@ model User {
   accounts      Account[]
 
   phone         String?
-  autoAccept    Boolean  @default(false)
 
   role        UserRole?
   banned      Boolean?
   banReason   String?
   banExpires  DateTime?
   onboardedAt DateTime?
-
-  locations                Location[]
-  commutes                 Commute[]
-  passengerBookings        PassengersOnStops[]
-  commuteTemplates         CommuteTemplate[]
-  notificationPreferences  NotificationPreference[]
 
   members     Member[]
   invitations Invitation[]
@@ -151,15 +144,12 @@ model Location {
   isDeleted      Boolean        @default(false)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organizationId String
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  memberId       String
+  member         Member         @relation(fields: [memberId], references: [id], onDelete: Cascade)
   stops          Stop[]
   templateStops  TemplateStop[]
 
-  @@index([userId])
-  @@index([organizationId])
+  @@index([memberId])
   @@map("location")
 }
 
@@ -174,14 +164,11 @@ model Commute {
   isDeleted      Boolean       @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  driverId       String
-  driver         User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  driverMemberId String
+  driver         Member        @relation("CommuteDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
   stops          Stop[]
 
-  @@index([driverId, date])
-  @@index([organizationId])
+  @@index([driverMemberId, date])
   @@map("commute")
 }
 
@@ -214,13 +201,13 @@ model PassengersOnStops {
   isDeleted   Boolean       @default(false)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  passengerId String
-  passenger   User          @relation(fields: [passengerId], references: [id], onDelete: Cascade)
-  stopId      String
-  stop        Stop          @relation(fields: [stopId], references: [id], onDelete: Cascade)
+  passengerMemberId String
+  passenger         Member    @relation("BookingPassenger", fields: [passengerMemberId], references: [id], onDelete: Cascade)
+  stopId            String
+  stop              Stop      @relation(fields: [stopId], references: [id], onDelete: Cascade)
 
-  @@unique([passengerId, stopId])
-  @@index([passengerId])
+  @@unique([passengerMemberId, stopId])
+  @@index([passengerMemberId])
   @@index([stopId])
   @@map("passengers_on_stops")
 }
@@ -234,13 +221,11 @@ model CommuteTemplate {
   isDeleted      Boolean        @default(false)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  driverId       String
-  driver         User           @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  organizationId String
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  driverMemberId String
+  driver         Member         @relation("TemplateDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
   stops          TemplateStop[]
 
-  @@index([organizationId])
+  @@index([driverMemberId])
   @@map("commute_template")
 }
 
@@ -266,10 +251,11 @@ model NotificationPreference {
   channel   NotificationChannel
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
-  userId    String
-  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    Member              @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, channel])
+  @@unique([memberId, channel])
+  @@index([memberId])
   @@map("notification_preference")
 }
 
@@ -282,9 +268,6 @@ model Organization {
   metadata         String?
   members          Member[]
   invitations      Invitation[]
-  locations        Location[]
-  commutes         Commute[]
-  commuteTemplates CommuteTemplate[]
 
   @@unique([slug])
   @@map("organization")
@@ -298,6 +281,13 @@ model Member {
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
   createdAt      DateTime
+  autoAccept     Boolean      @default(false)
+
+  locations                Location[]
+  notificationPreferences  NotificationPreference[]
+  drivenCommutes      Commute[]           @relation("CommuteDriver")
+  drivenTemplates     CommuteTemplate[]   @relation("TemplateDriver")
+  passengerBookings   PassengersOnStops[] @relation("BookingPassenger")
 
   @@index([organizationId])
   @@index([userId])

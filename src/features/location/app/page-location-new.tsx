@@ -21,7 +21,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocationNew = () => {
+export const PageLocationNew = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -45,7 +45,8 @@ export const PageLocationNew = () => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/locations',
+            to: '/app/$orgSlug/account/locations',
+            params: { orgSlug },
             replace: true,
             ignoreBlocker: true,
           });

@@ -1,8 +1,7 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { BuildingIcon, CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-import { orpc } from '@/lib/orpc/client';
 
 import {
   DropdownMenu,
@@ -15,29 +14,42 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { authClient } from '@/features/auth/client';
+import { useOrganizations } from '@/features/organization/use-organizations';
 
 export const OrgSwitcher = () => {
   const { t } = useTranslation(['organization']);
   const session = authClient.useSession();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const orgsQuery = useQuery(
-    orpc.organization.getMyOrganizations.queryOptions()
-  );
+  const { organizations, activeOrg, activeOrgId } = useOrganizations();
 
-  const activeOrgId = session.data?.session?.activeOrganizationId;
-  const activeOrg = orgsQuery.data?.find((org) => org.id === activeOrgId);
+  const handleSwitch = async (org: { id: string; slug: string }) => {
+    if (org.id === activeOrgId) return;
 
-  const handleSwitch = async (organizationId: string) => {
-    if (organizationId === activeOrgId) return;
-
-    await authClient.organization.setActive({ organizationId });
+    await authClient.organization.setActive({ organizationId: org.id });
     await session.refetch();
+
+    // If in app or manager route, navigate to the new org's URL
+    const currentPath = router.state.location.pathname;
+    const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
+    // Don't replace the slug on non-org-scoped routes like /manager/organizations
+    if (
+      currentPath.match(orgSlugPattern) &&
+      !currentPath.startsWith('/manager/organizations')
+    ) {
+      const newPath = currentPath.replace(
+        orgSlugPattern,
+        (_, prefix) => `/${prefix}/${org.slug}`
+      );
+      router.navigate({ to: newPath as string, replace: true });
+    }
+
     // Invalidate all queries since data is org-scoped
     await queryClient.invalidateQueries();
   };
 
-  if (!orgsQuery.data || orgsQuery.data.length <= 1) {
+  if (!organizations || organizations.length <= 1) {
     // Don't show switcher if user only has 1 org
     if (activeOrg) {
       return (
@@ -65,8 +77,8 @@ export const OrgSwitcher = () => {
             {t('organization:switcher.label')}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {orgsQuery.data.map((org) => (
-            <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org.id)}>
+          {organizations.map((org) => (
+            <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org)}>
               <span className="flex-1 truncate">{org.name}</span>
               {org.id === activeOrgId && (
                 <CheckIcon className="size-4 text-primary" />

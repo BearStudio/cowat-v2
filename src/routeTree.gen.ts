@@ -19,35 +19,39 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as InvitationsIdRouteImport } from './routes/invitations/$id'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
-import { Route as ManagerUsersIndexRouteImport } from './routes/manager/users/index'
-import { Route as ManagerStatsIndexRouteImport } from './routes/manager/stats.index'
+import { Route as ManagerOrganizationsRouteRouteImport } from './routes/manager/organizations/route'
+import { Route as ManagerOrgSlugRouteRouteImport } from './routes/manager/$orgSlug/route'
+import { Route as AppOrgSlugRouteRouteImport } from './routes/app/$orgSlug/route'
 import { Route as ManagerOrganizationsIndexRouteImport } from './routes/manager/organizations/index'
-import { Route as ManagerAccountIndexRouteImport } from './routes/manager/account.index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
-import { Route as AppRequestsIndexRouteImport } from './routes/app/requests/index'
-import { Route as AppCommutesIndexRouteImport } from './routes/app/commutes/index'
-import { Route as AppAccountIndexRouteImport } from './routes/app/account/index'
+import { Route as AppOrgSlugIndexRouteImport } from './routes/app/$orgSlug/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiRestSplatRouteImport } from './routes/api/rest.$'
 import { Route as ApiOpenapiAuthRouteImport } from './routes/api/openapi/auth'
 import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
-import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users/new.index'
-import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
 import { Route as ManagerOrganizationsNewIndexRouteImport } from './routes/manager/organizations/new.index'
-import { Route as ManagerOrganizationsIdIndexRouteImport } from './routes/manager/organizations/$id.index'
-import { Route as AppCommutesNewIndexRouteImport } from './routes/app/commutes/new.index'
-import { Route as AppAccountLocationsIndexRouteImport } from './routes/app/account/locations/index'
-import { Route as AppAccountCommuteTemplatesIndexRouteImport } from './routes/app/account/commute-templates/index'
+import { Route as ManagerOrgSlugUsersIndexRouteImport } from './routes/manager/$orgSlug/users/index'
+import { Route as ManagerOrgSlugStatsIndexRouteImport } from './routes/manager/$orgSlug/stats.index'
+import { Route as ManagerOrgSlugAccountIndexRouteImport } from './routes/manager/$orgSlug/account.index'
+import { Route as AppOrgSlugRequestsIndexRouteImport } from './routes/app/$orgSlug/requests/index'
+import { Route as AppOrgSlugCommutesIndexRouteImport } from './routes/app/$orgSlug/commutes/index'
+import { Route as AppOrgSlugAccountIndexRouteImport } from './routes/app/$orgSlug/account/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
-import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
-import { Route as AppAccountLocationsNewIndexRouteImport } from './routes/app/account/locations/new.index'
-import { Route as AppAccountCommuteTemplatesNewIndexRouteImport } from './routes/app/account/commute-templates/new.index'
-import { Route as AppAccountLocationsIdUpdateIndexRouteImport } from './routes/app/account/locations/$id.update.index'
-import { Route as AppAccountCommuteTemplatesIdUpdateIndexRouteImport } from './routes/app/account/commute-templates/$id.update.index'
+import { Route as ManagerOrgSlugUsersNewIndexRouteImport } from './routes/manager/$orgSlug/users/new.index'
+import { Route as ManagerOrgSlugUsersIdIndexRouteImport } from './routes/manager/$orgSlug/users/$id.index'
+import { Route as ManagerOrgSlugOrganizationsIdIndexRouteImport } from './routes/manager/$orgSlug/organizations/$id.index'
+import { Route as AppOrgSlugCommutesNewIndexRouteImport } from './routes/app/$orgSlug/commutes/new.index'
+import { Route as AppOrgSlugAccountLocationsIndexRouteImport } from './routes/app/$orgSlug/account/locations/index'
+import { Route as AppOrgSlugAccountCommuteTemplatesIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/index'
+import { Route as ManagerOrgSlugUsersIdUpdateIndexRouteImport } from './routes/manager/$orgSlug/users/$id.update.index'
+import { Route as AppOrgSlugAccountLocationsNewIndexRouteImport } from './routes/app/$orgSlug/account/locations/new.index'
+import { Route as AppOrgSlugAccountCommuteTemplatesNewIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/new.index'
+import { Route as AppOrgSlugAccountLocationsIdUpdateIndexRouteImport } from './routes/app/$orgSlug/account/locations/$id.update.index'
+import { Route as AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/$id.update.index'
 
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
@@ -99,27 +103,28 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerUsersIndexRoute = ManagerUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
+const ManagerOrganizationsRouteRoute =
+  ManagerOrganizationsRouteRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => ManagerRouteRoute,
+  } as any)
+const ManagerOrgSlugRouteRoute = ManagerOrgSlugRouteRouteImport.update({
+  id: '/$orgSlug',
+  path: '/$orgSlug',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
-const ManagerStatsIndexRoute = ManagerStatsIndexRouteImport.update({
-  id: '/stats/',
-  path: '/stats/',
-  getParentRoute: () => ManagerRouteRoute,
+const AppOrgSlugRouteRoute = AppOrgSlugRouteRouteImport.update({
+  id: '/$orgSlug',
+  path: '/$orgSlug',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const ManagerOrganizationsIndexRoute =
   ManagerOrganizationsIndexRouteImport.update({
-    id: '/organizations/',
-    path: '/organizations/',
-    getParentRoute: () => ManagerRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => ManagerOrganizationsRouteRoute,
   } as any)
-const ManagerAccountIndexRoute = ManagerAccountIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
-  getParentRoute: () => ManagerRouteRoute,
-} as any)
 const LoginVerifyIndexRoute = LoginVerifyIndexRouteImport.update({
   id: '/verify/',
   path: '/verify/',
@@ -130,20 +135,10 @@ const LoginErrorIndexRoute = LoginErrorIndexRouteImport.update({
   path: '/error/',
   getParentRoute: () => LoginRouteRoute,
 } as any)
-const AppRequestsIndexRoute = AppRequestsIndexRouteImport.update({
-  id: '/requests/',
-  path: '/requests/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppCommutesIndexRoute = AppCommutesIndexRouteImport.update({
-  id: '/commutes/',
-  path: '/commutes/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppAccountIndexRoute = AppAccountIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
-  getParentRoute: () => AppRouteRoute,
+const AppOrgSlugIndexRoute = AppOrgSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppOrgSlugRouteRoute,
 } as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
@@ -170,45 +165,45 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerUsersNewIndexRoute = ManagerUsersNewIndexRouteImport.update({
-  id: '/users/new/',
-  path: '/users/new/',
-  getParentRoute: () => ManagerRouteRoute,
-} as any)
-const ManagerUsersIdIndexRoute = ManagerUsersIdIndexRouteImport.update({
-  id: '/users/$id/',
-  path: '/users/$id/',
-  getParentRoute: () => ManagerRouteRoute,
-} as any)
 const ManagerOrganizationsNewIndexRoute =
   ManagerOrganizationsNewIndexRouteImport.update({
-    id: '/organizations/new/',
-    path: '/organizations/new/',
-    getParentRoute: () => ManagerRouteRoute,
+    id: '/new/',
+    path: '/new/',
+    getParentRoute: () => ManagerOrganizationsRouteRoute,
   } as any)
-const ManagerOrganizationsIdIndexRoute =
-  ManagerOrganizationsIdIndexRouteImport.update({
-    id: '/organizations/$id/',
-    path: '/organizations/$id/',
-    getParentRoute: () => ManagerRouteRoute,
+const ManagerOrgSlugUsersIndexRoute =
+  ManagerOrgSlugUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
-const AppCommutesNewIndexRoute = AppCommutesNewIndexRouteImport.update({
-  id: '/commutes/new/',
-  path: '/commutes/new/',
-  getParentRoute: () => AppRouteRoute,
+const ManagerOrgSlugStatsIndexRoute =
+  ManagerOrgSlugStatsIndexRouteImport.update({
+    id: '/stats/',
+    path: '/stats/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
+  } as any)
+const ManagerOrgSlugAccountIndexRoute =
+  ManagerOrgSlugAccountIndexRouteImport.update({
+    id: '/account/',
+    path: '/account/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
+  } as any)
+const AppOrgSlugRequestsIndexRoute = AppOrgSlugRequestsIndexRouteImport.update({
+  id: '/requests/',
+  path: '/requests/',
+  getParentRoute: () => AppOrgSlugRouteRoute,
 } as any)
-const AppAccountLocationsIndexRoute =
-  AppAccountLocationsIndexRouteImport.update({
-    id: '/account/locations/',
-    path: '/account/locations/',
-    getParentRoute: () => AppRouteRoute,
-  } as any)
-const AppAccountCommuteTemplatesIndexRoute =
-  AppAccountCommuteTemplatesIndexRouteImport.update({
-    id: '/account/commute-templates/',
-    path: '/account/commute-templates/',
-    getParentRoute: () => AppRouteRoute,
-  } as any)
+const AppOrgSlugCommutesIndexRoute = AppOrgSlugCommutesIndexRouteImport.update({
+  id: '/commutes/',
+  path: '/commutes/',
+  getParentRoute: () => AppOrgSlugRouteRoute,
+} as any)
+const AppOrgSlugAccountIndexRoute = AppOrgSlugAccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => AppOrgSlugRouteRoute,
+} as any)
 const ApiOpenapiAuthSchemaRoute = ApiOpenapiAuthSchemaRouteImport.update({
   id: '/schema',
   path: '/schema',
@@ -224,35 +219,71 @@ const ApiDevEmailTemplateRoute = ApiDevEmailTemplateRouteImport.update({
   path: '/api/dev/email/$template',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerUsersIdUpdateIndexRoute =
-  ManagerUsersIdUpdateIndexRouteImport.update({
+const ManagerOrgSlugUsersNewIndexRoute =
+  ManagerOrgSlugUsersNewIndexRouteImport.update({
+    id: '/users/new/',
+    path: '/users/new/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
+  } as any)
+const ManagerOrgSlugUsersIdIndexRoute =
+  ManagerOrgSlugUsersIdIndexRouteImport.update({
+    id: '/users/$id/',
+    path: '/users/$id/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
+  } as any)
+const ManagerOrgSlugOrganizationsIdIndexRoute =
+  ManagerOrgSlugOrganizationsIdIndexRouteImport.update({
+    id: '/organizations/$id/',
+    path: '/organizations/$id/',
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
+  } as any)
+const AppOrgSlugCommutesNewIndexRoute =
+  AppOrgSlugCommutesNewIndexRouteImport.update({
+    id: '/commutes/new/',
+    path: '/commutes/new/',
+    getParentRoute: () => AppOrgSlugRouteRoute,
+  } as any)
+const AppOrgSlugAccountLocationsIndexRoute =
+  AppOrgSlugAccountLocationsIndexRouteImport.update({
+    id: '/account/locations/',
+    path: '/account/locations/',
+    getParentRoute: () => AppOrgSlugRouteRoute,
+  } as any)
+const AppOrgSlugAccountCommuteTemplatesIndexRoute =
+  AppOrgSlugAccountCommuteTemplatesIndexRouteImport.update({
+    id: '/account/commute-templates/',
+    path: '/account/commute-templates/',
+    getParentRoute: () => AppOrgSlugRouteRoute,
+  } as any)
+const ManagerOrgSlugUsersIdUpdateIndexRoute =
+  ManagerOrgSlugUsersIdUpdateIndexRouteImport.update({
     id: '/users/$id/update/',
     path: '/users/$id/update/',
-    getParentRoute: () => ManagerRouteRoute,
+    getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
-const AppAccountLocationsNewIndexRoute =
-  AppAccountLocationsNewIndexRouteImport.update({
+const AppOrgSlugAccountLocationsNewIndexRoute =
+  AppOrgSlugAccountLocationsNewIndexRouteImport.update({
     id: '/account/locations/new/',
     path: '/account/locations/new/',
-    getParentRoute: () => AppRouteRoute,
+    getParentRoute: () => AppOrgSlugRouteRoute,
   } as any)
-const AppAccountCommuteTemplatesNewIndexRoute =
-  AppAccountCommuteTemplatesNewIndexRouteImport.update({
+const AppOrgSlugAccountCommuteTemplatesNewIndexRoute =
+  AppOrgSlugAccountCommuteTemplatesNewIndexRouteImport.update({
     id: '/account/commute-templates/new/',
     path: '/account/commute-templates/new/',
-    getParentRoute: () => AppRouteRoute,
+    getParentRoute: () => AppOrgSlugRouteRoute,
   } as any)
-const AppAccountLocationsIdUpdateIndexRoute =
-  AppAccountLocationsIdUpdateIndexRouteImport.update({
+const AppOrgSlugAccountLocationsIdUpdateIndexRoute =
+  AppOrgSlugAccountLocationsIdUpdateIndexRouteImport.update({
     id: '/account/locations/$id/update/',
     path: '/account/locations/$id/update/',
-    getParentRoute: () => AppRouteRoute,
+    getParentRoute: () => AppOrgSlugRouteRoute,
   } as any)
-const AppAccountCommuteTemplatesIdUpdateIndexRoute =
-  AppAccountCommuteTemplatesIdUpdateIndexRouteImport.update({
+const AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute =
+  AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRouteImport.update({
     id: '/account/commute-templates/$id/update/',
     path: '/account/commute-templates/$id/update/',
-    getParentRoute: () => AppRouteRoute,
+    getParentRoute: () => AppOrgSlugRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -261,6 +292,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
   '/logout': typeof LogoutRoute
+  '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
+  '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
+  '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -271,34 +305,36 @@ export interface FileRoutesByFullPath {
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/account/': typeof AppAccountIndexRoute
-  '/app/commutes/': typeof AppCommutesIndexRoute
-  '/app/requests/': typeof AppRequestsIndexRoute
+  '/app/$orgSlug/': typeof AppOrgSlugIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
-  '/manager/account/': typeof ManagerAccountIndexRoute
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
-  '/manager/stats/': typeof ManagerStatsIndexRoute
-  '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
-  '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
-  '/app/account/locations/': typeof AppAccountLocationsIndexRoute
-  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
-  '/manager/organizations/$id/': typeof ManagerOrganizationsIdIndexRoute
+  '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
+  '/app/$orgSlug/commutes/': typeof AppOrgSlugCommutesIndexRoute
+  '/app/$orgSlug/requests/': typeof AppOrgSlugRequestsIndexRoute
+  '/manager/$orgSlug/account/': typeof ManagerOrgSlugAccountIndexRoute
+  '/manager/$orgSlug/stats/': typeof ManagerOrgSlugStatsIndexRoute
+  '/manager/$orgSlug/users/': typeof ManagerOrgSlugUsersIndexRoute
   '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
-  '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
-  '/manager/users/new/': typeof ManagerUsersNewIndexRoute
-  '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
-  '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
-  '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
-  '/app/account/commute-templates/$id/update/': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
-  '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
+  '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
+  '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
+  '/manager/$orgSlug/organizations/$id/': typeof ManagerOrgSlugOrganizationsIdIndexRoute
+  '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
+  '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
+  '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/account/locations/new/': typeof AppOrgSlugAccountLocationsNewIndexRoute
+  '/manager/$orgSlug/users/$id/update/': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates/$id/update/': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
+  '/app/$orgSlug/account/locations/$id/update/': typeof AppOrgSlugAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/logout': typeof LogoutRoute
+  '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app': typeof AppIndexRoute
@@ -309,30 +345,31 @@ export interface FileRoutesByTo {
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/account': typeof AppAccountIndexRoute
-  '/app/commutes': typeof AppCommutesIndexRoute
-  '/app/requests': typeof AppRequestsIndexRoute
+  '/app/$orgSlug': typeof AppOrgSlugIndexRoute
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
-  '/manager/account': typeof ManagerAccountIndexRoute
   '/manager/organizations': typeof ManagerOrganizationsIndexRoute
-  '/manager/stats': typeof ManagerStatsIndexRoute
-  '/manager/users': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
-  '/app/account/commute-templates': typeof AppAccountCommuteTemplatesIndexRoute
-  '/app/account/locations': typeof AppAccountLocationsIndexRoute
-  '/app/commutes/new': typeof AppCommutesNewIndexRoute
-  '/manager/organizations/$id': typeof ManagerOrganizationsIdIndexRoute
+  '/app/$orgSlug/account': typeof AppOrgSlugAccountIndexRoute
+  '/app/$orgSlug/commutes': typeof AppOrgSlugCommutesIndexRoute
+  '/app/$orgSlug/requests': typeof AppOrgSlugRequestsIndexRoute
+  '/manager/$orgSlug/account': typeof ManagerOrgSlugAccountIndexRoute
+  '/manager/$orgSlug/stats': typeof ManagerOrgSlugStatsIndexRoute
+  '/manager/$orgSlug/users': typeof ManagerOrgSlugUsersIndexRoute
   '/manager/organizations/new': typeof ManagerOrganizationsNewIndexRoute
-  '/manager/users/$id': typeof ManagerUsersIdIndexRoute
-  '/manager/users/new': typeof ManagerUsersNewIndexRoute
-  '/app/account/commute-templates/new': typeof AppAccountCommuteTemplatesNewIndexRoute
-  '/app/account/locations/new': typeof AppAccountLocationsNewIndexRoute
-  '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
-  '/app/account/commute-templates/$id/update': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
-  '/app/account/locations/$id/update': typeof AppAccountLocationsIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
+  '/app/$orgSlug/account/locations': typeof AppOrgSlugAccountLocationsIndexRoute
+  '/app/$orgSlug/commutes/new': typeof AppOrgSlugCommutesNewIndexRoute
+  '/manager/$orgSlug/organizations/$id': typeof ManagerOrgSlugOrganizationsIdIndexRoute
+  '/manager/$orgSlug/users/$id': typeof ManagerOrgSlugUsersIdIndexRoute
+  '/manager/$orgSlug/users/new': typeof ManagerOrgSlugUsersNewIndexRoute
+  '/app/$orgSlug/account/commute-templates/new': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/account/locations/new': typeof AppOrgSlugAccountLocationsNewIndexRoute
+  '/manager/$orgSlug/users/$id/update': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates/$id/update': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
+  '/app/$orgSlug/account/locations/$id/update': typeof AppOrgSlugAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -341,6 +378,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
   '/logout': typeof LogoutRoute
+  '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
+  '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
+  '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -351,30 +391,31 @@ export interface FileRoutesById {
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/account/': typeof AppAccountIndexRoute
-  '/app/commutes/': typeof AppCommutesIndexRoute
-  '/app/requests/': typeof AppRequestsIndexRoute
+  '/app/$orgSlug/': typeof AppOrgSlugIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
-  '/manager/account/': typeof ManagerAccountIndexRoute
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
-  '/manager/stats/': typeof ManagerStatsIndexRoute
-  '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
-  '/app/account/commute-templates/': typeof AppAccountCommuteTemplatesIndexRoute
-  '/app/account/locations/': typeof AppAccountLocationsIndexRoute
-  '/app/commutes/new/': typeof AppCommutesNewIndexRoute
-  '/manager/organizations/$id/': typeof ManagerOrganizationsIdIndexRoute
+  '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
+  '/app/$orgSlug/commutes/': typeof AppOrgSlugCommutesIndexRoute
+  '/app/$orgSlug/requests/': typeof AppOrgSlugRequestsIndexRoute
+  '/manager/$orgSlug/account/': typeof ManagerOrgSlugAccountIndexRoute
+  '/manager/$orgSlug/stats/': typeof ManagerOrgSlugStatsIndexRoute
+  '/manager/$orgSlug/users/': typeof ManagerOrgSlugUsersIndexRoute
   '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
-  '/manager/users/$id/': typeof ManagerUsersIdIndexRoute
-  '/manager/users/new/': typeof ManagerUsersNewIndexRoute
-  '/app/account/commute-templates/new/': typeof AppAccountCommuteTemplatesNewIndexRoute
-  '/app/account/locations/new/': typeof AppAccountLocationsNewIndexRoute
-  '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
-  '/app/account/commute-templates/$id/update/': typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
-  '/app/account/locations/$id/update/': typeof AppAccountLocationsIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
+  '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
+  '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
+  '/manager/$orgSlug/organizations/$id/': typeof ManagerOrgSlugOrganizationsIdIndexRoute
+  '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
+  '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
+  '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/account/locations/new/': typeof AppOrgSlugAccountLocationsNewIndexRoute
+  '/manager/$orgSlug/users/$id/update/': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
+  '/app/$orgSlug/account/commute-templates/$id/update/': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
+  '/app/$orgSlug/account/locations/$id/update/': typeof AppOrgSlugAccountLocationsIdUpdateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -384,6 +425,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/manager'
     | '/logout'
+    | '/app/$orgSlug'
+    | '/manager/$orgSlug'
+    | '/manager/organizations'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -394,34 +438,36 @@ export interface FileRouteTypes {
     | '/api/openapi/auth'
     | '/api/rest/$'
     | '/api/rpc/$'
-    | '/app/account/'
-    | '/app/commutes/'
-    | '/app/requests/'
+    | '/app/$orgSlug/'
     | '/login/error/'
     | '/login/verify/'
-    | '/manager/account/'
     | '/manager/organizations/'
-    | '/manager/stats/'
-    | '/manager/users/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
-    | '/app/account/commute-templates/'
-    | '/app/account/locations/'
-    | '/app/commutes/new/'
-    | '/manager/organizations/$id/'
+    | '/app/$orgSlug/account/'
+    | '/app/$orgSlug/commutes/'
+    | '/app/$orgSlug/requests/'
+    | '/manager/$orgSlug/account/'
+    | '/manager/$orgSlug/stats/'
+    | '/manager/$orgSlug/users/'
     | '/manager/organizations/new/'
-    | '/manager/users/$id/'
-    | '/manager/users/new/'
-    | '/app/account/commute-templates/new/'
-    | '/app/account/locations/new/'
-    | '/manager/users/$id/update/'
-    | '/app/account/commute-templates/$id/update/'
-    | '/app/account/locations/$id/update/'
+    | '/app/$orgSlug/account/commute-templates/'
+    | '/app/$orgSlug/account/locations/'
+    | '/app/$orgSlug/commutes/new/'
+    | '/manager/$orgSlug/organizations/$id/'
+    | '/manager/$orgSlug/users/$id/'
+    | '/manager/$orgSlug/users/new/'
+    | '/app/$orgSlug/account/commute-templates/new/'
+    | '/app/$orgSlug/account/locations/new/'
+    | '/manager/$orgSlug/users/$id/update/'
+    | '/app/$orgSlug/account/commute-templates/$id/update/'
+    | '/app/$orgSlug/account/locations/$id/update/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/logout'
+    | '/manager/$orgSlug'
     | '/api/upload'
     | '/invitations/$id'
     | '/app'
@@ -432,30 +478,31 @@ export interface FileRouteTypes {
     | '/api/openapi/auth'
     | '/api/rest/$'
     | '/api/rpc/$'
-    | '/app/account'
-    | '/app/commutes'
-    | '/app/requests'
+    | '/app/$orgSlug'
     | '/login/error'
     | '/login/verify'
-    | '/manager/account'
     | '/manager/organizations'
-    | '/manager/stats'
-    | '/manager/users'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
-    | '/app/account/commute-templates'
-    | '/app/account/locations'
-    | '/app/commutes/new'
-    | '/manager/organizations/$id'
+    | '/app/$orgSlug/account'
+    | '/app/$orgSlug/commutes'
+    | '/app/$orgSlug/requests'
+    | '/manager/$orgSlug/account'
+    | '/manager/$orgSlug/stats'
+    | '/manager/$orgSlug/users'
     | '/manager/organizations/new'
-    | '/manager/users/$id'
-    | '/manager/users/new'
-    | '/app/account/commute-templates/new'
-    | '/app/account/locations/new'
-    | '/manager/users/$id/update'
-    | '/app/account/commute-templates/$id/update'
-    | '/app/account/locations/$id/update'
+    | '/app/$orgSlug/account/commute-templates'
+    | '/app/$orgSlug/account/locations'
+    | '/app/$orgSlug/commutes/new'
+    | '/manager/$orgSlug/organizations/$id'
+    | '/manager/$orgSlug/users/$id'
+    | '/manager/$orgSlug/users/new'
+    | '/app/$orgSlug/account/commute-templates/new'
+    | '/app/$orgSlug/account/locations/new'
+    | '/manager/$orgSlug/users/$id/update'
+    | '/app/$orgSlug/account/commute-templates/$id/update'
+    | '/app/$orgSlug/account/locations/$id/update'
   id:
     | '__root__'
     | '/'
@@ -463,6 +510,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/manager'
     | '/logout'
+    | '/app/$orgSlug'
+    | '/manager/$orgSlug'
+    | '/manager/organizations'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -473,30 +523,31 @@ export interface FileRouteTypes {
     | '/api/openapi/auth'
     | '/api/rest/$'
     | '/api/rpc/$'
-    | '/app/account/'
-    | '/app/commutes/'
-    | '/app/requests/'
+    | '/app/$orgSlug/'
     | '/login/error/'
     | '/login/verify/'
-    | '/manager/account/'
     | '/manager/organizations/'
-    | '/manager/stats/'
-    | '/manager/users/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
-    | '/app/account/commute-templates/'
-    | '/app/account/locations/'
-    | '/app/commutes/new/'
-    | '/manager/organizations/$id/'
+    | '/app/$orgSlug/account/'
+    | '/app/$orgSlug/commutes/'
+    | '/app/$orgSlug/requests/'
+    | '/manager/$orgSlug/account/'
+    | '/manager/$orgSlug/stats/'
+    | '/manager/$orgSlug/users/'
     | '/manager/organizations/new/'
-    | '/manager/users/$id/'
-    | '/manager/users/new/'
-    | '/app/account/commute-templates/new/'
-    | '/app/account/locations/new/'
-    | '/manager/users/$id/update/'
-    | '/app/account/commute-templates/$id/update/'
-    | '/app/account/locations/$id/update/'
+    | '/app/$orgSlug/account/commute-templates/'
+    | '/app/$orgSlug/account/locations/'
+    | '/app/$orgSlug/commutes/new/'
+    | '/manager/$orgSlug/organizations/$id/'
+    | '/manager/$orgSlug/users/$id/'
+    | '/manager/$orgSlug/users/new/'
+    | '/app/$orgSlug/account/commute-templates/new/'
+    | '/app/$orgSlug/account/locations/new/'
+    | '/manager/$orgSlug/users/$id/update/'
+    | '/app/$orgSlug/account/commute-templates/$id/update/'
+    | '/app/$orgSlug/account/locations/$id/update/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -587,33 +638,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manager/users/': {
-      id: '/manager/users/'
-      path: '/users'
-      fullPath: '/manager/users/'
-      preLoaderRoute: typeof ManagerUsersIndexRouteImport
+    '/manager/organizations': {
+      id: '/manager/organizations'
+      path: '/organizations'
+      fullPath: '/manager/organizations'
+      preLoaderRoute: typeof ManagerOrganizationsRouteRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
-    '/manager/stats/': {
-      id: '/manager/stats/'
-      path: '/stats'
-      fullPath: '/manager/stats/'
-      preLoaderRoute: typeof ManagerStatsIndexRouteImport
+    '/manager/$orgSlug': {
+      id: '/manager/$orgSlug'
+      path: '/$orgSlug'
+      fullPath: '/manager/$orgSlug'
+      preLoaderRoute: typeof ManagerOrgSlugRouteRouteImport
       parentRoute: typeof ManagerRouteRoute
+    }
+    '/app/$orgSlug': {
+      id: '/app/$orgSlug'
+      path: '/$orgSlug'
+      fullPath: '/app/$orgSlug'
+      preLoaderRoute: typeof AppOrgSlugRouteRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/manager/organizations/': {
       id: '/manager/organizations/'
-      path: '/organizations'
+      path: '/'
       fullPath: '/manager/organizations/'
       preLoaderRoute: typeof ManagerOrganizationsIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
-    }
-    '/manager/account/': {
-      id: '/manager/account/'
-      path: '/account'
-      fullPath: '/manager/account/'
-      preLoaderRoute: typeof ManagerAccountIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
+      parentRoute: typeof ManagerOrganizationsRouteRoute
     }
     '/login/verify/': {
       id: '/login/verify/'
@@ -629,26 +680,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginErrorIndexRouteImport
       parentRoute: typeof LoginRouteRoute
     }
-    '/app/requests/': {
-      id: '/app/requests/'
-      path: '/requests'
-      fullPath: '/app/requests/'
-      preLoaderRoute: typeof AppRequestsIndexRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/app/commutes/': {
-      id: '/app/commutes/'
-      path: '/commutes'
-      fullPath: '/app/commutes/'
-      preLoaderRoute: typeof AppCommutesIndexRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/app/account/': {
-      id: '/app/account/'
-      path: '/account'
-      fullPath: '/app/account/'
-      preLoaderRoute: typeof AppAccountIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+    '/app/$orgSlug/': {
+      id: '/app/$orgSlug/'
+      path: '/'
+      fullPath: '/app/$orgSlug/'
+      preLoaderRoute: typeof AppOrgSlugIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
     '/api/rpc/$': {
       id: '/api/rpc/$'
@@ -685,54 +722,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manager/users/new/': {
-      id: '/manager/users/new/'
-      path: '/users/new'
-      fullPath: '/manager/users/new/'
-      preLoaderRoute: typeof ManagerUsersNewIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
-    }
-    '/manager/users/$id/': {
-      id: '/manager/users/$id/'
-      path: '/users/$id'
-      fullPath: '/manager/users/$id/'
-      preLoaderRoute: typeof ManagerUsersIdIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
-    }
     '/manager/organizations/new/': {
       id: '/manager/organizations/new/'
-      path: '/organizations/new'
+      path: '/new'
       fullPath: '/manager/organizations/new/'
       preLoaderRoute: typeof ManagerOrganizationsNewIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
+      parentRoute: typeof ManagerOrganizationsRouteRoute
     }
-    '/manager/organizations/$id/': {
-      id: '/manager/organizations/$id/'
-      path: '/organizations/$id'
-      fullPath: '/manager/organizations/$id/'
-      preLoaderRoute: typeof ManagerOrganizationsIdIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
+    '/manager/$orgSlug/users/': {
+      id: '/manager/$orgSlug/users/'
+      path: '/users'
+      fullPath: '/manager/$orgSlug/users/'
+      preLoaderRoute: typeof ManagerOrgSlugUsersIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
     }
-    '/app/commutes/new/': {
-      id: '/app/commutes/new/'
-      path: '/commutes/new'
-      fullPath: '/app/commutes/new/'
-      preLoaderRoute: typeof AppCommutesNewIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+    '/manager/$orgSlug/stats/': {
+      id: '/manager/$orgSlug/stats/'
+      path: '/stats'
+      fullPath: '/manager/$orgSlug/stats/'
+      preLoaderRoute: typeof ManagerOrgSlugStatsIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
     }
-    '/app/account/locations/': {
-      id: '/app/account/locations/'
-      path: '/account/locations'
-      fullPath: '/app/account/locations/'
-      preLoaderRoute: typeof AppAccountLocationsIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+    '/manager/$orgSlug/account/': {
+      id: '/manager/$orgSlug/account/'
+      path: '/account'
+      fullPath: '/manager/$orgSlug/account/'
+      preLoaderRoute: typeof ManagerOrgSlugAccountIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
     }
-    '/app/account/commute-templates/': {
-      id: '/app/account/commute-templates/'
-      path: '/account/commute-templates'
-      fullPath: '/app/account/commute-templates/'
-      preLoaderRoute: typeof AppAccountCommuteTemplatesIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+    '/app/$orgSlug/requests/': {
+      id: '/app/$orgSlug/requests/'
+      path: '/requests'
+      fullPath: '/app/$orgSlug/requests/'
+      preLoaderRoute: typeof AppOrgSlugRequestsIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
+    '/app/$orgSlug/commutes/': {
+      id: '/app/$orgSlug/commutes/'
+      path: '/commutes'
+      fullPath: '/app/$orgSlug/commutes/'
+      preLoaderRoute: typeof AppOrgSlugCommutesIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
+    '/app/$orgSlug/account/': {
+      id: '/app/$orgSlug/account/'
+      path: '/account'
+      fullPath: '/app/$orgSlug/account/'
+      preLoaderRoute: typeof AppOrgSlugAccountIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
     '/api/openapi/auth/schema': {
       id: '/api/openapi/auth/schema'
@@ -755,72 +792,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDevEmailTemplateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manager/users/$id/update/': {
-      id: '/manager/users/$id/update/'
+    '/manager/$orgSlug/users/new/': {
+      id: '/manager/$orgSlug/users/new/'
+      path: '/users/new'
+      fullPath: '/manager/$orgSlug/users/new/'
+      preLoaderRoute: typeof ManagerOrgSlugUsersNewIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
+    }
+    '/manager/$orgSlug/users/$id/': {
+      id: '/manager/$orgSlug/users/$id/'
+      path: '/users/$id'
+      fullPath: '/manager/$orgSlug/users/$id/'
+      preLoaderRoute: typeof ManagerOrgSlugUsersIdIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
+    }
+    '/manager/$orgSlug/organizations/$id/': {
+      id: '/manager/$orgSlug/organizations/$id/'
+      path: '/organizations/$id'
+      fullPath: '/manager/$orgSlug/organizations/$id/'
+      preLoaderRoute: typeof ManagerOrgSlugOrganizationsIdIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
+    }
+    '/app/$orgSlug/commutes/new/': {
+      id: '/app/$orgSlug/commutes/new/'
+      path: '/commutes/new'
+      fullPath: '/app/$orgSlug/commutes/new/'
+      preLoaderRoute: typeof AppOrgSlugCommutesNewIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
+    '/app/$orgSlug/account/locations/': {
+      id: '/app/$orgSlug/account/locations/'
+      path: '/account/locations'
+      fullPath: '/app/$orgSlug/account/locations/'
+      preLoaderRoute: typeof AppOrgSlugAccountLocationsIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
+    '/app/$orgSlug/account/commute-templates/': {
+      id: '/app/$orgSlug/account/commute-templates/'
+      path: '/account/commute-templates'
+      fullPath: '/app/$orgSlug/account/commute-templates/'
+      preLoaderRoute: typeof AppOrgSlugAccountCommuteTemplatesIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
+    '/manager/$orgSlug/users/$id/update/': {
+      id: '/manager/$orgSlug/users/$id/update/'
       path: '/users/$id/update'
-      fullPath: '/manager/users/$id/update/'
-      preLoaderRoute: typeof ManagerUsersIdUpdateIndexRouteImport
-      parentRoute: typeof ManagerRouteRoute
+      fullPath: '/manager/$orgSlug/users/$id/update/'
+      preLoaderRoute: typeof ManagerOrgSlugUsersIdUpdateIndexRouteImport
+      parentRoute: typeof ManagerOrgSlugRouteRoute
     }
-    '/app/account/locations/new/': {
-      id: '/app/account/locations/new/'
+    '/app/$orgSlug/account/locations/new/': {
+      id: '/app/$orgSlug/account/locations/new/'
       path: '/account/locations/new'
-      fullPath: '/app/account/locations/new/'
-      preLoaderRoute: typeof AppAccountLocationsNewIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/app/$orgSlug/account/locations/new/'
+      preLoaderRoute: typeof AppOrgSlugAccountLocationsNewIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
-    '/app/account/commute-templates/new/': {
-      id: '/app/account/commute-templates/new/'
+    '/app/$orgSlug/account/commute-templates/new/': {
+      id: '/app/$orgSlug/account/commute-templates/new/'
       path: '/account/commute-templates/new'
-      fullPath: '/app/account/commute-templates/new/'
-      preLoaderRoute: typeof AppAccountCommuteTemplatesNewIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/app/$orgSlug/account/commute-templates/new/'
+      preLoaderRoute: typeof AppOrgSlugAccountCommuteTemplatesNewIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
-    '/app/account/locations/$id/update/': {
-      id: '/app/account/locations/$id/update/'
+    '/app/$orgSlug/account/locations/$id/update/': {
+      id: '/app/$orgSlug/account/locations/$id/update/'
       path: '/account/locations/$id/update'
-      fullPath: '/app/account/locations/$id/update/'
-      preLoaderRoute: typeof AppAccountLocationsIdUpdateIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/app/$orgSlug/account/locations/$id/update/'
+      preLoaderRoute: typeof AppOrgSlugAccountLocationsIdUpdateIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
-    '/app/account/commute-templates/$id/update/': {
-      id: '/app/account/commute-templates/$id/update/'
+    '/app/$orgSlug/account/commute-templates/$id/update/': {
+      id: '/app/$orgSlug/account/commute-templates/$id/update/'
       path: '/account/commute-templates/$id/update'
-      fullPath: '/app/account/commute-templates/$id/update/'
-      preLoaderRoute: typeof AppAccountCommuteTemplatesIdUpdateIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/app/$orgSlug/account/commute-templates/$id/update/'
+      preLoaderRoute: typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
     }
   }
 }
 
+interface AppOrgSlugRouteRouteChildren {
+  AppOrgSlugIndexRoute: typeof AppOrgSlugIndexRoute
+  AppOrgSlugAccountIndexRoute: typeof AppOrgSlugAccountIndexRoute
+  AppOrgSlugCommutesIndexRoute: typeof AppOrgSlugCommutesIndexRoute
+  AppOrgSlugRequestsIndexRoute: typeof AppOrgSlugRequestsIndexRoute
+  AppOrgSlugAccountCommuteTemplatesIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
+  AppOrgSlugAccountLocationsIndexRoute: typeof AppOrgSlugAccountLocationsIndexRoute
+  AppOrgSlugCommutesNewIndexRoute: typeof AppOrgSlugCommutesNewIndexRoute
+  AppOrgSlugAccountCommuteTemplatesNewIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  AppOrgSlugAccountLocationsNewIndexRoute: typeof AppOrgSlugAccountLocationsNewIndexRoute
+  AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
+  AppOrgSlugAccountLocationsIdUpdateIndexRoute: typeof AppOrgSlugAccountLocationsIdUpdateIndexRoute
+}
+
+const AppOrgSlugRouteRouteChildren: AppOrgSlugRouteRouteChildren = {
+  AppOrgSlugIndexRoute: AppOrgSlugIndexRoute,
+  AppOrgSlugAccountIndexRoute: AppOrgSlugAccountIndexRoute,
+  AppOrgSlugCommutesIndexRoute: AppOrgSlugCommutesIndexRoute,
+  AppOrgSlugRequestsIndexRoute: AppOrgSlugRequestsIndexRoute,
+  AppOrgSlugAccountCommuteTemplatesIndexRoute:
+    AppOrgSlugAccountCommuteTemplatesIndexRoute,
+  AppOrgSlugAccountLocationsIndexRoute: AppOrgSlugAccountLocationsIndexRoute,
+  AppOrgSlugCommutesNewIndexRoute: AppOrgSlugCommutesNewIndexRoute,
+  AppOrgSlugAccountCommuteTemplatesNewIndexRoute:
+    AppOrgSlugAccountCommuteTemplatesNewIndexRoute,
+  AppOrgSlugAccountLocationsNewIndexRoute:
+    AppOrgSlugAccountLocationsNewIndexRoute,
+  AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute:
+    AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute,
+  AppOrgSlugAccountLocationsIdUpdateIndexRoute:
+    AppOrgSlugAccountLocationsIdUpdateIndexRoute,
+}
+
+const AppOrgSlugRouteRouteWithChildren = AppOrgSlugRouteRoute._addFileChildren(
+  AppOrgSlugRouteRouteChildren,
+)
+
 interface AppRouteRouteChildren {
+  AppOrgSlugRouteRoute: typeof AppOrgSlugRouteRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
-  AppAccountIndexRoute: typeof AppAccountIndexRoute
-  AppCommutesIndexRoute: typeof AppCommutesIndexRoute
-  AppRequestsIndexRoute: typeof AppRequestsIndexRoute
-  AppAccountCommuteTemplatesIndexRoute: typeof AppAccountCommuteTemplatesIndexRoute
-  AppAccountLocationsIndexRoute: typeof AppAccountLocationsIndexRoute
-  AppCommutesNewIndexRoute: typeof AppCommutesNewIndexRoute
-  AppAccountCommuteTemplatesNewIndexRoute: typeof AppAccountCommuteTemplatesNewIndexRoute
-  AppAccountLocationsNewIndexRoute: typeof AppAccountLocationsNewIndexRoute
-  AppAccountCommuteTemplatesIdUpdateIndexRoute: typeof AppAccountCommuteTemplatesIdUpdateIndexRoute
-  AppAccountLocationsIdUpdateIndexRoute: typeof AppAccountLocationsIdUpdateIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppOrgSlugRouteRoute: AppOrgSlugRouteRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
-  AppAccountIndexRoute: AppAccountIndexRoute,
-  AppCommutesIndexRoute: AppCommutesIndexRoute,
-  AppRequestsIndexRoute: AppRequestsIndexRoute,
-  AppAccountCommuteTemplatesIndexRoute: AppAccountCommuteTemplatesIndexRoute,
-  AppAccountLocationsIndexRoute: AppAccountLocationsIndexRoute,
-  AppCommutesNewIndexRoute: AppCommutesNewIndexRoute,
-  AppAccountCommuteTemplatesNewIndexRoute:
-    AppAccountCommuteTemplatesNewIndexRoute,
-  AppAccountLocationsNewIndexRoute: AppAccountLocationsNewIndexRoute,
-  AppAccountCommuteTemplatesIdUpdateIndexRoute:
-    AppAccountCommuteTemplatesIdUpdateIndexRoute,
-  AppAccountLocationsIdUpdateIndexRoute: AppAccountLocationsIdUpdateIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
@@ -843,30 +939,56 @@ const LoginRouteRouteWithChildren = LoginRouteRoute._addFileChildren(
   LoginRouteRouteChildren,
 )
 
-interface ManagerRouteRouteChildren {
-  ManagerIndexRoute: typeof ManagerIndexRoute
-  ManagerAccountIndexRoute: typeof ManagerAccountIndexRoute
+interface ManagerOrgSlugRouteRouteChildren {
+  ManagerOrgSlugAccountIndexRoute: typeof ManagerOrgSlugAccountIndexRoute
+  ManagerOrgSlugStatsIndexRoute: typeof ManagerOrgSlugStatsIndexRoute
+  ManagerOrgSlugUsersIndexRoute: typeof ManagerOrgSlugUsersIndexRoute
+  ManagerOrgSlugOrganizationsIdIndexRoute: typeof ManagerOrgSlugOrganizationsIdIndexRoute
+  ManagerOrgSlugUsersIdIndexRoute: typeof ManagerOrgSlugUsersIdIndexRoute
+  ManagerOrgSlugUsersNewIndexRoute: typeof ManagerOrgSlugUsersNewIndexRoute
+  ManagerOrgSlugUsersIdUpdateIndexRoute: typeof ManagerOrgSlugUsersIdUpdateIndexRoute
+}
+
+const ManagerOrgSlugRouteRouteChildren: ManagerOrgSlugRouteRouteChildren = {
+  ManagerOrgSlugAccountIndexRoute: ManagerOrgSlugAccountIndexRoute,
+  ManagerOrgSlugStatsIndexRoute: ManagerOrgSlugStatsIndexRoute,
+  ManagerOrgSlugUsersIndexRoute: ManagerOrgSlugUsersIndexRoute,
+  ManagerOrgSlugOrganizationsIdIndexRoute:
+    ManagerOrgSlugOrganizationsIdIndexRoute,
+  ManagerOrgSlugUsersIdIndexRoute: ManagerOrgSlugUsersIdIndexRoute,
+  ManagerOrgSlugUsersNewIndexRoute: ManagerOrgSlugUsersNewIndexRoute,
+  ManagerOrgSlugUsersIdUpdateIndexRoute: ManagerOrgSlugUsersIdUpdateIndexRoute,
+}
+
+const ManagerOrgSlugRouteRouteWithChildren =
+  ManagerOrgSlugRouteRoute._addFileChildren(ManagerOrgSlugRouteRouteChildren)
+
+interface ManagerOrganizationsRouteRouteChildren {
   ManagerOrganizationsIndexRoute: typeof ManagerOrganizationsIndexRoute
-  ManagerStatsIndexRoute: typeof ManagerStatsIndexRoute
-  ManagerUsersIndexRoute: typeof ManagerUsersIndexRoute
-  ManagerOrganizationsIdIndexRoute: typeof ManagerOrganizationsIdIndexRoute
   ManagerOrganizationsNewIndexRoute: typeof ManagerOrganizationsNewIndexRoute
-  ManagerUsersIdIndexRoute: typeof ManagerUsersIdIndexRoute
-  ManagerUsersNewIndexRoute: typeof ManagerUsersNewIndexRoute
-  ManagerUsersIdUpdateIndexRoute: typeof ManagerUsersIdUpdateIndexRoute
+}
+
+const ManagerOrganizationsRouteRouteChildren: ManagerOrganizationsRouteRouteChildren =
+  {
+    ManagerOrganizationsIndexRoute: ManagerOrganizationsIndexRoute,
+    ManagerOrganizationsNewIndexRoute: ManagerOrganizationsNewIndexRoute,
+  }
+
+const ManagerOrganizationsRouteRouteWithChildren =
+  ManagerOrganizationsRouteRoute._addFileChildren(
+    ManagerOrganizationsRouteRouteChildren,
+  )
+
+interface ManagerRouteRouteChildren {
+  ManagerOrgSlugRouteRoute: typeof ManagerOrgSlugRouteRouteWithChildren
+  ManagerOrganizationsRouteRoute: typeof ManagerOrganizationsRouteRouteWithChildren
+  ManagerIndexRoute: typeof ManagerIndexRoute
 }
 
 const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
+  ManagerOrgSlugRouteRoute: ManagerOrgSlugRouteRouteWithChildren,
+  ManagerOrganizationsRouteRoute: ManagerOrganizationsRouteRouteWithChildren,
   ManagerIndexRoute: ManagerIndexRoute,
-  ManagerAccountIndexRoute: ManagerAccountIndexRoute,
-  ManagerOrganizationsIndexRoute: ManagerOrganizationsIndexRoute,
-  ManagerStatsIndexRoute: ManagerStatsIndexRoute,
-  ManagerUsersIndexRoute: ManagerUsersIndexRoute,
-  ManagerOrganizationsIdIndexRoute: ManagerOrganizationsIdIndexRoute,
-  ManagerOrganizationsNewIndexRoute: ManagerOrganizationsNewIndexRoute,
-  ManagerUsersIdIndexRoute: ManagerUsersIdIndexRoute,
-  ManagerUsersNewIndexRoute: ManagerUsersNewIndexRoute,
-  ManagerUsersIdUpdateIndexRoute: ManagerUsersIdUpdateIndexRoute,
 }
 
 const ManagerRouteRouteWithChildren = ManagerRouteRoute._addFileChildren(

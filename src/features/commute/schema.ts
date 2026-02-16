@@ -27,7 +27,7 @@ export const zCommute = () =>
     status: zCommuteStatus(),
     delay: z.number().int().nullish(),
     comment: z.string().nullish(),
-    driverId: z.string(),
+    driverMemberId: z.string(),
     createdAt: z.date(),
     updatedAt: z.date(),
   });

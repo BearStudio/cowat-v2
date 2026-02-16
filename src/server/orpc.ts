@@ -235,9 +235,20 @@ export const organizationProcedure = ({
       });
     }
 
+    const member = await context.db.member.findFirst({
+      where: { userId: context.user.id, organizationId },
+    });
+
+    if (!member) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'Not a member of this organization',
+      });
+    }
+
     return await next({
       context: {
         organizationId,
+        memberId: member.id,
       },
     });
   });

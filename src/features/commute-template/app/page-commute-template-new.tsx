@@ -24,7 +24,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommuteTemplateNew = () => {
+export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -50,7 +50,8 @@ export const PageCommuteTemplateNew = () => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/commute-templates',
+            to: '/app/$orgSlug/account/commute-templates',
+            params: { orgSlug },
             replace: true,
             ignoreBlocker: true,
           });

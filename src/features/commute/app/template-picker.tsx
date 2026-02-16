@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { ButtonLink } from '@/components/ui/button-link';
 import {
   Empty,
   EmptyContent,
@@ -17,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import type { FormFieldsCommute } from '@/features/commute/schema';
 import { CommuteTemplateSummary } from '@/features/commute-template/commute-template-summary';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
 
 type TemplateData = Pick<
   FormFieldsCommute,
@@ -82,14 +82,14 @@ export const TemplatePicker = ({
               <EmptyTitle>{t('commute:templatePicker.emptyState')}</EmptyTitle>
             </EmptyHeader>
             <EmptyContent>
-              <ButtonLink
-                to="/app/account/commute-templates/new"
+              <OrgButtonLink
+                to="/app/$orgSlug/account/commute-templates/new"
                 variant="secondary"
                 size="sm"
               >
                 <PlusIcon />
                 {t('commuteTemplate:list.newAction')}
-              </ButtonLink>
+              </OrgButtonLink>
             </EmptyContent>
           </Empty>
         ))

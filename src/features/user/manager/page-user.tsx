@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { Link, useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +42,7 @@ import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -49,7 +50,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageUser = (props: { params: { id: string } }) => {
+export const PageUser = (props: { id: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -57,13 +58,13 @@ export const PageUser = (props: { params: { id: string } }) => {
   const { t } = useTranslation(['user']);
   const userQuery = useQuery(
     orpc.user.getById.queryOptions({
-      input: { id: props.params.id },
+      input: { id: props.id },
     })
   );
 
   const deleteUser = async () => {
     try {
-      await orpc.user.deleteById.call({ id: props.params.id });
+      await orpc.user.deleteById.call({ id: props.id });
       await Promise.all([
         // Invalidate users list
         queryClient.invalidateQueries({
@@ -72,7 +73,7 @@ export const PageUser = (props: { params: { id: string } }) => {
         }),
         // Remove user from cache
         queryClient.removeQueries({
-          queryKey: orpc.user.getById.key({ input: { id: props.params.id } }),
+          queryKey: orpc.user.getById.key({ input: { id: props.id } }),
         }),
       ]);
 
@@ -108,7 +109,7 @@ export const PageUser = (props: { params: { id: string } }) => {
         startActions={<BackButton />}
         endActions={
           <>
-            {session.data?.user.id !== props.params.id && (
+            {session.data?.user.id !== props.id && (
               <WithPermissions
                 permissions={[
                   {
@@ -178,9 +179,9 @@ export const PageUser = (props: { params: { id: string } }) => {
                       <CardDescription>{user.email}</CardDescription>
                     </div>
                     <WithPermissions permissions={[{ user: ['set-role'] }]}>
-                      <Link
-                        to="/manager/users/$id/update"
-                        params={props.params}
+                      <OrgLink
+                        to="/manager/$orgSlug/users/$id/update"
+                        params={{ id: props.id }}
                         className="-m-2 self-start"
                       >
                         <Button
@@ -195,7 +196,7 @@ export const PageUser = (props: { params: { id: string } }) => {
                           </span>
                         </Button>
                         <span className="absolute inset-0" />
-                      </Link>
+                      </OrgLink>
                     </WithPermissions>
                   </div>
                 </CardHeader>
@@ -225,7 +226,7 @@ export const PageUser = (props: { params: { id: string } }) => {
 
               <div className="flex flex-2 flex-col">
                 <WithPermissions permissions={[{ session: ['list'] }]}>
-                  <UserSessions userId={props.params.id} />
+                  <UserSessions userId={props.id} />
                 </WithPermissions>
               </div>
             </div>

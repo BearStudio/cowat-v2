@@ -34,7 +34,7 @@ const baseCommute: CommuteEnriched = {
   status: 'UNKNOWN',
   delay: null,
   comment: null,
-  driverId: 'driver-1',
+  driverMemberId: 'member-driver-1',
   createdAt: now,
   updatedAt: now,
   driver: { id: 'driver-1', name: 'Alice Martin', image: null },

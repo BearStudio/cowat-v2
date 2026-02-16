@@ -2,7 +2,11 @@ import { call } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 
 import commuteTemplateRouter from '@/server/routers/commute-template';
-import { mockDb, mockGetSession, mockUser } from '@/server/routers/test-utils';
+import {
+  mockDb,
+  mockGetSession,
+  mockMemberId,
+} from '@/server/routers/test-utils';
 
 const now = new Date();
 
@@ -15,7 +19,7 @@ const mockTemplateFromDb = {
   isDeleted: false,
   createdAt: now,
   updatedAt: now,
-  driverId: mockUser.id,
+  driverMemberId: mockMemberId,
 };
 
 const mockStop = {
@@ -60,6 +64,19 @@ describe('commute-template router', () => {
       const result = await call(commuteTemplateRouter.create, createInput);
 
       expect(result).toEqual({ ...mockTemplateFromDb, stops: [mockStop] });
+      expect(mockDb.commuteTemplate.create).toHaveBeenCalledWith({
+        data: {
+          name: createInput.name,
+          seats: createInput.seats,
+          type: createInput.type,
+          comment: createInput.comment,
+          driverMemberId: mockMemberId,
+          stops: {
+            create: createInput.stops,
+          },
+        },
+        include: { stops: true },
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -216,7 +233,7 @@ describe('commute-template router', () => {
     it('should throw FORBIDDEN when user is not the owner', async () => {
       mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(
@@ -262,7 +279,7 @@ describe('commute-template router', () => {
     it('should throw FORBIDDEN when user is not the owner', async () => {
       mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(

@@ -24,13 +24,13 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageLocationUpdate = (props: { params: { id: string } }) => {
+export const PageLocationUpdate = (props: { id: string; orgSlug: string }) => {
   const { t } = useTranslation(['location']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
 
   const locationQuery = useQuery(
-    orpc.location.getById.queryOptions({ input: { id: props.params.id } })
+    orpc.location.getById.queryOptions({ input: { id: props.id } })
   );
 
   const locationUpdate = useMutation(
@@ -39,7 +39,7 @@ export const PageLocationUpdate = (props: { params: { id: string } }) => {
         await Promise.all([
           context.client.invalidateQueries({
             queryKey: orpc.location.getById.key({
-              input: { id: props.params.id },
+              input: { id: props.id },
             }),
           }),
           context.client.invalidateQueries({
@@ -52,7 +52,8 @@ export const PageLocationUpdate = (props: { params: { id: string } }) => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/account/locations',
+            to: '/app/$orgSlug/account/locations',
+            params: { orgSlug: props.orgSlug },
             replace: true,
             ignoreBlocker: true,
           });
@@ -85,7 +86,7 @@ export const PageLocationUpdate = (props: { params: { id: string } }) => {
         {...form}
         onSubmit={(values) => {
           locationUpdate.mutate({
-            id: props.params.id,
+            id: props.id,
             name: values.name,
             address: values.address,
           });

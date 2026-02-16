@@ -21,10 +21,10 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -32,7 +32,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageCommuteTemplates = () => {
+export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
 
@@ -71,14 +71,14 @@ export const PageCommuteTemplates = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/account/commute-templates/new"
+            to="/app/$orgSlug/account/commute-templates/new"
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
@@ -109,8 +109,8 @@ export const PageCommuteTemplates = () => {
                   className="cursor-pointer"
                   onClick={() =>
                     navigate({
-                      to: '/app/account/commute-templates/$id/update' as never,
-                      params: { id: item.id } as never,
+                      to: '/app/$orgSlug/account/commute-templates/$id/update',
+                      params: { orgSlug, id: item.id },
                     })
                   }
                 >

@@ -71,7 +71,6 @@ export const EditPhoneDrawer = (props: { children: ReactElement }) => {
             updateUser.mutate({
               name: session.data?.user.name ?? '',
               phone,
-              autoAccept: session.data?.user.autoAccept ?? false,
             });
           }}
           className="flex flex-col gap-4"

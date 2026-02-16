@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import { ChevronRightIcon, MapPinIcon, RepeatIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +8,7 @@ import { NotificationPreferences } from '@/features/account/notification-prefere
 import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
+import { OrgLink } from '@/features/organization/org-link';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import {
   PageLayout,
@@ -32,22 +32,22 @@ export const PageAccount = () => {
             <OrgSwitcher />
           </div>
           <UserCard />
-          <Link
-            to="/app/account/locations"
+          <OrgLink
+            to="/app/$orgSlug/account/locations"
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
           >
             <MapPinIcon className="size-5 text-muted-foreground" />
             <span className="flex-1">{t('account:locationsLink')}</span>
             <ChevronRightIcon className="size-4 text-muted-foreground" />
-          </Link>
-          <Link
-            to="/app/account/commute-templates"
+          </OrgLink>
+          <OrgLink
+            to="/app/$orgSlug/account/commute-templates"
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
           >
             <RepeatIcon className="size-5 text-muted-foreground" />
             <span className="flex-1">{t('account:commuteTemplatesLink')}</span>
             <ChevronRightIcon className="size-4 text-muted-foreground" />
-          </Link>
+          </OrgLink>
           <NotificationPreferences />
           <DisplayPreferences />
           <BuildInfoDrawer>

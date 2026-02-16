@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageDashboard } from '@/features/dashboard/app/page-dashboard';
+import { OrgRedirect } from '@/features/organization/org-redirect';
 
 export const Route = createFileRoute('/app/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <PageDashboard />;
+  return <OrgRedirect to="/app/$orgSlug" />;
 }

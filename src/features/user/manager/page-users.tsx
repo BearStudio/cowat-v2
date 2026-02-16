@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -21,10 +21,11 @@ import {
   DataListRowResults,
   DataListText,
 } from '@/components/ui/datalist';
-import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button-link';
 import { SearchButton } from '@/components/ui/search-button';
 import { SearchInput } from '@/components/ui/search-input';
 
+import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -78,14 +79,14 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveIconButtonLink
+          <OrgResponsiveIconButtonLink
             label={t('user:manager.list.newButton')}
             variant="secondary"
             size="sm"
-            to="/manager/users/new"
+            to="/manager/$orgSlug/users/new"
           >
             <PlusIcon />
-          </ResponsiveIconButtonLink>
+          </OrgResponsiveIconButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
@@ -148,10 +149,13 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
                     </DataListCell>
                     <DataListCell>
                       <DataListText className="font-medium">
-                        <Link to="/manager/users/$id" params={{ id: item.id }}>
+                        <OrgLink
+                          to="/manager/$orgSlug/users/$id"
+                          params={{ id: item.id }}
+                        >
                           {item.name}
                           <span className="absolute inset-0" />
-                        </Link>
+                        </OrgLink>
                       </DataListText>
                       <DataListText className="text-xs text-muted-foreground">
                         {item.email}

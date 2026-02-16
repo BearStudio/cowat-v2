@@ -34,7 +34,13 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
   stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
 };
 
-export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
+export const PageCommuteNew = ({
+  search,
+  orgSlug,
+}: {
+  search: { date?: Date };
+  orgSlug: string;
+}) => {
   const { t } = useTranslation(['commute']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -57,7 +63,8 @@ export const PageCommuteNew = ({ search }: { search: { date?: Date } }) => {
           router.history.back({ ignoreBlocker: true });
         } else {
           router.navigate({
-            to: '/app/commutes',
+            to: '/app/$orgSlug/commutes',
+            params: { orgSlug },
             replace: true,
             ignoreBlocker: true,
           });
