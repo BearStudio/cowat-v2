@@ -1,11 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-
-import { orpc } from '@/lib/orpc/client';
 
 import { Spinner } from '@/components/ui/spinner';
 
-import { authClient } from '@/features/auth/client';
+import { useOrganizations } from '@/features/organization/use-organizations';
 import { Layout } from '@/layout/manager/layout';
 
 export const Route = createFileRoute('/manager/organizations')({
@@ -13,16 +10,8 @@ export const Route = createFileRoute('/manager/organizations')({
 });
 
 function RouteComponent() {
-  const session = authClient.useSession();
-  const activeOrgId = session.data?.session?.activeOrganizationId;
-
-  const orgsQuery = useQuery({
-    ...orpc.organization.getMyOrganizations.queryOptions(),
-    enabled: !!session.data?.user,
-  });
-
-  const activeOrg = orgsQuery.data?.find((org) => org.id === activeOrgId);
-  const orgSlug = activeOrg?.slug ?? orgsQuery.data?.[0]?.slug;
+  const { activeOrg, organizations } = useOrganizations();
+  const orgSlug = activeOrg?.slug ?? organizations?.[0]?.slug;
 
   if (!orgSlug) {
     return <Spinner full className="opacity-60" />;

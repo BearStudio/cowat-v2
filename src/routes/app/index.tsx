@@ -1,13 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
-import { orpc } from '@/lib/orpc/client';
-
 import { Spinner } from '@/components/ui/spinner';
 
-import { authClient } from '@/features/auth/client';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
+import { useOrganizations } from '@/features/organization/use-organizations';
 
 export const Route = createFileRoute('/app/')({
   component: RouteComponent,
@@ -15,19 +12,12 @@ export const Route = createFileRoute('/app/')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const session = authClient.useSession();
-  const activeOrgId = session.data?.session?.activeOrganizationId;
-
-  const orgsQuery = useQuery({
-    ...orpc.organization.getMyOrganizations.queryOptions(),
-    enabled: !!session.data?.user,
-  });
+  const { organizations, activeOrg, isPending } = useOrganizations();
 
   useEffect(() => {
-    if (!orgsQuery.data || orgsQuery.data.length === 0) return;
+    if (!organizations || organizations.length === 0) return;
 
-    const activeOrg = orgsQuery.data.find((org) => org.id === activeOrgId);
-    const targetOrg = activeOrg ?? orgsQuery.data[0];
+    const targetOrg = activeOrg ?? organizations[0];
 
     if (targetOrg) {
       navigate({
@@ -36,13 +26,13 @@ function RouteComponent() {
         replace: true,
       });
     }
-  }, [orgsQuery.data, activeOrgId, navigate]);
+  }, [organizations, activeOrg, navigate]);
 
-  if (orgsQuery.isPending) {
+  if (isPending) {
     return <Spinner full className="opacity-60" />;
   }
 
-  if (!orgsQuery.data || orgsQuery.data.length === 0) {
+  if (!organizations || organizations.length === 0) {
     return <PageNoOrganization />;
   }
 
