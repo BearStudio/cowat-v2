@@ -36,9 +36,7 @@ export const OrgInvitations = (props: {
       orpc.organization.cancelInvitation.call({ invitationId }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getById.key({
-          input: { id: props.orgId },
-        }),
+        queryKey: orpc.organization.getActiveOrganization.key(),
       });
       toast.success(t('organization:manager.detail.invitationCancelled'));
     },
@@ -49,7 +47,7 @@ export const OrgInvitations = (props: {
 
   return (
     <div className="flex flex-col gap-4">
-      <FormInvite orgId={props.orgId} />
+      <FormInvite />
       <DataList>
         <DataListRow>
           <DataListCell>

@@ -36,7 +36,8 @@ export const OrgSwitcher = () => {
     // Don't replace the slug on non-org-scoped routes like /manager/organizations
     if (
       currentPath.match(orgSlugPattern) &&
-      !currentPath.startsWith('/manager/organizations')
+      !currentPath.startsWith('/manager/organizations') &&
+      !currentPath.startsWith('/manager/users')
     ) {
       const newPath = currentPath.replace(
         orgSlugPattern,

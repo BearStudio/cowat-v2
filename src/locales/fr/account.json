@@ -43,6 +43,7 @@
     "successMessage": "Acceptation automatique mise à jour",
     "errorMessage": "Échec de la mise à jour de l'acceptation automatique"
   },
+  "managerLink": "Gestion de l'organisation",
   "notificationPreferences": {
     "title": "Préférences de notification",
     "successMessage": "Préférences de notification mises à jour",

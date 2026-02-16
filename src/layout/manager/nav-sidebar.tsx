@@ -3,6 +3,7 @@ import {
   BarChart3Icon,
   BuildingIcon,
   PanelLeftIcon,
+  SettingsIcon,
   UsersIcon,
   XIcon,
 } from 'lucide-react';
@@ -71,11 +72,36 @@ export const NavSidebar = (props: {
         </div>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>{t('layout:nav.application')}</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {t('layout:nav.organization')}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <Link to="/manager/$orgSlug/stats" params={{ orgSlug }}>
+                  <Link
+                    to="/manager/$orgSlug"
+                    params={{ orgSlug }}
+                    activeOptions={{ exact: true }}
+                  >
+                    {({ isActive }) => (
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        render={
+                          <span>
+                            <SettingsIcon />
+                            <span>{t('layout:nav.configuration')}</span>
+                          </span>
+                        }
+                      />
+                    )}
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link
+                    to="/manager/$orgSlug/stats"
+                    params={{ orgSlug }}
+                    activeOptions={{ exact: true }}
+                  >
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
@@ -95,18 +121,18 @@ export const NavSidebar = (props: {
           <WithPermissions
             permissions={[
               {
-                user: ['list'],
+                apps: ['manager'],
               },
             ]}
           >
             <SidebarGroup>
               <SidebarGroupLabel>
-                {t('layout:nav.configuration')}
+                {t('layout:nav.administration')}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <Link to="/manager/$orgSlug/users" params={{ orgSlug }}>
+                    <Link to="/manager/users">
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}

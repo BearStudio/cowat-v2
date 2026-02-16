@@ -42,7 +42,7 @@ import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
-import { OrgLink } from '@/features/organization/org-link';
+import { Link } from '@tanstack/react-router';
 import {
   PageLayout,
   PageLayoutContent,
@@ -179,8 +179,8 @@ export const PageUser = (props: { id: string }) => {
                       <CardDescription>{user.email}</CardDescription>
                     </div>
                     <WithPermissions permissions={[{ user: ['set-role'] }]}>
-                      <OrgLink
-                        to="/manager/$orgSlug/users/$id/update"
+                      <Link
+                        to="/manager/users/$id/update"
                         params={{ id: props.id }}
                         className="-m-2 self-start"
                       >
@@ -196,7 +196,7 @@ export const PageUser = (props: { id: string }) => {
                           </span>
                         </Button>
                         <span className="absolute inset-0" />
-                      </OrgLink>
+                      </Link>
                     </WithPermissions>
                   </div>
                 </CardHeader>

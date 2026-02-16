@@ -6,11 +6,7 @@ import { organizationProcedure } from '@/server/orpc';
 const tags = ['stats'];
 
 export default {
-  getAll: organizationProcedure({
-    permission: {
-      user: ['list'],
-    },
-  })
+  getAll: organizationProcedure()
     .route({
       method: 'GET',
       path: '/stats',

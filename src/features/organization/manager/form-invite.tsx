@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 
 import { zInviteForm } from '@/features/organization/schema';
 
-export const FormInvite = (props: { orgId: string }) => {
+export const FormInvite = () => {
   const { t } = useTranslation(['organization']);
   const queryClient = useQueryClient();
 
@@ -27,15 +27,10 @@ export const FormInvite = (props: { orgId: string }) => {
 
   const invite = useMutation({
     mutationFn: (data: z.infer<typeof zInviteForm>) =>
-      orpc.organization.adminInviteMember.call({
-        organizationId: props.orgId,
-        ...data,
-      }),
+      orpc.organization.inviteMember.call(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getById.key({
-          input: { id: props.orgId },
-        }),
+        queryKey: orpc.organization.getActiveOrganization.key(),
       });
       toast.success(t('organization:manager.detail.invitationSent'));
       form.reset();
@@ -69,7 +64,7 @@ export const FormInvite = (props: { orgId: string }) => {
           name="role"
           items={[
             { label: t('organization:members.roles.member'), value: 'member' },
-            { label: t('organization:members.roles.admin'), value: 'admin' },
+            { label: t('organization:members.roles.owner'), value: 'owner' },
           ]}
         />
       </FormField>

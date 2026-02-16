@@ -21,7 +21,7 @@ const zOrganizationListItem = z.object({
 
 export default {
   getAll: protectedProcedure({
-    permission: { user: ['list'] },
+    permission: { organization: ['list'] },
   })
     .route({
       method: 'GET',
@@ -87,7 +87,7 @@ export default {
     }),
 
   getById: protectedProcedure({
-    permission: { user: ['list'] },
+    permission: { organization: ['list'] },
   })
     .route({
       method: 'GET',
@@ -189,7 +189,7 @@ export default {
       }));
     }),
 
-  getActiveOrganization: organizationProcedure({ permission: null })
+  getActiveOrganization: organizationProcedure()
     .route({
       method: 'GET',
       path: '/organizations/active',
@@ -256,7 +256,7 @@ export default {
     }),
 
   create: protectedProcedure({
-    permission: { user: ['create'] },
+    permission: { organization: ['create'] },
   })
     .route({
       method: 'POST',
@@ -303,7 +303,7 @@ export default {
     }),
 
   adminInviteMember: protectedProcedure({
-    permission: { user: ['create'] },
+    permission: { organization: ['create'] },
   })
     .route({
       method: 'POST',
@@ -314,7 +314,7 @@ export default {
       z.object({
         organizationId: z.string(),
         email: z.string().email(),
-        role: z.enum(['admin', 'member']).prefault('member'),
+        role: z.enum(['owner', 'member']).prefault('member'),
       })
     )
     .output(z.void())
@@ -329,7 +329,9 @@ export default {
       });
     }),
 
-  inviteMember: organizationProcedure({ permission: null })
+  inviteMember: organizationProcedure({
+    permissions: { invitation: ['create'] },
+  })
     .route({
       method: 'POST',
       path: '/organizations/invite',
@@ -338,7 +340,7 @@ export default {
     .input(
       z.object({
         email: z.string().email(),
-        role: z.enum(['admin', 'member']).prefault('member'),
+        role: z.enum(['owner', 'member']).prefault('member'),
       })
     )
     .output(z.void())
@@ -368,7 +370,7 @@ export default {
       });
     }),
 
-  removeMember: organizationProcedure({ permission: null })
+  removeMember: organizationProcedure({ permissions: { member: ['delete'] } })
     .route({
       method: 'POST',
       path: '/organizations/remove-member',
@@ -401,7 +403,7 @@ export default {
       });
     }),
 
-  cancelInvitation: organizationProcedure({ permission: null })
+  cancelInvitation: organizationProcedure()
     .route({
       method: 'POST',
       path: '/organizations/cancel-invitation',
@@ -418,7 +420,7 @@ export default {
       });
     }),
 
-  leaveOrganization: organizationProcedure({ permission: null })
+  leaveOrganization: organizationProcedure()
     .route({
       method: 'POST',
       path: '/organizations/leave',

@@ -27,7 +27,9 @@
       "newButton": "New User",
       "loadMore": "Load more",
       "showing": "Showing {{count}} of {{total}}",
-      "searchResults": "{{total}} results for \"{{searchTerm}}\""
+      "searchResults": "{{total}} results for \"{{searchTerm}}\"",
+      "allOrganizations": "All organizations",
+      "noOrganization": "No organization"
     },
     "detail": {
       "editButton": {

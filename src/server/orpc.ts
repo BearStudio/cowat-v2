@@ -5,7 +5,10 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { match } from 'ts-pattern';
 
-import { Permission } from '@/features/auth/permissions';
+import {
+  OrganizationPermission,
+  Permission,
+} from '@/features/auth/permissions';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import { Prisma } from '@/server/db/generated/client';
@@ -222,10 +225,12 @@ export const protectedProcedure = ({
   });
 
 export const organizationProcedure = ({
-  permission,
+  permission = null,
+  permissions,
 }: {
-  permission: Permission | null;
-}) =>
+  permission?: Permission | null;
+  permissions?: OrganizationPermission;
+} = {}) =>
   protectedProcedure({ permission }).use(async ({ context, next }) => {
     const organizationId = context.session.activeOrganizationId;
 
@@ -243,6 +248,22 @@ export const organizationProcedure = ({
       throw new ORPCError('FORBIDDEN', {
         message: 'Not a member of this organization',
       });
+    }
+
+    // Check org-level permissions if specified
+    if (permissions) {
+      const hasPermission = await auth.api.hasPermission({
+        headers: getRequestHeaders(),
+        body: {
+          permission: permissions,
+        },
+      });
+
+      if (!hasPermission.success) {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Insufficient organization permissions',
+        });
+      }
     }
 
     return await next({

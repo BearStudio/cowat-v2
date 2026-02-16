@@ -27,7 +27,9 @@
       "newButton": "Nouvel utilisateur",
       "loadMore": "Charger plus",
       "showing": "Affichage de {{count}} sur {{total}}",
-      "searchResults": "{{total}} résultats pour \"{{searchTerm}}\""
+      "searchResults": "{{total}} résultats pour \"{{searchTerm}}\"",
+      "allOrganizations": "Toutes les organisations",
+      "noOrganization": "Aucune organisation"
     },
     "detail": {
       "editButton": {

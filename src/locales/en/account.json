@@ -43,6 +43,7 @@
     "successMessage": "Auto-accept updated",
     "errorMessage": "Failed to update auto-accept"
   },
+  "managerLink": "Organization Management",
   "notificationPreferences": {
     "title": "Notification Preferences",
     "successMessage": "Notification preferences updated",

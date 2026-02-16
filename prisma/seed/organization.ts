@@ -40,7 +40,10 @@ export async function createOrganization() {
         id: crypto.randomUUID(),
         userId: user.id,
         organizationId: org.id,
-        role: email === 'admin@admin.com' ? 'owner' : 'member',
+        role:
+          email === 'admin@admin.com' || email === 'owner@owner.com'
+            ? 'owner'
+            : 'member',
         createdAt: new Date(),
       },
     });
