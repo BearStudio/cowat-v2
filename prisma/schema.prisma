@@ -69,15 +69,12 @@ model User {
   accounts      Account[]
 
   phone         String?
-  autoAccept    Boolean  @default(false)
 
   role        UserRole?
   banned      Boolean?
   banReason   String?
   banExpires  DateTime?
   onboardedAt DateTime?
-
-  notificationPreferences  NotificationPreference[]
 
   members     Member[]
   invitations Invitation[]
@@ -254,10 +251,11 @@ model NotificationPreference {
   channel   NotificationChannel
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
-  userId    String
-  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    Member              @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, channel])
+  @@unique([memberId, channel])
+  @@index([memberId])
   @@map("notification_preference")
 }
 
@@ -283,8 +281,10 @@ model Member {
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
   createdAt      DateTime
+  autoAccept     Boolean      @default(false)
 
-  locations           Location[]
+  locations                Location[]
+  notificationPreferences  NotificationPreference[]
   drivenCommutes      Commute[]           @relation("CommuteDriver")
   drivenTemplates     CommuteTemplate[]   @relation("TemplateDriver")
   passengerBookings   PassengersOnStops[] @relation("BookingPassenger")

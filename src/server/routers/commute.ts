@@ -286,15 +286,15 @@ export default {
         include: {
           passenger: {
             include: {
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
               user: {
                 select: {
                   id: true,
                   name: true,
                   email: true,
-                  notificationPreferences: {
-                    where: { enabled: false },
-                    select: { channel: true },
-                  },
                 },
               },
             },
@@ -310,8 +310,8 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: passengerUser.notificationPreferences.map((p) =>
-              p.channel.toLowerCase()
+            disabledChannels: booking.passenger.notificationPreferences.map(
+              (p) => p.channel.toLowerCase()
             ),
           },
           payload: {
@@ -357,15 +357,15 @@ export default {
         include: {
           passenger: {
             include: {
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
               user: {
                 select: {
                   id: true,
                   name: true,
                   email: true,
-                  notificationPreferences: {
-                    where: { enabled: false },
-                    select: { channel: true },
-                  },
                 },
               },
             },
@@ -385,8 +385,8 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: passengerUser.notificationPreferences.map((p) =>
-              p.channel.toLowerCase()
+            disabledChannels: booking.passenger.notificationPreferences.map(
+              (p) => p.channel.toLowerCase()
             ),
           },
           payload: {

@@ -71,7 +71,6 @@ export const EditNameDrawer = (props: { children: ReactElement }) => {
             updateUser.mutate({
               name,
               phone: session.data?.user.phone ?? null,
-              autoAccept: session.data?.user.autoAccept ?? false,
             });
           }}
           className="flex flex-col gap-4"

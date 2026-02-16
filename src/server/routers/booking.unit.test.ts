@@ -28,11 +28,11 @@ const mockBookingFromDb = {
 const mockBookingWithStop = {
   ...mockBookingFromDb,
   passenger: {
+    notificationPreferences: [],
     user: {
       id: 'passenger-user-1',
       name: 'Passenger',
       email: 'passenger@test.com',
-      notificationPreferences: [],
     },
   },
   stop: {
@@ -51,11 +51,11 @@ const mockBookingWithDriver = {
       date: now,
       type: 'ROUND' as const,
       driver: {
+        notificationPreferences: [],
         user: {
           id: 'driver-user-1',
           name: 'Driver',
           email: 'driver@test.com',
-          notificationPreferences: [],
         },
       },
     },
@@ -113,12 +113,12 @@ describe('booking router', () => {
           driverMemberId: 'driver-member-1',
           driver: {
             organizationId: mockOrganizationId,
+            autoAccept: false,
+            notificationPreferences: [],
             user: {
               id: 'driver-user-1',
               name: 'Driver',
               email: 'driver@test.com',
-              autoAccept: false,
-              notificationPreferences: [],
             },
           },
         },
@@ -160,12 +160,12 @@ describe('booking router', () => {
           driverMemberId: 'driver-member-1',
           driver: {
             organizationId: mockOrganizationId,
+            autoAccept: true,
+            notificationPreferences: [],
             user: {
               id: 'driver-user-1',
               name: 'Driver',
               email: 'driver@test.com',
-              autoAccept: true,
-              notificationPreferences: [],
             },
           },
         },
@@ -213,7 +213,8 @@ describe('booking router', () => {
           driverMemberId: 'driver-member-1',
           driver: {
             organizationId: mockOrganizationId,
-            user: { autoAccept: false, notificationPreferences: [] },
+            autoAccept: false,
+            notificationPreferences: [],
           },
         },
       });

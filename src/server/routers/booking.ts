@@ -35,16 +35,16 @@ export default {
               driver: {
                 select: {
                   organizationId: true,
+                  autoAccept: true,
+                  notificationPreferences: {
+                    where: { enabled: false },
+                    select: { channel: true },
+                  },
                   user: {
                     select: {
                       id: true,
                       name: true,
                       email: true,
-                      autoAccept: true,
-                      notificationPreferences: {
-                        where: { enabled: false },
-                        select: { channel: true },
-                      },
                     },
                   },
                 },
@@ -76,8 +76,9 @@ export default {
         });
       }
 
-      const driverUser = stop.commute.driver.user;
-      const status = driverUser.autoAccept ? 'ACCEPTED' : 'REQUESTED';
+      const driverMember = stop.commute.driver;
+      const driverUser = driverMember.user;
+      const status = driverMember.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
       const booking = await context.db.passengersOnStops.upsert({
         where: {
@@ -104,7 +105,7 @@ export default {
           userId: driverUser.id,
           name: driverUser.name,
           email: driverUser.email,
-          disabledChannels: driverUser.notificationPreferences.map((p) =>
+          disabledChannels: driverMember.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },
@@ -133,15 +134,15 @@ export default {
         include: {
           passenger: {
             include: {
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
               user: {
                 select: {
                   id: true,
                   name: true,
                   email: true,
-                  notificationPreferences: {
-                    where: { enabled: false },
-                    select: { channel: true },
-                  },
                 },
               },
             },
@@ -172,7 +173,7 @@ export default {
           userId: passengerUser.id,
           name: passengerUser.name,
           email: passengerUser.email,
-          disabledChannels: passengerUser.notificationPreferences.map((p) =>
+          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },
@@ -198,15 +199,15 @@ export default {
         include: {
           passenger: {
             include: {
+              notificationPreferences: {
+                where: { enabled: false },
+                select: { channel: true },
+              },
               user: {
                 select: {
                   id: true,
                   name: true,
                   email: true,
-                  notificationPreferences: {
-                    where: { enabled: false },
-                    select: { channel: true },
-                  },
                 },
               },
             },
@@ -237,7 +238,7 @@ export default {
           userId: passengerUser.id,
           name: passengerUser.name,
           email: passengerUser.email,
-          disabledChannels: passengerUser.notificationPreferences.map((p) =>
+          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },
@@ -267,15 +268,15 @@ export default {
                 include: {
                   driver: {
                     include: {
+                      notificationPreferences: {
+                        where: { enabled: false },
+                        select: { channel: true },
+                      },
                       user: {
                         select: {
                           id: true,
                           name: true,
                           email: true,
-                          notificationPreferences: {
-                            where: { enabled: false },
-                            select: { channel: true },
-                          },
                         },
                       },
                     },
@@ -302,14 +303,15 @@ export default {
         data: { status: 'CANCELED' },
       });
 
-      const driverUser = booking.stop.commute.driver.user;
+      const driverMember = booking.stop.commute.driver;
+      const driverUser = driverMember.user;
       context.notify({
         type: 'booking.canceled',
         recipient: {
           userId: driverUser.id,
           name: driverUser.name,
           email: driverUser.email,
-          disabledChannels: driverUser.notificationPreferences.map((p) =>
+          disabledChannels: driverMember.notificationPreferences.map((p) =>
             p.channel.toLowerCase()
           ),
         },

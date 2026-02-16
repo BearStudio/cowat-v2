@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zFormFieldsOnboarding } from '@/features/auth/schema';
 import { zNotificationChannel } from '@/features/notification/schema';
 import { zUser } from '@/features/user/schema';
-import { protectedProcedure } from '@/server/orpc';
+import { organizationProcedure, protectedProcedure } from '@/server/orpc';
 
 const tags = ['account'];
 
@@ -41,7 +41,6 @@ export default {
       zUser().pick({
         name: true,
         phone: true,
-        autoAccept: true,
       })
     )
     .output(z.void())
@@ -52,14 +51,42 @@ export default {
         data: {
           name: input.name ?? '',
           phone: input.phone ?? null,
-          autoAccept: input.autoAccept,
         },
       });
     }),
 
-  getNotificationPreferences: protectedProcedure({
-    permission: null,
-  })
+  getAutoAccept: organizationProcedure({ permission: null })
+    .route({
+      method: 'GET',
+      path: '/account/auto-accept',
+      tags,
+    })
+    .input(z.void())
+    .output(z.object({ autoAccept: z.boolean() }))
+    .handler(async ({ context }) => {
+      const member = await context.db.member.findUniqueOrThrow({
+        where: { id: context.memberId },
+        select: { autoAccept: true },
+      });
+      return member;
+    }),
+
+  updateAutoAccept: organizationProcedure({ permission: null })
+    .route({
+      method: 'POST',
+      path: '/account/auto-accept',
+      tags,
+    })
+    .input(z.object({ autoAccept: z.boolean() }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      await context.db.member.update({
+        where: { id: context.memberId },
+        data: { autoAccept: input.autoAccept },
+      });
+    }),
+
+  getNotificationPreferences: organizationProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/account/notification-preferences',
@@ -73,14 +100,12 @@ export default {
     )
     .handler(async ({ context }) => {
       return await context.db.notificationPreference.findMany({
-        where: { userId: context.user.id },
+        where: { memberId: context.memberId },
         select: { channel: true, enabled: true },
       });
     }),
 
-  updateNotificationPreference: protectedProcedure({
-    permission: null,
-  })
+  updateNotificationPreference: organizationProcedure({ permission: null })
     .route({
       method: 'POST',
       path: '/account/notification-preferences',
@@ -91,14 +116,14 @@ export default {
     .handler(async ({ context, input }) => {
       await context.db.notificationPreference.upsert({
         where: {
-          userId_channel: {
-            userId: context.user.id,
+          memberId_channel: {
+            memberId: context.memberId,
             channel: input.channel,
           },
         },
         update: { enabled: input.enabled },
         create: {
-          userId: context.user.id,
+          memberId: context.memberId,
           channel: input.channel,
           enabled: input.enabled,
         },
