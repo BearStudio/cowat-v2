@@ -89,7 +89,7 @@ function DrawerContent({
           {...props}
         >
           <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[swipe-direction=down]/drawer-content:block" />
-          <DrawerPrimitive.Content data-slot="drawer-inner-content">
+          <DrawerPrimitive.Content data-slot="drawer-inner-content pb-safe-bottom">
             {children}
           </DrawerPrimitive.Content>
         </DrawerPrimitive.Popup>

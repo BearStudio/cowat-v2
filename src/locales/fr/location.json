@@ -10,10 +10,13 @@
   },
   "new": {
     "title": "Nouveau lieu",
-    "submitButton": "Créer"
+    "submitButton": "Créer",
+    "successMessage": "Lieu créé"
   },
   "update": {
-    "submitButton": "Enregistrer"
+    "title": "Modifier le lieu",
+    "submitButton": "Enregistrer",
+    "successMessage": "Lieu modifié"
   },
   "form": {
     "name": "Nom",

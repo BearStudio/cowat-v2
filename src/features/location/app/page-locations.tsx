@@ -1,6 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { ExternalLinkIcon, MapPinIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -24,8 +25,7 @@ import {
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
-import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
-import { OrgLink } from '@/features/organization/org-link';
+import { LocationDrawer } from '@/features/location/app/location-drawer';
 import {
   PageLayout,
   PageLayoutContent,
@@ -35,6 +35,10 @@ import {
 
 export const PageLocations = () => {
   const { t } = useTranslation(['location', 'common']);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingLocationId, setEditingLocationId] = useState<string | null>(
+    null
+  );
 
   const locationsQuery = useInfiniteQuery(
     orpc.location.getAll.infiniteOptions({
@@ -67,18 +71,28 @@ export const PageLocations = () => {
     return set('default', { items });
   });
 
+  const openCreateDrawer = () => {
+    setEditingLocationId(null);
+    setIsDrawerOpen(true);
+  };
+
+  const openEditDrawer = (id: string) => {
+    setEditingLocationId(id);
+    setIsDrawerOpen(true);
+  };
+
   return (
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgResponsiveIconButtonLink
+          <ResponsiveIconButton
             label={t('location:list.newAction')}
             variant="secondary"
             size="sm"
-            to="/app/$orgSlug/account/locations/new"
+            onClick={openCreateDrawer}
           >
             <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          </ResponsiveIconButton>
         }
       >
         <PageLayoutTopBarTitle>
@@ -107,13 +121,13 @@ export const PageLocations = () => {
                 <DataListRow key={item.id} role="row" withHover>
                   <DataListCell>
                     <DataListText className="font-medium">
-                      <OrgLink
-                        to="/app/$orgSlug/account/locations/$id/update"
-                        params={{ id: item.id }}
+                      <button
+                        type="button"
+                        onClick={() => openEditDrawer(item.id)}
                       >
                         {item.name}
                         <span className="absolute inset-0" />
-                      </OrgLink>
+                      </button>
                     </DataListText>
                     <DataListText className="text-xs text-muted-foreground">
                       {item.address}
@@ -176,6 +190,12 @@ export const PageLocations = () => {
           ))
           .exhaustive()}
       </PageLayoutContent>
+
+      <LocationDrawer
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        locationId={editingLocationId}
+      />
     </PageLayout>
   );
 };
