@@ -1,6 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +22,10 @@ import {
   DataListRowResults,
   DataListText,
 } from '@/components/ui/datalist';
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { SearchButton } from '@/components/ui/search-button';
 import { SearchInput } from '@/components/ui/search-input';
 
-import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
-import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -33,7 +33,9 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-export const PageUsers = (props: { search: { searchTerm?: string } }) => {
+export const PageUsers = (props: {
+  search: { searchTerm?: string; organizationId?: string };
+}) => {
   const { t } = useTranslation(['user']);
   const router = useRouter();
 
@@ -42,7 +44,7 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
     onChange: (value: string) =>
       router.navigate({
         to: '.',
-        search: { searchTerm: value },
+        search: { ...props.search, searchTerm: value },
         replace: true,
       }),
   };
@@ -51,6 +53,7 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
     orpc.user.getAll.infiniteOptions({
       input: (cursor: string | undefined) => ({
         searchTerm: props.search.searchTerm,
+        organizationId: props.search.organizationId,
         cursor,
       }),
       initialPageParam: undefined,
@@ -79,14 +82,17 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgResponsiveIconButtonLink
-            label={t('user:manager.list.newButton')}
-            variant="secondary"
-            size="sm"
-            to="/manager/$orgSlug/users/new"
-          >
-            <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          <Link to="/manager/users/new">
+            <ResponsiveIconButton
+              label={t('user:manager.list.newButton')}
+              variant="secondary"
+              size="sm"
+              render={<span />}
+              nativeButton={false}
+            >
+              <PlusIcon />
+            </ResponsiveIconButton>
+          </Link>
         }
       >
         <PageLayoutTopBarTitle>
@@ -122,7 +128,7 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
                     onClear={() => {
                       router.navigate({
                         to: '.',
-                        search: { searchTerm: '' },
+                        search: { ...props.search, searchTerm: '' },
                         replace: true,
                       });
                     }}
@@ -149,13 +155,10 @@ export const PageUsers = (props: { search: { searchTerm?: string } }) => {
                     </DataListCell>
                     <DataListCell>
                       <DataListText className="font-medium">
-                        <OrgLink
-                          to="/manager/$orgSlug/users/$id"
-                          params={{ id: item.id }}
-                        >
+                        <Link to="/manager/users/$id" params={{ id: item.id }}>
                           {item.name}
                           <span className="absolute inset-0" />
-                        </OrgLink>
+                        </Link>
                       </DataListText>
                       <DataListText className="text-xs text-muted-foreground">
                         {item.email}

@@ -24,6 +24,18 @@ export const OrgSwitcher = () => {
 
   const { organizations, activeOrg, activeOrgId } = useOrganizations();
 
+  // In manager routes, only show orgs where user is owner
+  const currentPath = router.state.location.pathname;
+  const isInManagerRoutes = currentPath.startsWith('/manager/');
+  const filteredOrgs = isInManagerRoutes
+    ? organizations?.filter((org) =>
+        authClient.organization.checkRolePermission({
+          role: org.role as 'owner' | 'admin' | 'member',
+          permission: { organization: ['delete'] },
+        })
+      )
+    : organizations;
+
   const handleSwitch = async (org: { id: string; slug: string }) => {
     if (org.id === activeOrgId) return;
 
@@ -31,12 +43,12 @@ export const OrgSwitcher = () => {
     await session.refetch();
 
     // If in app or manager route, navigate to the new org's URL
-    const currentPath = router.state.location.pathname;
     const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
     // Don't replace the slug on non-org-scoped routes like /manager/organizations
     if (
       currentPath.match(orgSlugPattern) &&
-      !currentPath.startsWith('/manager/organizations')
+      !currentPath.startsWith('/manager/organizations') &&
+      !currentPath.startsWith('/manager/users')
     ) {
       const newPath = currentPath.replace(
         orgSlugPattern,
@@ -49,8 +61,8 @@ export const OrgSwitcher = () => {
     await queryClient.invalidateQueries();
   };
 
-  if (!organizations || organizations.length <= 1) {
-    // Don't show switcher if user only has 1 org
+  if (!filteredOrgs || filteredOrgs.length <= 1) {
+    // Don't show switcher if user only has 1 org (after filtering)
     if (activeOrg) {
       return (
         <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium">
@@ -77,7 +89,7 @@ export const OrgSwitcher = () => {
             {t('organization:switcher.label')}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {organizations.map((org) => (
+          {filteredOrgs.map((org) => (
             <DropdownMenuItem key={org.id} onClick={() => handleSwitch(org)}>
               <span className="flex-1 truncate">{org.name}</span>
               {org.id === activeOrgId && (

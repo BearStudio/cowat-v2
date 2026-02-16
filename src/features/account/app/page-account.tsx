@@ -1,4 +1,9 @@
-import { ChevronRightIcon, MapPinIcon, RepeatIcon } from 'lucide-react';
+import {
+  ChevronRightIcon,
+  MapPinIcon,
+  RepeatIcon,
+  SettingsIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -6,10 +11,13 @@ import { Button } from '@/components/ui/button';
 import { DisplayPreferences } from '@/features/account/display-preferences';
 import { NotificationPreferences } from '@/features/account/notification-preferences';
 import { UserCard } from '@/features/account/user-card';
+import { authClient } from '@/features/auth/client';
+import { Role } from '@/features/auth/permissions';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
 import { OrgLink } from '@/features/organization/org-link';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
+import { useOrganizations } from '@/features/organization/use-organizations';
 import {
   PageLayout,
   PageLayoutContent,
@@ -18,6 +26,24 @@ import {
 
 export const PageAccount = () => {
   const { t } = useTranslation(['account']);
+  const session = authClient.useSession();
+  const { organizations, activeOrgId } = useOrganizations();
+
+  const userRole = session.data?.user.role;
+  const activeOrg = organizations?.find((org) => org.id === activeOrgId);
+
+  // Show manager link if user is app admin OR org owner
+  const showManagerLink =
+    (userRole &&
+      authClient.admin.checkRolePermission({
+        role: userRole as Role,
+        permission: { apps: ['manager'] },
+      })) ||
+    (activeOrg &&
+      authClient.organization.checkRolePermission({
+        role: activeOrg.role as 'owner' | 'admin' | 'member',
+        permission: { organization: ['delete'] },
+      }));
 
   return (
     <PageLayout>
@@ -32,6 +58,16 @@ export const PageAccount = () => {
             <OrgSwitcher />
           </div>
           <UserCard />
+          {showManagerLink && (
+            <OrgLink
+              to="/manager"
+              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <SettingsIcon className="size-5 text-muted-foreground" />
+              <span className="flex-1">{t('account:managerLink')}</span>
+              <ChevronRightIcon className="size-4 text-muted-foreground" />
+            </OrgLink>
+          )}
           <OrgLink
             to="/app/$orgSlug/account/locations"
             className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"

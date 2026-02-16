@@ -14,7 +14,11 @@ import { organizationProcedure } from '@/server/orpc';
 const tags = ['commutes'];
 
 export default {
-  create: organizationProcedure({ permission: null })
+  create: organizationProcedure({
+    permissions: {
+      commute: ['create'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/commutes',
@@ -56,7 +60,11 @@ export default {
       return commute;
     }),
 
-  getById: organizationProcedure({ permission: null })
+  getById: organizationProcedure({
+    permissions: {
+      commute: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/commutes/{id}',
@@ -80,7 +88,11 @@ export default {
       return commute;
     }),
 
-  getByDate: organizationProcedure({ permission: null })
+  getByDate: organizationProcedure({
+    permissions: {
+      commute: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/commutes/by-date',
@@ -132,7 +144,11 @@ export default {
       }));
     }),
 
-  getMyCommutes: organizationProcedure({ permission: null })
+  getMyCommutes: organizationProcedure({
+    permissions: {
+      commute: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/commutes/mine',
@@ -230,7 +246,11 @@ export default {
       return { items, nextCursor, total };
     }),
 
-  update: organizationProcedure({ permission: null })
+  update: organizationProcedure({
+    permissions: {
+      commute: ['update'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/commutes/{id}',
@@ -325,7 +345,11 @@ export default {
       return commute;
     }),
 
-  cancel: organizationProcedure({ permission: null })
+  cancel: organizationProcedure({
+    permissions: {
+      commute: ['delete'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/commutes/{id}/cancel',

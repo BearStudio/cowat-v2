@@ -26,30 +26,56 @@ export default {
           cursor: z.string().optional(),
           limit: z.coerce.number().int().min(1).max(100).prefault(20),
           searchTerm: z.string().trim().optional().prefault(''),
+          organizationId: z.string().optional(),
         })
         .prefault({})
     )
     .output(
       z.object({
-        items: z.array(zUser()),
+        items: z.array(
+          zUser().extend({
+            members: z.array(
+              z.object({
+                organization: z.object({
+                  id: z.string(),
+                  name: z.string(),
+                  slug: z.string(),
+                }),
+              })
+            ),
+          })
+        ),
         nextCursor: z.string().optional(),
         total: z.number(),
       })
     )
     .handler(async ({ context, input }) => {
       const where = {
-        OR: [
+        AND: [
+          ...(input.organizationId
+            ? [
+                {
+                  members: {
+                    some: { organizationId: input.organizationId },
+                  },
+                },
+              ]
+            : []),
           {
-            name: {
-              contains: input.searchTerm,
-              mode: 'insensitive',
-            },
-          },
-          {
-            email: {
-              contains: input.searchTerm,
-              mode: 'insensitive',
-            },
+            OR: [
+              {
+                name: {
+                  contains: input.searchTerm,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                email: {
+                  contains: input.searchTerm,
+                  mode: 'insensitive' as const,
+                },
+              },
+            ],
           },
         ],
       } satisfies Prisma.UserWhereInput;
@@ -67,6 +93,15 @@ export default {
             name: 'asc',
           },
           where,
+          include: {
+            members: {
+              select: {
+                organization: {
+                  select: { id: true, name: true, slug: true },
+                },
+              },
+            },
+          },
         }),
       ]);
 

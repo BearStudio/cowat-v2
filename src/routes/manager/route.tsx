@@ -12,7 +12,7 @@ export const Route = createFileRoute('/manager')({
 
 function RouteComponent() {
   return (
-    <GuardAuthenticated permissionApps={['manager']}>
+    <GuardAuthenticated>
       <Outlet />
     </GuardAuthenticated>
   );

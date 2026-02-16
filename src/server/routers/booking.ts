@@ -13,7 +13,11 @@ import { organizationProcedure } from '@/server/orpc';
 const tags = ['bookings'];
 
 export default {
-  request: organizationProcedure({ permission: null })
+  request: organizationProcedure({
+    permissions: {
+      booking: ['request'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/bookings/request',
@@ -120,7 +124,11 @@ export default {
       return booking;
     }),
 
-  accept: organizationProcedure({ permission: null })
+  accept: organizationProcedure({
+    permissions: {
+      booking: ['manage'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/bookings/{id}/accept',
@@ -185,7 +193,11 @@ export default {
       });
     }),
 
-  refuse: organizationProcedure({ permission: null })
+  refuse: organizationProcedure({
+    permissions: {
+      booking: ['manage'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/bookings/{id}/refuse',
@@ -250,7 +262,11 @@ export default {
       });
     }),
 
-  cancel: organizationProcedure({ permission: null })
+  cancel: organizationProcedure({
+    permissions: {
+      booking: ['manage'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/bookings/{id}/cancel',
@@ -323,7 +339,11 @@ export default {
       });
     }),
 
-  pendingRequestCount: organizationProcedure({ permission: null })
+  pendingRequestCount: organizationProcedure({
+    permissions: {
+      booking: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/bookings/pending-count',
@@ -346,7 +366,11 @@ export default {
       return { count };
     }),
 
-  getRequestsForDriver: organizationProcedure({ permission: null })
+  getRequestsForDriver: organizationProcedure({
+    permissions: {
+      booking: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/bookings/driver-requests',

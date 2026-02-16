@@ -14,7 +14,11 @@ import { organizationProcedure } from '@/server/orpc';
 const tags = ['commute-templates'];
 
 export default {
-  create: organizationProcedure({ permission: null })
+  create: organizationProcedure({
+    permissions: {
+      commuteTemplate: ['create'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/commute-templates',
@@ -36,7 +40,11 @@ export default {
       });
     }),
 
-  getAll: organizationProcedure({ permission: null })
+  getAll: organizationProcedure({
+    permissions: {
+      commuteTemplate: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/commute-templates',
@@ -93,7 +101,11 @@ export default {
       return { items, nextCursor, total };
     }),
 
-  getById: organizationProcedure({ permission: null })
+  getById: organizationProcedure({
+    permissions: {
+      commuteTemplate: ['read'],
+    },
+  })
     .route({
       method: 'GET',
       path: '/commute-templates/{id}',
@@ -128,7 +140,11 @@ export default {
       return template;
     }),
 
-  update: organizationProcedure({ permission: null })
+  update: organizationProcedure({
+    permissions: {
+      commuteTemplate: ['update'],
+    },
+  })
     .route({
       method: 'POST',
       path: '/commute-templates/{id}',
@@ -178,7 +194,11 @@ export default {
       });
     }),
 
-  delete: organizationProcedure({ permission: null })
+  delete: organizationProcedure({
+    permissions: {
+      commuteTemplate: ['delete'],
+    },
+  })
     .route({
       method: 'DELETE',
       path: '/commute-templates/{id}',

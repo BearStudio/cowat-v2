@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 import { Spinner } from '@/components/ui/spinner';
 
+import { GuardAuthenticated } from '@/features/auth/guard-authenticated';
 import { useOrganizations } from '@/features/organization/use-organizations';
 import { Layout } from '@/layout/manager/layout';
 
@@ -18,8 +19,10 @@ function RouteComponent() {
   }
 
   return (
-    <Layout orgSlug={orgSlug}>
-      <Outlet />
-    </Layout>
+    <GuardAuthenticated permissionApps={['manager']}>
+      <Layout orgSlug={orgSlug}>
+        <Outlet />
+      </Layout>
+    </GuardAuthenticated>
   );
 }

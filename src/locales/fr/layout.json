@@ -11,6 +11,8 @@
     "apiDocumentation": "Documentation API",
     "openApp": "Ouvrir l'application",
     "stats": "Statistiques",
-    "organizations": "Organisations"
+    "organizations": "Organisations",
+    "organization": "Organisation",
+    "administration": "Administration"
   }
 }

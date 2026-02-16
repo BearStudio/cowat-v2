@@ -12,6 +12,7 @@ const statement = {
   ...defaultStatements,
   account: ['read', 'update'],
   apps: ['app', 'manager'],
+  organization: ['list', 'create'],
 } as const;
 
 const ac = createAccessControl(statement);
@@ -25,6 +26,7 @@ const admin = ac.newRole({
   ...adminAc.statements,
   account: ['update'],
   apps: ['app', 'manager'],
+  organization: ['list', 'create'],
 });
 
 export const rolesNames = ['admin', 'user'] as const;
@@ -42,4 +44,8 @@ export const permissions = {
 
 export type Permission = NonNullable<
   Parameters<typeof authClient.admin.hasPermission>['0']['permission']
+>;
+
+export type OrganizationPermission = NonNullable<
+  Parameters<typeof authClient.organization.hasPermission>['0']['permission']
 >;

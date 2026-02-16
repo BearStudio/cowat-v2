@@ -16,6 +16,7 @@ import {
   AUTH_INVITATION_EXPIRATION_IN_SECONDS,
   AUTH_SIGNUP_ENABLED,
 } from '@/features/auth/config';
+import { organizationPermissions } from '@/features/auth/organization-permissions';
 import { permissions } from '@/features/auth/permissions';
 import { db } from '@/server/db';
 import { sendEmail } from '@/server/email';
@@ -87,6 +88,7 @@ export const auth = betterAuth({
       ...permissions,
     }),
     organization({
+      ...organizationPermissions,
       allowUserToCreateOrganization: false,
       organizationLimit: 100,
       membershipLimit: 200,

@@ -9,6 +9,7 @@ import { createAuthClient } from 'better-auth/react';
 import { envClient } from '@/env/client';
 import type { Auth } from '@/server/auth';
 
+import { organizationPermissions } from './organization-permissions';
 import { permissions } from './permissions';
 
 export const authClient = createAuthClient({
@@ -22,6 +23,6 @@ export const authClient = createAuthClient({
       ...permissions,
     }),
     emailOTPClient(),
-    organizationClient(),
+    organizationClient({ ...organizationPermissions }),
   ],
 });

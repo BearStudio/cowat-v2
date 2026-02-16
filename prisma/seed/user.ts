@@ -4,7 +4,11 @@ import { db } from '@/server/db';
 
 import { emphasis } from './_utils';
 
-export const SEED_EMAILS = ['user@user.com', 'admin@admin.com'] as const;
+export const SEED_EMAILS = [
+  'user@user.com',
+  'admin@admin.com',
+  'owner@owner.com',
+] as const;
 
 export async function createUsers() {
   console.log(`⏳ Seeding users`);
@@ -52,9 +56,23 @@ export async function createUsers() {
     createdCounter += 1;
   }
 
+  if (!(await db.user.findUnique({ where: { email: 'owner@owner.com' } }))) {
+    await db.user.create({
+      data: {
+        name: 'Owner',
+        email: 'owner@owner.com',
+        emailVerified: true,
+        role: 'user',
+        onboardedAt: new Date(),
+      },
+    });
+    createdCounter += 1;
+  }
+
   console.log(
     `✅ ${existingCount} existing user 👉 ${createdCounter} users created`
   );
   console.log(`👉 Admin connect with: ${emphasis('admin@admin.com')}`);
   console.log(`👉 User connect with: ${emphasis('user@user.com')}`);
+  console.log(`👉 Owner connect with: ${emphasis('owner@owner.com')}`);
 }
