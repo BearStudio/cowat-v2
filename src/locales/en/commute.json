@@ -27,6 +27,10 @@
     "emptyState": "Save time: create a template",
     "fromScratch": "Create from scratch"
   },
+  "active": {
+    "title": "Commute Details",
+    "badge": "Active"
+  },
   "form": {
     "date": "Date",
     "seats": "Seats",

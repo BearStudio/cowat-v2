@@ -38,5 +38,7 @@ export type FormFieldsOnboarding = z.infer<
 export const zFormFieldsOnboarding = () =>
   z.object({
     name: zu.fieldText.required(),
-    phone: zu.fieldText.nullish(),
+    phone: zu.fieldText
+      .nullish()
+      .pipe(zu.phone({ invalid: t('auth:common.phone.invalid') })),
   });

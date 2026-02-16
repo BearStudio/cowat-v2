@@ -71,21 +71,52 @@ export default {
       tags,
     })
     .input(z.object({ id: z.string() }))
-    .output(zCommute().extend({ stops: z.array(zStop()) }))
+    .output(zCommuteEnriched())
     .handler(async ({ context, input }) => {
       const commute = await context.db.commute.findFirst({
         where: {
           id: input.id,
           driver: { organizationId: context.organizationId },
         },
-        include: { stops: true },
+        include: {
+          driver: {
+            include: {
+              user: { select: { id: true, name: true, image: true } },
+            },
+          },
+          stops: {
+            orderBy: { order: 'asc' },
+            include: {
+              location: { select: { id: true, name: true } },
+              passengers: {
+                include: {
+                  passenger: {
+                    include: {
+                      user: { select: { id: true, name: true, image: true } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!commute) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      return commute;
+      return {
+        ...commute,
+        driver: commute.driver.user,
+        stops: commute.stops.map((s) => ({
+          ...s,
+          passengers: s.passengers.map((p) => ({
+            ...p,
+            passenger: p.passenger.user,
+          })),
+        })),
+      };
     }),
 
   getByDate: organizationProcedure({

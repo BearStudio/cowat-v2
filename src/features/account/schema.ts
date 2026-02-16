@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
@@ -15,5 +16,7 @@ export type FormFieldsAccountUpdatePhone = z.infer<
 >;
 export const zFormFieldsAccountUpdatePhone = () =>
   z.object({
-    phone: zu.fieldText.nullish(),
+    phone: zu.fieldText
+      .nullish()
+      .pipe(zu.phone({ invalid: t('auth:common.phone.invalid') })),
   });

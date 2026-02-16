@@ -6,7 +6,9 @@ import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader } from '@/components/ui/card';
 import {
   CardCommute,
   CardCommuteContent,
@@ -29,7 +31,9 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { authClient } from '@/features/auth/client';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { isCommuteActive } from '@/features/commute/commute-active';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -123,6 +127,36 @@ export const PageCommutes = () => {
                 }
                 const available = item.seats - acceptedPassengers.size;
                 const isDriver = session.data?.user.id === item.driver.id;
+                const isActive = isCommuteActive(item);
+
+                if (isActive) {
+                  return (
+                    <OrgLink
+                      key={item.id}
+                      to="/app/$orgSlug/commutes/$commuteId"
+                      params={{ commuteId: item.id }}
+                      className="block no-underline"
+                    >
+                      <Card className="cursor-pointer transition-colors hover:bg-accent/50">
+                        <CardHeader>
+                          <CardCommuteHeader
+                            driver={item.driver}
+                            date={item.date}
+                            status={item.status}
+                            type={item.type}
+                            availableSeats={available}
+                            totalSeats={item.seats}
+                            actions={
+                              <Badge variant="warning" size="sm">
+                                {t('commute:active.badge')}
+                              </Badge>
+                            }
+                          />
+                        </CardHeader>
+                      </Card>
+                    </OrgLink>
+                  );
+                }
 
                 return (
                   <CardCommute key={item.id}>

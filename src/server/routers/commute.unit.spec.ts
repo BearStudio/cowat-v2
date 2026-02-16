@@ -130,15 +130,15 @@ describe('commute router', () => {
 
   describe('getById', () => {
     it('should return a commute with stops when found', async () => {
-      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteEnrichedRawFromDb);
 
       const result = await call(commuteRouter.getById, { id: 'commute-1' });
 
-      expect(result).toEqual(mockCommuteFromDb);
+      expect(result).toEqual(mockCommuteEnriched);
     });
 
     it('should scope query by organizationId via driver relation', async () => {
-      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteEnrichedRawFromDb);
 
       await call(commuteRouter.getById, { id: 'commute-1' });
 

@@ -10,6 +10,11 @@ const emptyStringAsUndefined = (input: string) =>
   input.trim() === '' ? (undefined as unknown as string) : input.trim();
 
 export const zu = {
+  phone: (params: { invalid: string }) =>
+    z
+      .string()
+      .regex(/^[\d\s+\-().]+$/, params.invalid)
+      .nullish(),
   fieldText: {
     required: (
       params: Parameters<typeof z.string>[0] = t('common:errors.required')

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader } from '@/components/ui/card';
 import {
   CardCommute,
   CardCommuteContent,
@@ -15,7 +16,9 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { isCommuteActive } from '@/features/commute/commute-active';
 import { CommuteEnriched, StopEnriched } from '@/features/commute/schema';
+import { OrgLink } from '@/features/organization/org-link';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
@@ -59,6 +62,36 @@ export const DashboardCommuteCard = ({
         (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
     )
   );
+
+  const isActive = isCommuteActive(commute);
+
+  if (isActive) {
+    return (
+      <OrgLink
+        to="/app/$orgSlug/commutes/$commuteId"
+        params={{ commuteId: commute.id }}
+        className="block no-underline"
+      >
+        <Card className="cursor-pointer transition-colors hover:bg-accent/50">
+          <CardHeader>
+            <CardCommuteHeader
+              driver={commute.driver}
+              date={commute.date}
+              status={commute.status}
+              type={commute.type}
+              availableSeats={available}
+              totalSeats={commute.seats}
+              actions={
+                <Badge variant="warning" size="sm">
+                  {t('commute:active.badge')}
+                </Badge>
+              }
+            />
+          </CardHeader>
+        </Card>
+      </OrgLink>
+    );
+  }
 
   return (
     <CardCommute>

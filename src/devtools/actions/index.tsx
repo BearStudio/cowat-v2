@@ -1,5 +1,6 @@
 import { ClearDbAction } from './clear-db-action';
 import { DbSeedAction } from './db-actions';
+import { ForceActiveCommuteAction } from './force-active-commute-action';
 import { SwitchUserAction } from './switch-user-action';
 
 export function ActionsDevtoolPanel() {
@@ -9,6 +10,7 @@ export function ActionsDevtoolPanel() {
         <DbSeedAction />
         <ClearDbAction />
         <SwitchUserAction />
+        <ForceActiveCommuteAction />
       </div>
     </div>
   );

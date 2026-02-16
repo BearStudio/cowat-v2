@@ -27,6 +27,10 @@
     "emptyState": "Gagnez du temps : créez un modèle",
     "fromScratch": "Créer de zéro"
   },
+  "active": {
+    "title": "Détails du trajet",
+    "badge": "Actif"
+  },
   "form": {
     "date": "Date",
     "seats": "Places",
