@@ -1,7 +1,14 @@
 {
   "title": "Account",
+  "sections": {
+    "personal": "Personal",
+    "organization": "Organization"
+  },
   "displayPreferences": {
     "title": "Display Preferences"
+  },
+  "memberPreferences": {
+    "title": "Preferences"
   },
   "userCard": {
     "name": {

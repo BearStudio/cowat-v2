@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 
 import { DisplayPreferences } from '@/features/account/display-preferences';
+import { MemberPreferences } from '@/features/account/member-preferences';
 import { NotificationPreferences } from '@/features/account/notification-preferences';
 import { UserCard } from '@/features/account/user-card';
 import { authClient } from '@/features/auth/client';
@@ -53,39 +54,55 @@ export const PageAccount = () => {
         </h1>
       </PageLayoutTopBar>
       <PageLayoutContent>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           <div className="md:hidden">
             <OrgSwitcher />
           </div>
-          <UserCard />
-          {showManagerLink && (
+
+          <section className="flex flex-col gap-4">
+            <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              {t('account:sections.personal')}
+            </h2>
+            <UserCard />
+            <DisplayPreferences />
+          </section>
+
+          <section className="flex flex-col gap-4">
+            <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              {t('account:sections.organization')}
+            </h2>
+            <MemberPreferences />
+            <NotificationPreferences />
+            {showManagerLink && (
+              <OrgLink
+                to="/manager"
+                className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                <SettingsIcon className="size-5 text-muted-foreground" />
+                <span className="flex-1">{t('account:managerLink')}</span>
+                <ChevronRightIcon className="size-4 text-muted-foreground" />
+              </OrgLink>
+            )}
             <OrgLink
-              to="/manager"
+              to="/app/$orgSlug/account/locations"
               className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
             >
-              <SettingsIcon className="size-5 text-muted-foreground" />
-              <span className="flex-1">{t('account:managerLink')}</span>
+              <MapPinIcon className="size-5 text-muted-foreground" />
+              <span className="flex-1">{t('account:locationsLink')}</span>
               <ChevronRightIcon className="size-4 text-muted-foreground" />
             </OrgLink>
-          )}
-          <OrgLink
-            to="/app/$orgSlug/account/locations"
-            className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            <MapPinIcon className="size-5 text-muted-foreground" />
-            <span className="flex-1">{t('account:locationsLink')}</span>
-            <ChevronRightIcon className="size-4 text-muted-foreground" />
-          </OrgLink>
-          <OrgLink
-            to="/app/$orgSlug/account/commute-templates"
-            className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            <RepeatIcon className="size-5 text-muted-foreground" />
-            <span className="flex-1">{t('account:commuteTemplatesLink')}</span>
-            <ChevronRightIcon className="size-4 text-muted-foreground" />
-          </OrgLink>
-          <NotificationPreferences />
-          <DisplayPreferences />
+            <OrgLink
+              to="/app/$orgSlug/account/commute-templates"
+              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <RepeatIcon className="size-5 text-muted-foreground" />
+              <span className="flex-1">
+                {t('account:commuteTemplatesLink')}
+              </span>
+              <ChevronRightIcon className="size-4 text-muted-foreground" />
+            </OrgLink>
+          </section>
+
           <BuildInfoDrawer>
             <Button variant="ghost" size="xs" className="opacity-60">
               <BuildInfoVersion />

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { AccountCardRow } from '@/features/account/account-card-row';
-import { AutoAcceptToggle } from '@/features/account/auto-accept-toggle';
 import { EditNameDrawer } from '@/features/account/edit-name-drawer';
 import { EditPhoneDrawer } from '@/features/account/edit-phone-drawer';
 import { authClient } from '@/features/auth/client';
@@ -90,12 +89,6 @@ export const UserCard = () => {
             </span>
           </Button>
         </EditPhoneDrawer>
-      </AccountCardRow>
-      <AccountCardRow
-        label={t('account:userCard.autoAccept.label')}
-        className="sm:items-center"
-      >
-        <AutoAcceptToggle />
       </AccountCardRow>
     </Card>
   );
