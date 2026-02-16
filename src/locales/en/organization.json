@@ -38,6 +38,7 @@
     "title": "Create organization",
     "name": "Name",
     "slug": "Slug",
+    "slugHelper": "Unique identifier used in URLs",
     "owner": "Owner",
     "submit": "Create"
   },
