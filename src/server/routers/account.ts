@@ -55,7 +55,7 @@ export default {
       });
     }),
 
-  getAutoAccept: organizationProcedure({ permission: null })
+  getAutoAccept: organizationProcedure()
     .route({
       method: 'GET',
       path: '/account/auto-accept',
@@ -70,7 +70,7 @@ export default {
       });
     }),
 
-  updateAutoAccept: organizationProcedure({ permission: null })
+  updateAutoAccept: organizationProcedure()
     .route({
       method: 'POST',
       path: '/account/auto-accept',
@@ -85,7 +85,7 @@ export default {
       });
     }),
 
-  getNotificationPreferences: organizationProcedure({ permission: null })
+  getNotificationPreferences: organizationProcedure()
     .route({
       method: 'GET',
       path: '/account/notification-preferences',
@@ -104,7 +104,7 @@ export default {
       });
     }),
 
-  updateNotificationPreference: organizationProcedure({ permission: null })
+  updateNotificationPreference: organizationProcedure()
     .route({
       method: 'POST',
       path: '/account/notification-preferences',

@@ -3,10 +3,12 @@ import { vi } from 'vitest';
 const hoisted = vi.hoisted(() => ({
   mockGetSession: vi.fn(),
   mockUserHasPermission: vi.fn(),
+  mockHasPermission: vi.fn(),
 }));
 
 export const mockGetSession = hoisted.mockGetSession;
 export const mockUserHasPermission = hoisted.mockUserHasPermission;
+export const mockHasPermission = hoisted.mockHasPermission;
 
 import type { Mock } from 'vitest';
 
@@ -53,6 +55,7 @@ export function setupAuthenticatedUser() {
     session: mockSession,
   });
   mockUserHasPermission.mockResolvedValue({ success: true, error: false });
+  mockHasPermission.mockResolvedValue({ success: true, error: false });
   mockDb.member.findFirst.mockResolvedValue({
     id: mockMemberId,
     userId: mockUser.id,

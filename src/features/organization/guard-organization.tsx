@@ -4,8 +4,8 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { PageError } from '@/components/errors/page-error';
 import { Spinner } from '@/components/ui/spinner';
 
-import { OrganizationPermission, Role } from '@/features/auth/permissions';
 import { authClient } from '@/features/auth/client';
+import { OrganizationPermission, Role } from '@/features/auth/permissions';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
 import { useOrganizations } from '@/features/organization/use-organizations';
 

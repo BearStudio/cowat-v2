@@ -11,7 +11,7 @@ import {
 
 const customStatements = {
   commute: ['read', 'create', 'update', 'delete'],
-  booking: ['read', 'create', 'manage'],
+  booking: ['read', 'create', 'manage', 'request'],
   location: ['read', 'create', 'update', 'delete'],
   commuteTemplate: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;

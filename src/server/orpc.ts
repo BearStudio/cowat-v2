@@ -225,13 +225,13 @@ export const protectedProcedure = ({
   });
 
 export const organizationProcedure = ({
-  permission = null,
   permissions,
 }: {
-  permission?: Permission | null;
   permissions?: OrganizationPermission;
 } = {}) =>
-  protectedProcedure({ permission }).use(async ({ context, next }) => {
+  protectedProcedure({
+    permission: null,
+  }).use(async ({ context, next }) => {
     const organizationId = context.session.activeOrganizationId;
 
     if (!organizationId) {

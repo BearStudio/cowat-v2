@@ -3,6 +3,7 @@ import { beforeEach, vi } from 'vitest';
 import {
   mockDb,
   mockGetSession,
+  mockHasPermission,
   mockUserHasPermission,
   setupAuthenticatedUser,
 } from '@/server/routers/test-utils';
@@ -12,6 +13,7 @@ vi.mock('@/server/auth', () => ({
     api: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
       userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
+      hasPermission: (...args: unknown[]) => mockHasPermission(...args),
     },
   },
 }));

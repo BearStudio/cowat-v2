@@ -9,7 +9,9 @@ const tags = ['locations'];
 
 export default {
   create: organizationProcedure({
-    permission: null,
+    permissions: {
+      location: ['create'],
+    },
   })
     .route({
       method: 'POST',
@@ -28,7 +30,9 @@ export default {
     }),
 
   getAll: organizationProcedure({
-    permission: null,
+    permissions: {
+      location: ['read'],
+    },
   })
     .route({
       method: 'GET',
@@ -75,7 +79,9 @@ export default {
     }),
 
   getById: organizationProcedure({
-    permission: null,
+    permissions: {
+      location: ['read'],
+    },
   })
     .route({
       method: 'GET',
@@ -104,7 +110,9 @@ export default {
     }),
 
   update: organizationProcedure({
-    permission: null,
+    permissions: {
+      location: ['update'],
+    },
   })
     .route({
       method: 'POST',
@@ -141,7 +149,9 @@ export default {
     }),
 
   delete: organizationProcedure({
-    permission: null,
+    permissions: {
+      location: ['delete'],
+    },
   })
     .route({
       method: 'DELETE',

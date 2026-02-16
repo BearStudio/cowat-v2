@@ -46,6 +46,11 @@ const mockUserFromDb = {
   onboardedAt: null,
 };
 
+const mockUserWithMembers = {
+  ...mockUserFromDb,
+  members: [],
+};
+
 const mockSessionFromDb = {
   id: 'session-1',
   token: 'session-token-1',
@@ -58,12 +63,12 @@ describe('user router', () => {
   describe('getAll', () => {
     it('should return paginated users with total count', async () => {
       mockDb.user.count.mockResolvedValue(1);
-      mockDb.user.findMany.mockResolvedValue([mockUserFromDb]);
+      mockDb.user.findMany.mockResolvedValue([mockUserWithMembers]);
 
       const result = await call(userRouter.getAll, {});
 
       expect(result).toEqual({
-        items: [mockUserFromDb],
+        items: [mockUserWithMembers],
         nextCursor: undefined,
         total: 1,
       });
@@ -71,7 +76,7 @@ describe('user router', () => {
 
     it('should return nextCursor when there are more items than limit', async () => {
       const usersFromDb = Array.from({ length: 4 }, (_, i) => ({
-        ...mockUserFromDb,
+        ...mockUserWithMembers,
         id: `user-${i + 1}`,
       }));
       mockDb.user.count.mockResolvedValue(10);
@@ -86,7 +91,7 @@ describe('user router', () => {
 
     it('should not return nextCursor when items fit within limit', async () => {
       mockDb.user.count.mockResolvedValue(1);
-      mockDb.user.findMany.mockResolvedValue([mockUserFromDb]);
+      mockDb.user.findMany.mockResolvedValue([mockUserWithMembers]);
 
       const result = await call(userRouter.getAll, { limit: 5 });
 
