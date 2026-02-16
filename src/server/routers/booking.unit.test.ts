@@ -7,7 +7,6 @@ import {
   mockGetSession,
   mockMemberId,
   mockOrganizationId,
-  mockUser,
 } from '@/server/routers/test-utils';
 
 const now = new Date();
