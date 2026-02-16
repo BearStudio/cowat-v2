@@ -23,7 +23,6 @@ import { ResponsiveIconButtonLink } from '@/components/ui/responsive-icon-button
 import { SearchButton } from '@/components/ui/search-button';
 import { SearchInput } from '@/components/ui/search-input';
 
-import type { OrgParams } from '@/features/organization/org-params';
 import {
   PageLayout,
   PageLayoutContent,
@@ -32,12 +31,11 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageOrganizations = (props: {
-  params: OrgParams;
+  orgSlug: string;
   search: { searchTerm?: string };
 }) => {
   const { t } = useTranslation(['organization']);
   const router = useRouter();
-  const { orgSlug } = props.params;
 
   const searchInputProps = {
     value: props.search.searchTerm ?? '',
@@ -85,8 +83,7 @@ export const PageOrganizations = (props: {
             label={t('organization:manager.list.newButton')}
             variant="secondary"
             size="sm"
-            to="/manager/$orgSlug/organizations/new"
-            params={{ orgSlug }}
+            to="/manager/organizations/new"
           >
             <PlusIcon />
           </ResponsiveIconButtonLink>
@@ -147,7 +144,7 @@ export const PageOrganizations = (props: {
                       <DataListText className="font-medium">
                         <Link
                           to="/manager/$orgSlug/organizations/$id"
-                          params={{ orgSlug, id: item.id }}
+                          params={{ orgSlug: props.orgSlug, id: item.id }}
                         >
                           {item.name}
                           <span className="absolute inset-0" />

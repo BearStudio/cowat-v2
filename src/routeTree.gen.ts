@@ -19,8 +19,10 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as InvitationsIdRouteImport } from './routes/invitations/$id'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
+import { Route as ManagerOrganizationsRouteRouteImport } from './routes/manager/organizations/route'
 import { Route as ManagerOrgSlugRouteRouteImport } from './routes/manager/$orgSlug/route'
 import { Route as AppOrgSlugRouteRouteImport } from './routes/app/$orgSlug/route'
+import { Route as ManagerOrganizationsIndexRouteImport } from './routes/manager/organizations/index'
 import { Route as LoginVerifyIndexRouteImport } from './routes/login/verify.index'
 import { Route as LoginErrorIndexRouteImport } from './routes/login/error.index'
 import { Route as AppOrgSlugIndexRouteImport } from './routes/app/$orgSlug/index'
@@ -29,9 +31,9 @@ import { Route as ApiRestSplatRouteImport } from './routes/api/rest.$'
 import { Route as ApiOpenapiAuthRouteImport } from './routes/api/openapi/auth'
 import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as ManagerOrganizationsNewIndexRouteImport } from './routes/manager/organizations/new.index'
 import { Route as ManagerOrgSlugUsersIndexRouteImport } from './routes/manager/$orgSlug/users/index'
 import { Route as ManagerOrgSlugStatsIndexRouteImport } from './routes/manager/$orgSlug/stats.index'
-import { Route as ManagerOrgSlugOrganizationsIndexRouteImport } from './routes/manager/$orgSlug/organizations/index'
 import { Route as ManagerOrgSlugAccountIndexRouteImport } from './routes/manager/$orgSlug/account.index'
 import { Route as AppOrgSlugRequestsIndexRouteImport } from './routes/app/$orgSlug/requests/index'
 import { Route as AppOrgSlugCommutesIndexRouteImport } from './routes/app/$orgSlug/commutes/index'
@@ -41,7 +43,6 @@ import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/ap
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
 import { Route as ManagerOrgSlugUsersNewIndexRouteImport } from './routes/manager/$orgSlug/users/new.index'
 import { Route as ManagerOrgSlugUsersIdIndexRouteImport } from './routes/manager/$orgSlug/users/$id.index'
-import { Route as ManagerOrgSlugOrganizationsNewIndexRouteImport } from './routes/manager/$orgSlug/organizations/new.index'
 import { Route as ManagerOrgSlugOrganizationsIdIndexRouteImport } from './routes/manager/$orgSlug/organizations/$id.index'
 import { Route as AppOrgSlugCommutesNewIndexRouteImport } from './routes/app/$orgSlug/commutes/new.index'
 import { Route as AppOrgSlugAccountLocationsIndexRouteImport } from './routes/app/$orgSlug/account/locations/index'
@@ -102,6 +103,12 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerOrganizationsRouteRoute =
+  ManagerOrganizationsRouteRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => ManagerRouteRoute,
+  } as any)
 const ManagerOrgSlugRouteRoute = ManagerOrgSlugRouteRouteImport.update({
   id: '/$orgSlug',
   path: '/$orgSlug',
@@ -112,6 +119,12 @@ const AppOrgSlugRouteRoute = AppOrgSlugRouteRouteImport.update({
   path: '/$orgSlug',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const ManagerOrganizationsIndexRoute =
+  ManagerOrganizationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => ManagerOrganizationsRouteRoute,
+  } as any)
 const LoginVerifyIndexRoute = LoginVerifyIndexRouteImport.update({
   id: '/verify/',
   path: '/verify/',
@@ -152,6 +165,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerOrganizationsNewIndexRoute =
+  ManagerOrganizationsNewIndexRouteImport.update({
+    id: '/new/',
+    path: '/new/',
+    getParentRoute: () => ManagerOrganizationsRouteRoute,
+  } as any)
 const ManagerOrgSlugUsersIndexRoute =
   ManagerOrgSlugUsersIndexRouteImport.update({
     id: '/users/',
@@ -162,12 +181,6 @@ const ManagerOrgSlugStatsIndexRoute =
   ManagerOrgSlugStatsIndexRouteImport.update({
     id: '/stats/',
     path: '/stats/',
-    getParentRoute: () => ManagerOrgSlugRouteRoute,
-  } as any)
-const ManagerOrgSlugOrganizationsIndexRoute =
-  ManagerOrgSlugOrganizationsIndexRouteImport.update({
-    id: '/organizations/',
-    path: '/organizations/',
     getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
 const ManagerOrgSlugAccountIndexRoute =
@@ -216,12 +229,6 @@ const ManagerOrgSlugUsersIdIndexRoute =
   ManagerOrgSlugUsersIdIndexRouteImport.update({
     id: '/users/$id/',
     path: '/users/$id/',
-    getParentRoute: () => ManagerOrgSlugRouteRoute,
-  } as any)
-const ManagerOrgSlugOrganizationsNewIndexRoute =
-  ManagerOrgSlugOrganizationsNewIndexRouteImport.update({
-    id: '/organizations/new/',
-    path: '/organizations/new/',
     getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
 const ManagerOrgSlugOrganizationsIdIndexRoute =
@@ -287,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutRoute
   '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
   '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
+  '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/app/$orgSlug/': typeof AppOrgSlugIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
+  '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
@@ -307,14 +316,13 @@ export interface FileRoutesByFullPath {
   '/app/$orgSlug/commutes/': typeof AppOrgSlugCommutesIndexRoute
   '/app/$orgSlug/requests/': typeof AppOrgSlugRequestsIndexRoute
   '/manager/$orgSlug/account/': typeof ManagerOrgSlugAccountIndexRoute
-  '/manager/$orgSlug/organizations/': typeof ManagerOrgSlugOrganizationsIndexRoute
   '/manager/$orgSlug/stats/': typeof ManagerOrgSlugStatsIndexRoute
   '/manager/$orgSlug/users/': typeof ManagerOrgSlugUsersIndexRoute
+  '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
   '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
   '/manager/$orgSlug/organizations/$id/': typeof ManagerOrgSlugOrganizationsIdIndexRoute
-  '/manager/$orgSlug/organizations/new/': typeof ManagerOrgSlugOrganizationsNewIndexRoute
   '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
@@ -340,6 +348,7 @@ export interface FileRoutesByTo {
   '/app/$orgSlug': typeof AppOrgSlugIndexRoute
   '/login/error': typeof LoginErrorIndexRoute
   '/login/verify': typeof LoginVerifyIndexRoute
+  '/manager/organizations': typeof ManagerOrganizationsIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
@@ -347,14 +356,13 @@ export interface FileRoutesByTo {
   '/app/$orgSlug/commutes': typeof AppOrgSlugCommutesIndexRoute
   '/app/$orgSlug/requests': typeof AppOrgSlugRequestsIndexRoute
   '/manager/$orgSlug/account': typeof ManagerOrgSlugAccountIndexRoute
-  '/manager/$orgSlug/organizations': typeof ManagerOrgSlugOrganizationsIndexRoute
   '/manager/$orgSlug/stats': typeof ManagerOrgSlugStatsIndexRoute
   '/manager/$orgSlug/users': typeof ManagerOrgSlugUsersIndexRoute
+  '/manager/organizations/new': typeof ManagerOrganizationsNewIndexRoute
   '/app/$orgSlug/account/commute-templates': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new': typeof AppOrgSlugCommutesNewIndexRoute
   '/manager/$orgSlug/organizations/$id': typeof ManagerOrgSlugOrganizationsIdIndexRoute
-  '/manager/$orgSlug/organizations/new': typeof ManagerOrgSlugOrganizationsNewIndexRoute
   '/manager/$orgSlug/users/$id': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new': typeof ManagerOrgSlugUsersNewIndexRoute
   '/app/$orgSlug/account/commute-templates/new': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
   '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
+  '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -385,6 +394,7 @@ export interface FileRoutesById {
   '/app/$orgSlug/': typeof AppOrgSlugIndexRoute
   '/login/error/': typeof LoginErrorIndexRoute
   '/login/verify/': typeof LoginVerifyIndexRoute
+  '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
@@ -392,14 +402,13 @@ export interface FileRoutesById {
   '/app/$orgSlug/commutes/': typeof AppOrgSlugCommutesIndexRoute
   '/app/$orgSlug/requests/': typeof AppOrgSlugRequestsIndexRoute
   '/manager/$orgSlug/account/': typeof ManagerOrgSlugAccountIndexRoute
-  '/manager/$orgSlug/organizations/': typeof ManagerOrgSlugOrganizationsIndexRoute
   '/manager/$orgSlug/stats/': typeof ManagerOrgSlugStatsIndexRoute
   '/manager/$orgSlug/users/': typeof ManagerOrgSlugUsersIndexRoute
+  '/manager/organizations/new/': typeof ManagerOrganizationsNewIndexRoute
   '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
   '/manager/$orgSlug/organizations/$id/': typeof ManagerOrgSlugOrganizationsIdIndexRoute
-  '/manager/$orgSlug/organizations/new/': typeof ManagerOrgSlugOrganizationsNewIndexRoute
   '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/app/$orgSlug'
     | '/manager/$orgSlug'
+    | '/manager/organizations'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -431,6 +441,7 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/'
     | '/login/error/'
     | '/login/verify/'
+    | '/manager/organizations/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
@@ -438,14 +449,13 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/commutes/'
     | '/app/$orgSlug/requests/'
     | '/manager/$orgSlug/account/'
-    | '/manager/$orgSlug/organizations/'
     | '/manager/$orgSlug/stats/'
     | '/manager/$orgSlug/users/'
+    | '/manager/organizations/new/'
     | '/app/$orgSlug/account/commute-templates/'
     | '/app/$orgSlug/account/locations/'
     | '/app/$orgSlug/commutes/new/'
     | '/manager/$orgSlug/organizations/$id/'
-    | '/manager/$orgSlug/organizations/new/'
     | '/manager/$orgSlug/users/$id/'
     | '/manager/$orgSlug/users/new/'
     | '/app/$orgSlug/account/commute-templates/new/'
@@ -471,6 +481,7 @@ export interface FileRouteTypes {
     | '/app/$orgSlug'
     | '/login/error'
     | '/login/verify'
+    | '/manager/organizations'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
@@ -478,14 +489,13 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/commutes'
     | '/app/$orgSlug/requests'
     | '/manager/$orgSlug/account'
-    | '/manager/$orgSlug/organizations'
     | '/manager/$orgSlug/stats'
     | '/manager/$orgSlug/users'
+    | '/manager/organizations/new'
     | '/app/$orgSlug/account/commute-templates'
     | '/app/$orgSlug/account/locations'
     | '/app/$orgSlug/commutes/new'
     | '/manager/$orgSlug/organizations/$id'
-    | '/manager/$orgSlug/organizations/new'
     | '/manager/$orgSlug/users/$id'
     | '/manager/$orgSlug/users/new'
     | '/app/$orgSlug/account/commute-templates/new'
@@ -502,6 +512,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/app/$orgSlug'
     | '/manager/$orgSlug'
+    | '/manager/organizations'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -515,6 +526,7 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/'
     | '/login/error/'
     | '/login/verify/'
+    | '/manager/organizations/'
     | '/api/dev/email/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
@@ -522,14 +534,13 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/commutes/'
     | '/app/$orgSlug/requests/'
     | '/manager/$orgSlug/account/'
-    | '/manager/$orgSlug/organizations/'
     | '/manager/$orgSlug/stats/'
     | '/manager/$orgSlug/users/'
+    | '/manager/organizations/new/'
     | '/app/$orgSlug/account/commute-templates/'
     | '/app/$orgSlug/account/locations/'
     | '/app/$orgSlug/commutes/new/'
     | '/manager/$orgSlug/organizations/$id/'
-    | '/manager/$orgSlug/organizations/new/'
     | '/manager/$orgSlug/users/$id/'
     | '/manager/$orgSlug/users/new/'
     | '/app/$orgSlug/account/commute-templates/new/'
@@ -627,6 +638,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager/organizations': {
+      id: '/manager/organizations'
+      path: '/organizations'
+      fullPath: '/manager/organizations'
+      preLoaderRoute: typeof ManagerOrganizationsRouteRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
     '/manager/$orgSlug': {
       id: '/manager/$orgSlug'
       path: '/$orgSlug'
@@ -640,6 +658,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/$orgSlug'
       preLoaderRoute: typeof AppOrgSlugRouteRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/manager/organizations/': {
+      id: '/manager/organizations/'
+      path: '/'
+      fullPath: '/manager/organizations/'
+      preLoaderRoute: typeof ManagerOrganizationsIndexRouteImport
+      parentRoute: typeof ManagerOrganizationsRouteRoute
     }
     '/login/verify/': {
       id: '/login/verify/'
@@ -697,6 +722,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager/organizations/new/': {
+      id: '/manager/organizations/new/'
+      path: '/new'
+      fullPath: '/manager/organizations/new/'
+      preLoaderRoute: typeof ManagerOrganizationsNewIndexRouteImport
+      parentRoute: typeof ManagerOrganizationsRouteRoute
+    }
     '/manager/$orgSlug/users/': {
       id: '/manager/$orgSlug/users/'
       path: '/users'
@@ -709,13 +741,6 @@ declare module '@tanstack/react-router' {
       path: '/stats'
       fullPath: '/manager/$orgSlug/stats/'
       preLoaderRoute: typeof ManagerOrgSlugStatsIndexRouteImport
-      parentRoute: typeof ManagerOrgSlugRouteRoute
-    }
-    '/manager/$orgSlug/organizations/': {
-      id: '/manager/$orgSlug/organizations/'
-      path: '/organizations'
-      fullPath: '/manager/$orgSlug/organizations/'
-      preLoaderRoute: typeof ManagerOrgSlugOrganizationsIndexRouteImport
       parentRoute: typeof ManagerOrgSlugRouteRoute
     }
     '/manager/$orgSlug/account/': {
@@ -779,13 +804,6 @@ declare module '@tanstack/react-router' {
       path: '/users/$id'
       fullPath: '/manager/$orgSlug/users/$id/'
       preLoaderRoute: typeof ManagerOrgSlugUsersIdIndexRouteImport
-      parentRoute: typeof ManagerOrgSlugRouteRoute
-    }
-    '/manager/$orgSlug/organizations/new/': {
-      id: '/manager/$orgSlug/organizations/new/'
-      path: '/organizations/new'
-      fullPath: '/manager/$orgSlug/organizations/new/'
-      preLoaderRoute: typeof ManagerOrgSlugOrganizationsNewIndexRouteImport
       parentRoute: typeof ManagerOrgSlugRouteRoute
     }
     '/manager/$orgSlug/organizations/$id/': {
@@ -923,11 +941,9 @@ const LoginRouteRouteWithChildren = LoginRouteRoute._addFileChildren(
 
 interface ManagerOrgSlugRouteRouteChildren {
   ManagerOrgSlugAccountIndexRoute: typeof ManagerOrgSlugAccountIndexRoute
-  ManagerOrgSlugOrganizationsIndexRoute: typeof ManagerOrgSlugOrganizationsIndexRoute
   ManagerOrgSlugStatsIndexRoute: typeof ManagerOrgSlugStatsIndexRoute
   ManagerOrgSlugUsersIndexRoute: typeof ManagerOrgSlugUsersIndexRoute
   ManagerOrgSlugOrganizationsIdIndexRoute: typeof ManagerOrgSlugOrganizationsIdIndexRoute
-  ManagerOrgSlugOrganizationsNewIndexRoute: typeof ManagerOrgSlugOrganizationsNewIndexRoute
   ManagerOrgSlugUsersIdIndexRoute: typeof ManagerOrgSlugUsersIdIndexRoute
   ManagerOrgSlugUsersNewIndexRoute: typeof ManagerOrgSlugUsersNewIndexRoute
   ManagerOrgSlugUsersIdUpdateIndexRoute: typeof ManagerOrgSlugUsersIdUpdateIndexRoute
@@ -935,13 +951,10 @@ interface ManagerOrgSlugRouteRouteChildren {
 
 const ManagerOrgSlugRouteRouteChildren: ManagerOrgSlugRouteRouteChildren = {
   ManagerOrgSlugAccountIndexRoute: ManagerOrgSlugAccountIndexRoute,
-  ManagerOrgSlugOrganizationsIndexRoute: ManagerOrgSlugOrganizationsIndexRoute,
   ManagerOrgSlugStatsIndexRoute: ManagerOrgSlugStatsIndexRoute,
   ManagerOrgSlugUsersIndexRoute: ManagerOrgSlugUsersIndexRoute,
   ManagerOrgSlugOrganizationsIdIndexRoute:
     ManagerOrgSlugOrganizationsIdIndexRoute,
-  ManagerOrgSlugOrganizationsNewIndexRoute:
-    ManagerOrgSlugOrganizationsNewIndexRoute,
   ManagerOrgSlugUsersIdIndexRoute: ManagerOrgSlugUsersIdIndexRoute,
   ManagerOrgSlugUsersNewIndexRoute: ManagerOrgSlugUsersNewIndexRoute,
   ManagerOrgSlugUsersIdUpdateIndexRoute: ManagerOrgSlugUsersIdUpdateIndexRoute,
@@ -950,13 +963,31 @@ const ManagerOrgSlugRouteRouteChildren: ManagerOrgSlugRouteRouteChildren = {
 const ManagerOrgSlugRouteRouteWithChildren =
   ManagerOrgSlugRouteRoute._addFileChildren(ManagerOrgSlugRouteRouteChildren)
 
+interface ManagerOrganizationsRouteRouteChildren {
+  ManagerOrganizationsIndexRoute: typeof ManagerOrganizationsIndexRoute
+  ManagerOrganizationsNewIndexRoute: typeof ManagerOrganizationsNewIndexRoute
+}
+
+const ManagerOrganizationsRouteRouteChildren: ManagerOrganizationsRouteRouteChildren =
+  {
+    ManagerOrganizationsIndexRoute: ManagerOrganizationsIndexRoute,
+    ManagerOrganizationsNewIndexRoute: ManagerOrganizationsNewIndexRoute,
+  }
+
+const ManagerOrganizationsRouteRouteWithChildren =
+  ManagerOrganizationsRouteRoute._addFileChildren(
+    ManagerOrganizationsRouteRouteChildren,
+  )
+
 interface ManagerRouteRouteChildren {
   ManagerOrgSlugRouteRoute: typeof ManagerOrgSlugRouteRouteWithChildren
+  ManagerOrganizationsRouteRoute: typeof ManagerOrganizationsRouteRouteWithChildren
   ManagerIndexRoute: typeof ManagerIndexRoute
 }
 
 const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
   ManagerOrgSlugRouteRoute: ManagerOrgSlugRouteRouteWithChildren,
+  ManagerOrganizationsRouteRoute: ManagerOrganizationsRouteRouteWithChildren,
   ManagerIndexRoute: ManagerIndexRoute,
 }
 
