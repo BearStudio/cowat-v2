@@ -5,6 +5,7 @@ import bookingRouter from '@/server/routers/booking';
 import {
   mockDb,
   mockGetSession,
+  mockMemberId,
   mockOrganizationId,
   mockUser,
 } from '@/server/routers/test-utils';
@@ -21,21 +22,23 @@ const mockBookingFromDb = {
   isDeleted: false,
   createdAt: now,
   updatedAt: now,
-  passengerId: mockUser.id,
+  passengerMemberId: mockMemberId,
   stopId: 'stop-1',
 };
 
 const mockBookingWithStop = {
   ...mockBookingFromDb,
   passenger: {
-    id: 'passenger-1',
-    name: 'Passenger',
-    email: 'passenger@test.com',
-    notificationPreferences: [],
+    user: {
+      id: 'passenger-user-1',
+      name: 'Passenger',
+      email: 'passenger@test.com',
+      notificationPreferences: [],
+    },
   },
   stop: {
     commute: {
-      driverId: mockUser.id,
+      driverMemberId: mockMemberId,
       date: now,
       type: 'ROUND' as const,
     },
@@ -49,18 +52,40 @@ const mockBookingWithDriver = {
       date: now,
       type: 'ROUND' as const,
       driver: {
-        id: 'driver-1',
-        name: 'Driver',
-        email: 'driver@test.com',
-        notificationPreferences: [],
+        user: {
+          id: 'driver-user-1',
+          name: 'Driver',
+          email: 'driver@test.com',
+          notificationPreferences: [],
+        },
       },
     },
   },
 };
 
-const mockBookingForDriver = {
+// Raw DB shape for getRequestsForDriver (passenger is a Member with nested user)
+const mockBookingForDriverRaw = {
   ...mockBookingFromDb,
-  passenger: { id: 'passenger-1', name: 'Passenger', image: null },
+  passenger: {
+    user: { id: 'passenger-user-1', name: 'Passenger', image: null },
+  },
+  stop: {
+    id: 'stop-1',
+    order: 0,
+    outwardTime: '08:00',
+    inwardTime: '18:00',
+    commute: {
+      id: 'commute-1',
+      date: now,
+      type: 'ROUND' as const,
+    },
+  },
+};
+
+// Expected shape after router flattening
+const mockBookingForDriverExpected = {
+  ...mockBookingFromDb,
+  passenger: { id: 'passenger-user-1', name: 'Passenger', image: null },
   stop: {
     id: 'stop-1',
     order: 0,
@@ -86,8 +111,17 @@ describe('booking router', () => {
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
         commute: {
-          organizationId: mockOrganizationId,
-          driver: { autoAccept: false, notificationPreferences: [] },
+          driverMemberId: 'driver-member-1',
+          driver: {
+            organizationId: mockOrganizationId,
+            user: {
+              id: 'driver-user-1',
+              name: 'Driver',
+              email: 'driver@test.com',
+              autoAccept: false,
+              notificationPreferences: [],
+            },
+          },
         },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
@@ -96,7 +130,24 @@ describe('booking router', () => {
       const result = await call(bookingRouter.request, requestInput);
 
       expect(result).toEqual(mockBookingFromDb);
-      expect(result.status).toBe('REQUESTED');
+      expect(mockDb.passengersOnStops.upsert).toHaveBeenCalledWith({
+        where: {
+          passengerMemberId_stopId: {
+            passengerMemberId: mockMemberId,
+            stopId: requestInput.stopId,
+          },
+        },
+        update: {
+          status: 'REQUESTED',
+          tripType: requestInput.tripType,
+          comment: requestInput.comment,
+        },
+        create: {
+          ...requestInput,
+          status: 'REQUESTED',
+          passengerMemberId: mockMemberId,
+        },
+      });
     });
 
     it('should auto-accept booking when driver has autoAccept enabled', async () => {
@@ -107,8 +158,17 @@ describe('booking router', () => {
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
         commute: {
-          organizationId: mockOrganizationId,
-          driver: { autoAccept: true, notificationPreferences: [] },
+          driverMemberId: 'driver-member-1',
+          driver: {
+            organizationId: mockOrganizationId,
+            user: {
+              id: 'driver-user-1',
+              name: 'Driver',
+              email: 'driver@test.com',
+              autoAccept: true,
+              notificationPreferences: [],
+            },
+          },
         },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
@@ -117,7 +177,24 @@ describe('booking router', () => {
       const result = await call(bookingRouter.request, requestInput);
 
       expect(result).toEqual(autoAcceptedBooking);
-      expect(result.status).toBe('ACCEPTED');
+      expect(mockDb.passengersOnStops.upsert).toHaveBeenCalledWith({
+        where: {
+          passengerMemberId_stopId: {
+            passengerMemberId: mockMemberId,
+            stopId: requestInput.stopId,
+          },
+        },
+        update: {
+          status: 'ACCEPTED',
+          tripType: requestInput.tripType,
+          comment: requestInput.comment,
+        },
+        create: {
+          ...requestInput,
+          status: 'ACCEPTED',
+          passengerMemberId: mockMemberId,
+        },
+      });
     });
 
     it('should throw NOT_FOUND when stop does not exist', async () => {
@@ -133,7 +210,13 @@ describe('booking router', () => {
     it('should throw CONFLICT when user already has a booking on this commute', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
         commuteId: 'commute-1',
-        commute: { organizationId: mockOrganizationId },
+        commute: {
+          driverMemberId: 'driver-member-1',
+          driver: {
+            organizationId: mockOrganizationId,
+            user: { autoAccept: false, notificationPreferences: [] },
+          },
+        },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(mockBookingFromDb);
 
@@ -182,7 +265,7 @@ describe('booking router', () => {
     it('should throw FORBIDDEN when user is not the driver', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue({
         ...mockBookingWithStop,
-        stop: { commute: { driverId: 'other-user' } },
+        stop: { commute: { driverMemberId: 'other-member' } },
       });
 
       await expect(
@@ -246,7 +329,7 @@ describe('booking router', () => {
     it('should throw FORBIDDEN when user is not the driver', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue({
         ...mockBookingWithStop,
-        stop: { commute: { driverId: 'other-user' } },
+        stop: { commute: { driverMemberId: 'other-member' } },
       });
 
       await expect(
@@ -310,7 +393,7 @@ describe('booking router', () => {
     it('should throw FORBIDDEN when user is not the passenger', async () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue({
         ...mockBookingWithDriver,
-        passengerId: 'other-user',
+        passengerMemberId: 'other-member',
       });
 
       await expect(
@@ -363,28 +446,34 @@ describe('booking router', () => {
     it('should return paginated booking requests for the driver', async () => {
       mockDb.passengersOnStops.count.mockResolvedValue(1);
       mockDb.passengersOnStops.findMany.mockResolvedValue([
-        mockBookingForDriver,
+        mockBookingForDriverRaw,
       ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {});
 
       expect(result).toEqual({
-        items: [mockBookingForDriver],
+        items: [mockBookingForDriverExpected],
         nextCursor: undefined,
         total: 1,
       });
     });
 
-    it('should return empty results when no pending requests exist', async () => {
-      mockDb.passengersOnStops.count.mockResolvedValue(0);
-      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+    it('should filter by driverMemberId', async () => {
+      mockDb.passengersOnStops.count.mockResolvedValue(1);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        mockBookingForDriverRaw,
+      ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {});
 
-      expect(result).toEqual({
-        items: [],
-        nextCursor: undefined,
-        total: 0,
+      const expectedWhere = expect.objectContaining({
+        status: 'REQUESTED',
+        stop: {
+          commute: {
+            driverMemberId: mockMemberId,
+            date: { gte: expect.any(Date) },
+          },
+        },
       });
     });
 
@@ -400,7 +489,7 @@ describe('booking router', () => {
 
     it('should handle pagination with cursor', async () => {
       const bookings = Array.from({ length: 3 }, (_, i) => ({
-        ...mockBookingForDriver,
+        ...mockBookingForDriverRaw,
         id: `booking-${i}`,
       }));
       mockDb.passengersOnStops.count.mockResolvedValue(5);
@@ -425,12 +514,22 @@ describe('booking router', () => {
       expect(result).toEqual({ count: 3 });
     });
 
-    it('should return zero when no pending requests exist', async () => {
+    it('should filter by driverMemberId', async () => {
       mockDb.passengersOnStops.count.mockResolvedValue(0);
 
       const result = await call(bookingRouter.pendingRequestCount, undefined);
 
-      expect(result).toEqual({ count: 0 });
+      expect(mockDb.passengersOnStops.count).toHaveBeenCalledWith({
+        where: {
+          status: 'REQUESTED',
+          stop: {
+            commute: {
+              driverMemberId: mockMemberId,
+              date: { gte: expect.any(Date) },
+            },
+          },
+        },
+      });
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {

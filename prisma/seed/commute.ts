@@ -31,17 +31,28 @@ export async function createCommutes(organizationId: string) {
     )
   ).filter((u): u is { id: string } => u !== null);
 
+  const seedMembers = (
+    await Promise.all(
+      seedUsers.map((u) =>
+        db.member.findFirst({
+          where: { userId: u.id, organizationId },
+          select: { id: true, userId: true },
+        })
+      )
+    )
+  ).filter((m): m is { id: string; userId: string } => m !== null);
+
   const today = getToday();
 
-  for (const driver of seedUsers) {
+  for (const driverMember of seedMembers) {
     const locations = await db.location.findMany({
-      where: { userId: driver.id },
+      where: { memberId: driverMember.id },
       select: { id: true },
     });
     if (locations.length === 0) continue;
 
     const existingCount = await db.commute.count({
-      where: { driverId: driver.id },
+      where: { driverMemberId: driverMember.id },
     });
     if (existingCount > 0) continue;
 
@@ -55,8 +66,7 @@ export async function createCommutes(organizationId: string) {
           seats: faker.number.int({ min: 1, max: 4 }),
           type,
           status: 'UNKNOWN',
-          driverId: driver.id,
-          organizationId,
+          driverMemberId: driverMember.id,
         },
       });
       commutesCreated += 1;
@@ -77,15 +87,15 @@ export async function createCommutes(organizationId: string) {
         });
         stopsCreated += 1;
 
-        // Add the other seed user as a passenger on the first stop
+        // Add the other seed member as a passenger on the first stop
         if (order === 0) {
-          const otherUser = seedUsers.find((u) => u.id !== driver.id);
-          if (otherUser) {
+          const otherMember = seedMembers.find((m) => m.id !== driverMember.id);
+          if (otherMember) {
             await db.passengersOnStops.create({
               data: {
                 tripType: type === 'ROUND' ? 'ROUND' : 'ONEWAY',
                 status: 'ACCEPTED',
-                passengerId: otherUser.id,
+                passengerMemberId: otherMember.id,
                 stopId: stop.id,
               },
             });

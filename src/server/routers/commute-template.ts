@@ -27,8 +27,7 @@ export default {
       return await context.db.commuteTemplate.create({
         data: {
           ...templateData,
-          driverId: context.user.id,
-          organizationId: context.organizationId,
+          driverMemberId: context.memberId,
           stops: {
             create: stops,
           },
@@ -64,8 +63,7 @@ export default {
     )
     .handler(async ({ context, input }) => {
       const where = {
-        driverId: context.user.id,
-        organizationId: context.organizationId,
+        driverMemberId: context.memberId,
       } satisfies Prisma.CommuteTemplateWhereInput;
 
       const [total, items] = await Promise.all([
@@ -109,7 +107,10 @@ export default {
     )
     .handler(async ({ context, input }) => {
       const template = await context.db.commuteTemplate.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
         include: {
           stops: {
             orderBy: { order: 'asc' },
@@ -146,14 +147,17 @@ export default {
     .output(zCommuteTemplate().extend({ stops: z.array(zTemplateStop()) }))
     .handler(async ({ context, input }) => {
       const existing = await context.db.commuteTemplate.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (existing.driverId !== context.user.id) {
+      if (existing.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -184,14 +188,17 @@ export default {
     .output(z.void())
     .handler(async ({ context, input }) => {
       const existing = await context.db.commuteTemplate.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (existing.driverId !== context.user.id) {
+      if (existing.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 

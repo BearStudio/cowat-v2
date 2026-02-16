@@ -122,7 +122,7 @@ export const PageCommutes = () => {
                   }
                 }
                 const available = item.seats - acceptedPassengers.size;
-                const isDriver = session.data?.user.id === item.driverId;
+                const isDriver = session.data?.user.id === item.driver.id;
 
                 return (
                   <CardCommute key={item.id}>

@@ -13,7 +13,7 @@ export const zLocation = () =>
     isDeleted: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    userId: z.string(),
+    memberId: z.string(),
   });
 
 export type FormFieldsLocation = z.infer<

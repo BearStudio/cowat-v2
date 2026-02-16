@@ -26,41 +26,31 @@ export default {
 
       const orgId = context.organizationId;
 
-      const [usersWithCounts, commutesWithStops] = await Promise.all([
-        context.db.user.findMany({
-          where: {
-            members: { some: { organizationId: orgId } },
-          },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
+      const [membersWithCounts, commutesWithStops] = await Promise.all([
+        context.db.member.findMany({
+          where: { organizationId: orgId },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
             _count: {
               select: {
-                commutes: {
-                  where: { organizationId: orgId },
-                },
-                passengerBookings: {
-                  where: {
-                    stop: {
-                      commute: {
-                        organizationId: orgId,
-                      },
-                    },
-                  },
-                },
-                commuteTemplates: {
-                  where: { organizationId: orgId },
-                },
+                drivenCommutes: true,
+                passengerBookings: true,
+                drivenTemplates: true,
               },
             },
           },
         }),
         context.db.commute.findMany({
-          where: { organizationId: orgId },
+          where: { driver: { organizationId: orgId } },
           select: {
-            driverId: true,
+            driverMemberId: true,
             _count: {
               select: {
                 stops: true,
@@ -70,23 +60,24 @@ export default {
         }),
       ]);
 
-      const stopCountByDriver = new Map<string, number>();
+      const stopCountByMember = new Map<string, number>();
       for (const commute of commutesWithStops) {
-        stopCountByDriver.set(
-          commute.driverId,
-          (stopCountByDriver.get(commute.driverId) ?? 0) + commute._count.stops
+        stopCountByMember.set(
+          commute.driverMemberId,
+          (stopCountByMember.get(commute.driverMemberId) ?? 0) +
+            commute._count.stops
         );
       }
 
-      const users = usersWithCounts.map((user) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        commuteCount: user._count.commutes,
-        bookingCount: user._count.passengerBookings,
-        templateCount: user._count.commuteTemplates,
-        stopCount: stopCountByDriver.get(user.id) ?? 0,
+      const users = membersWithCounts.map((member) => ({
+        id: member.user.id,
+        name: member.user.name,
+        email: member.user.email,
+        image: member.user.image,
+        commuteCount: member._count.drivenCommutes,
+        bookingCount: member._count.passengerBookings,
+        templateCount: member._count.drivenTemplates,
+        stopCount: stopCountByMember.get(member.id) ?? 0,
       }));
 
       return { users };

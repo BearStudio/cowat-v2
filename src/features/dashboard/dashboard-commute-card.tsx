@@ -50,7 +50,7 @@ export const DashboardCommuteCard = ({
   }
 
   const available = commute.seats - acceptedPassengers.size;
-  const isDriver = currentUserId === commute.driverId;
+  const isDriver = currentUserId === commute.driver.id;
   const hasPassengers = acceptedPassengers.size > 0;
   const hasBookingOnCommute = commute.stops.some((s) =>
     s.passengers.some(

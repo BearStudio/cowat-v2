@@ -17,7 +17,7 @@ const baseRequest: BookingForDriver = {
   isDeleted: false,
   createdAt: new Date('2025-06-10T08:00:00Z'),
   updatedAt: new Date('2025-06-10T08:00:00Z'),
-  passengerId: 'user-1',
+  passengerMemberId: 'member-1',
   stopId: 'stop-1',
   passenger: { id: 'user-1', name: 'Alice Martin', image: null },
   stop: {

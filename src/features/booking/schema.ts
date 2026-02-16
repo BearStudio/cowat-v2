@@ -25,7 +25,7 @@ export const zBooking = () =>
     isDeleted: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    passengerId: z.string(),
+    passengerMemberId: z.string(),
     stopId: z.string(),
   });
 
