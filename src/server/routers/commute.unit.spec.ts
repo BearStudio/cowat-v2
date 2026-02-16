@@ -6,6 +6,7 @@ import commuteRouter from '@/server/routers/commute';
 import {
   mockDb,
   mockGetSession,
+  mockMemberId,
   mockOrganizationId,
   mockUser,
 } from '@/server/routers/test-utils';
@@ -37,13 +38,21 @@ const mockCommuteFromDb = {
   status: 'UNKNOWN' as const,
   delay: null,
   comment: null,
-  driverId: mockUser.id,
+  driverMemberId: mockMemberId,
   createdAt: now,
   updatedAt: now,
   stops: [mockStop],
 };
 
-const mockCommuteEnrichedFromDb = {
+// Raw DB shape (driver is a Member with nested user)
+const mockCommuteEnrichedRawFromDb = {
+  ...mockCommuteFromDb,
+  driver: { user: { id: mockUser.id, name: mockUser.name, image: null } },
+  stops: [mockStopEnriched],
+};
+
+// Expected shape after router flattening
+const mockCommuteEnriched = {
   ...mockCommuteFromDb,
   driver: { id: mockUser.id, name: mockUser.name, image: null },
   stops: [mockStopEnriched],
@@ -79,7 +88,7 @@ describe('commute router', () => {
             date: createInput.date,
             seats: createInput.seats,
             type: createInput.type,
-            driverId: mockUser.id,
+            driverMemberId: mockMemberId,
             stops: expect.objectContaining({
               create: createInput.stops,
             }),
@@ -128,7 +137,7 @@ describe('commute router', () => {
       expect(result).toEqual(mockCommuteFromDb);
     });
 
-    it('should scope query by organizationId', async () => {
+    it('should scope query by organizationId via driver relation', async () => {
       mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
 
       await call(commuteRouter.getById, { id: 'commute-1' });
@@ -137,7 +146,7 @@ describe('commute router', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             id: 'commute-1',
-            organizationId: mockOrganizationId,
+            driver: { organizationId: mockOrganizationId },
           }),
         })
       );
@@ -167,16 +176,16 @@ describe('commute router', () => {
     };
 
     it('should return enriched commutes for the given date range', async () => {
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedRawFromDb]);
 
       const result = await call(commuteRouter.getByDate, dateRange);
 
-      expect(result).toEqual([mockCommuteEnrichedFromDb]);
+      expect(result).toEqual([mockCommuteEnriched]);
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             date: { gte: dateRange.from, lt: dateRange.to },
-            organizationId: mockOrganizationId,
+            driver: { organizationId: mockOrganizationId },
           },
           orderBy: { date: 'asc' },
         })
@@ -203,12 +212,12 @@ describe('commute router', () => {
   describe('getMyCommutes', () => {
     it('should return paginated commutes for the current user', async () => {
       mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedRawFromDb]);
 
       const result = await call(commuteRouter.getMyCommutes, {});
 
       expect(result).toEqual({
-        items: [mockCommuteEnrichedFromDb],
+        items: [mockCommuteEnriched],
         nextCursor: undefined,
         total: 1,
       });
@@ -216,7 +225,7 @@ describe('commute router', () => {
 
     it('should return nextCursor when there are more items than limit', async () => {
       const commutes = Array.from({ length: 4 }, (_, i) => ({
-        ...mockCommuteEnrichedFromDb,
+        ...mockCommuteEnrichedRawFromDb,
         id: `commute-${i + 1}`,
       }));
       mockDb.commute.count.mockResolvedValue(10);
@@ -231,7 +240,7 @@ describe('commute router', () => {
 
     it('should not return nextCursor when items fit within limit', async () => {
       mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedFromDb]);
+      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedRawFromDb]);
 
       const result = await call(commuteRouter.getMyCommutes, { limit: 5 });
 
@@ -247,15 +256,18 @@ describe('commute router', () => {
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            organizationId: mockOrganizationId,
+            driver: { organizationId: mockOrganizationId },
             date: { gte: expect.any(Date) },
             OR: [
-              { driverId: mockUser.id },
+              { driverMemberId: mockMemberId },
               {
                 stops: {
                   some: {
                     passengers: {
-                      some: { passengerId: mockUser.id, status: 'ACCEPTED' },
+                      some: {
+                        passengerMemberId: mockMemberId,
+                        status: 'ACCEPTED',
+                      },
                     },
                   },
                 },
@@ -297,7 +309,7 @@ describe('commute router', () => {
       expect(result).toEqual(updatedCommute);
     });
 
-    it('should scope lookup by organizationId', async () => {
+    it('should scope lookup by organizationId via driver relation', async () => {
       mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
       mockDb.commute.update.mockResolvedValue(mockCommuteFromDb);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
@@ -308,7 +320,7 @@ describe('commute router', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             id: 'commute-1',
-            organizationId: mockOrganizationId,
+            driver: { organizationId: mockOrganizationId },
           }),
         })
       );
@@ -325,7 +337,7 @@ describe('commute router', () => {
     it('should throw FORBIDDEN when user is not the driver', async () => {
       mockDb.commute.findFirst.mockResolvedValue({
         ...mockCommuteFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(
@@ -362,7 +374,7 @@ describe('commute router', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should scope lookup by organizationId', async () => {
+    it('should scope lookup by organizationId via driver relation', async () => {
       mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.commute.delete.mockResolvedValue(mockCommuteFromDb);
@@ -373,7 +385,7 @@ describe('commute router', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             id: 'commute-1',
-            organizationId: mockOrganizationId,
+            driver: { organizationId: mockOrganizationId },
           }),
         })
       );
@@ -390,7 +402,7 @@ describe('commute router', () => {
     it('should throw FORBIDDEN when user is not the driver', async () => {
       mockDb.commute.findFirst.mockResolvedValue({
         ...mockCommuteFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(

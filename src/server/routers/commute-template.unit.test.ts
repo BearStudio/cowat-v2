@@ -5,6 +5,7 @@ import commuteTemplateRouter from '@/server/routers/commute-template';
 import {
   mockDb,
   mockGetSession,
+  mockMemberId,
   mockOrganizationId,
   mockUser,
 } from '@/server/routers/test-utils';
@@ -20,7 +21,7 @@ const mockTemplateFromDb = {
   isDeleted: false,
   createdAt: now,
   updatedAt: now,
-  driverId: mockUser.id,
+  driverMemberId: mockMemberId,
 };
 
 const mockStop = {
@@ -71,8 +72,7 @@ describe('commute-template router', () => {
           seats: createInput.seats,
           type: createInput.type,
           comment: createInput.comment,
-          driverId: mockUser.id,
-          organizationId: mockOrganizationId,
+          driverMemberId: mockMemberId,
           stops: {
             create: createInput.stops,
           },
@@ -248,7 +248,7 @@ describe('commute-template router', () => {
     it('should throw FORBIDDEN when user is not the owner', async () => {
       mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(
@@ -298,7 +298,7 @@ describe('commute-template router', () => {
     it('should throw FORBIDDEN when user is not the owner', async () => {
       mockDb.commuteTemplate.findFirst.mockResolvedValue({
         ...mockTemplateFromDb,
-        driverId: 'other-user',
+        driverMemberId: 'other-member',
       });
 
       await expect(

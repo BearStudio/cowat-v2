@@ -5,7 +5,7 @@ import locationRouter from '@/server/routers/location';
 import {
   mockDb,
   mockGetSession,
-  mockUser,
+  mockMemberId,
   mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
@@ -20,7 +20,7 @@ const mockLocationFromDb = {
   isDeleted: false,
   createdAt: now,
   updatedAt: now,
-  userId: mockUser.id,
+  memberId: mockMemberId,
 };
 
 describe('location router', () => {

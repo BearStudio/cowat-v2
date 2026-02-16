@@ -35,8 +35,7 @@ export default {
       const commute = await context.db.commute.create({
         data: {
           ...commuteData,
-          driverId: context.user.id,
-          organizationId: context.organizationId,
+          driverMemberId: context.memberId,
           stops: {
             create: stops,
           },
@@ -67,7 +66,10 @@ export default {
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
       const commute = await context.db.commute.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
         include: { stops: true },
       });
 
@@ -87,14 +89,18 @@ export default {
     .input(z.object({ from: z.date(), to: z.date() }))
     .output(z.array(zCommuteEnriched()))
     .handler(async ({ context, input }) => {
-      return await context.db.commute.findMany({
+      const commutes = await context.db.commute.findMany({
         where: {
           date: { gte: input.from, lt: input.to },
-          organizationId: context.organizationId,
+          driver: { organizationId: context.organizationId },
         },
         orderBy: { date: 'asc' },
         include: {
-          driver: { select: { id: true, name: true, image: true } },
+          driver: {
+            include: {
+              user: { select: { id: true, name: true, image: true } },
+            },
+          },
           stops: {
             orderBy: { order: 'asc' },
             include: {
@@ -102,7 +108,9 @@ export default {
               passengers: {
                 include: {
                   passenger: {
-                    select: { id: true, name: true, image: true },
+                    include: {
+                      user: { select: { id: true, name: true, image: true } },
+                    },
                   },
                 },
               },
@@ -110,6 +118,18 @@ export default {
           },
         },
       });
+
+      return commutes.map((c) => ({
+        ...c,
+        driver: c.driver.user,
+        stops: c.stops.map((s) => ({
+          ...s,
+          passengers: s.passengers.map((p) => ({
+            ...p,
+            passenger: p.passenger.user,
+          })),
+        })),
+      }));
     }),
 
   getMyCommutes: organizationProcedure({ permission: null })
@@ -138,15 +158,18 @@ export default {
       today.setHours(0, 0, 0, 0);
 
       const where = {
-        organizationId: context.organizationId,
+        driver: { organizationId: context.organizationId },
         date: { gte: today },
         OR: [
-          { driverId: context.user.id },
+          { driverMemberId: context.memberId },
           {
             stops: {
               some: {
                 passengers: {
-                  some: { passengerId: context.user.id, status: 'ACCEPTED' },
+                  some: {
+                    passengerMemberId: context.memberId,
+                    status: 'ACCEPTED',
+                  },
                 },
               },
             },
@@ -155,7 +178,9 @@ export default {
       } satisfies Prisma.CommuteWhereInput;
 
       const include = {
-        driver: { select: { id: true, name: true, image: true } },
+        driver: {
+          include: { user: { select: { id: true, name: true, image: true } } },
+        },
         stops: {
           orderBy: { order: 'asc' as const },
           include: {
@@ -163,7 +188,9 @@ export default {
             passengers: {
               include: {
                 passenger: {
-                  select: { id: true, name: true, image: true },
+                  include: {
+                    user: { select: { id: true, name: true, image: true } },
+                  },
                 },
               },
             },
@@ -171,7 +198,7 @@ export default {
         },
       } satisfies Prisma.CommuteInclude;
 
-      const [total, items] = await Promise.all([
+      const [total, rawItems] = await Promise.all([
         context.db.commute.count({ where }),
         context.db.commute.findMany({
           take: input.limit + 1,
@@ -183,10 +210,22 @@ export default {
       ]);
 
       let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
+      if (rawItems.length > input.limit) {
+        const nextItem = rawItems.pop();
         nextCursor = nextItem?.id;
       }
+
+      const items = rawItems.map((c) => ({
+        ...c,
+        driver: c.driver.user,
+        stops: c.stops.map((s) => ({
+          ...s,
+          passengers: s.passengers.map((p) => ({
+            ...p,
+            passenger: p.passenger.user,
+          })),
+        })),
+      }));
 
       return { items, nextCursor, total };
     }),
@@ -209,14 +248,17 @@ export default {
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
       const existing = await context.db.commute.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (existing.driverId !== context.user.id) {
+      if (existing.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -243,13 +285,17 @@ export default {
         },
         include: {
           passenger: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              notificationPreferences: {
-                where: { enabled: false },
-                select: { channel: true },
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  notificationPreferences: {
+                    where: { enabled: false },
+                    select: { channel: true },
+                  },
+                },
               },
             },
           },
@@ -257,14 +303,15 @@ export default {
       });
 
       for (const booking of affectedPassengers) {
+        const passengerUser = booking.passenger.user;
         context.notify({
           type: 'commute.updated',
           recipient: {
-            userId: booking.passenger.id,
-            name: booking.passenger.name,
-            email: booking.passenger.email,
-            disabledChannels: booking.passenger.notificationPreferences.map(
-              (p) => p.channel.toLowerCase()
+            userId: passengerUser.id,
+            name: passengerUser.name,
+            email: passengerUser.email,
+            disabledChannels: passengerUser.notificationPreferences.map((p) =>
+              p.channel.toLowerCase()
             ),
           },
           payload: {
@@ -288,14 +335,17 @@ export default {
     .output(z.void())
     .handler(async ({ context, input }) => {
       const existing = await context.db.commute.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          driver: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (existing.driverId !== context.user.id) {
+      if (existing.driverMemberId !== context.memberId) {
         throw new ORPCError('FORBIDDEN');
       }
 
@@ -306,13 +356,17 @@ export default {
         },
         include: {
           passenger: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              notificationPreferences: {
-                where: { enabled: false },
-                select: { channel: true },
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  notificationPreferences: {
+                    where: { enabled: false },
+                    select: { channel: true },
+                  },
+                },
               },
             },
           },
@@ -324,14 +378,15 @@ export default {
       });
 
       for (const booking of affectedPassengers) {
+        const passengerUser = booking.passenger.user;
         context.notify({
           type: 'commute.canceled',
           recipient: {
-            userId: booking.passenger.id,
-            name: booking.passenger.name,
-            email: booking.passenger.email,
-            disabledChannels: booking.passenger.notificationPreferences.map(
-              (p) => p.channel.toLowerCase()
+            userId: passengerUser.id,
+            name: passengerUser.name,
+            email: passengerUser.email,
+            disabledChannels: passengerUser.notificationPreferences.map((p) =>
+              p.channel.toLowerCase()
             ),
           },
           payload: {

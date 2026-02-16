@@ -22,8 +22,7 @@ export default {
       return await context.db.location.create({
         data: {
           ...input,
-          userId: context.user.id,
-          organizationId: context.organizationId,
+          memberId: context.memberId,
         },
       });
     }),
@@ -53,8 +52,7 @@ export default {
     )
     .handler(async ({ context, input }) => {
       const where = {
-        userId: context.user.id,
-        organizationId: context.organizationId,
+        memberId: context.memberId,
       } satisfies Prisma.LocationWhereInput;
 
       const [total, items] = await Promise.all([
@@ -92,7 +90,10 @@ export default {
     .output(zLocation())
     .handler(async ({ context, input }) => {
       const location = await context.db.location.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          member: { organizationId: context.organizationId },
+        },
       });
 
       if (!location) {
@@ -120,7 +121,10 @@ export default {
     .output(zLocation())
     .handler(async ({ context, input }) => {
       const existing = await context.db.location.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          member: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {
@@ -152,7 +156,10 @@ export default {
     .output(z.void())
     .handler(async ({ context, input }) => {
       const existing = await context.db.location.findFirst({
-        where: { id: input.id, organizationId: context.organizationId },
+        where: {
+          id: input.id,
+          member: { organizationId: context.organizationId },
+        },
       });
 
       if (!existing) {

@@ -15,7 +15,7 @@ export const zCommuteTemplate = () =>
     isDeleted: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    driverId: z.string(),
+    driverMemberId: z.string(),
   });
 
 export type FormFieldsCommuteTemplate = z.infer<

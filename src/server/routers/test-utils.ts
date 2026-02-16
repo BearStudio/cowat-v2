@@ -40,6 +40,7 @@ export const mockDb: MockedDb = new Proxy({} as ExplicitAny, {
 });
 
 export const mockUser = { id: 'user-1', name: 'Test User' };
+export const mockMemberId = 'member-1';
 export const mockOrganizationId = 'org-1';
 export const mockSession = {
   id: 'session-1',
@@ -52,4 +53,10 @@ export function setupAuthenticatedUser() {
     session: mockSession,
   });
   mockUserHasPermission.mockResolvedValue({ success: true, error: false });
+  mockDb.member.findFirst.mockResolvedValue({
+    id: mockMemberId,
+    userId: mockUser.id,
+    organizationId: mockOrganizationId,
+    role: 'member',
+  });
 }
