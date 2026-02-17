@@ -4,6 +4,7 @@ import {
   SetFieldValue,
   useFieldArray,
   useWatch,
+  Watch,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -16,36 +17,6 @@ import { Button } from '@/components/ui/button';
 
 import { FormFieldsCommute } from '@/features/commute/schema';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
-
-/**
- * Isolated component that watches stops to compute excluded location IDs.
- * Only this component re-renders when a sibling stop's location changes.
- */
-const StopLocationSelect = ({
-  control,
-  setValue,
-  index,
-}: {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
-  index: number;
-}) => {
-  const stops = useWatch({ control, name: 'stops' }) as
-    | { locationId?: string }[]
-    | undefined;
-
-  return (
-    <FormFieldLocationSelect
-      control={control}
-      name={`stops.${index}.locationId`}
-      setValue={setValue}
-      excludeLocationIds={stops
-        ?.filter((_, i) => i !== index)
-        .map((s) => s.locationId)
-        .filter((id): id is string => !!id)}
-    />
-  );
-};
 
 type FormFieldStopsProps = {
   control: Control<TODO>;
@@ -90,10 +61,24 @@ export const FormFieldStops = ({
             key={field.id}
             className="flex flex-col gap-3 rounded-sm border border-border p-4"
           >
-            <StopLocationSelect
+            <Watch
               control={control}
-              setValue={setValue}
-              index={index}
+              name={['stops']}
+              render={([stops]) => {
+                const excludeLocationIds = (stops as { locationId?: string }[])
+                  ?.filter((_, i) => i !== index)
+                  .map((s) => s.locationId)
+                  .filter((id): id is string => !!id);
+
+                return (
+                  <FormFieldLocationSelect
+                    control={control}
+                    name={`stops.${index}.locationId`}
+                    setValue={setValue}
+                    excludeLocationIds={excludeLocationIds}
+                  />
+                );
+              }}
             />
             <div className="flex items-end gap-3">
               <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
