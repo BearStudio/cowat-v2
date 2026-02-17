@@ -42,7 +42,7 @@ export const LocationDrawer = ({
   const locationQuery = useQuery(
     orpc.location.getById.queryOptions({
       input: { id: locationId! },
-      enabled: isUpdate && open,
+      enabled: open && !!locationId,
     })
   );
 
