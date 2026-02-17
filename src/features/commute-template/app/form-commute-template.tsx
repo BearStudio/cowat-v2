@@ -34,7 +34,6 @@ export const FormCommuteTemplate = () => {
         ns="commuteTemplate"
         defaultStop={{
           locationId: '',
-          order: 0,
           outwardTime: '',
           inwardTime: null,
         }}

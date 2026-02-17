@@ -1,7 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { ComponentProps, useState } from 'react';
-import { FieldPath, FieldValues, UseFormReturn } from 'react-hook-form';
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  SetFieldValue,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -19,11 +24,12 @@ type FormFieldLocationSelectProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
 > = {
-  control: UseFormReturn<TFieldValues>['control'];
+  control: Control<TFieldValues>;
   name: TName;
   label?: string;
   placeholder?: string;
-  setValue: UseFormReturn<TFieldValues>['setValue'];
+  setValue: SetFieldValue<TFieldValues>;
+  excludeLocationIds?: string[];
 } & Omit<ComponentProps<typeof FormField>, 'children'>;
 
 export const FormFieldLocationSelect = <
@@ -35,6 +41,7 @@ export const FormFieldLocationSelect = <
   label,
   placeholder,
   setValue,
+  excludeLocationIds,
   ...formFieldProps
 }: FormFieldLocationSelectProps<TFieldValues, TName>) => {
   const { t } = useTranslation(['commute', 'location']);
@@ -50,9 +57,10 @@ export const FormFieldLocationSelect = <
   );
 
   const locationItems =
-    locationsQuery.data?.pages.flatMap((p) =>
-      p.items.map((loc) => ({ label: loc.name, value: loc.id }))
-    ) ?? [];
+    locationsQuery.data?.pages
+      .flatMap((p) => p.items)
+      .filter((loc) => !excludeLocationIds?.includes(loc.id))
+      .map((loc) => ({ label: loc.name, value: loc.id })) ?? [];
 
   return (
     <>

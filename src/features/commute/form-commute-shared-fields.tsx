@@ -1,10 +1,4 @@
-import { PlusIcon, Trash2Icon } from 'lucide-react';
-import {
-  Control,
-  SetFieldValue,
-  useFieldArray,
-  useWatch,
-} from 'react-hook-form';
+import { Control, SetFieldValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -12,17 +6,16 @@ import {
   FormFieldController,
   FormFieldLabel,
 } from '@/components/form';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 
-import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
+import { FormFieldStops } from '@/features/commute/form-field-stops';
+import { FormFieldsCommute } from '@/features/commute/schema';
 
 type FormCommuteSharedFieldsProps = {
-  control: Control<FormCommuteSharedFieldsProps>;
-  setValue: SetFieldValue<FormCommuteSharedFieldsProps>;
+  control: Control<TODO>;
+  setValue: SetFieldValue<TODO>;
   ns: 'commute' | 'commuteTemplate';
-  defaultStop: Record<string, unknown>;
+  defaultStop: FormFieldsCommute['stops'][number];
 };
 
 export const FormCommuteSharedFields = ({
@@ -32,13 +25,6 @@ export const FormCommuteSharedFields = ({
   defaultStop,
 }: FormCommuteSharedFieldsProps) => {
   const { t } = useTranslation([ns]);
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: '',
-  });
-
-  const commuteType = useWatch({ control, name: 'type' });
 
   return (
     <>
@@ -69,71 +55,12 @@ export const FormCommuteSharedFields = ({
         )}
       />
 
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">{t(`${ns}:form.stops`)}</span>
-          <Button
-            type="button"
-            variant="secondary"
-            size="xs"
-            onClick={() => append(defaultStop)}
-          >
-            <PlusIcon className="size-3" />
-            {t(`${ns}:form.addStop`)}
-          </Button>
-        </div>
-
-        {fields.map((field, index) => (
-          <Card key={field.id}>
-            <CardHeader className="flex-row items-center justify-between py-2">
-              <CardTitle className="text-sm">
-                {t(`${ns}:form.stopIndex`, { index: index + 1 })}
-              </CardTitle>
-              {fields.length > 1 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="xs"
-                  onClick={() => remove(index)}
-                >
-                  <Trash2Icon className="size-3" />
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <FormFieldLocationSelect
-                control={control}
-                name={`stops.${index}.locationId`}
-                setValue={setValue}
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <FormField>
-                  <FormFieldLabel required>
-                    {t(`${ns}:form.outwardTime`)}
-                  </FormFieldLabel>
-                  <FormFieldController
-                    type="time"
-                    control={control}
-                    name={`stops.${index}.outwardTime`}
-                  />
-                </FormField>
-                {commuteType === 'ROUND' && (
-                  <FormField>
-                    <FormFieldLabel>
-                      {t(`${ns}:form.inwardTime`)}
-                    </FormFieldLabel>
-                    <FormFieldController
-                      type="time"
-                      control={control}
-                      name={`stops.${index}.inwardTime`}
-                    />
-                  </FormField>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <FormFieldStops
+        control={control}
+        setValue={setValue}
+        ns={ns}
+        defaultStop={defaultStop}
+      />
 
       <FormField>
         <FormFieldLabel>{t(`${ns}:form.comment`)}</FormFieldLabel>
