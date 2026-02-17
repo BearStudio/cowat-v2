@@ -19,7 +19,7 @@ const baseRequest: BookingForDriver = {
   updatedAt: new Date('2025-06-10T08:00:00Z'),
   passengerMemberId: 'member-1',
   stopId: 'stop-1',
-  passenger: { id: 'user-1', name: 'Alice Martin', image: null },
+  passenger: { id: 'user-1', name: 'Alice Martin', image: null, phone: null },
   stop: {
     id: 'stop-1',
     order: 1,
@@ -88,7 +88,12 @@ export const Multiple = () => {
           id: 'booking-5',
           tripType: 'ONEWAY',
           comment: null,
-          passenger: { id: 'user-2', name: 'Bob Dupont', image: null },
+          passenger: {
+            id: 'user-2',
+            name: 'Bob Dupont',
+            image: null,
+            phone: null,
+          },
           stop: {
             ...baseRequest.stop,
             id: 'stop-2',
@@ -103,7 +108,12 @@ export const Multiple = () => {
           id: 'booking-6',
           tripType: 'RETURN',
           comment: 'Running a bit late, will text when ready.',
-          passenger: { id: 'user-3', name: 'Charlie Durand', image: null },
+          passenger: {
+            id: 'user-3',
+            name: 'Charlie Durand',
+            image: null,
+            phone: null,
+          },
           stop: {
             ...baseRequest.stop,
             id: 'stop-3',
