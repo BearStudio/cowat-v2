@@ -1,6 +1,12 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { CarIcon, PlusIcon, Trash2 } from 'lucide-react';
+import {
+  CarIcon,
+  MapPinIcon,
+  PlusIcon,
+  RepeatIcon,
+  Trash2,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -38,7 +44,12 @@ import {
 } from '@/layout/app/page-layout';
 
 export const PageCommutes = () => {
-  const { t } = useTranslation(['commute', 'common']);
+  const { t } = useTranslation([
+    'commute',
+    'common',
+    'location',
+    'commuteTemplate',
+  ]);
   const session = authClient.useSession();
 
   const commutesQuery = useInfiniteQuery(
@@ -76,14 +87,32 @@ export const PageCommutes = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgResponsiveIconButtonLink
-            label={t('commute:list.newAction')}
-            variant="secondary"
-            size="sm"
-            to="/app/$orgSlug/commutes/new"
-          >
-            <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          <>
+            <OrgResponsiveIconButtonLink
+              label={t('location:list.title')}
+              variant="ghost"
+              size="sm"
+              to="/app/$orgSlug/account/locations"
+            >
+              <MapPinIcon />
+            </OrgResponsiveIconButtonLink>
+            <OrgResponsiveIconButtonLink
+              label={t('commuteTemplate:list.title')}
+              variant="ghost"
+              size="sm"
+              to="/app/$orgSlug/account/commute-templates"
+            >
+              <RepeatIcon />
+            </OrgResponsiveIconButtonLink>
+            <OrgResponsiveIconButtonLink
+              label={t('commute:list.newAction')}
+              variant="secondary"
+              size="sm"
+              to="/app/$orgSlug/commutes/new"
+            >
+              <PlusIcon />
+            </OrgResponsiveIconButtonLink>
+          </>
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
