@@ -47,7 +47,9 @@ export const FormInvite = () => {
       className="flex flex-col gap-2 sm:flex-row sm:items-end"
     >
       <FormField className="flex-1">
-        <FormFieldLabel>{t('organization:members.email')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('organization:members.email')}
+        </FormFieldLabel>
         <FormFieldController
           control={form.control}
           type="email"
@@ -57,7 +59,9 @@ export const FormInvite = () => {
         />
       </FormField>
       <FormField className="sm:w-36">
-        <FormFieldLabel>{t('organization:members.role')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('organization:members.role')}
+        </FormFieldLabel>
         <FormFieldController
           control={form.control}
           type="select"

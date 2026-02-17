@@ -40,7 +40,7 @@ export const FormCommute = () => {
   return (
     <div className="flex flex-col gap-4">
       <FormField>
-        <FormFieldLabel>{t('commute:form.date')}</FormFieldLabel>
+        <FormFieldLabel required>{t('commute:form.date')}</FormFieldLabel>
         <FormFieldController
           type="date"
           control={form.control}

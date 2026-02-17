@@ -37,7 +37,7 @@ export const FormFieldLocationSelect = <
   setValue,
   ...formFieldProps
 }: FormFieldLocationSelectProps<TFieldValues, TName>) => {
-  const { t } = useTranslation(['commute']);
+  const { t } = useTranslation(['commute', 'location']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const locationsQuery = useInfiniteQuery(
@@ -57,7 +57,9 @@ export const FormFieldLocationSelect = <
   return (
     <>
       <FormField {...formFieldProps}>
-        <FormFieldLabel>{label ?? t('commute:form.location')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {label ?? t('commute:form.location')}
+        </FormFieldLabel>
         <div className="flex items-start gap-2">
           <div className="flex-1">
             <FormFieldController
@@ -74,6 +76,7 @@ export const FormFieldLocationSelect = <
             size="icon"
             onClick={() => setIsDrawerOpen(true)}
           >
+            <span className="sr-only">{t('location:new.title')}</span>
             <PlusIcon className="size-4" />
           </Button>
         </div>
