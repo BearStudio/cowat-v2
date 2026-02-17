@@ -59,12 +59,12 @@ function DrawerContent({
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
           className={cn(
-            'group/drawer-content absolute flex h-auto flex-col bg-background pb-12',
+            'group/drawer-content absolute flex h-auto flex-col bg-background',
             'transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
             'data-swiping:duration-0 data-swiping:select-none',
             // Down
-            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-xl data-[swipe-direction=down]:border-t',
+            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-xl data-[swipe-direction=down]:border-t data-[swipe-direction=down]:pb-12',
             'data-[swipe-direction=down]:transform-[translateY(calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y,0px)))]',
             'data-[swipe-direction=down]:data-starting-style:transform-[translateY(100%)]',
             'data-[swipe-direction=down]:data-ending-style:transform-[translateY(100%)]',
