@@ -1,11 +1,12 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import dayjs from 'dayjs';
-import { ChevronDown } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/tailwind/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardAction,
@@ -120,8 +121,9 @@ type CardCommuteHeaderProps = {
   driver: { name?: string | null; image?: string | null };
   date: Date;
   type: 'ROUND' | 'ONEWAY';
-  availableSeats: number;
   totalSeats: number;
+  outwardAvailable: number;
+  inwardAvailable?: number;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
 };
@@ -130,35 +132,55 @@ function CardCommuteHeader({
   driver,
   date,
   type,
-  availableSeats,
   totalSeats,
+  outwardAvailable,
+  inwardAvailable,
   badge,
   actions,
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
 
+  const seatLabel = (available: number) =>
+    t('commute:list.seatCount', { available, total: totalSeats });
+
   return (
     <>
-      <div className="flex items-center gap-2">
-        <Avatar size="sm">
-          <AvatarImage src={driver.image ?? undefined} />
+      <div className="flex items-start gap-2">
+        <Avatar size="xl" className="rounded-sm">
+          <AvatarImage src={driver.image ?? undefined} className="rounded-md" />
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
-        <CardTitle>{dayjs(date).format('DD/MM/YYYY')}</CardTitle>
-        {badge}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            <CardTitle className="capitalize">
+              {dayjs(date).format('dddd DD/MM')}
+            </CardTitle>
+            <Badge variant="secondary" size="sm">
+              {t(`commute:list.type.${type}`)}
+            </Badge>
+          </div>
+          <CardDescription>{driver.name}</CardDescription>
+        </div>
       </div>
-      <CardDescription>
-        {driver.name}
-        {' · '}
-        {t(`commute:list.type.${type}`)}
-        {' · '}
-        {t('commute:list.availableSeats', {
-          available: availableSeats,
-          total: totalSeats,
-        })}
-      </CardDescription>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        {type === 'ROUND' ? (
+          <>
+            <span className="flex items-center gap-0.5">
+              <ArrowUpRight className="size-3" />
+              {seatLabel(outwardAvailable)}
+            </span>
+            <span className="flex items-center gap-0.5">
+              <ArrowDownLeft className="size-3" />
+              {seatLabel(inwardAvailable ?? outwardAvailable)}
+            </span>
+          </>
+        ) : (
+          <span>{seatLabel(outwardAvailable)}</span>
+        )}
+      </div>
       <CardAction>
         <div className="flex items-center gap-1">
+          {badge}
           {actions}
           <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
         </div>

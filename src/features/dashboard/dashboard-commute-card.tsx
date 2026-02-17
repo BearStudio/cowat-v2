@@ -1,11 +1,9 @@
 import { UseMutationResult } from '@tanstack/react-query';
-import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
-import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
@@ -15,8 +13,10 @@ import {
   CardCommuteHeader,
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
+import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
 import { CommuteEnriched, StopEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
@@ -36,22 +36,9 @@ export const DashboardCommuteCard = ({
 }: DashboardCommuteCardProps) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
 
-  const acceptedPassengers = new Map<
-    string,
-    { id: string; name?: string | null; image?: string | null }
-  >();
-  for (const stop of commute.stops) {
-    for (const sp of stop.passengers) {
-      if (
-        sp.status === 'ACCEPTED' &&
-        !acceptedPassengers.has(sp.passenger.id)
-      ) {
-        acceptedPassengers.set(sp.passenger.id, sp.passenger);
-      }
-    }
-  }
+  const { outwardPassengers, inwardPassengers, acceptedPassengers } =
+    getCommutePassengerStats(commute);
 
-  const available = commute.seats - acceptedPassengers.size;
   const isDriver = currentUserId === commute.driver.id;
   const bookingStatus = getUserBookingStatus(commute, currentUserId);
   const hasPassengers = acceptedPassengers.size > 0;
@@ -70,35 +57,14 @@ export const DashboardCommuteCard = ({
           driver={commute.driver}
           date={commute.date}
           type={commute.type}
-          availableSeats={available}
           totalSeats={commute.seats}
-          badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
-          actions={
-            isDriver && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <ConfirmResponsiveDrawer
-                  description={t(
-                    hasPassengers
-                      ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
-                      : 'dashboard:cancelCommute.confirmDescription'
-                  )}
-                  confirmText={t('common:actions.delete')}
-                  confirmVariant="destructive"
-                  onConfirm={() =>
-                    commuteCancel.mutateAsync({ id: commute.id })
-                  }
-                >
-                  <ResponsiveIconButton
-                    variant="ghost"
-                    size="sm"
-                    label={t('common:actions.delete')}
-                  >
-                    <Trash2 />
-                  </ResponsiveIconButton>
-                </ConfirmResponsiveDrawer>
-              </div>
-            )
+          outwardAvailable={commute.seats - outwardPassengers.size}
+          inwardAvailable={
+            commute.type === 'ROUND'
+              ? commute.seats - inwardPassengers.size
+              : undefined
           }
+          badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
@@ -162,6 +128,16 @@ export const DashboardCommuteCard = ({
           />
           <CardCommutePassengersList
             passengers={[...acceptedPassengers.values()]}
+          />
+          <CardCommuteActions
+            isDriver={isDriver}
+            driverPhone={commute.driver.phone}
+            cancelConfirmDescription={t(
+              hasPassengers
+                ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
+                : 'dashboard:cancelCommute.confirmDescription'
+            )}
+            onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
           />
         </div>
       </CardCommuteContent>

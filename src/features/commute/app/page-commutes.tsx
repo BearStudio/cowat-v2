@@ -1,19 +1,12 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import {
-  CarIcon,
-  MapPinIcon,
-  PlusIcon,
-  RepeatIcon,
-  Trash2,
-} from 'lucide-react';
+import { CarIcon, MapPinIcon, PlusIcon, RepeatIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
-import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataListErrorState,
   DataListLoadingState,
@@ -24,7 +17,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { authClient } from '@/features/auth/client';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
@@ -35,8 +27,10 @@ import {
   CardCommuteHeader,
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
+import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -138,21 +132,11 @@ export const PageCommutes = () => {
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => {
-                const acceptedPassengers = new Map<
-                  string,
-                  { id: string; name?: string | null; image?: string | null }
-                >();
-                for (const stop of item.stops) {
-                  for (const sp of stop.passengers) {
-                    if (
-                      sp.status === 'ACCEPTED' &&
-                      !acceptedPassengers.has(sp.passenger.id)
-                    ) {
-                      acceptedPassengers.set(sp.passenger.id, sp.passenger);
-                    }
-                  }
-                }
-                const available = item.seats - acceptedPassengers.size;
+                const {
+                  outwardPassengers,
+                  inwardPassengers,
+                  acceptedPassengers,
+                } = getCommutePassengerStats(item);
                 const currentUserId = session.data?.user.id ?? '';
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
@@ -164,33 +148,14 @@ export const PageCommutes = () => {
                         driver={item.driver}
                         date={item.date}
                         type={item.type}
-                        availableSeats={available}
                         totalSeats={item.seats}
-                        badge={<BookingStatusBadge status={bookingStatus} />}
-                        actions={
-                          isDriver && (
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <ConfirmResponsiveDrawer
-                                description={t(
-                                  'commute:list.cancelConfirmDescription'
-                                )}
-                                confirmText={t('common:actions.delete')}
-                                confirmVariant="destructive"
-                                onConfirm={() =>
-                                  commuteCancel.mutateAsync({ id: item.id })
-                                }
-                              >
-                                <ResponsiveIconButton
-                                  variant="ghost"
-                                  size="sm"
-                                  label={t('common:actions.delete')}
-                                >
-                                  <Trash2 />
-                                </ResponsiveIconButton>
-                              </ConfirmResponsiveDrawer>
-                            </div>
-                          )
+                        outwardAvailable={item.seats - outwardPassengers.size}
+                        inwardAvailable={
+                          item.type === 'ROUND'
+                            ? item.seats - inwardPassengers.size
+                            : undefined
                         }
+                        badge={<BookingStatusBadge status={bookingStatus} />}
                       />
                     </CardCommuteTrigger>
                     <CardCommuteContent>
@@ -203,6 +168,16 @@ export const PageCommutes = () => {
                         <CardCommuteStopsList stops={item.stops} />
                         <CardCommutePassengersList
                           passengers={[...acceptedPassengers.values()]}
+                        />
+                        <CardCommuteActions
+                          isDriver={isDriver}
+                          driverPhone={item.driver.phone}
+                          cancelConfirmDescription={t(
+                            'commute:list.cancelConfirmDescription'
+                          )}
+                          onCancel={() =>
+                            commuteCancel.mutateAsync({ id: item.id })
+                          }
                         />
                       </div>
                     </CardCommuteContent>

@@ -3,9 +3,9 @@
     "status": {
       "driver": "Conducteur",
       "REQUESTED": "En attente",
-      "ACCEPTED": "Confirmée",
-      "REFUSED": "Refusée",
-      "CANCELED": "Annulée"
+      "ACCEPTED": "Accepté",
+      "REFUSED": "Refusé",
+      "CANCELED": "Annulé"
     },
     "tripType": {
       "ROUND": "Aller-retour",

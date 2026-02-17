@@ -23,8 +23,9 @@ export const Default = () => {
           driver={{ name: 'Alice Martin', image: null }}
           date={new Date('2026-02-14')}
           type="ROUND"
-          availableSeats={2}
           totalSeats={4}
+          outwardAvailable={2}
+          inwardAvailable={3}
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
@@ -45,8 +46,9 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Alice Martin', image: null }}
             date={new Date('2026-02-14')}
             type="ROUND"
-            availableSeats={2}
             totalSeats={4}
+            outwardAvailable={2}
+            inwardAvailable={3}
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
@@ -59,9 +61,10 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Bob Dupont', image: null }}
             date={new Date('2026-02-14')}
             type="ROUND"
-            badge={<BookingStatusBadge status="DRIVER" />}
-            availableSeats={3}
             totalSeats={4}
+            outwardAvailable={3}
+            inwardAvailable={4}
+            badge={<BookingStatusBadge status="DRIVER" />}
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
@@ -74,8 +77,9 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Claire Petit', image: null }}
             date={new Date('2026-02-14')}
             type="ROUND"
-            availableSeats={3}
             totalSeats={4}
+            outwardAvailable={3}
+            inwardAvailable={3}
             badge={<BookingStatusBadge status="REQUESTED" />}
           />
         </CardCommuteTrigger>
@@ -89,13 +93,15 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Charlie Durand', image: null }}
             date={new Date('2026-02-14')}
             type="ONEWAY"
-            availableSeats={1}
             totalSeats={3}
+            outwardAvailable={1}
             badge={<BookingStatusBadge status="ACCEPTED" />}
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
-          <p className="text-sm text-muted-foreground">Passenger — Accepted</p>
+          <p className="text-sm text-muted-foreground">
+            Passenger — Accepted (one way)
+          </p>
         </CardCommuteContent>
       </CardCommute>
       <CardCommute bookingStatus="REFUSED">
@@ -104,8 +110,9 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Diana Moreau', image: null }}
             date={new Date('2026-02-15')}
             type="ROUND"
-            availableSeats={2}
             totalSeats={4}
+            outwardAvailable={2}
+            inwardAvailable={3}
             badge={<BookingStatusBadge status="REFUSED" />}
           />
         </CardCommuteTrigger>
@@ -119,8 +126,8 @@ export const LeftBorderByStatus = () => {
             driver={{ name: 'Eve Lambert', image: null }}
             date={new Date('2026-02-15')}
             type="ONEWAY"
-            availableSeats={0}
             totalSeats={2}
+            outwardAvailable={0}
             badge={<BookingStatusBadge status="CANCELED" />}
           />
         </CardCommuteTrigger>
@@ -140,8 +147,9 @@ export const WithActions = () => {
           driver={{ name: 'Alice Martin', image: null }}
           date={new Date('2026-02-14')}
           type="ROUND"
-          availableSeats={2}
           totalSeats={4}
+          outwardAvailable={2}
+          inwardAvailable={3}
           actions={
             <div onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon-sm">

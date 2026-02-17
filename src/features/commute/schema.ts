@@ -125,7 +125,7 @@ export const zFormFieldsCommute = () =>
 
 export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
 export const zUserSummary = () =>
-  zUser().pick({ id: true, name: true, image: true });
+  zUser().pick({ id: true, name: true, image: true, phone: true });
 
 export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
 export const zLocationSummary = () =>
