@@ -1,5 +1,12 @@
 {
   "request": {
+    "status": {
+      "DRIVER": "Driver",
+      "REQUESTED": "Pending",
+      "ACCEPTED": "Accepted",
+      "REFUSED": "Refused",
+      "CANCELED": "Cancelled"
+    },
     "tripType": {
       "ROUND": "Round trip",
       "ONEWAY": "One way",

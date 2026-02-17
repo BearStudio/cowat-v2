@@ -110,7 +110,9 @@ export default {
         include: {
           driver: {
             include: {
-              user: { select: { id: true, name: true, image: true } },
+              user: {
+                select: { id: true, name: true, image: true, phone: true },
+              },
             },
           },
           stops: {
@@ -121,7 +123,14 @@ export default {
                 include: {
                   passenger: {
                     include: {
-                      user: { select: { id: true, name: true, image: true } },
+                      user: {
+                        select: {
+                          id: true,
+                          name: true,
+                          image: true,
+                          phone: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -195,7 +204,11 @@ export default {
 
       const include = {
         driver: {
-          include: { user: { select: { id: true, name: true, image: true } } },
+          include: {
+            user: {
+              select: { id: true, name: true, image: true, phone: true },
+            },
+          },
         },
         stops: {
           orderBy: { order: 'asc' as const },
@@ -205,7 +218,14 @@ export default {
               include: {
                 passenger: {
                   include: {
-                    user: { select: { id: true, name: true, image: true } },
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        phone: true,
+                      },
+                    },
                   },
                 },
               },

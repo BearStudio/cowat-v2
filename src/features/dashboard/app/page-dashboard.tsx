@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { Badge } from '@/components/ui/badge';
 import {
   DataListErrorState,
   DataListLoadingState,
@@ -129,21 +128,15 @@ export const PageDashboard = () => {
                 return (
                   <div key={key} className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h2
-                        className={
-                          isToday
-                            ? 'text-base font-bold'
-                            : 'text-sm font-semibold'
-                        }
-                      >
-                        {day.format('dddd DD/MM')}
+                      <h2 className="text-base font-semibold">
+                        {isToday
+                          ? t('dashboard:today')
+                          : day.format('dddd DD/MM')}
                       </h2>
-                      {isToday && (
-                        <Badge variant="positive">{t('dashboard:today')}</Badge>
-                      )}
+
                       <OrgButtonLink
                         variant="ghost"
-                        size={isToday ? 'sm' : 'xs'}
+                        size="sm"
                         className="ml-auto"
                         to="/app/$orgSlug/commutes/new"
                         search={{ date: day.toDate() }}

@@ -16,7 +16,11 @@
     "stops_other": "{{count}} arrêts",
     "stopsLabel": "Arrêts",
     "availableSeats": "{{available}}/{{total}} places disponibles",
-    "passengersLabel": "Passagers"
+    "seatCount": "{{available}}/{{total}} places",
+    "passengersLabel": "Passagers",
+    "editAction": "Modifier",
+    "cancelAction": "Annuler",
+    "callDriver": "Appeler"
   },
   "new": {
     "title": "Nouveau trajet",

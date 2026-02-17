@@ -16,7 +16,11 @@
     "stops_other": "{{count}} stops",
     "stopsLabel": "Stops",
     "availableSeats": "{{available}}/{{total}} seats available",
-    "passengersLabel": "Passengers"
+    "seatCount": "{{available}}/{{total}} seats",
+    "passengersLabel": "Passengers",
+    "editAction": "Edit",
+    "cancelAction": "Cancel",
+    "callDriver": "Call"
   },
   "new": {
     "title": "New Commute",

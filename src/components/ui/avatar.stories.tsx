@@ -38,6 +38,10 @@ export function Sizes() {
         <AvatarImage src="/avatar.jpg" alt="@cosmobear" />
         <AvatarFallback variant="initials" name="Cosmo Bear" />
       </Avatar>
+      <Avatar size="xl">
+        <AvatarImage src="/avatar.jpg" alt="@cosmobear" />
+        <AvatarFallback variant="initials" name="Cosmo Bear" />
+      </Avatar>
     </div>
   );
 }
