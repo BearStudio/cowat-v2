@@ -1,12 +1,11 @@
+import { cva, type VariantProps } from 'class-variance-authority';
 import dayjs from 'dayjs';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardAction,
@@ -21,13 +20,62 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 
+import { UserBookingStatus } from '@/features/booking/status-colors';
+
+const cardCommuteVariants = cva('border-l-4', {
+  variants: {
+    bookingStatus: {
+      OUTSIDER: 'border-l-neutral-400',
+      DRIVER: 'border-l-secondary',
+      REQUESTED: 'border-l-primary',
+      ACCEPTED: 'border-l-positive-500',
+      REFUSED: 'border-l-negative-500',
+      CANCELED: 'border-l-warning-500',
+    } satisfies Record<NonNullable<UserBookingStatus>, string>,
+  },
+  defaultVariants: {
+    bookingStatus: 'OUTSIDER',
+  },
+});
+
+const cardCommuteGlowVariants = cva(
+  'pointer-events-none absolute -top-6 -right-6 size-24 rounded-full opacity-20 blur-2xl',
+  {
+    variants: {
+      bookingStatus: {
+        OUTSIDER: 'bg-neutral-400',
+        DRIVER: 'bg-secondary',
+        REQUESTED: 'bg-primary',
+        ACCEPTED: 'bg-positive-500',
+        REFUSED: 'bg-negative-500',
+        CANCELED: 'bg-warning-500',
+      } satisfies Record<NonNullable<UserBookingStatus>, string>,
+    },
+    defaultVariants: {
+      bookingStatus: 'OUTSIDER',
+    },
+  }
+);
+
 function CardCommute({
   children,
+  className,
+  bookingStatus,
   ...props
-}: React.ComponentProps<typeof Collapsible>) {
+}: React.ComponentProps<typeof Collapsible> &
+  VariantProps<typeof cardCommuteVariants>) {
   return (
     <Collapsible data-slot="card-commute" {...props}>
-      <Card>{children}</Card>
+      <Card
+        className={cn(
+          'relative overflow-hidden',
+          cardCommuteVariants({ bookingStatus }),
+          className
+        )}
+      >
+        <div className={cardCommuteGlowVariants({ bookingStatus })} />
+        {children}
+      </Card>
     </Collapsible>
   );
 }
@@ -58,7 +106,7 @@ function CardCommuteContent({
     <CollapsibleContent
       data-slot="card-commute-content"
       className={cn(
-        'overflow-hidden transition-all data-[ending-style]:h-0 data-[starting-style]:h-0',
+        'overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0',
         className
       )}
       {...props}
@@ -71,20 +119,20 @@ function CardCommuteContent({
 type CardCommuteHeaderProps = {
   driver: { name?: string | null; image?: string | null };
   date: Date;
-  status: 'UNKNOWN' | 'ON_TIME' | 'DELAYED';
   type: 'ROUND' | 'ONEWAY';
   availableSeats: number;
   totalSeats: number;
+  badge?: React.ReactNode;
   actions?: React.ReactNode;
 };
 
 function CardCommuteHeader({
   driver,
   date,
-  status,
   type,
   availableSeats,
   totalSeats,
+  badge,
   actions,
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
@@ -97,16 +145,7 @@ function CardCommuteHeader({
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
         <CardTitle>{dayjs(date).format('DD/MM/YYYY')}</CardTitle>
-        <Badge
-          variant={match(status)
-            .returnType<'positive' | 'warning' | 'secondary'>()
-            .with('ON_TIME', () => 'positive')
-            .with('DELAYED', () => 'warning')
-            .otherwise(() => 'secondary')}
-          size="sm"
-        >
-          {status}
-        </Badge>
+        {badge}
       </div>
       <CardDescription>
         {driver.name}
@@ -133,4 +172,5 @@ export {
   CardCommuteContent,
   CardCommuteHeader,
   CardCommuteTrigger,
+  cardCommuteVariants,
 };

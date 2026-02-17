@@ -4,15 +4,17 @@ import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
+
+import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
+import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
   CardCommute,
   CardCommuteContent,
   CardCommuteHeader,
   CardCommuteTrigger,
-} from '@/components/ui/card-commute';
-import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
-import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-
+} from '@/features/commute/card-commute';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CommuteEnriched, StopEnriched } from '@/features/commute/schema';
@@ -51,6 +53,7 @@ export const DashboardCommuteCard = ({
 
   const available = commute.seats - acceptedPassengers.size;
   const isDriver = currentUserId === commute.driver.id;
+  const bookingStatus = getUserBookingStatus(commute, currentUserId);
   const hasPassengers = acceptedPassengers.size > 0;
   const hasBookingOnCommute = commute.stops.some((s) =>
     s.passengers.some(
@@ -61,15 +64,15 @@ export const DashboardCommuteCard = ({
   );
 
   return (
-    <CardCommute>
+    <CardCommute bookingStatus={bookingStatus}>
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={commute.driver}
           date={commute.date}
-          status={commute.status}
           type={commute.type}
           availableSeats={available}
           totalSeats={commute.seats}
+          badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
           actions={
             isDriver && (
               <div onClick={(e) => e.stopPropagation()}>

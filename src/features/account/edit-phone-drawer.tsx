@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { PhoneIcon } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -93,6 +94,7 @@ export const EditPhoneDrawer = (props: { children: ReactElement }) => {
                 type="tel"
                 name="phone"
                 size="lg"
+                startAddon={<PhoneIcon />}
                 autoFocus
               />
             </FormField>

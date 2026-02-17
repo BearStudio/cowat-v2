@@ -13,12 +13,6 @@ import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
-import {
-  CardCommute,
-  CardCommuteContent,
-  CardCommuteHeader,
-  CardCommuteTrigger,
-} from '@/components/ui/card-commute';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataListErrorState,
@@ -33,6 +27,14 @@ import {
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { authClient } from '@/features/auth/client';
+import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
+import { getUserBookingStatus } from '@/features/booking/status-colors';
+import {
+  CardCommute,
+  CardCommuteContent,
+  CardCommuteHeader,
+  CardCommuteTrigger,
+} from '@/features/commute/card-commute';
 import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
@@ -151,18 +153,20 @@ export const PageCommutes = () => {
                   }
                 }
                 const available = item.seats - acceptedPassengers.size;
-                const isDriver = session.data?.user.id === item.driver.id;
+                const currentUserId = session.data?.user.id ?? '';
+                const isDriver = currentUserId === item.driver.id;
+                const bookingStatus = getUserBookingStatus(item, currentUserId);
 
                 return (
-                  <CardCommute key={item.id}>
+                  <CardCommute key={item.id} bookingStatus={bookingStatus}>
                     <CardCommuteTrigger>
                       <CardCommuteHeader
                         driver={item.driver}
                         date={item.date}
-                        status={item.status}
                         type={item.type}
                         availableSeats={available}
                         totalSeats={item.seats}
+                        badge={<BookingStatusBadge status={bookingStatus} />}
                         actions={
                           isDriver && (
                             <div onClick={(e) => e.stopPropagation()}>

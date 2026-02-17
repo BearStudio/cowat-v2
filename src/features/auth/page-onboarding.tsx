@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { LogOutIcon } from 'lucide-react';
+import { LogOutIcon, PhoneIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -105,6 +105,7 @@ export const PageOnboarding = () => {
             control={form.control}
             name="phone"
             size="lg"
+            startAddon={<PhoneIcon />}
           />
         </FormField>
         <Button
