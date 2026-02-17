@@ -59,6 +59,18 @@
   --color-positive-900: oklch(0.393 0.095 152.535);
   --color-positive-950: oklch(0.266 0.065 152.934);
 
+  --color-brand-50: oklch(0.977 0.013 236.62);
+  --color-brand-100: oklch(0.951 0.026 236.824);
+  --color-brand-200: oklch(0.901 0.058 230.902);
+  --color-brand-300: oklch(0.828 0.111 230.318);
+  --color-brand-400: oklch(0.746 0.16 232.661);
+  --color-brand-500: oklch(0.685 0.169 237.323);
+  --color-brand-600: oklch(0.588 0.158 241.966);
+  --color-brand-700: oklch(0.5 0.134 242.749);
+  --color-brand-800: oklch(0.443 0.11 240.79);
+  --color-brand-900: oklch(0.391 0.09 240.876);
+  --color-brand-950: oklch(0.293 0.066 243.157);
+
   --spacing-safe-top: env(safe-area-inset-top);
   --spacing-safe-bottom: env(safe-area-inset-bottom);
   --spacing-safe-left: env(safe-area-inset-left);
@@ -84,33 +96,33 @@
   --card-foreground: var(--color-neutral-950);
   --popover: var(--color-white);
   --popover-foreground: var(--color-neutral-950);
-  --primary: var(--color-neutral-900);
-  --primary-foreground: var(--color-neutral-50);
-  --secondary: var(--color-neutral-100);
-  --secondary-foreground: var(--color-neutral-900);
+  --primary: var(--color-brand-600);
+  --primary-foreground: var(--color-brand-50);
+  --secondary: var(--color-brand-100);
+  --secondary-foreground: var(--color-brand-900);
   --muted: var(--color-neutral-100);
   --muted-foreground: var(--color-neutral-500);
-  --accent: var(--color-neutral-100);
-  --accent-foreground: var(--color-neutral-900);
+  --accent: var(--color-brand-100);
+  --accent-foreground: var(--color-brand-900);
   --destructive: var(--color-negative-600);
   --destructive-foreground: var(--color-negative-50);
   --border: var(--color-neutral-200);
   --input: var(--color-neutral-200);
-  --ring: var(--color-neutral-300);
+  --ring: var(--color-brand-500);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.875rem;
+  --radius: 0.725rem;
   --sidebar: var(--color-white);
   --sidebar-foreground: var(--color-neutral-600);
-  --sidebar-primary: var(--color-neutral-900);
-  --sidebar-primary-foreground: var(--color-neutral-50);
+  --sidebar-primary: var(--color-brand-600);
+  --sidebar-primary-foreground: var(--color-brand-50);
   --sidebar-accent: var(--color-neutral-100);
   --sidebar-accent-foreground: var(--color-neutral-900);
   --sidebar-border: var(--color-neutral-200);
-  --sidebar-ring: var(--color-neutral-300);
+  --sidebar-ring: var(--color-brand-500);
 }
 
 .dark {
@@ -122,8 +134,8 @@
   --card-foreground: var(--color-neutral-50);
   --popover: var(--color-neutral-950);
   --popover-foreground: var(--color-neutral-50);
-  --primary: var(--color-neutral-50);
-  --primary-foreground: var(--color-neutral-900);
+  --primary: var(--color-brand-500);
+  --primary-foreground: var(--color-brand-950);
   --secondary: var(--color-neutral-800);
   --secondary-foreground: var(--color-neutral-50);
   --muted: var(--color-neutral-900);
@@ -134,7 +146,7 @@
   --destructive-foreground: var(--color-white);
   --border: var(--color-neutral-800);
   --input: var(--color-neutral-800);
-  --ring: var(--color-neutral-600);
+  --ring: var(--color-brand-700);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -142,12 +154,12 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: var(--color-neutral-900);
   --sidebar-foreground: var(--color-neutral-300);
-  --sidebar-primary: var(--color-neutral-100);
-  --sidebar-primary-foreground: var(--color-neutral-900);
+  --sidebar-primary: var(--color-brand-400);
+  --sidebar-primary-foreground: var(--color-brand-950);
   --sidebar-accent: var(--color-neutral-800);
   --sidebar-accent-foreground: var(--color-neutral-50);
   --sidebar-border: var(--color-neutral-800);
-  --sidebar-ring: var(--color-neutral-600);
+  --sidebar-ring: var(--color-brand-700);
 }
 
 @theme inline {
@@ -194,7 +206,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-neutral-50 text-foreground dark:bg-neutral-950;
+    @apply bg-neutral-50 text-[1.0625rem] text-foreground dark:bg-neutral-950;
 
     @media all and (display-mode: standalone) {
       height: 100lvh; /* Force full height on iOS standalone */
