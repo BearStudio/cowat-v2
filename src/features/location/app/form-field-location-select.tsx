@@ -57,7 +57,7 @@ export const FormFieldLocationSelect = <
   setValue,
   ...formFieldProps
 }: FormFieldLocationSelectProps<TFieldValues, TName>) => {
-  const { t } = useTranslation(['commute']);
+  const { t } = useTranslation(['commute', 'location']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const locationsQuery = useInfiniteQuery(
@@ -96,6 +96,7 @@ export const FormFieldLocationSelect = <
             size="icon"
             onClick={() => setIsDrawerOpen(true)}
           >
+            <span className="sr-only">{t('location:new.title')}</span>
             <PlusIcon className="size-4" />
           </Button>
         </div>

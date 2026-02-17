@@ -1,5 +1,10 @@
 import { PlusIcon, Trash2Icon } from 'lucide-react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import {
+  Control,
+  SetFieldValue,
+  useFieldArray,
+  useWatch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -14,10 +19,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type FormCommuteSharedFieldsProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: any;
+  control: Control<FormCommuteSharedFieldsProps>;
+  setValue: SetFieldValue<FormCommuteSharedFieldsProps>;
   ns: 'commute' | 'commuteTemplate';
   defaultStop: Record<string, unknown>;
 };
@@ -32,7 +35,7 @@ export const FormCommuteSharedFields = ({
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'stops',
+    name: '',
   });
 
   const commuteType = useWatch({ control, name: 'type' });

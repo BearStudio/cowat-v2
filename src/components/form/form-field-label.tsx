@@ -17,7 +17,7 @@ export const FormFieldLabel = ({
   return (
     <Label {...props} id={ctx.labelId} htmlFor={ctx.id}>
       {children}
-      {required && <span className="text-red-500">*</span>}
+      {required && <span className="-ml-0.5 text-destructive">*</span>}
     </Label>
   );
 };
