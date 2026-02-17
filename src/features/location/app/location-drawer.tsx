@@ -29,10 +29,12 @@ export const LocationDrawer = ({
   open,
   onOpenChange,
   locationId,
+  onCreated,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  locationId: string | null;
+  locationId?: string | null;
+  onCreated?: (locationId: string) => void;
 }) => {
   const { t } = useTranslation(['location', 'common']);
   const isUpdate = !!locationId;
@@ -59,12 +61,16 @@ export const LocationDrawer = ({
 
   const locationCreate = useMutation(
     orpc.location.create.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+      onSuccess: async (data, _variables, _onMutateResult, context) => {
         await context.client.invalidateQueries({
           queryKey: orpc.location.getAll.key(),
           type: 'all',
         });
         toast.success(t('location:new.successMessage'));
+        form.reset();
+        if (onCreated) {
+          onCreated(data.id);
+        }
         onOpenChange(false);
       },
     })
