@@ -29,6 +29,7 @@ type FormFieldLocationSelectProps<
   label?: string;
   placeholder?: string;
   setValue: SetFieldValue<TFieldValues>;
+  excludeLocationIds?: string[];
 } & Omit<ComponentProps<typeof FormField>, 'children'>;
 
 export const FormFieldLocationSelect = <
@@ -40,6 +41,7 @@ export const FormFieldLocationSelect = <
   label,
   placeholder,
   setValue,
+  excludeLocationIds,
   ...formFieldProps
 }: FormFieldLocationSelectProps<TFieldValues, TName>) => {
   const { t } = useTranslation(['commute', 'location']);
@@ -55,9 +57,10 @@ export const FormFieldLocationSelect = <
   );
 
   const locationItems =
-    locationsQuery.data?.pages.flatMap((p) =>
-      p.items.map((loc) => ({ label: loc.name, value: loc.id }))
-    ) ?? [];
+    locationsQuery.data?.pages
+      .flatMap((p) => p.items)
+      .filter((loc) => !excludeLocationIds?.includes(loc.id))
+      .map((loc) => ({ label: loc.name, value: loc.id })) ?? [];
 
   return (
     <>

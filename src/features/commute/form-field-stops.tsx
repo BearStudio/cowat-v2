@@ -18,10 +18,8 @@ import { FormFieldsCommute } from '@/features/commute/schema';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type FormFieldStopsProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: SetFieldValue<any>;
+  control: Control<TODO>;
+  setValue: SetFieldValue<TODO>;
   ns: 'commute' | 'commuteTemplate';
   defaultStop: FormFieldsCommute['stops'][number];
 };
@@ -40,6 +38,9 @@ export const FormFieldStops = ({
   });
 
   const commuteType = useWatch({ control, name: 'type' });
+  const stops = useWatch({ control, name: 'stops' }) as
+    | { locationId?: string }[]
+    | undefined;
 
   return (
     <div className="flex flex-col gap-3">
@@ -66,6 +67,10 @@ export const FormFieldStops = ({
               control={control}
               name={`stops.${index}.locationId`}
               setValue={setValue}
+              excludeLocationIds={stops
+                ?.filter((_, i) => i !== index)
+                .map((s) => s.locationId)
+                .filter((id): id is string => !!id)}
             />
             <div className="flex items-end gap-3">
               <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
