@@ -1,7 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { ComponentProps, useState } from 'react';
-import { FieldPath, FieldValues, UseFormReturn } from 'react-hook-form';
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  SetFieldValue,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -19,11 +24,11 @@ type FormFieldLocationSelectProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
 > = {
-  control: UseFormReturn<TFieldValues>['control'];
+  control: Control<TFieldValues>;
   name: TName;
   label?: string;
   placeholder?: string;
-  setValue: UseFormReturn<TFieldValues>['setValue'];
+  setValue: SetFieldValue<TFieldValues>;
 } & Omit<ComponentProps<typeof FormField>, 'children'>;
 
 export const FormFieldLocationSelect = <
