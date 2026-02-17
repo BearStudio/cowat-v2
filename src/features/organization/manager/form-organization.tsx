@@ -53,7 +53,9 @@ export const FormOrganization = () => {
     <div className="flex flex-col gap-4">
       <SlugSync />
       <FormField>
-        <FormFieldLabel>{t('organization:create.name')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('organization:create.name')}
+        </FormFieldLabel>
         <FormFieldController
           type="text"
           control={form.control}
@@ -62,12 +64,16 @@ export const FormOrganization = () => {
         />
       </FormField>
       <FormField>
-        <FormFieldLabel>{t('organization:create.slug')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('organization:create.slug')}
+        </FormFieldLabel>
         <FormFieldController type="text" control={form.control} name="slug" />
         <FormFieldHelper>{t('organization:create.slugHelper')}</FormFieldHelper>
       </FormField>
       <FormField>
-        <FormFieldLabel>{t('organization:create.owner')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('organization:create.owner')}
+        </FormFieldLabel>
         <FormFieldController
           type="select"
           control={form.control}

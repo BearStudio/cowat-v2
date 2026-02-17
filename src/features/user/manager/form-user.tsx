@@ -30,7 +30,7 @@ export const FormUser = (props: { userId?: string }) => {
         />
       </FormField>
       <FormField>
-        <FormFieldLabel>{t('user:common.email.label')}</FormFieldLabel>
+        <FormFieldLabel required>{t('user:common.email.label')}</FormFieldLabel>
         <FormFieldController type="email" control={form.control} name="email" />
       </FormField>
       <FormField>

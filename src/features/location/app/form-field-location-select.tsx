@@ -77,7 +77,9 @@ export const FormFieldLocationSelect = <
   return (
     <>
       <FormField {...formFieldProps}>
-        <FormFieldLabel>{label ?? t('commute:form.location')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {label ?? t('commute:form.location')}
+        </FormFieldLabel>
         <div className="flex items-start gap-2">
           <div className="flex-1">
             <FormFieldController

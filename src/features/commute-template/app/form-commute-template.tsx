@@ -17,7 +17,9 @@ export const FormCommuteTemplate = () => {
   return (
     <div className="flex flex-col gap-4">
       <FormField>
-        <FormFieldLabel>{t('commuteTemplate:form.name')}</FormFieldLabel>
+        <FormFieldLabel required>
+          {t('commuteTemplate:form.name')}
+        </FormFieldLabel>
         <FormFieldController
           type="text"
           control={form.control}

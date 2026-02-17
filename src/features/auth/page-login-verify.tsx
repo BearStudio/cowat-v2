@@ -103,7 +103,7 @@ export default function PageLoginVerify({
       </div>
       <div className="grid gap-4">
         <FormField>
-          <FormFieldLabel>{t('auth:common.otp.label')}</FormFieldLabel>
+          <FormFieldLabel required>{t('auth:common.otp.label')}</FormFieldLabel>
           <FormFieldController
             type="otp"
             control={form.control}

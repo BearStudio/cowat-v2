@@ -40,7 +40,7 @@ export const FormCommuteSharedFields = ({
   return (
     <>
       <FormField>
-        <FormFieldLabel>{t(`${ns}:form.seats`)}</FormFieldLabel>
+        <FormFieldLabel required>{t(`${ns}:form.seats`)}</FormFieldLabel>
         <FormFieldController
           type="number"
           control={control}
@@ -105,7 +105,9 @@ export const FormCommuteSharedFields = ({
               />
               <div className="grid grid-cols-2 gap-3">
                 <FormField>
-                  <FormFieldLabel>{t(`${ns}:form.outwardTime`)}</FormFieldLabel>
+                  <FormFieldLabel required>
+                    {t(`${ns}:form.outwardTime`)}
+                  </FormFieldLabel>
                   <FormFieldController
                     type="time"
                     control={control}

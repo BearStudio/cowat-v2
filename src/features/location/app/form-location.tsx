@@ -16,7 +16,7 @@ export const FormLocation = () => {
   return (
     <div className="flex flex-col gap-4">
       <FormField>
-        <FormFieldLabel>{t('location:form.name')}</FormFieldLabel>
+        <FormFieldLabel required>{t('location:form.name')}</FormFieldLabel>
         <FormFieldController
           type="text"
           control={form.control}
@@ -25,7 +25,7 @@ export const FormLocation = () => {
         />
       </FormField>
       <FormField>
-        <FormFieldLabel>{t('location:form.address')}</FormFieldLabel>
+        <FormFieldLabel required>{t('location:form.address')}</FormFieldLabel>
         <FormFieldController
           type="textarea"
           control={form.control}

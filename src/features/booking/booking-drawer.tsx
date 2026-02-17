@@ -100,7 +100,9 @@ export const BookingDrawer = (props: {
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody className="flex flex-col gap-4">
             <FormField>
-              <FormFieldLabel>{t('dashboard:booking.tripType')}</FormFieldLabel>
+              <FormFieldLabel required>
+                {t('dashboard:booking.tripType')}
+              </FormFieldLabel>
               <FormFieldController
                 control={form.control}
                 type="radio-group"
