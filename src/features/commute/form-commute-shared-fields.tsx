@@ -12,10 +12,8 @@ import { FormFieldStops } from '@/features/commute/form-field-stops';
 import { FormFieldsCommute } from '@/features/commute/schema';
 
 type FormCommuteSharedFieldsProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setValue: SetFieldValue<any>;
+  control: Control<TODO>;
+  setValue: SetFieldValue<TODO>;
   ns: 'commute' | 'commuteTemplate';
   defaultStop: FormFieldsCommute['stops'][number];
 };
