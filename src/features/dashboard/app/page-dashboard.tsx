@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { Badge } from '@/components/ui/badge';
 import {
   DataListErrorState,
   DataListLoadingState,
