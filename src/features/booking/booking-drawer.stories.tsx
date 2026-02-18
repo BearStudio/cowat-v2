@@ -9,13 +9,74 @@ export default {
   title: 'Feature/Booking/BookingDrawer',
 } satisfies Meta;
 
-export const Default = () => {
+export const RoundMiddleStop = () => {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Open booking drawer</Button>
-      <BookingDrawer stopId="stop-1" open={open} onOpenChange={setOpen} />
+      <Button onClick={() => setOpen(true)}>Round commute — middle stop</Button>
+      <BookingDrawer
+        stopId="stop-1"
+        commuteType="ROUND"
+        isFirstStop={false}
+        isLastStop={false}
+        open={open}
+        onOpenChange={setOpen}
+      />
+    </>
+  );
+};
+
+export const RoundFirstStop = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Round commute — first stop</Button>
+      <BookingDrawer
+        stopId="stop-1"
+        commuteType="ROUND"
+        isFirstStop={true}
+        isLastStop={false}
+        open={open}
+        onOpenChange={setOpen}
+      />
+    </>
+  );
+};
+
+export const RoundLastStop = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Round commute — last stop</Button>
+      <BookingDrawer
+        stopId="stop-1"
+        commuteType="ROUND"
+        isFirstStop={false}
+        isLastStop={true}
+        open={open}
+        onOpenChange={setOpen}
+      />
+    </>
+  );
+};
+
+export const OneWayCommute = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>One-way commute</Button>
+      <BookingDrawer
+        stopId="stop-1"
+        commuteType="ONEWAY"
+        isFirstStop={false}
+        isLastStop={false}
+        open={open}
+        onOpenChange={setOpen}
+      />
     </>
   );
 };
