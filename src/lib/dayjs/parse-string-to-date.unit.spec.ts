@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 import { describe, expect, it } from 'vitest';
 
+import { getDateFormat } from '@/lib/dayjs/formats';
 import { parseStringToDate } from '@/lib/dayjs/parse-string-to-date';
 
 describe('parseStringToDate', () => {
-  const FORMAT = 'DD/MM/YYYY';
+  const FORMAT = getDateFormat('common:short');
   it.each([
     { input: '10', expected: dayjs().set('date', 10).format(FORMAT) },
     {

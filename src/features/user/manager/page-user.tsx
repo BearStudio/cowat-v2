@@ -10,6 +10,8 @@ import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
+
+import { formatDate } from '@/lib/dayjs/formats';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -211,8 +213,9 @@ export const PageUser = (props: { id: string }) => {
                       {user.onboardedAt ? (
                         <>
                           {t('user:common.onboardingStatus.onboardedAt', {
-                            time: dayjs(user.onboardedAt).format(
-                              'DD/MM/YYYY [at] HH:mm'
+                            time: formatDate(
+                              user.onboardedAt,
+                              'user:onboardedAt'
                             ),
                           })}
                         </>
