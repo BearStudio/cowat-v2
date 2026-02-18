@@ -30,7 +30,6 @@ import {
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
-import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
@@ -134,11 +133,8 @@ export const PageCommutes = () => {
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => {
-                const {
-                  outwardPassengers,
-                  inwardPassengers,
-                  acceptedPassengers,
-                } = getCommutePassengerStats(item);
+                const { outwardPassengers, inwardPassengers } =
+                  getCommutePassengerStats(item);
                 const currentUserId = session.data?.user.id ?? '';
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
@@ -168,9 +164,6 @@ export const PageCommutes = () => {
                           </p>
                         )}
                         <CardCommuteStopsList stops={item.stops} />
-                        <CardCommutePassengersList
-                          passengers={[...acceptedPassengers.values()]}
-                        />
                         <CardCommuteActions
                           isDriver={isDriver}
                           driverPhone={item.driver.phone}

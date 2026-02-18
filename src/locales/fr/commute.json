@@ -14,10 +14,8 @@
     },
     "stops_one": "{{count}} arrêt",
     "stops_other": "{{count}} arrêts",
-    "stopsLabel": "Arrêts",
     "availableSeats": "{{available}}/{{total}} places disponibles",
     "seatCount": "{{available}}/{{total}} places",
-    "passengersLabel": "Passagers",
     "editAction": "Modifier",
     "cancelAction": "Annuler",
     "callDriver": "Appeler"

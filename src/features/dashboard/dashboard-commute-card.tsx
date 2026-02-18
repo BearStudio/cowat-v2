@@ -1,7 +1,6 @@
 import { UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
@@ -14,10 +13,9 @@ import {
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
-import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
-import { CommuteEnriched, StopEnriched } from '@/features/commute/schema';
+import { CommuteEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
@@ -76,58 +74,41 @@ export const DashboardCommuteCard = ({
             stops={commute.stops}
             renderActions={(stop) => {
               if (isDriver) return null;
-              const enrichedStop = stop as StopEnriched;
-              const userBooking = enrichedStop.passengers?.find(
+
+              const userBooking = stop.passengers?.find(
                 (p) =>
                   p.passenger.id === currentUserId &&
                   (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
               );
               if (userBooking) {
                 return (
-                  <div className="flex items-center gap-1.5">
-                    <Badge
-                      size="xs"
-                      variant={
-                        userBooking.status === 'ACCEPTED'
-                          ? 'positive'
-                          : 'warning'
-                      }
-                    >
-                      {t(
-                        `dashboard:booking.status.${userBooking.status as 'REQUESTED' | 'ACCEPTED'}`
-                      )}
-                    </Badge>
-                    <ConfirmResponsiveDrawer
-                      description={t(
-                        'dashboard:cancelBooking.confirmDescription'
-                      )}
-                      confirmText={t('common:actions.delete')}
-                      confirmVariant="destructive"
-                      onConfirm={() =>
-                        bookingCancel.mutateAsync({ id: userBooking.id })
-                      }
-                    >
-                      <Button size="xs" variant="destructive">
-                        {t('common:actions.cancel')}
-                      </Button>
-                    </ConfirmResponsiveDrawer>
-                  </div>
+                  <ConfirmResponsiveDrawer
+                    description={t(
+                      'dashboard:cancelBooking.confirmDescription'
+                    )}
+                    confirmText={t('common:actions.delete')}
+                    confirmVariant="destructive"
+                    onConfirm={() =>
+                      bookingCancel.mutateAsync({ id: userBooking.id })
+                    }
+                  >
+                    <Button variant="destructive-secondary">
+                      {t('common:actions.cancel')}
+                    </Button>
+                  </ConfirmResponsiveDrawer>
                 );
               }
               if (hasBookingOnCommute) return null;
               return (
                 <Button
-                  size="xs"
                   variant="secondary"
+                  className="w-2/3"
                   onClick={() => onBookStop(stop.id)}
                 >
                   {t('dashboard:booking.submitButton')}
                 </Button>
               );
             }}
-          />
-          <CardCommutePassengersList
-            passengers={[...acceptedPassengers.values()]}
           />
           <CardCommuteActions
             isDriver={isDriver}

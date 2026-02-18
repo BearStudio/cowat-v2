@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 type CardCommuteActionsProps = {
   isDriver: boolean;
@@ -20,7 +21,7 @@ export function CardCommuteActions({
   const { t } = useTranslation(['commute', 'common']);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="ms-auto flex items-center gap-2">
       {isDriver && (
         <>
           <Button size="sm" variant="secondary">
@@ -33,7 +34,7 @@ export function CardCommuteActions({
             confirmVariant="destructive"
             onConfirm={onCancel}
           >
-            <Button size="sm" variant="destructive">
+            <Button size="sm" variant="destructive-secondary">
               <Trash2 />
               {t('commute:list.cancelAction')}
             </Button>
@@ -41,14 +42,15 @@ export function CardCommuteActions({
         </>
       )}
       {!isDriver && driverPhone && (
-        <Button
+        <ResponsiveIconButton
           size="sm"
           variant="secondary"
+          nativeButton={false}
+          label={t('commute:list.callDriver')}
           render={<a href={`tel:${driverPhone}`} />}
         >
           <PhoneIcon />
-          {t('commute:list.callDriver')}
-        </Button>
+        </ResponsiveIconButton>
       )}
     </div>
   );
