@@ -2,11 +2,10 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon, Trash2 } from 'lucide-react';
-
-import { featureIcons } from '@/lib/feature-icons';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';

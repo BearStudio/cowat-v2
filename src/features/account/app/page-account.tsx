@@ -1,7 +1,7 @@
 import { ChevronRightIcon, SettingsIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 

@@ -1,13 +1,9 @@
-import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
-import {
-  isInwardAfterOutward,
-  isTimeInFuture,
-} from '@/features/commute/form-commute-rules';
+import { createCommuteRules } from '@/features/commute/form-commute-rules';
 import { zLocation } from '@/features/location/schema';
 import { zUser } from '@/features/user/schema';
 
@@ -80,14 +76,10 @@ export const zFormFieldsCommute = () =>
         .min(1, t('commute:form.errors.stopsMin')),
     })
     .superRefine((data, ctx) => {
-      const isToday = dayjs(data.date).isToday();
+      const rules = createCommuteRules(data);
 
       data.stops.forEach((stop, index) => {
-        if (
-          isToday &&
-          stop.outwardTime &&
-          !isTimeInFuture(data.date, stop.outwardTime)
-        ) {
+        if (!rules.isOutwardInFuture(stop)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.outwardInPast'),
@@ -95,12 +87,7 @@ export const zFormFieldsCommute = () =>
           });
         }
 
-        if (
-          data.type === 'ROUND' &&
-          stop.inwardTime &&
-          stop.outwardTime &&
-          !isInwardAfterOutward(stop.outwardTime, stop.inwardTime)
-        ) {
+        if (!rules.shouldInwardBeAfterOutward(stop)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.inwardBeforeOutward'),
@@ -108,15 +95,26 @@ export const zFormFieldsCommute = () =>
           });
         }
 
-        if (
-          isToday &&
-          data.type === 'ROUND' &&
-          stop.inwardTime &&
-          !isTimeInFuture(data.date, stop.inwardTime)
-        ) {
+        if (!rules.isInwardInFuture(stop)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.inwardInPast'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+
+        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.outwardNotIncreasing'),
+            path: ['stops', index, 'outwardTime'],
+          });
+        }
+
+        if (!rules.shouldInwardBeDecreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.inwardNotDecreasing'),
             path: ['stops', index, 'inwardTime'],
           });
         }

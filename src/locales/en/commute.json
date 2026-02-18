@@ -47,13 +47,16 @@
     "roundTrip": "Round trip",
     "outwardTime": "Outbound time",
     "inwardTime": "Inbound time",
+    "autoComputedHint": "This time is automatically computed",
     "todayWarning": "You are creating a commute for today. Make sure the times are still valid.",
     "errors": {
       "seatsMin": "At least 1 seat required",
       "stopsMin": "At least 1 stop required",
       "inwardBeforeOutward": "Inbound time must be after outbound time",
       "inwardInPast": "Inbound time must be in the future",
-      "outwardInPast": "Outbound time must be in the future"
+      "outwardInPast": "Outbound time must be in the future",
+      "outwardNotIncreasing": "Must be after the previous stop's outbound time",
+      "inwardNotDecreasing": "Must be before the previous stop's inbound time"
     }
   }
 }

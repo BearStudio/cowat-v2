@@ -10,11 +10,10 @@ import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
-
-import { formatDate } from '@/lib/dayjs/formats';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { formatDate } from '@/lib/dayjs/formats';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';

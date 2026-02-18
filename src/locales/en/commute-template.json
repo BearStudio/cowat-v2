@@ -24,6 +24,7 @@
     "roundTrip": "Round trip",
     "outwardTime": "Outbound time",
     "inwardTime": "Inbound time",
+    "autoComputedHint": "This time is automatically computed",
     "comment": "Comment",
     "commentPlaceholder": "Optional comment...",
     "stops": "Stops",
