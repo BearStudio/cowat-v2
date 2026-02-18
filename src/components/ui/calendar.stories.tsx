@@ -2,6 +2,8 @@ import type { Meta } from '@storybook/react-vite';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
+import { formatDate } from '@/lib/dayjs/formats';
+
 import { Calendar } from '@/components/ui/calendar';
 
 export default {
@@ -35,7 +37,7 @@ export const Controlled = () => {
       footer={
         <div className="mt-4 text-sm">
           {selected
-            ? `Selected: ${dayjs(selected).format('DD/MM/YYYY')}`
+            ? `Selected: ${formatDate(selected, 'common:short')}`
             : 'Pick a day'}
         </div>
       }

@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 
+import { getDateFormat } from '@/lib/dayjs/formats';
 import { parseStringToDate } from '@/lib/dayjs/parse-string-to-date';
 import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 
@@ -69,7 +70,7 @@ export const useDatePickerInputManagement = (
 
     const isNewValue = !date.isSame(dateValue, 'date');
     if (!isNewValue) {
-      setInputValue(date.format('DD/MM/YYYY'));
+      setInputValue(date.format(dateFormat));
       // To avoid the issue of non-selection when:
       // * The input is focused with an already selected value
       // * A new date is clicked directly
@@ -88,7 +89,7 @@ export const DateInput = ({
   onBlur,
   onKeyDown,
   value,
-  format = 'DD/MM/YYYY',
+  format = getDateFormat('common:short'),
   ...props
 }: Omit<ComponentProps<typeof Input>, 'onChange' | 'value'> & {
   onChange?: (date: Date | null) => void;

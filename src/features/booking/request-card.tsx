@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+
+import { formatDate } from '@/lib/dayjs/formats';
 
 import { orpc } from '@/lib/orpc/client';
 
@@ -79,7 +80,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           <CardTitle>{request.passenger.name}</CardTitle>
         </div>
         <CardDescription>
-          {dayjs(request.stop.commute.date).format('DD/MM/YYYY')}
+          {formatDate(request.stop.commute.date, 'booking:requestDate')}
           {' · '}
           {request.stop.outwardTime}
           {request.stop.inwardTime && ` – ${request.stop.inwardTime}`}
