@@ -18,11 +18,7 @@
     "submitButton": "Réserver",
     "successMessage": "Demande de réservation envoyée",
     "autoAcceptedMessage": "Réservation confirmée",
-    "errorMessage": "Échec de l'envoi de la demande de réservation. Veuillez réessayer.",
-    "status": {
-      "REQUESTED": "En attente",
-      "ACCEPTED": "Confirmée"
-    }
+    "errorMessage": "Échec de l'envoi de la demande de réservation. Veuillez réessayer."
   },
   "cancelBooking": {
     "confirmDescription": "Vous êtes sur le point d'annuler votre réservation.",

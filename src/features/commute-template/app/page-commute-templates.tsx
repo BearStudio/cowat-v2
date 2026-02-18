@@ -153,7 +153,14 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                           {item.comment}
                         </p>
                       )}
-                      <CardCommuteStopsList stops={item.stops} />
+                      {/* Templates don't have passengers, so we pass them as empty */}
+                      <CardCommuteStopsList
+                        stops={item.stops.map((stop) => ({
+                          ...stop,
+                          commuteId: '',
+                          passengers: [],
+                        }))}
+                      />
                     </div>
                   </CardContent>
                 </Card>

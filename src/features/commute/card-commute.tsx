@@ -3,7 +3,6 @@ import { ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/dayjs/formats';
-
 import { cn } from '@/lib/tailwind/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -152,18 +151,14 @@ function CardCommuteHeader({
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
         <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <CardTitle className="capitalize">
-              {formatDate(date, 'commute:dayHeader')}
-            </CardTitle>
-            <Badge variant="secondary" size="sm">
-              {t(`commute:list.type.${type}`)}
-            </Badge>
-          </div>
+          <CardTitle className="capitalize">
+            {formatDate(date, 'commute:dayHeader')}
+          </CardTitle>
+
           <CardDescription>{driver.name}</CardDescription>
         </div>
       </div>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="flex flex-1 items-center gap-2 text-sm text-muted-foreground">
         {type === 'ROUND' ? (
           <>
             <span className="flex items-center gap-0.5">
@@ -178,6 +173,9 @@ function CardCommuteHeader({
         ) : (
           <span>{seatLabel(outwardAvailable)}</span>
         )}
+        <Badge variant="secondary" size="sm">
+          {t(`commute:list.type.${type}`)}
+        </Badge>
       </div>
       <CardAction>
         <div className="flex items-center gap-1">

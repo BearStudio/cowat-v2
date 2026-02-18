@@ -14,10 +14,8 @@
     },
     "stops_one": "{{count}} stop",
     "stops_other": "{{count}} stops",
-    "stopsLabel": "Stops",
     "availableSeats": "{{available}}/{{total}} seats available",
     "seatCount": "{{available}}/{{total}} seats",
-    "passengersLabel": "Passengers",
     "editAction": "Edit",
     "cancelAction": "Cancel",
     "callDriver": "Call"
