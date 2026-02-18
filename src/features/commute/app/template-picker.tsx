@@ -1,6 +1,8 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
-import { PlusIcon, RepeatIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
+
+import { featureIcons } from '@/lib/feature-icons';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -77,7 +79,7 @@ export const TemplatePicker = ({
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <RepeatIcon />
+                <featureIcons.CommuteTemplates />
               </EmptyMedia>
               <EmptyTitle>{t('commute:templatePicker.emptyState')}</EmptyTitle>
             </EmptyHeader>
