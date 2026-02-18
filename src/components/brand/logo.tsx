@@ -18,7 +18,7 @@ export const Logo = (props: SVGProps<SVGSVGElement>) => (
       fill="currentColor"
       fontSize="32"
       fontWeight="bold"
-      fontFamily="Inter, system-ui, sans-serif"
+      fontFamily="Public Sans, system-ui, sans-serif"
     >
       Cowat
     </text>
