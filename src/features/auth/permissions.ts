@@ -12,7 +12,7 @@ const statement = {
   ...defaultStatements,
   account: ['read', 'update'],
   apps: ['app', 'manager'],
-  organization: ['list', 'create'],
+  organization: ['list', 'create', 'delete'],
 } as const;
 
 const ac = createAccessControl(statement);
@@ -26,7 +26,7 @@ const admin = ac.newRole({
   ...adminAc.statements,
   account: ['update'],
   apps: ['app', 'manager'],
-  organization: ['list', 'create'],
+  organization: ['list', 'create', 'delete'],
 });
 
 export const rolesNames = ['admin', 'user'] as const;

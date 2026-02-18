@@ -1,7 +1,9 @@
 import { getUiState } from '@bearstudio/ui-state';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { AlertCircleIcon, BuildingIcon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
@@ -14,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { DangerZone, DangerZoneCardItem } from '@/components/ui/danger-zone';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -27,11 +30,28 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageOrganization = () => {
-  const { t } = useTranslation(['organization']);
+  const { t } = useTranslation(['organization', 'common']);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const orgQuery = useQuery(
     orpc.organization.getActiveOrganization.queryOptions()
   );
+
+  const deleteOrganization = useMutation({
+    mutationFn: (organizationId: string) =>
+      orpc.organization.delete.call({ organizationId }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: orpc.organization.getAll.key(),
+      });
+      toast.success(t('organization:manager.detail.deleteOrganizationSuccess'));
+      navigate({ to: '/manager/organizations' });
+    },
+    onError: () => {
+      toast.error(t('organization:manager.detail.deleteOrganizationError'));
+    },
+  });
 
   const ui = getUiState((set) => {
     if (orgQuery.status === 'pending') return set('pending');
@@ -82,6 +102,23 @@ export const PageOrganization = () => {
 
               <OrgInvitations orgId={org.id} invitations={org.invitations} />
               <OrgMembers orgId={org.id} members={org.members} />
+
+              <DangerZone>
+                <DangerZoneCardItem
+                  title={t(
+                    'organization:manager.detail.deleteOrganizationTitle'
+                  )}
+                  description={t(
+                    'organization:manager.detail.deleteOrganizationConfirm'
+                  )}
+                  confirmDescription={t(
+                    'organization:manager.detail.deleteOrganizationConfirm'
+                  )}
+                  confirmText={t('common:actions.confirm')}
+                  onConfirm={() => deleteOrganization.mutateAsync(org.id)}
+                  isPending={deleteOrganization.isPending}
+                />
+              </DangerZone>
             </div>
           ))
           .exhaustive()}

@@ -72,6 +72,9 @@
     "placeholder": "Sélectionner...",
     "noItemsFound": "Aucun élément trouvé."
   },
+  "dangerZoneCard": {
+    "title": "Zone de danger"
+  },
   "errorBoundary": {
     "title": "Erreur inconnue",
     "details": "Détails",
