@@ -21,8 +21,6 @@
     "email": "Adresse email",
     "role": "Rôle",
     "remove": "Retirer",
-    "leave": "Quitter l'organisation",
-    "leaveConfirm": "Êtes-vous sûr de vouloir quitter cette organisation ?",
     "roles": {
       "owner": "Propriétaire",
       "admin": "Administrateur",
@@ -65,7 +63,16 @@
       "invitationCancelled": "Invitation annulée",
       "cancelInvitationError": "Impossible d'annuler l'invitation",
       "invitationSent": "Invitation envoyée",
-      "invitationError": "Impossible d'envoyer l'invitation"
+      "invitationError": "Impossible d'envoyer l'invitation",
+      "deleteOrganization": "Supprimer l'organisation",
+      "deleteOrganizationTitle": "Supprimer cette organisation",
+      "deleteOrganizationConfirm": "Êtes-vous sûr de vouloir supprimer cette organisation ? Cette action est irréversible.",
+      "deleteOrganizationSuccess": "Organisation supprimée",
+      "deleteOrganizationError": "Impossible de supprimer l'organisation",
+      "removeMember": "Retirer le membre",
+      "removeMemberConfirm": "Êtes-vous sûr de vouloir retirer ce membre de l'organisation ?",
+      "removeMemberSuccess": "Membre retiré",
+      "removeMemberError": "Impossible de retirer le membre"
     }
   }
 }

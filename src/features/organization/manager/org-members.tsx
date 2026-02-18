@@ -1,7 +1,16 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+import { orpc } from '@/lib/orpc/client';
+
+import { authClient } from '@/features/auth/client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataList,
   DataListCell,
@@ -24,6 +33,23 @@ export const OrgMembers = (props: {
   }>;
 }) => {
   const { t } = useTranslation(['organization']);
+  const queryClient = useQueryClient();
+  const session = authClient.useSession();
+  const currentUserId = session.data?.user?.id;
+
+  const removeMember = useMutation({
+    mutationFn: (memberIdOrEmail: string) =>
+      orpc.organization.removeMember.call({ memberIdOrEmail }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: orpc.organization.getActiveOrganization.key(),
+      });
+      toast.success(t('organization:manager.detail.removeMemberSuccess'));
+    },
+    onError: () => {
+      toast.error(t('organization:manager.detail.removeMemberError'));
+    },
+  });
 
   return (
     <DataList>
@@ -75,6 +101,27 @@ export const OrgMembers = (props: {
                 )}
               </Badge>
             </DataListCell>
+            {member.user.id !== currentUserId && (
+              <DataListCell className="flex-none">
+                <ConfirmResponsiveDrawer
+                  description={t(
+                    'organization:manager.detail.removeMemberConfirm'
+                  )}
+                  confirmText={t('organization:members.remove')}
+                  confirmVariant="destructive"
+                  onConfirm={() => removeMember.mutateAsync(member.user.id)}
+                >
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    loading={removeMember.isPending}
+                  >
+                    <XIcon className="size-3" />
+                    {t('organization:members.remove')}
+                  </Button>
+                </ConfirmResponsiveDrawer>
+              </DataListCell>
+            )}
           </DataListRow>
         ))
       )}

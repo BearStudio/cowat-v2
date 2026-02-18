@@ -20,7 +20,8 @@
     "close": "Close",
     "delete": "Delete",
     "edit": "Edit",
-    "update": "Update"
+    "update": "Update",
+    "confirm": "Confirm"
   },
   "errors": {
     "required": "Required"

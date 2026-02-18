@@ -21,8 +21,6 @@
     "email": "Email address",
     "role": "Role",
     "remove": "Remove",
-    "leave": "Leave organization",
-    "leaveConfirm": "Are you sure you want to leave this organization?",
     "roles": {
       "owner": "Owner",
       "admin": "Admin",
@@ -65,7 +63,16 @@
       "invitationCancelled": "Invitation cancelled",
       "cancelInvitationError": "Failed to cancel invitation",
       "invitationSent": "Invitation sent",
-      "invitationError": "Failed to send invitation"
+      "invitationError": "Failed to send invitation",
+      "deleteOrganization": "Delete organization",
+      "deleteOrganizationTitle": "Delete this organization",
+      "deleteOrganizationConfirm": "Are you sure you want to delete this organization? This action cannot be undone.",
+      "deleteOrganizationSuccess": "Organization deleted",
+      "deleteOrganizationError": "Failed to delete organization",
+      "removeMember": "Remove member",
+      "removeMemberConfirm": "Are you sure you want to remove this member from the organization?",
+      "removeMemberSuccess": "Member removed",
+      "removeMemberError": "Failed to remove member"
     }
   }
 }

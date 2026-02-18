@@ -20,7 +20,8 @@
     "close": "Fermer",
     "delete": "Supprimer",
     "edit": "Modifier",
-    "update": "Mettre à jour"
+    "update": "Mettre à jour",
+    "confirm": "Confirmer"
   },
   "errors": {
     "required": "Requis"
