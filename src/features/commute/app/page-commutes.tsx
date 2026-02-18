@@ -1,6 +1,8 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { CarIcon, MapPinIcon, PlusIcon, RepeatIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
+
+import { featureIcons } from '@/lib/feature-icons';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -90,7 +92,7 @@ export const PageCommutes = () => {
               size="sm"
               to="/app/$orgSlug/account/locations"
             >
-              <MapPinIcon />
+              <featureIcons.Locations />
             </OrgResponsiveIconButtonLink>
             <OrgResponsiveIconButtonLink
               label={t('commuteTemplate:list.title')}
@@ -98,7 +100,7 @@ export const PageCommutes = () => {
               size="sm"
               to="/app/$orgSlug/account/commute-templates"
             >
-              <RepeatIcon />
+              <featureIcons.CommuteTemplates />
             </OrgResponsiveIconButtonLink>
             <OrgResponsiveIconButtonLink
               label={t('commute:list.newAction')}
@@ -123,7 +125,7 @@ export const PageCommutes = () => {
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <CarIcon />
+                  <featureIcons.Commutes />
                 </EmptyMedia>
                 <EmptyTitle>{t('commute:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
