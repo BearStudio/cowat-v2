@@ -5,8 +5,6 @@ import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { authClient } from '@/features/auth/client';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +16,8 @@ import {
   DataListRow,
   DataListText,
 } from '@/components/ui/datalist';
+
+import { authClient } from '@/features/auth/client';
 
 export const OrgMembers = (props: {
   orgId: string;
