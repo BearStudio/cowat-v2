@@ -23,12 +23,22 @@
     "speedDial": {
       "myLocations": "My Locations",
       "myCommutes": "My Commutes",
-      "createCommute": "Create a Commute"
+      "createCommute": "New Commute"
     }
   },
   "new": {
     "title": "New Commute",
-    "submitButton": "Create"
+    "submitButton": "Create",
+    "requestButton": "Request a commute",
+    "requestDrawer": {
+      "title": "Request a commute",
+      "description": "Pick a date and notify the team that you need a ride.",
+      "pickDate": "Date",
+      "destination": "Destination",
+      "destinationPlaceholder": "Optional destination...",
+      "submit": "Send request",
+      "success": "Request sent!"
+    }
   },
   "templatePicker": {
     "title": "My templates",

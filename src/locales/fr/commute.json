@@ -23,12 +23,22 @@
     "speedDial": {
       "myLocations": "Mes Lieux",
       "myCommutes": "Mes Trajets",
-      "createCommute": "Créer un Trajet"
+      "createCommute": "Nouveau Trajet"
     }
   },
   "new": {
     "title": "Nouveau trajet",
-    "submitButton": "Créer"
+    "submitButton": "Créer",
+    "requestButton": "Demander un trajet",
+    "requestDrawer": {
+      "title": "Demander un trajet",
+      "description": "Choisissez une date pour notifier l'équipe que vous avez besoin d'un trajet.",
+      "pickDate": "Date",
+      "destination": "Destination",
+      "destinationPlaceholder": "Destination optionnelle...",
+      "submit": "Envoyer la demande",
+      "success": "Demande envoyée !"
+    }
   },
   "templatePicker": {
     "title": "Mes modèles",

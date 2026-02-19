@@ -74,6 +74,17 @@ export type CommuteCanceledEvent = {
   };
 };
 
+export type CommuteRequestedEvent = {
+  type: 'commute.requested';
+  payload: {
+    requesterName: string;
+    requesterEmail: string;
+    commuteDate: Commute['date'];
+    orgSlug: string;
+    locationName?: string;
+  };
+};
+
 export type NotificationEvent =
   | BookingRequestedEvent
   | BookingAcceptedEvent
@@ -81,7 +92,8 @@ export type NotificationEvent =
   | BookingCanceledEvent
   | CommuteCreatedEvent
   | CommuteUpdatedEvent
-  | CommuteCanceledEvent;
+  | CommuteCanceledEvent
+  | CommuteRequestedEvent;
 
 export interface NotificationChannel {
   name: string;

@@ -8,7 +8,9 @@
   "commute": {
     "created": "{{driver}} a créé un nouveau trajet {{commuteType}} le {{date}}.",
     "updated": "{{driverName}} a mis à jour le trajet {{commuteType}} du {{date}}.",
-    "canceled": "{{driverName}} a annulé le trajet {{commuteType}} du {{date}}."
+    "canceled": "{{driverName}} a annulé le trajet {{commuteType}} du {{date}}.",
+    "requested": "{{requester}} cherche un trajet le {{date}}. <{{link}}|Créer un trajet>",
+    "requestedWithLocation": "{{requester}} cherche un trajet vers {{locationName}} le {{date}}. <{{link}}|Créer un trajet>"
   },
   "commuteType": {
     "ROUND": "aller-retour",

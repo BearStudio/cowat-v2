@@ -8,7 +8,9 @@
   "commute": {
     "created": "{{driver}} created a new {{commuteType}} commute on {{date}}.",
     "updated": "{{driverName}} updated the {{commuteType}} commute on {{date}}.",
-    "canceled": "{{driverName}} canceled the {{commuteType}} commute on {{date}}."
+    "canceled": "{{driverName}} canceled the {{commuteType}} commute on {{date}}.",
+    "requested": "{{requester}} is looking for a commute on {{date}}. <{{link}}|Create one>",
+    "requestedWithLocation": "{{requester}} is looking for a commute to {{locationName}} on {{date}}. <{{link}}|Create one>"
   },
   "commuteType": {
     "ROUND": "round-trip",
