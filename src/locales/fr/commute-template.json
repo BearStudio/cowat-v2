@@ -24,6 +24,7 @@
     "roundTrip": "Aller-retour",
     "outwardTime": "Heure aller",
     "inwardTime": "Heure retour",
+    "autoComputedHint": "Cet horaire est calculé automatiquement",
     "comment": "Commentaire",
     "commentPlaceholder": "Commentaire optionnel...",
     "stops": "Arrêts",

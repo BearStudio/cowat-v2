@@ -212,6 +212,16 @@
       height: 100lvh; /* Force full height on iOS standalone */
     }
   }
+  input[type='time'] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type='time']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-inner-spin-button,
+  input[type='time']::-webkit-clear-button {
+    display: none;
+    -webkit-appearance: none;
+  }
 }
 
 @layer components {
