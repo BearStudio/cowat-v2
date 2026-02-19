@@ -18,7 +18,8 @@
     "seatCount": "{{available}}/{{total}} seats",
     "editAction": "Edit",
     "cancelAction": "Cancel",
-    "callDriver": "Call"
+    "callDriver": "Call",
+    "openCommuteView": "Open commute view"
   },
   "new": {
     "title": "New Commute",
@@ -28,6 +29,9 @@
     "title": "My templates",
     "emptyState": "Save time: create a template",
     "fromScratch": "Create from scratch"
+  },
+  "view": {
+    "title": "Commute view"
   },
   "form": {
     "date": "Date",

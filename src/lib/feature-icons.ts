@@ -1,6 +1,7 @@
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  EyeIcon,
   InboxIcon,
   MapPinIcon,
   Repeat,
@@ -12,6 +13,7 @@ export const featureIcons = {
   Locations: MapPinIcon,
   CommuteTemplates: RouteIcon,
   Commutes: IconCarDuotone,
+  CommuteView: EyeIcon,
   Bookings: InboxIcon,
 } as const;
 
