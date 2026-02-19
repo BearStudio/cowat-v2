@@ -8,8 +8,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { buttonVariants } from '@/components/ui/button';
 import {
   type FabVariantProps,
-  ResponsiveFab,
   fabVariants,
+  ResponsiveFab,
 } from '@/components/ui/floating-action-button';
 
 import { OrgLink } from '@/features/organization/org-link';

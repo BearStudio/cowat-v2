@@ -5,8 +5,8 @@ import { cn } from '@/lib/tailwind/utils';
 import { ButtonLink } from '@/components/ui/button-link';
 import {
   type FabVariantProps,
-  ResponsiveFab,
   fabVariants,
+  ResponsiveFab,
 } from '@/components/ui/floating-action-button';
 
 export const FloatingActionButtonLink = ({
