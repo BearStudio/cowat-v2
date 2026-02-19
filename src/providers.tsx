@@ -2,7 +2,7 @@ import { ThemeProvider } from 'next-themes';
 import type { ReactNode } from 'react';
 import '@/lib/dayjs/config';
 import '@/lib/i18n';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/public-sans';
 
 import { QueryClientProvider } from '@/lib/tanstack-query/provider';
 

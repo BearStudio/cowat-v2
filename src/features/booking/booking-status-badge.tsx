@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { UserBookingStatus } from '@/features/booking/status-colors';
 
-const bookingStatusBadgeVariants = cva('', {
+export const bookingStatusBadgeVariants = cva('', {
   variants: {
     status: {
       DRIVER: 'secondary',
@@ -38,7 +38,7 @@ export const BookingStatusBadge = ({
         }) as React.ComponentProps<typeof Badge>['variant']
       }
       className="uppercase"
-      size="sm"
+      size="xs"
     >
       {t(`booking:request.status.${status}`)}
     </Badge>

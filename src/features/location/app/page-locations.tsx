@@ -1,10 +1,11 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { ExternalLinkIcon, MapPinIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { ExternalLinkIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
@@ -109,7 +110,7 @@ export const PageLocations = () => {
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <MapPinIcon />
+                  <featureIcons.Locations />
                 </EmptyMedia>
                 <EmptyTitle>{t('location:list.emptyState')}</EmptyTitle>
               </EmptyHeader>

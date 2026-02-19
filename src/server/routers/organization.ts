@@ -394,6 +394,13 @@ export default {
         });
       }
 
+      // Prevent self-removal
+      if (input.memberIdOrEmail === context.user.id) {
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Cannot remove yourself from the organization',
+        });
+      }
+
       await auth.api.removeMember({
         headers: getRequestHeaders(),
         body: {
@@ -420,48 +427,32 @@ export default {
       });
     }),
 
-  leaveOrganization: organizationProcedure()
+  delete: protectedProcedure({
+    permission: { organization: ['delete'] },
+  })
     .route({
       method: 'POST',
-      path: '/organizations/leave',
+      path: '/organizations/delete',
       tags,
     })
+    .input(z.object({ organizationId: z.string() }))
     .output(z.void())
-    .handler(async ({ context }) => {
-      // Prevent the last owner from leaving
-      const membership = await context.db.member.findFirst({
-        where: {
-          userId: context.user.id,
-          organizationId: context.organizationId,
-        },
+    .handler(async ({ context, input }) => {
+      const org = await context.db.organization.findUnique({
+        where: { id: input.organizationId },
       });
 
-      if (!membership) {
+      if (!org) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (membership.role === 'owner') {
-        const ownerCount = await context.db.member.count({
-          where: {
-            organizationId: context.organizationId,
-            role: 'owner',
-          },
-        });
-
-        if (ownerCount <= 1) {
-          throw new ORPCError('BAD_REQUEST', {
-            message:
-              'Cannot leave organization as the last owner. Transfer ownership first.',
-          });
-        }
-      }
-
-      await auth.api.removeMember({
-        headers: getRequestHeaders(),
-        body: {
-          memberIdOrEmail: context.user.id,
-          organizationId: context.organizationId,
-        },
+      await context.db.organization.delete({
+        where: { id: input.organizationId },
       });
+
+      context.logger.info(
+        { organizationId: input.organizationId },
+        'Organization deleted'
+      );
     }),
 };

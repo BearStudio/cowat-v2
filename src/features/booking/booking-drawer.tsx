@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -24,7 +25,8 @@ import {
   ResponsiveDrawerTitle,
 } from '@/components/ui/responsive-drawer';
 
-import { zTripType } from '@/features/booking/schema';
+import { type TripType, zTripType } from '@/features/booking/schema';
+import { type CommuteType } from '@/features/commute/schema';
 
 const zBookingForm = () =>
   z.object({
@@ -34,19 +36,79 @@ const zBookingForm = () =>
 
 type BookingForm = z.infer<ReturnType<typeof zBookingForm>>;
 
-export const BookingDrawer = (props: {
-  stopId: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+const useBookingForm = ({
+  commuteType,
+  isFirstStop,
+  isLastStop,
+}: {
+  commuteType: CommuteType;
+  isFirstStop: boolean;
+  isLastStop: boolean;
 }) => {
   const { t } = useTranslation(['dashboard']);
+
+  const allowOneway = !isLastStop;
+  const allowReturn = commuteType === 'ROUND' && !isFirstStop;
+  const allowRound = commuteType === 'ROUND' && !isLastStop;
+
+  const tripTypeOptions = [
+    ...(allowRound
+      ? [
+          {
+            value: 'ROUND',
+            label: t('dashboard:booking.tripTypeOptions.ROUND'),
+          },
+        ]
+      : []),
+    ...(allowOneway
+      ? [
+          {
+            value: 'ONEWAY',
+            label: t('dashboard:booking.tripTypeOptions.ONEWAY'),
+          },
+        ]
+      : []),
+    ...(allowReturn
+      ? [
+          {
+            value: 'RETURN',
+            label: t('dashboard:booking.tripTypeOptions.RETURN'),
+          },
+        ]
+      : []),
+  ];
+
+  const defaultTripType: TripType =
+    (tripTypeOptions[0]?.value as TripType) ?? 'ONEWAY';
 
   const form = useForm<BookingForm>({
     resolver: zodResolver(zBookingForm()),
     defaultValues: {
-      tripType: 'ROUND',
+      tripType: defaultTripType,
       comment: null,
     },
+  });
+
+  useEffect(() => {
+    form.reset({ tripType: defaultTripType, comment: null });
+  }, [defaultTripType, form]);
+
+  return { form, tripTypeOptions };
+};
+
+export const BookingDrawer = (props: {
+  stopId: string;
+  commuteType: CommuteType;
+  isFirstStop: boolean;
+  isLastStop: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => {
+  const { t } = useTranslation(['dashboard']);
+  const { form, tripTypeOptions } = useBookingForm({
+    commuteType: props.commuteType,
+    isFirstStop: props.isFirstStop,
+    isLastStop: props.isLastStop,
   });
 
   const bookingRequest = useMutation(
@@ -99,30 +161,19 @@ export const BookingDrawer = (props: {
             </ResponsiveDrawerDescription>
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody className="flex flex-col gap-4">
-            <FormField>
-              <FormFieldLabel required>
-                {t('dashboard:booking.tripType')}
-              </FormFieldLabel>
-              <FormFieldController
-                control={form.control}
-                type="radio-group"
-                name="tripType"
-                options={[
-                  {
-                    value: 'ROUND',
-                    label: t('dashboard:booking.tripTypeOptions.ROUND'),
-                  },
-                  {
-                    value: 'ONEWAY',
-                    label: t('dashboard:booking.tripTypeOptions.ONEWAY'),
-                  },
-                  {
-                    value: 'RETURN',
-                    label: t('dashboard:booking.tripTypeOptions.RETURN'),
-                  },
-                ]}
-              />
-            </FormField>
+            {tripTypeOptions.length > 1 && (
+              <FormField>
+                <FormFieldLabel required>
+                  {t('dashboard:booking.tripType')}
+                </FormFieldLabel>
+                <FormFieldController
+                  control={form.control}
+                  type="radio-group"
+                  name="tripType"
+                  options={tripTypeOptions}
+                />
+              </FormField>
+            )}
             <FormField>
               <FormFieldLabel>{t('dashboard:booking.comment')}</FormFieldLabel>
               <FormFieldController

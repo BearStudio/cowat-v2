@@ -5,7 +5,7 @@
 
 @theme {
   --font-sans:
-    'Inter Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Public Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --color-*: initial;
   --color-white: #fff;
@@ -211,6 +211,16 @@
     @media all and (display-mode: standalone) {
       height: 100lvh; /* Force full height on iOS standalone */
     }
+  }
+  input[type='time'] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type='time']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-inner-spin-button,
+  input[type='time']::-webkit-clear-button {
+    display: none;
+    -webkit-appearance: none;
   }
 }
 

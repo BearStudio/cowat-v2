@@ -1,10 +1,7 @@
-import {
-  ChevronRightIcon,
-  MapPinIcon,
-  RepeatIcon,
-  SettingsIcon,
-} from 'lucide-react';
+import { ChevronRightIcon, SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
+import { featureIcons } from '@/lib/feature-icons';
 
 import { Button } from '@/components/ui/button';
 
@@ -87,7 +84,7 @@ export const PageAccount = () => {
               to="/app/$orgSlug/account/locations"
               className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
             >
-              <MapPinIcon className="size-5 text-muted-foreground" />
+              <featureIcons.Locations className="size-5 text-muted-foreground" />
               <span className="flex-1">{t('account:locationsLink')}</span>
               <ChevronRightIcon className="size-4 text-muted-foreground" />
             </OrgLink>
@@ -95,7 +92,7 @@ export const PageAccount = () => {
               to="/app/$orgSlug/account/commute-templates"
               className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
             >
-              <RepeatIcon className="size-5 text-muted-foreground" />
+              <featureIcons.CommuteTemplates className="size-5 text-muted-foreground" />
               <span className="flex-1">
                 {t('account:commuteTemplatesLink')}
               </span>

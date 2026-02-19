@@ -1,10 +1,11 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { PlusIcon, RepeatIcon, Trash2 } from 'lucide-react';
+import { PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
@@ -95,7 +96,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <RepeatIcon />
+                  <featureIcons.CommuteTemplates />
                 </EmptyMedia>
                 <EmptyTitle>{t('commuteTemplate:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
@@ -151,7 +152,14 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                           {item.comment}
                         </p>
                       )}
-                      <CardCommuteStopsList stops={item.stops} />
+                      {/* Templates don't have passengers, so we pass them as empty */}
+                      <CardCommuteStopsList
+                        stops={item.stops.map((stop) => ({
+                          ...stop,
+                          commuteId: '',
+                          passengers: [],
+                        }))}
+                      />
                     </div>
                   </CardContent>
                 </Card>

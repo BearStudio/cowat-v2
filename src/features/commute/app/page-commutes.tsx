@@ -1,9 +1,10 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { CarIcon, MapPinIcon, PlusIcon, RepeatIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,6 @@ import {
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
-import { CardCommutePassengersList } from '@/features/commute/card-commute-passengers-list';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
@@ -90,7 +90,7 @@ export const PageCommutes = () => {
               size="sm"
               to="/app/$orgSlug/account/locations"
             >
-              <MapPinIcon />
+              <featureIcons.Locations />
             </OrgResponsiveIconButtonLink>
             <OrgResponsiveIconButtonLink
               label={t('commuteTemplate:list.title')}
@@ -98,7 +98,7 @@ export const PageCommutes = () => {
               size="sm"
               to="/app/$orgSlug/account/commute-templates"
             >
-              <RepeatIcon />
+              <featureIcons.CommuteTemplates />
             </OrgResponsiveIconButtonLink>
             <OrgResponsiveIconButtonLink
               label={t('commute:list.newAction')}
@@ -123,7 +123,7 @@ export const PageCommutes = () => {
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <CarIcon />
+                  <featureIcons.Commutes />
                 </EmptyMedia>
                 <EmptyTitle>{t('commute:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
@@ -155,6 +155,7 @@ export const PageCommutes = () => {
                             ? item.seats - inwardPassengers.size
                             : undefined
                         }
+                        passengers={[...acceptedPassengers.values()]}
                         badge={<BookingStatusBadge status={bookingStatus} />}
                       />
                     </CardCommuteTrigger>
@@ -166,9 +167,6 @@ export const PageCommutes = () => {
                           </p>
                         )}
                         <CardCommuteStopsList stops={item.stops} />
-                        <CardCommutePassengersList
-                          passengers={[...acceptedPassengers.values()]}
-                        />
                         <CardCommuteActions
                           isDriver={isDriver}
                           driverPhone={item.driver.phone}

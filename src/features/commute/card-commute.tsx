@@ -1,11 +1,17 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import dayjs from 'dayjs';
 import { ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { formatDate } from '@/lib/dayjs/formats';
 import { cn } from '@/lib/tailwind/utils';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -88,6 +94,7 @@ function CardCommuteTrigger({
   return (
     <CollapsibleTrigger
       data-slot="card-commute-trigger"
+      nativeButton={false}
       render={<CardHeader />}
       className={cn(
         'cursor-pointer [&[data-panel-open]_.chevron-icon]:rotate-180',
@@ -124,9 +131,12 @@ type CardCommuteHeaderProps = {
   totalSeats: number;
   outwardAvailable: number;
   inwardAvailable?: number;
+  passengers?: Array<{ name?: string | null; image?: string | null }>;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
 };
+
+const MAX_VISIBLE_PASSENGERS = 4;
 
 function CardCommuteHeader({
   driver,
@@ -135,6 +145,7 @@ function CardCommuteHeader({
   totalSeats,
   outwardAvailable,
   inwardAvailable,
+  passengers,
   badge,
   actions,
 }: CardCommuteHeaderProps) {
@@ -151,18 +162,14 @@ function CardCommuteHeader({
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
         <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <CardTitle className="capitalize">
-              {dayjs(date).format('dddd DD/MM')}
-            </CardTitle>
-            <Badge variant="secondary" size="sm">
-              {t(`commute:list.type.${type}`)}
-            </Badge>
-          </div>
+          <CardTitle className="capitalize">
+            {formatDate(date, 'commute:dayHeader')}
+          </CardTitle>
+
           <CardDescription>{driver.name}</CardDescription>
         </div>
       </div>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="col-span-full flex items-center gap-2 text-sm text-muted-foreground">
         {type === 'ROUND' ? (
           <>
             <span className="flex items-center gap-0.5">
@@ -177,12 +184,32 @@ function CardCommuteHeader({
         ) : (
           <span>{seatLabel(outwardAvailable)}</span>
         )}
+        <Badge variant="secondary" size="sm">
+          {t(`commute:list.type.${type}`)}
+        </Badge>
       </div>
       <CardAction>
-        <div className="flex items-center gap-1">
-          {badge}
-          {actions}
-          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-1">
+            {badge}
+            {actions}
+            <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
+          </div>
+          {!!passengers?.length && (
+            <AvatarGroup>
+              {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
+                <Avatar key={p.name} size="sm">
+                  <AvatarImage src={p.image ?? undefined} />
+                  <AvatarFallback variant="boring" name={p.name ?? '?'} />
+                </Avatar>
+              ))}
+              {passengers.length > MAX_VISIBLE_PASSENGERS && (
+                <AvatarGroupCount>
+                  +{passengers.length - MAX_VISIBLE_PASSENGERS}
+                </AvatarGroupCount>
+              )}
+            </AvatarGroup>
+          )}
         </div>
       </CardAction>
     </>
