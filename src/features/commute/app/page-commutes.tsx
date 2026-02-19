@@ -30,7 +30,7 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
+import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -132,11 +132,8 @@ export const PageCommutes = () => {
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => {
-                const {
-                  outwardPassengers,
-                  inwardPassengers,
-                  acceptedPassengers,
-                } = getCommutePassengerStats(item);
+                const { outwardCount, inwardCount, acceptedPassengers } =
+                  getCommutePassengerStats(item);
                 const currentUserId = session.data?.user.id ?? '';
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
@@ -149,10 +146,10 @@ export const PageCommutes = () => {
                         date={item.date}
                         type={item.type}
                         totalSeats={item.seats}
-                        outwardAvailable={item.seats - outwardPassengers.size}
+                        outwardAvailable={item.seats - outwardCount}
                         inwardAvailable={
                           item.type === 'ROUND'
-                            ? item.seats - inwardPassengers.size
+                            ? item.seats - inwardCount
                             : undefined
                         }
                         outwardDeparture={item.stops.at(0)?.outwardTime}
