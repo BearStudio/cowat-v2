@@ -1,16 +1,18 @@
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  CarIcon,
+  InboxIcon,
   MapPinIcon,
   Repeat,
   RouteIcon,
 } from 'lucide-react';
 
+import { IconCarDuotone } from '@/components/icons/generated';
 export const featureIcons = {
   Locations: MapPinIcon,
   CommuteTemplates: RouteIcon,
-  Commutes: CarIcon,
+  Commutes: IconCarDuotone,
+  Bookings: InboxIcon,
 } as const;
 
 export const tripTypeIcons = {

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -31,7 +32,10 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
+import {
+  OrgButtonLink,
+  OrgResponsiveIconButtonLink,
+} from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -127,6 +131,16 @@ export const PageCommutes = () => {
                 </EmptyMedia>
                 <EmptyTitle>{t('commute:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
+              <EmptyContent>
+                <OrgButtonLink
+                  variant="secondary"
+                  size="sm"
+                  to="/app/$orgSlug/commutes/new"
+                >
+                  <PlusIcon />
+                  {t('commute:list.newAction')}
+                </OrgButtonLink>
+              </EmptyContent>
             </Empty>
           ))
           .match('default', ({ items }) => (
