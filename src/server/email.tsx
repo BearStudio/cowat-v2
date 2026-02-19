@@ -7,8 +7,18 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import { envServer } from '@/env/server';
 
-// eslint-disable-next-line sonarjs/no-clear-text-protocols
-const transport = nodemailer.createTransport(envServer.EMAIL_SERVER);
+const transport = envServer.RESEND_API_KEY
+  ? nodemailer.createTransport({
+      host: 'smtp.resend.com',
+      secure: true,
+      port: 465,
+      auth: {
+        user: 'resend',
+        pass: envServer.RESEND_API_KEY,
+      },
+    })
+  : // eslint-disable-next-line sonarjs/no-clear-text-protocols
+    nodemailer.createTransport(envServer.EMAIL_SERVER);
 
 export const sendEmail = async ({
   template,
