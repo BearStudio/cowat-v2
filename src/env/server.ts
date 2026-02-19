@@ -27,8 +27,9 @@ export const envServer = createEnv({
     SLACK_DEFAULT_CHANNEL: zOptionalWithReplaceMe(),
     SLACK_LOCALE: z.enum(['en', 'fr']).default('en'),
 
-    EMAIL_SERVER: z.url(),
+    EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
     EMAIL_FROM: z.string(),
+    RESEND_API_KEY: zOptionalWithReplaceMe(),
 
     LOGGER_LEVEL: z
       .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
