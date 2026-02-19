@@ -1,10 +1,9 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
-
-import { featureIcons } from '@/lib/feature-icons';
 import { useTranslation } from 'react-i18next';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import {
