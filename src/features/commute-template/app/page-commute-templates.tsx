@@ -5,6 +5,7 @@ import { PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { BackButton } from '@/components/back-button';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
@@ -17,6 +18,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -25,7 +27,10 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
-import { OrgResponsiveIconButtonLink } from '@/features/organization/org-button-link';
+import {
+  OrgButtonLink,
+  OrgResponsiveIconButtonLink,
+} from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -71,6 +76,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   return (
     <PageLayout>
       <PageLayoutTopBar
+        startActions={<BackButton />}
         endActions={
           <OrgResponsiveIconButtonLink
             label={t('commuteTemplate:list.newAction')}
@@ -100,6 +106,16 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                 </EmptyMedia>
                 <EmptyTitle>{t('commuteTemplate:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
+              <EmptyContent>
+                <OrgButtonLink
+                  variant="secondary"
+                  size="sm"
+                  to="/app/$orgSlug/account/commute-templates/new"
+                >
+                  <PlusIcon />
+                  {t('commuteTemplate:list.newAction')}
+                </OrgButtonLink>
+              </EmptyContent>
             </Empty>
           ))
           .match('default', ({ items }) => (

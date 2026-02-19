@@ -1,8 +1,8 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { InboxIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
@@ -64,7 +64,7 @@ export const PageRequests = () => {
             <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
-                  <InboxIcon />
+                  <featureIcons.Bookings />
                 </EmptyMedia>
                 <EmptyTitle>{t('booking:requests.emptyState')}</EmptyTitle>
               </EmptyHeader>

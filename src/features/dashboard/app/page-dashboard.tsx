@@ -1,7 +1,9 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { CalendarIcon, PlusIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
+
+import { featureIcons } from '@/lib/feature-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -15,6 +17,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -153,15 +156,26 @@ export const PageDashboard = () => {
                     </div>
 
                     {dayCommutes.length === 0 ? (
-                      <Empty className="p-6">
+                      <Empty className="border p-4">
                         <EmptyHeader>
                           <EmptyMedia variant="icon">
-                            <CalendarIcon />
+                            <featureIcons.Commutes />
                           </EmptyMedia>
                           <EmptyTitle className="text-sm">
                             {t('dashboard:noCommutesForDay')}
                           </EmptyTitle>
                         </EmptyHeader>
+                        <EmptyContent>
+                          <OrgButtonLink
+                            to="/app/$orgSlug/commutes/new"
+                            search={{ date: day.toDate() }}
+                            variant="secondary"
+                            size="sm"
+                          >
+                            <PlusIcon />
+                            {t('dashboard:newCommuteAction')}
+                          </OrgButtonLink>
+                        </EmptyContent>
                       </Empty>
                     ) : (
                       <div className="flex flex-col gap-3">

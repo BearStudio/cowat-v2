@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { BackButton } from '@/components/back-button';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -85,6 +87,7 @@ export const PageLocations = () => {
   return (
     <PageLayout>
       <PageLayoutTopBar
+        startActions={<BackButton />}
         endActions={
           <ResponsiveIconButton
             label={t('location:list.newAction')}
@@ -114,6 +117,16 @@ export const PageLocations = () => {
                 </EmptyMedia>
                 <EmptyTitle>{t('location:list.emptyState')}</EmptyTitle>
               </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={openCreateDrawer}
+                >
+                  <PlusIcon />
+                  {t('location:list.newAction')}
+                </Button>
+              </EmptyContent>
             </Empty>
           ))
           .match('default', ({ items }) => (
