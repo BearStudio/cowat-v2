@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Empty,
   EmptyContent,
@@ -15,8 +16,9 @@ import {
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import type { FormFieldsCommute } from '@/features/commute/schema';
-import { CommuteTemplateSummary } from '@/features/commute-template/commute-template-summary';
+import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
 import { OrgButtonLink } from '@/features/organization/org-button-link';
 
 type TemplateData = Pick<
@@ -95,23 +97,38 @@ export const TemplatePicker = ({
           </Empty>
         ))
         .match('default', ({ items }) => (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="flex flex-col gap-3">
             {items.map((item) => (
-              <button
+              <Card
                 key={item.id}
-                type="button"
+                className="cursor-pointer"
                 onClick={() => handleSelect(item)}
-                className="flex cursor-pointer flex-col items-start gap-1 rounded-lg border p-3 text-left text-sm transition-colors hover:bg-muted/50"
               >
-                <span className="font-medium">{item.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  <CommuteTemplateSummary
+                <CardHeader>
+                  <CardCommuteTemplateHeader
+                    name={item.name}
                     type={item.type}
                     stopsCount={item.stops.length}
                     seats={item.seats}
                   />
-                </span>
-              </button>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col gap-2">
+                    {item.comment && (
+                      <p className="text-sm text-muted-foreground">
+                        {item.comment}
+                      </p>
+                    )}
+                    <CardCommuteStopsList
+                      stops={item.stops.map((stop) => ({
+                        ...stop,
+                        commuteId: '',
+                        passengers: [],
+                      }))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         ))
