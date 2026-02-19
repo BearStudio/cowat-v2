@@ -16,6 +16,7 @@
     "comment": "Comment",
     "commentPlaceholder": "Optional comment...",
     "submitButton": "Book",
+    "fullWarning": "This commute is full",
     "successMessage": "Booking request sent",
     "autoAcceptedMessage": "Booking confirmed",
     "errorMessage": "Failed to send booking request. Please try again."

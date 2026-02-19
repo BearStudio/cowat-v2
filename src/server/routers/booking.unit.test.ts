@@ -36,10 +36,12 @@ const mockBookingWithStop = {
     },
   },
   stop: {
+    commuteId: 'commute-1',
     commute: {
       driverMemberId: mockMemberId,
       date: now,
       type: 'ROUND' as const,
+      seats: 4,
     },
   },
 };
@@ -113,6 +115,7 @@ describe('booking router', () => {
         commute: {
           driverMemberId: 'driver-member-1',
           type: 'ROUND',
+          seats: 4,
           stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
@@ -127,6 +130,7 @@ describe('booking router', () => {
         },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
 
       const result = await call(bookingRouter.request, requestInput);
@@ -163,6 +167,7 @@ describe('booking router', () => {
         commute: {
           driverMemberId: 'driver-member-1',
           type: 'ROUND',
+          seats: 4,
           stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
@@ -177,6 +182,7 @@ describe('booking router', () => {
         },
       });
       mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.passengersOnStops.upsert.mockResolvedValue(autoAcceptedBooking);
 
       const result = await call(bookingRouter.request, requestInput);
@@ -219,6 +225,7 @@ describe('booking router', () => {
         commute: {
           driverMemberId: 'driver-member-1',
           type: 'ROUND',
+          seats: 4,
           stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
@@ -245,6 +252,99 @@ describe('booking router', () => {
         code: 'UNAUTHORIZED',
       });
     });
+
+    it('should throw CONFLICT when commute outward seats are full', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
+        commuteId: 'commute-1',
+        commute: {
+          driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          seats: 1,
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
+          driver: {
+            organizationId: mockOrganizationId,
+            autoAccept: false,
+            notificationPreferences: [],
+          },
+        },
+      });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        { passengerMemberId: 'other-member', tripType: 'ONEWAY' },
+      ]);
+
+      await expect(
+        call(bookingRouter.request, {
+          ...requestInput,
+          tripType: 'ONEWAY',
+        })
+      ).rejects.toMatchObject({
+        code: 'CONFLICT',
+        message: 'This commute is full',
+      });
+    });
+
+    it('should throw CONFLICT when commute inward seats are full', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
+        commuteId: 'commute-1',
+        commute: {
+          driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          seats: 1,
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
+          driver: {
+            organizationId: mockOrganizationId,
+            autoAccept: false,
+            notificationPreferences: [],
+          },
+        },
+      });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        { passengerMemberId: 'other-member', tripType: 'RETURN' },
+      ]);
+
+      await expect(
+        call(bookingRouter.request, {
+          ...requestInput,
+          tripType: 'RETURN',
+        })
+      ).rejects.toMatchObject({
+        code: 'CONFLICT',
+        message: 'This commute is full',
+      });
+    });
+
+    it('should throw CONFLICT when commute is fully booked for ROUND trip', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
+        commuteId: 'commute-1',
+        commute: {
+          driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          seats: 1,
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
+          driver: {
+            organizationId: mockOrganizationId,
+            autoAccept: false,
+            notificationPreferences: [],
+          },
+        },
+      });
+      mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        { passengerMemberId: 'other-member', tripType: 'ROUND' },
+      ]);
+
+      await expect(
+        call(bookingRouter.request, requestInput)
+      ).rejects.toMatchObject({
+        code: 'CONFLICT',
+        message: 'This commute is full',
+      });
+    });
   });
 
   describe('accept', () => {
@@ -254,6 +354,7 @@ describe('booking router', () => {
       mockDb.passengersOnStops.findUnique.mockResolvedValue(
         mockBookingWithStop
       );
+      mockDb.passengersOnStops.findMany.mockResolvedValue([]);
       mockDb.passengersOnStops.update.mockResolvedValue(undefined);
 
       await expect(
@@ -309,6 +410,31 @@ describe('booking router', () => {
         });
       }
     );
+
+    it('should throw CONFLICT when accepting would exceed seat capacity', async () => {
+      mockDb.passengersOnStops.findUnique.mockResolvedValue({
+        ...mockBookingWithStop,
+        stop: {
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: mockMemberId,
+            date: now,
+            type: 'ROUND' as const,
+            seats: 1,
+          },
+        },
+      });
+      mockDb.passengersOnStops.findMany.mockResolvedValue([
+        { passengerMemberId: 'other-member', tripType: 'ROUND' },
+      ]);
+
+      await expect(
+        call(bookingRouter.accept, acceptInput)
+      ).rejects.toMatchObject({
+        code: 'CONFLICT',
+        message: 'This commute is full',
+      });
+    });
   });
 
   describe('refuse', () => {

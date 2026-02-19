@@ -16,6 +16,7 @@
     "comment": "Commentaire",
     "commentPlaceholder": "Commentaire optionnel...",
     "submitButton": "Réserver",
+    "fullWarning": "Ce trajet est complet",
     "successMessage": "Demande de réservation envoyée",
     "autoAcceptedMessage": "Réservation confirmée",
     "errorMessage": "Échec de l'envoi de la demande de réservation. Veuillez réessayer."

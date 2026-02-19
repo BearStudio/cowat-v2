@@ -1,4 +1,5 @@
 import { UseMutationResult } from '@tanstack/react-query';
+import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
+import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
@@ -38,7 +39,7 @@ export const DashboardCommuteCard = ({
 }: DashboardCommuteCardProps) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
 
-  const { outwardPassengers, inwardPassengers, acceptedPassengers } =
+  const { outwardCount, inwardCount, acceptedPassengers } =
     getCommutePassengerStats(commute);
 
   const stopOrders = commute.stops.map((s) => s.order);
@@ -56,6 +57,11 @@ export const DashboardCommuteCard = ({
     )
   );
 
+  const outwardFull = outwardCount >= commute.seats;
+  const inwardFull = inwardCount >= commute.seats;
+  const isFull =
+    commute.type === 'ROUND' ? outwardFull && inwardFull : outwardFull;
+
   return (
     <CardCommute bookingStatus={bookingStatus}>
       <CardCommuteTrigger>
@@ -64,11 +70,9 @@ export const DashboardCommuteCard = ({
           date={commute.date}
           type={commute.type}
           totalSeats={commute.seats}
-          outwardAvailable={commute.seats - outwardPassengers.size}
+          outwardAvailable={commute.seats - outwardCount}
           inwardAvailable={
-            commute.type === 'ROUND'
-              ? commute.seats - inwardPassengers.size
-              : undefined
+            commute.type === 'ROUND' ? commute.seats - inwardCount : undefined
           }
           outwardDeparture={commute.stops.at(0)?.outwardTime}
           inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
@@ -80,6 +84,12 @@ export const DashboardCommuteCard = ({
         <div className="flex flex-col gap-2">
           {commute.comment && (
             <p className="text-sm text-muted-foreground">{commute.comment}</p>
+          )}
+          {isFull && !isDriver && (
+            <p className="flex items-center gap-1 text-sm text-warning-600 dark:text-warning-400">
+              <AlertTriangleIcon size="1em" className="flex-none" />
+              {t('dashboard:booking.fullWarning')}
+            </p>
           )}
           <CardCommuteStopsList
             stops={commute.stops}
@@ -110,6 +120,7 @@ export const DashboardCommuteCard = ({
                 );
               }
               if (hasBookingOnCommute) return null;
+              if (isFull) return null;
               return (
                 <Button
                   variant="secondary"

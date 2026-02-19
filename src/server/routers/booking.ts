@@ -7,6 +7,10 @@ import {
   zBookingRequest,
 } from '@/features/booking/schema';
 import { validateStatusTransition } from '@/features/booking/status-machine';
+import {
+  countPassengersByDirection,
+  isTripTypeFull,
+} from '@/features/commute/commute-passenger-rules';
 import { Prisma } from '@/server/db/generated/client';
 import { organizationProcedure } from '@/server/orpc';
 
@@ -37,6 +41,7 @@ export default {
               driverMemberId: true,
               date: true,
               type: true,
+              seats: true,
               stops: { select: { order: true } },
               driver: {
                 select: {
@@ -95,6 +100,28 @@ export default {
       if (existingBooking) {
         throw new ORPCError('CONFLICT', {
           message: 'You already have a booking on this commute',
+        });
+      }
+
+      // Check seat capacity
+      const acceptedBookings = await context.db.passengersOnStops.findMany({
+        where: {
+          status: 'ACCEPTED',
+          stop: { commuteId: stop.commuteId },
+        },
+        select: { passengerMemberId: true, tripType: true },
+      });
+
+      const counts = countPassengersByDirection(
+        acceptedBookings.map((p) => ({
+          passengerId: p.passengerMemberId,
+          tripType: p.tripType,
+        }))
+      );
+
+      if (isTripTypeFull(input.tripType, stop.commute.seats, counts)) {
+        throw new ORPCError('CONFLICT', {
+          message: 'This commute is full',
         });
       }
 
@@ -186,6 +213,30 @@ export default {
       }
 
       validateStatusTransition(booking.status, 'ACCEPTED');
+
+      // Check seat capacity before accepting
+      const acceptedBookings = await context.db.passengersOnStops.findMany({
+        where: {
+          status: 'ACCEPTED',
+          stop: { commuteId: booking.stop.commuteId },
+        },
+        select: { passengerMemberId: true, tripType: true },
+      });
+
+      const counts = countPassengersByDirection(
+        acceptedBookings.map((p) => ({
+          passengerId: p.passengerMemberId,
+          tripType: p.tripType,
+        }))
+      );
+
+      if (
+        isTripTypeFull(booking.tripType, booking.stop.commute.seats, counts)
+      ) {
+        throw new ORPCError('CONFLICT', {
+          message: 'This commute is full',
+        });
+      }
 
       await context.db.passengersOnStops.update({
         where: { id: input.id },
