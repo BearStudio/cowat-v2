@@ -197,8 +197,8 @@ function CardCommuteHeader({
           </div>
           {!!passengers?.length && (
             <AvatarGroup>
-              {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p, i) => (
-                <Avatar key={i} size="sm">
+              {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
+                <Avatar key={p.name} size="sm">
                   <AvatarImage src={p.image ?? undefined} />
                   <AvatarFallback variant="boring" name={p.name ?? '?'} />
                 </Avatar>
