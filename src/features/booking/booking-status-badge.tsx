@@ -38,7 +38,7 @@ export const BookingStatusBadge = ({
         }) as React.ComponentProps<typeof Badge>['variant']
       }
       className="uppercase"
-      size="xs"
+      size="sm"
     >
       {t(`booking:request.status.${status}`)}
     </Badge>

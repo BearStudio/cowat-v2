@@ -26,6 +26,8 @@ export const Default = () => {
           totalSeats={4}
           outwardAvailable={2}
           inwardAvailable={3}
+          outwardDeparture="08:00"
+          inwardDeparture="17:30"
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
@@ -64,6 +66,8 @@ export const LeftBorderByStatus = () => {
             totalSeats={4}
             outwardAvailable={3}
             inwardAvailable={4}
+            outwardDeparture="07:45"
+            inwardDeparture="18:00"
             badge={<BookingStatusBadge status="DRIVER" />}
           />
         </CardCommuteTrigger>
@@ -80,6 +84,8 @@ export const LeftBorderByStatus = () => {
             totalSeats={4}
             outwardAvailable={3}
             inwardAvailable={3}
+            outwardDeparture="08:00"
+            inwardDeparture="17:30"
             badge={<BookingStatusBadge status="REQUESTED" />}
           />
         </CardCommuteTrigger>
@@ -95,6 +101,7 @@ export const LeftBorderByStatus = () => {
             type="ONEWAY"
             totalSeats={3}
             outwardAvailable={1}
+            outwardDeparture="08:15"
             badge={<BookingStatusBadge status="ACCEPTED" />}
           />
         </CardCommuteTrigger>
@@ -128,6 +135,7 @@ export const LeftBorderByStatus = () => {
             type="ONEWAY"
             totalSeats={2}
             outwardAvailable={0}
+            outwardDeparture="09:00"
             badge={<BookingStatusBadge status="CANCELED" />}
           />
         </CardCommuteTrigger>
@@ -161,6 +169,8 @@ export const WithManyPassengers = () => {
             totalSeats={8}
             outwardAvailable={1}
             inwardAvailable={2}
+            outwardDeparture="07:30"
+            inwardDeparture="18:00"
             passengers={passengers}
             badge={<BookingStatusBadge status="DRIVER" />}
           />
@@ -179,6 +189,7 @@ export const WithManyPassengers = () => {
             type="ONEWAY"
             totalSeats={4}
             outwardAvailable={1}
+            outwardDeparture="08:15"
             passengers={passengers.slice(0, 3)}
             badge={<BookingStatusBadge status="ACCEPTED" />}
           />
@@ -198,6 +209,8 @@ export const WithManyPassengers = () => {
             totalSeats={2}
             outwardAvailable={1}
             inwardAvailable={1}
+            outwardDeparture="08:00"
+            inwardDeparture="17:30"
             passengers={passengers.slice(0, 1)}
             badge={<BookingStatusBadge status="REQUESTED" />}
           />
@@ -221,6 +234,8 @@ export const WithActions = () => {
           totalSeats={4}
           outwardAvailable={2}
           inwardAvailable={3}
+          outwardDeparture="08:00"
+          inwardDeparture="17:30"
           actions={
             <div onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon-sm">

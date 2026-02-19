@@ -15,10 +15,7 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passengers';
-import {
-  CommuteEnriched,
-  type CommuteType,
-} from '@/features/commute/schema';
+import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
@@ -73,6 +70,8 @@ export const DashboardCommuteCard = ({
               ? commute.seats - inwardPassengers.size
               : undefined
           }
+          outwardDeparture={commute.stops.at(0)?.outwardTime}
+          inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
           passengers={[...acceptedPassengers.values()]}
           badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
         />
