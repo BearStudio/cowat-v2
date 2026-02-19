@@ -6,6 +6,11 @@ import { cn } from '@/lib/tailwind/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 import { buttonVariants } from '@/components/ui/button';
+import {
+  type FabVariantProps,
+  ResponsiveFab,
+  fabVariants,
+} from '@/components/ui/floating-action-button';
 
 import { OrgLink } from '@/features/organization/org-link';
 
@@ -66,4 +71,51 @@ function OrgResponsiveIconButtonLink({
   );
 }
 
-export { OrgButtonLink, OrgResponsiveIconButtonLink };
+type OrgFloatingActionButtonLinkProps = Omit<
+  OrgButtonLinkProps,
+  'size' | 'children'
+> & {
+  children?: ReactNode;
+  label: ReactNode;
+  size?: 'xs' | 'sm' | 'default' | 'lg';
+  fabSize?: FabVariantProps['size'];
+  breakpoint?: number;
+};
+
+function OrgFloatingActionButtonLink({
+  label,
+  size = 'sm',
+  fabSize,
+  breakpoint,
+  children,
+  className,
+  ...props
+}: OrgFloatingActionButtonLinkProps) {
+  return (
+    <ResponsiveFab
+      breakpoint={breakpoint}
+      desktop={
+        <OrgButtonLink size={size} className={className} {...props}>
+          {children}
+          {label}
+        </OrgButtonLink>
+      }
+      mobile={
+        <OrgButtonLink
+          size="icon"
+          className={cn(fabVariants({ size: fabSize }), className)}
+          {...props}
+        >
+          {children}
+          <span className="sr-only">{label}</span>
+        </OrgButtonLink>
+      }
+    />
+  );
+}
+
+export {
+  OrgButtonLink,
+  OrgFloatingActionButtonLink,
+  OrgResponsiveIconButtonLink,
+};

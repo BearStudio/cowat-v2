@@ -28,7 +28,7 @@ import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import {
   OrgButtonLink,
-  OrgResponsiveIconButtonLink,
+  OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
 import { OrgLink } from '@/features/organization/org-link';
 import {
@@ -109,14 +109,14 @@ export const PageDashboard = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgResponsiveIconButtonLink
+          <OrgFloatingActionButtonLink
             label={t('dashboard:newCommuteAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
           >
             <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          </OrgFloatingActionButtonLink>
         }
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>

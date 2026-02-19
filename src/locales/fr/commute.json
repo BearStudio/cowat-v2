@@ -19,7 +19,12 @@
     "editAction": "Modifier",
     "cancelAction": "Annuler",
     "callDriver": "Appeler",
-    "openCommuteView": "Ouvrir la vue trajet"
+    "openCommuteView": "Ouvrir la vue trajet",
+    "speedDial": {
+      "myLocations": "Mes Lieux",
+      "myCommutes": "Mes Trajets",
+      "createCommute": "Créer un Trajet"
+    }
   },
   "new": {
     "title": "Nouveau trajet",

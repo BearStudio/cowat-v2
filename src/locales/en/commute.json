@@ -19,7 +19,12 @@
     "editAction": "Edit",
     "cancelAction": "Cancel",
     "callDriver": "Call",
-    "openCommuteView": "Open commute view"
+    "openCommuteView": "Open commute view",
+    "speedDial": {
+      "myLocations": "My Locations",
+      "myCommutes": "My Commutes",
+      "createCommute": "Create a Commute"
+    }
   },
   "new": {
     "title": "New Commute",

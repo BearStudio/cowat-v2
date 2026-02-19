@@ -29,7 +29,7 @@ import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
 import {
   OrgButtonLink,
-  OrgResponsiveIconButtonLink,
+  OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -78,14 +78,14 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
       <PageLayoutTopBar
         startActions={<BackButton />}
         endActions={
-          <OrgResponsiveIconButtonLink
+          <OrgFloatingActionButtonLink
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/commute-templates/new"
           >
             <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          </OrgFloatingActionButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
