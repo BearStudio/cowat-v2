@@ -30,12 +30,14 @@ export default {
       const stop = await context.db.stop.findUnique({
         where: { id: input.stopId },
         select: {
+          order: true,
           commuteId: true,
           commute: {
             select: {
               driverMemberId: true,
               date: true,
               type: true,
+              stops: { select: { order: true } },
               driver: {
                 select: {
                   organizationId: true,
@@ -63,6 +65,22 @@ export default {
         stop.commute.driver.organizationId !== context.organizationId
       ) {
         throw new ORPCError('NOT_FOUND');
+      }
+
+      const orders = stop.commute.stops.map((s) => s.order);
+      const isFirstStop = stop.order === Math.min(...orders);
+      const isLastStop = stop.order === Math.max(...orders);
+      const allowOutward = !isLastStop;
+      const allowInward = stop.commute.type === 'ROUND' && !isFirstStop;
+
+      if (
+        (input.tripType === 'ONEWAY' && !allowOutward) ||
+        (input.tripType === 'RETURN' && !allowInward) ||
+        (input.tripType === 'ROUND' && (!allowOutward || !allowInward))
+      ) {
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Invalid trip type for this stop',
+        });
       }
 
       // Check if user already has an active booking on any stop of this commute

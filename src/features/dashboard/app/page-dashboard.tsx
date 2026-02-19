@@ -22,7 +22,7 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
-import { CommuteEnriched } from '@/features/commute/schema';
+import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import {
   OrgButtonLink,
@@ -39,7 +39,12 @@ export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
-  const [bookingStopId, setBookingStopId] = useState<string | null>(null);
+  const [bookingInfo, setBookingInfo] = useState<{
+    stopId: string;
+    commuteType: CommuteType;
+    isFirstStop: boolean;
+    isLastStop: boolean;
+  } | null>(null);
 
   const today = dayjs().startOf('day');
   const rangeEnd = today.add(7, 'day');
@@ -167,7 +172,13 @@ export const PageDashboard = () => {
                             currentUserId={currentUserId}
                             commuteCancel={commuteCancel}
                             bookingCancel={bookingCancel}
-                            onBookStop={setBookingStopId}
+                            onBookStop={(stopId, commuteType, options) =>
+                              setBookingInfo({
+                                stopId,
+                                commuteType,
+                                ...options,
+                              })
+                            }
                           />
                         ))}
                       </div>
@@ -180,10 +191,13 @@ export const PageDashboard = () => {
           .exhaustive()}
 
         <BookingDrawer
-          stopId={bookingStopId ?? ''}
-          open={bookingStopId !== null}
+          stopId={bookingInfo?.stopId ?? ''}
+          commuteType={bookingInfo?.commuteType ?? 'ROUND'}
+          isFirstStop={bookingInfo?.isFirstStop ?? false}
+          isLastStop={bookingInfo?.isLastStop ?? false}
+          open={bookingInfo !== null}
           onOpenChange={(open) => {
-            if (!open) setBookingStopId(null);
+            if (!open) setBookingInfo(null);
           }}
         />
       </PageLayoutContent>

@@ -108,9 +108,12 @@ describe('booking router', () => {
 
     it('should create a REQUESTED booking when driver has autoAccept disabled', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
         commuteId: 'commute-1',
         commute: {
           driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
             autoAccept: false,
@@ -155,9 +158,12 @@ describe('booking router', () => {
         status: 'ACCEPTED' as const,
       };
       mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
         commuteId: 'commute-1',
         commute: {
           driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
             autoAccept: true,
@@ -208,9 +214,12 @@ describe('booking router', () => {
 
     it('should throw CONFLICT when user already has a booking on this commute', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
         commuteId: 'commute-1',
         commute: {
           driverMemberId: 'driver-member-1',
+          type: 'ROUND',
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
           driver: {
             organizationId: mockOrganizationId,
             autoAccept: false,
