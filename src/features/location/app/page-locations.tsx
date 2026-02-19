@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { BackButton } from '@/components/back-button';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { BackButton } from '@/components/back-button';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
@@ -26,6 +26,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { LocationDrawer } from '@/features/location/app/location-drawer';
@@ -89,14 +90,13 @@ export const PageLocations = () => {
       <PageLayoutTopBar
         startActions={<BackButton />}
         endActions={
-          <ResponsiveIconButton
+          <FloatingActionButton
+            icon={<PlusIcon />}
             label={t('location:list.newAction')}
             variant="secondary"
             size="sm"
             onClick={openCreateDrawer}
-          >
-            <PlusIcon />
-          </ResponsiveIconButton>
+          />
         }
       >
         <PageLayoutTopBarTitle>

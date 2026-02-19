@@ -4,6 +4,7 @@ import {
   EyeIcon,
   InboxIcon,
   MapPinIcon,
+  MegaphoneIcon,
   Repeat,
   RouteIcon,
 } from 'lucide-react';
@@ -14,6 +15,7 @@ export const featureIcons = {
   CommuteTemplates: RouteIcon,
   Commutes: IconCarDuotone,
   CommuteView: EyeIcon,
+  CommuteRequest: MegaphoneIcon,
   Bookings: InboxIcon,
 } as const;
 

@@ -2,13 +2,12 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-
-import { featureIcons } from '@/lib/feature-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { formatDate } from '@/lib/dayjs/formats';
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import {
@@ -28,7 +27,7 @@ import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import {
   OrgButtonLink,
-  OrgResponsiveIconButtonLink,
+  OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
 import { OrgLink } from '@/features/organization/org-link';
 import {
@@ -109,14 +108,14 @@ export const PageDashboard = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgResponsiveIconButtonLink
+          <OrgFloatingActionButtonLink
             label={t('dashboard:newCommuteAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/commutes/new"
           >
             <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          </OrgFloatingActionButtonLink>
         }
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>

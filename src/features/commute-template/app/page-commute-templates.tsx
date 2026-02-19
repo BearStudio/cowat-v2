@@ -5,10 +5,10 @@ import { PlusIcon, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { BackButton } from '@/components/back-button';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { BackButton } from '@/components/back-button';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
@@ -29,7 +29,7 @@ import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
 import {
   OrgButtonLink,
-  OrgResponsiveIconButtonLink,
+  OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -78,14 +78,14 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
       <PageLayoutTopBar
         startActions={<BackButton />}
         endActions={
-          <OrgResponsiveIconButtonLink
+          <OrgFloatingActionButtonLink
             label={t('commuteTemplate:list.newAction')}
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/commute-templates/new"
           >
             <PlusIcon />
-          </OrgResponsiveIconButtonLink>
+          </OrgFloatingActionButtonLink>
         }
       >
         <PageLayoutTopBarTitle>

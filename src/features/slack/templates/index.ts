@@ -9,11 +9,21 @@ import {
   bookingRefused,
   bookingRequested,
 } from './booking';
-import { commuteCanceled, commuteCreated, commuteUpdated } from './commute';
+import {
+  commuteCanceled,
+  commuteCreated,
+  commuteRequested,
+  commuteUpdated,
+} from './commute';
 
 export function getSlackTemplate(
   event: NotificationEvent,
-  opts?: { driverSlackId?: string; locale?: LanguageKey }
+  opts?: {
+    driverSlackId?: string;
+    requesterSlackId?: string;
+    baseUrl?: string;
+    locale?: LanguageKey;
+  }
 ): string {
   const locale = opts?.locale ?? DEFAULT_LANGUAGE_KEY;
 
@@ -32,5 +42,12 @@ export function getSlackTemplate(
       return commuteUpdated(event, locale);
     case 'commute.canceled':
       return commuteCanceled(event, locale);
+    case 'commute.requested':
+      return commuteRequested(
+        event,
+        locale,
+        opts?.baseUrl ?? '',
+        opts?.requesterSlackId
+      );
   }
 }

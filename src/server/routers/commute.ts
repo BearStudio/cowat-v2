@@ -441,4 +441,34 @@ export default {
         });
       }
     }),
+
+  requestCommute: organizationProcedure()
+    .route({
+      method: 'POST',
+      path: '/commutes/request',
+      tags,
+    })
+    .input(z.object({ date: z.date(), destination: z.string().optional() }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      const organization = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
+
+      if (!organization?.slug) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      context.notify({
+        type: 'commute.requested',
+        payload: {
+          requesterName: context.user.name,
+          requesterEmail: context.user.email,
+          commuteDate: input.date,
+          orgSlug: organization.slug,
+          locationName: input.destination || undefined,
+        },
+      });
+    }),
 };
