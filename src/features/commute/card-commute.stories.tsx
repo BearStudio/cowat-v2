@@ -139,6 +139,77 @@ export const LeftBorderByStatus = () => {
   );
 };
 
+export const WithManyPassengers = () => {
+  const passengers = [
+    { name: 'Bob Dupont', image: null },
+    { name: 'Claire Petit', image: null },
+    { name: 'Charlie Durand', image: null },
+    { name: 'Diana Moreau', image: null },
+    { name: 'Eve Lambert', image: null },
+    { name: 'François Leroy', image: null },
+    { name: 'Gérard Blanc', image: null },
+  ];
+
+  return (
+    <div className="flex flex-col gap-3">
+      <CardCommute bookingStatus="DRIVER">
+        <CardCommuteTrigger>
+          <CardCommuteHeader
+            driver={{ name: 'Alice Martin', image: null }}
+            date={new Date('2026-02-14')}
+            type="ROUND"
+            totalSeats={8}
+            outwardAvailable={1}
+            inwardAvailable={2}
+            passengers={passengers}
+            badge={<BookingStatusBadge status="DRIVER" />}
+          />
+        </CardCommuteTrigger>
+        <CardCommuteContent>
+          <p className="text-sm text-muted-foreground">
+            7 passengers — overflow after 4
+          </p>
+        </CardCommuteContent>
+      </CardCommute>
+      <CardCommute bookingStatus="ACCEPTED">
+        <CardCommuteTrigger>
+          <CardCommuteHeader
+            driver={{ name: 'Alice Martin', image: null }}
+            date={new Date('2026-02-14')}
+            type="ONEWAY"
+            totalSeats={4}
+            outwardAvailable={1}
+            passengers={passengers.slice(0, 3)}
+            badge={<BookingStatusBadge status="ACCEPTED" />}
+          />
+        </CardCommuteTrigger>
+        <CardCommuteContent>
+          <p className="text-sm text-muted-foreground">
+            3 passengers — no overflow
+          </p>
+        </CardCommuteContent>
+      </CardCommute>
+      <CardCommute bookingStatus="REQUESTED">
+        <CardCommuteTrigger>
+          <CardCommuteHeader
+            driver={{ name: 'Alice Martin', image: null }}
+            date={new Date('2026-02-14')}
+            type="ROUND"
+            totalSeats={2}
+            outwardAvailable={1}
+            inwardAvailable={1}
+            passengers={passengers.slice(0, 1)}
+            badge={<BookingStatusBadge status="REQUESTED" />}
+          />
+        </CardCommuteTrigger>
+        <CardCommuteContent>
+          <p className="text-sm text-muted-foreground">1 passenger</p>
+        </CardCommuteContent>
+      </CardCommute>
+    </div>
+  );
+};
+
 export const WithActions = () => {
   return (
     <CardCommute>

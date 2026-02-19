@@ -62,6 +62,7 @@ export const DashboardCommuteCard = ({
               ? commute.seats - inwardPassengers.size
               : undefined
           }
+          passengers={[...acceptedPassengers.values()]}
           badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
         />
       </CardCommuteTrigger>
@@ -92,7 +93,7 @@ export const DashboardCommuteCard = ({
                       bookingCancel.mutateAsync({ id: userBooking.id })
                     }
                   >
-                    <Button variant="destructive-secondary">
+                    <Button variant="destructive-secondary" className="w-2/3">
                       {t('common:actions.cancel')}
                     </Button>
                   </ConfirmResponsiveDrawer>

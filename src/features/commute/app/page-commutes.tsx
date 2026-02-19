@@ -132,8 +132,11 @@ export const PageCommutes = () => {
           .match('default', ({ items }) => (
             <div className="flex flex-col gap-3">
               {items.map((item) => {
-                const { outwardPassengers, inwardPassengers } =
-                  getCommutePassengerStats(item);
+                const {
+                  outwardPassengers,
+                  inwardPassengers,
+                  acceptedPassengers,
+                } = getCommutePassengerStats(item);
                 const currentUserId = session.data?.user.id ?? '';
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
@@ -152,6 +155,7 @@ export const PageCommutes = () => {
                             ? item.seats - inwardPassengers.size
                             : undefined
                         }
+                        passengers={[...acceptedPassengers.values()]}
                         badge={<BookingStatusBadge status={bookingStatus} />}
                       />
                     </CardCommuteTrigger>
