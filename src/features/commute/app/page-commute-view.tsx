@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { featureIcons } from '@/lib/feature-icons';
-
 import { BackButton } from '@/components/back-button';
 
 import {
