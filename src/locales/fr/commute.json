@@ -18,7 +18,8 @@
     "seatCount": "{{available}}/{{total}} places",
     "editAction": "Modifier",
     "cancelAction": "Annuler",
-    "callDriver": "Appeler"
+    "callDriver": "Appeler",
+    "openCommuteView": "Ouvrir la vue trajet"
   },
   "new": {
     "title": "Nouveau trajet",
@@ -28,6 +29,9 @@
     "title": "Mes modèles",
     "emptyState": "Gagnez du temps : créez un modèle",
     "fromScratch": "Créer de zéro"
+  },
+  "view": {
+    "title": "Vue trajet"
   },
   "form": {
     "date": "Date",

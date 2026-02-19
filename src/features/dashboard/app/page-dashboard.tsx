@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
-  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -31,6 +30,7 @@ import {
   OrgButtonLink,
   OrgResponsiveIconButtonLink,
 } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -156,27 +156,21 @@ export const PageDashboard = () => {
                     </div>
 
                     {dayCommutes.length === 0 ? (
-                      <Empty className="border p-4">
-                        <EmptyHeader>
-                          <EmptyMedia variant="icon">
-                            <featureIcons.Commutes />
-                          </EmptyMedia>
-                          <EmptyTitle className="text-sm">
-                            {t('dashboard:noCommutesForDay')}
-                          </EmptyTitle>
-                        </EmptyHeader>
-                        <EmptyContent>
-                          <OrgButtonLink
-                            to="/app/$orgSlug/commutes/new"
-                            search={{ date: day.toDate() }}
-                            variant="secondary"
-                            size="sm"
-                          >
-                            <PlusIcon />
-                            {t('dashboard:newCommuteAction')}
-                          </OrgButtonLink>
-                        </EmptyContent>
-                      </Empty>
+                      <OrgLink
+                        to="/app/$orgSlug/commutes/new"
+                        search={{ date: day.toDate() }}
+                      >
+                        <Empty className="border p-4 transition-colors hover:bg-accent">
+                          <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                              <featureIcons.Commutes />
+                            </EmptyMedia>
+                            <EmptyTitle className="text-sm">
+                              {t('dashboard:noCommutesForDay')}
+                            </EmptyTitle>
+                          </EmptyHeader>
+                        </Empty>
+                      </OrgLink>
                     ) : (
                       <div className="flex flex-col gap-3">
                         {dayCommutes.map((item) => (

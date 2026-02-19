@@ -134,6 +134,58 @@ export const AsDriver = () => {
   );
 };
 
+export const ActiveCommute = () => {
+  const soonStop = (
+    id: string,
+    order: number
+  ): CommuteEnriched['stops'][number] => {
+    const inOneHour = new Date();
+    inOneHour.setHours(inOneHour.getHours() + 1);
+    const hh = String(inOneHour.getHours()).padStart(2, '0');
+    const mm = String(inOneHour.getMinutes()).padStart(2, '0');
+    return {
+      ...mockStop(id, order),
+      outwardTime: `${hh}:${mm}`,
+    };
+  };
+
+  const commute: CommuteEnriched = {
+    ...baseCommute,
+    date: new Date(),
+    stops: [soonStop('stop-1', 0), soonStop('stop-2', 1)],
+  };
+
+  return (
+    <DashboardCommuteCard
+      commute={commute}
+      currentUserId="passenger-1"
+      commuteCancel={noopMutation}
+      bookingCancel={noopMutation}
+      onBookStop={noop}
+    />
+  );
+};
+
+export const FutureCommute = () => {
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 5);
+
+  const commute: CommuteEnriched = {
+    ...baseCommute,
+    date: futureDate,
+  };
+
+  return (
+    <DashboardCommuteCard
+      commute={commute}
+      currentUserId="passenger-1"
+      commuteCancel={noopMutation}
+      bookingCancel={noopMutation}
+      onBookStop={noop}
+    />
+  );
+};
+
 export const FullSeats = () => {
   const passengers = [
     {
