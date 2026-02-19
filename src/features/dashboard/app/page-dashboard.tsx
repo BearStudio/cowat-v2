@@ -2,13 +2,12 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-
-import { featureIcons } from '@/lib/feature-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { formatDate } from '@/lib/dayjs/formats';
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import {
