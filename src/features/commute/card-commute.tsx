@@ -1,8 +1,9 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import { ArrowDownLeft, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/dayjs/formats';
+import { tripTypeIcons } from '@/lib/feature-icons';
 import { cn } from '@/lib/tailwind/utils';
 
 import {
@@ -131,6 +132,8 @@ type CardCommuteHeaderProps = {
   totalSeats: number;
   outwardAvailable: number;
   inwardAvailable?: number;
+  outwardDeparture?: string;
+  inwardDeparture?: string;
   passengers?: Array<{ name?: string | null; image?: string | null }>;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
@@ -145,6 +148,8 @@ function CardCommuteHeader({
   totalSeats,
   outwardAvailable,
   inwardAvailable,
+  outwardDeparture,
+  inwardDeparture,
   passengers,
   badge,
   actions,
@@ -169,49 +174,57 @@ function CardCommuteHeader({
           <CardDescription>{driver.name}</CardDescription>
         </div>
       </div>
+      <CardAction className="row-span-1">
+        <div className="flex items-center gap-1">
+          {actions}
+          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
+        </div>
+      </CardAction>
+      <div className="col-span-full flex items-center gap-2">
+        <Badge variant="secondary" size="sm">
+          {t(`commute:list.type.${type}`)}
+        </Badge>
+        {badge}
+        {!!passengers?.length && (
+          <AvatarGroup className="ml-auto">
+            {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
+              <Avatar key={p.name} size="sm">
+                <AvatarImage src={p.image ?? undefined} />
+                <AvatarFallback variant="boring" name={p.name ?? '?'} />
+              </Avatar>
+            ))}
+            {passengers.length > MAX_VISIBLE_PASSENGERS && (
+              <AvatarGroupCount>
+                +{passengers.length - MAX_VISIBLE_PASSENGERS}
+              </AvatarGroupCount>
+            )}
+          </AvatarGroup>
+        )}
+      </div>
       <div className="col-span-full flex items-center gap-2 text-sm text-muted-foreground">
         {type === 'ROUND' ? (
           <>
             <span className="flex items-center gap-0.5">
-              <ArrowUpRight className="size-3" />
+              <tripTypeIcons.ONEWAY className="size-3" />
+              {outwardDeparture}
+              <span className="text-muted-foreground/60">·</span>
               {seatLabel(outwardAvailable)}
             </span>
             <span className="flex items-center gap-0.5">
-              <ArrowDownLeft className="size-3" />
+              <tripTypeIcons.RETURN className="size-3" />
+              {inwardDeparture}
+              <span className="text-muted-foreground/60">·</span>
               {seatLabel(inwardAvailable ?? outwardAvailable)}
             </span>
           </>
         ) : (
-          <span>{seatLabel(outwardAvailable)}</span>
+          <span className="flex items-center gap-0.5">
+            {outwardDeparture}
+            <span className="text-muted-foreground/60">·</span>
+            {seatLabel(outwardAvailable)}
+          </span>
         )}
-        <Badge variant="secondary" size="sm">
-          {t(`commute:list.type.${type}`)}
-        </Badge>
       </div>
-      <CardAction>
-        <div className="flex flex-col items-end gap-1">
-          <div className="flex items-center gap-1">
-            {badge}
-            {actions}
-            <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform" />
-          </div>
-          {!!passengers?.length && (
-            <AvatarGroup>
-              {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
-                <Avatar key={p.name} size="sm">
-                  <AvatarImage src={p.image ?? undefined} />
-                  <AvatarFallback variant="boring" name={p.name ?? '?'} />
-                </Avatar>
-              ))}
-              {passengers.length > MAX_VISIBLE_PASSENGERS && (
-                <AvatarGroupCount>
-                  +{passengers.length - MAX_VISIBLE_PASSENGERS}
-                </AvatarGroupCount>
-              )}
-            </AvatarGroup>
-          )}
-        </div>
-      </CardAction>
     </>
   );
 }

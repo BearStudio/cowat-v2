@@ -155,6 +155,10 @@ export const PageCommutes = () => {
                             ? item.seats - inwardPassengers.size
                             : undefined
                         }
+                        outwardDeparture={item.stops.at(0)?.outwardTime}
+                        inwardDeparture={
+                          item.stops.at(-1)?.inwardTime ?? undefined
+                        }
                         passengers={[...acceptedPassengers.values()]}
                         badge={<BookingStatusBadge status={bookingStatus} />}
                       />

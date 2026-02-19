@@ -1,4 +1,3 @@
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { tripTypeIcons } from '@/lib/feature-icons';
@@ -39,12 +38,12 @@ export const StopsTimelineItem = ({
       </span>
       <div className="flex items-center gap-3 text-sm text-muted-foreground">
         <span className="flex items-center gap-1">
-          <ArrowUpRight className="size-3.5" />
+          <tripTypeIcons.ONEWAY className="size-3.5" />
           {stop.outwardTime}
         </span>
         {stop.inwardTime && (
           <span className="flex items-center gap-1">
-            <ArrowDownLeft className="size-3.5" />
+            <tripTypeIcons.RETURN className="size-3.5" />
             {stop.inwardTime}
           </span>
         )}
