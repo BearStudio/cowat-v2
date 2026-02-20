@@ -40,6 +40,8 @@
     "commentPlaceholder": "Commentaire optionnel...",
     "stops": "Arrêts",
     "addStop": "Ajouter un arrêt",
+    "departure": "Départ",
+    "arrival": "Arrivée",
     "stopIndex": "Arrêt {{index}}"
   }
 }

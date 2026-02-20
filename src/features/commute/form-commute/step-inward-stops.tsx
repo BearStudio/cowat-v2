@@ -1,6 +1,6 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
 import { Control, SetFieldValue } from 'react-hook-form';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -58,17 +58,29 @@ export const StepInwardStops = ({
 
   return (
     <div className="flex flex-col gap-3">
-      {reversedIndices.map((index) => {
+      {reversedIndices.map((index, displayPos) => {
         const stop = stops![index]!;
+        // In the return trip, the last outward stop is the departure and the first is the arrival
+        const isInboundDeparture = displayPos === 0;
+        const isInboundArrival = displayPos === reversedIndices.length - 1;
+        const stopLabel = isInboundDeparture
+          ? t(`${ns}:form.departure`)
+          : isInboundArrival
+            ? t(`${ns}:form.arrival`)
+            : (locationsMap.get(stop.locationId) ??
+              t(`${ns}:form.stopIndex`, { index: index + 1 }));
+
         return (
           <div
             key={index}
             className="flex flex-col gap-2 rounded-sm border border-border p-4"
           >
-            <span className="truncate text-sm font-medium">
-              {locationsMap.get(stop.locationId) ??
-                t(`${ns}:form.stopIndex`, { index: index + 1 })}
-            </span>
+            <span className="truncate text-sm font-semibold">{stopLabel}</span>
+            {(isInboundDeparture || isInboundArrival) && (
+              <span className="truncate text-xs text-muted-foreground">
+                {locationsMap.get(stop.locationId)}
+              </span>
+            )}
             <p className="text-xs text-muted-foreground">
               {t(`${ns}:form.outwardTime`)}: {stop.outwardTime}
             </p>

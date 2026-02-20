@@ -67,78 +67,83 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
         </Badge>
       </div>
 
-      {/* Outbound trip */}
-      <div className="flex flex-col gap-2">
-        {isRound && (
-          <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <OnewayIcon className="size-3.5" />
-            {t(`${ns}:stepper.outboundTrip`)}
-          </h3>
-        )}
-        <div className="flex flex-col">
-          {stops?.map((stop, index) => {
-            const isLast = index === (stops.length ?? 0) - 1;
-            return (
-              <div key={index} className="flex items-start gap-4">
-                <div className="flex flex-col items-center self-stretch">
-                  <div className="flex h-6 items-center">
-                    <div className="size-3 shrink-0 rounded-full bg-primary" />
-                  </div>
-                  {!isLast && <div className="w-px flex-1 bg-border" />}
-                </div>
-                <div
-                  className={`flex min-w-0 flex-1 flex-col gap-1.5 ${isLast ? '' : 'pb-4'}`}
-                >
-                  <span className="truncate text-base leading-6 font-medium">
-                    {locationsMap.get(stop.locationId) ?? stop.locationId}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {stop.outwardTime}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Inbound trip (only for round trips with inward times) */}
-      {isRound && hasInwardTimes && (
+      {/* Trip timelines — side by side for round trips */}
+      <div
+        className={isRound && hasInwardTimes ? 'grid grid-cols-2 gap-4' : ''}
+      >
+        {/* Outbound trip */}
         <div className="flex flex-col gap-2">
-          <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <ReturnIcon className="size-3.5" />
-            {t(`${ns}:stepper.inboundTrip`)}
-          </h3>
+          {isRound && (
+            <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+              <OnewayIcon className="size-3.5" />
+              {t(`${ns}:stepper.outboundTrip`)}
+            </h3>
+          )}
           <div className="flex flex-col">
-            {[...(stops ?? [])]
-              .reverse()
-              .filter((stop) => stop.inwardTime)
-              .map((stop, index, arr) => {
-                const isLast = index === arr.length - 1;
-                return (
-                  <div key={index} className="flex items-start gap-4">
-                    <div className="flex flex-col items-center self-stretch">
-                      <div className="flex h-6 items-center">
-                        <div className="size-3 shrink-0 rounded-full bg-primary" />
-                      </div>
-                      {!isLast && <div className="w-px flex-1 bg-border" />}
+            {stops?.map((stop, index) => {
+              const isLast = index === (stops.length ?? 0) - 1;
+              return (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex flex-col items-center self-stretch">
+                    <div className="flex h-6 items-center">
+                      <div className="size-3 shrink-0 rounded-full bg-primary" />
                     </div>
-                    <div
-                      className={`flex min-w-0 flex-1 flex-col gap-1.5 ${isLast ? '' : 'pb-4'}`}
-                    >
-                      <span className="truncate text-base leading-6 font-medium">
-                        {locationsMap.get(stop.locationId) ?? stop.locationId}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {stop.inwardTime}
-                      </span>
-                    </div>
+                    {!isLast && <div className="w-px flex-1 bg-border" />}
                   </div>
-                );
-              })}
+                  <div
+                    className={`flex min-w-0 flex-1 flex-col gap-1 ${isLast ? '' : 'pb-4'}`}
+                  >
+                    <span className="truncate text-sm leading-6 font-medium">
+                      {locationsMap.get(stop.locationId) ?? stop.locationId}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {stop.outwardTime}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      )}
+
+        {/* Inbound trip (only for round trips with inward times) */}
+        {isRound && hasInwardTimes && (
+          <div className="flex flex-col gap-2">
+            <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+              <ReturnIcon className="size-3.5" />
+              {t(`${ns}:stepper.inboundTrip`)}
+            </h3>
+            <div className="flex flex-col">
+              {[...(stops ?? [])]
+                .reverse()
+                .filter((stop) => stop.inwardTime)
+                .map((stop, index, arr) => {
+                  const isLast = index === arr.length - 1;
+                  return (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="flex flex-col items-center self-stretch">
+                        <div className="flex h-6 items-center">
+                          <div className="size-3 shrink-0 rounded-full bg-primary" />
+                        </div>
+                        {!isLast && <div className="w-px flex-1 bg-border" />}
+                      </div>
+                      <div
+                        className={`flex min-w-0 flex-1 flex-col gap-1 ${isLast ? '' : 'pb-4'}`}
+                      >
+                        <span className="truncate text-sm leading-6 font-medium">
+                          {locationsMap.get(stop.locationId) ?? stop.locationId}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {stop.inwardTime}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Comment */}
       {values.comment && (

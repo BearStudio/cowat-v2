@@ -15,7 +15,10 @@ import { StepDetailsTemplate } from '@/features/commute/form-commute/step-detail
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
-import { Stepper } from '@/features/commute/form-commute/stepper';
+import {
+  Stepper,
+  StepperNavigation,
+} from '@/features/commute/form-commute/stepper';
 import {
   FormFieldsCommuteTemplate,
   zFormFieldsCommuteTemplate,
@@ -42,7 +45,10 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
       seats: 1,
       type: 'ROUND',
       comment: null,
-      stops: [{ locationId: '', order: 0, outwardTime: '', inwardTime: null }],
+      stops: [
+        { locationId: '', order: 0, outwardTime: '', inwardTime: null },
+        { locationId: '', order: 1, outwardTime: '', inwardTime: null },
+      ],
     },
   });
 
@@ -122,6 +128,13 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
     setStep((s) => Math.max(0, s - 1));
   };
 
+  const handleSubmit = form.handleSubmit((values) => {
+    templateCreate.mutate({
+      ...values,
+      stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
+    });
+  });
+
   return (
     <>
       <FormStateSubscribe
@@ -136,25 +149,17 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
             </PageLayoutTopBarTitle>
           </PageLayoutTopBar>
           <PageLayoutContent>
-            <Stepper
-              steps={steps}
-              currentStep={step}
-              onNext={handleNext}
-              onBack={handleBack}
-              onSubmit={form.handleSubmit((values) => {
-                templateCreate.mutate({
-                  ...values,
-                  stops: values.stops.map((stop, index) => ({
-                    ...stop,
-                    order: index,
-                  })),
-                });
-              })}
-              onStepClick={setStep}
-              isSubmitting={templateCreate.isPending}
-              ns="commuteTemplate"
-            />
+            <Stepper steps={steps} currentStep={step} onStepClick={setStep} />
           </PageLayoutContent>
+          <StepperNavigation
+            steps={steps}
+            currentStep={step}
+            onNext={handleNext}
+            onBack={handleBack}
+            onSubmit={handleSubmit}
+            isSubmitting={templateCreate.isPending}
+            ns="commuteTemplate"
+          />
         </PageLayout>
       </Form>
     </>

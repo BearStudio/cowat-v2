@@ -71,6 +71,8 @@
     "commentPlaceholder": "Commentaire optionnel...",
     "stops": "Arrêts",
     "addStop": "Ajouter un arrêt",
+    "departure": "Départ",
+    "arrival": "Arrivée",
     "stopIndex": "Arrêt {{index}}",
     "location": "Lieu",
     "locationPlaceholder": "Sélectionner un lieu...",
@@ -81,7 +83,7 @@
     "todayWarning": "Vous créez un trajet pour aujourd'hui. Vérifiez que les horaires sont encore valides.",
     "errors": {
       "seatsMin": "Au moins 1 place requise",
-      "stopsMin": "Au moins 1 arrêt requis",
+      "stopsMin": "Au moins 2 arrêts requis",
       "inwardBeforeOutward": "L'heure retour doit être après l'heure aller",
       "inwardInPast": "L'heure retour doit être dans le futur",
       "outwardInPast": "L'heure aller doit être dans le futur",

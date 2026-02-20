@@ -27,7 +27,7 @@ export const zFormFieldsCommuteTemplate = () =>
     seats: z.number().int().min(1),
     type: zCommuteType(),
     comment: zu.fieldText.nullish(),
-    stops: z.array(zFormFieldsTemplateStopInput()).min(1),
+    stops: z.array(zFormFieldsTemplateStopInput()).min(2),
   });
 
 export type FormFieldsTemplateStopInput = z.infer<

@@ -73,7 +73,7 @@ export const zFormFieldsCommute = () =>
       comment: zu.fieldText.nullish(),
       stops: z
         .array(zFormFieldsStopInput())
-        .min(1, t('commute:form.errors.stopsMin')),
+        .min(2, t('commute:form.errors.stopsMin')),
     })
     .superRefine((data, ctx) => {
       const rules = createCommuteRules(data);

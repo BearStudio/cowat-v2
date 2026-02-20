@@ -40,6 +40,8 @@
     "commentPlaceholder": "Optional comment...",
     "stops": "Stops",
     "addStop": "Add stop",
+    "departure": "Departure",
+    "arrival": "Arrival",
     "stopIndex": "Stop {{index}}"
   }
 }

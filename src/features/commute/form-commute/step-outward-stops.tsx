@@ -1,4 +1,5 @@
 import { PlusIcon, Trash2Icon } from 'lucide-react';
+import { Fragment } from 'react';
 import {
   Control,
   SetFieldValue,
@@ -31,81 +32,80 @@ export const StepOutwardStops = ({
   defaultStop,
 }: StepOutwardStopsProps) => {
   const { t } = useTranslation([ns]);
-  const { fields, append, remove } = useFieldArray({ control, name: 'stops' });
+  const { fields, insert, remove } = useFieldArray({ control, name: 'stops' });
   const stops = useWatch({ control, name: 'stops' }) as
     | FormFieldsCommute['stops']
     | undefined;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{t(`${ns}:form.stops`)}</span>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => append(defaultStop)}
-        >
-          <PlusIcon className="size-3" />
-          {t(`${ns}:form.addStop`)}
-        </Button>
-      </div>
+      {fields.map((field, index) => {
+        const isFirst = index === 0;
+        const isLast = index === fields.length - 1;
+        const stopLabel = isFirst
+          ? t(`${ns}:form.departure`)
+          : isLast
+            ? t(`${ns}:form.arrival`)
+            : t(`${ns}:form.stopIndex`, { index });
 
-      <div className="flex flex-col gap-3">
-        {fields.map((field, index) => (
-          <div
-            key={field.id}
-            className="flex flex-col gap-3 rounded-sm border border-border p-4"
-          >
-            <FormFieldLocationSelect
-              control={control}
-              name={`stops.${index}.locationId`}
-              setValue={setValue}
-              excludeLocationIds={stops
-                ?.filter((_, i) => i !== index)
-                .map((s) => s.locationId)
-                .filter((id): id is string => !!id)}
-            />
+        return (
+          <Fragment key={field.id}>
+            <div className="flex flex-col gap-3 rounded-sm border border-border p-4">
+              <span className="text-sm font-semibold">{stopLabel}</span>
 
-            <div className="flex items-end gap-3">
-              <div className="min-w-0 flex-1">
-                <FormField>
-                  <FormFieldLabel required>
-                    {t(`${ns}:form.outwardTime`)}
-                  </FormFieldLabel>
-                  <FormFieldController
-                    type="time"
-                    control={control}
-                    name={`stops.${index}.outwardTime`}
-                  />
-                </FormField>
+              <FormFieldLocationSelect
+                control={control}
+                name={`stops.${index}.locationId`}
+                setValue={setValue}
+                excludeLocationIds={stops
+                  ?.filter((_, i) => i !== index)
+                  .map((s) => s.locationId)
+                  .filter((id): id is string => !!id)}
+              />
+
+              <div className="flex items-end gap-3">
+                <div className="min-w-0 flex-1">
+                  <FormField>
+                    <FormFieldLabel required>
+                      {t(`${ns}:form.outwardTime`)}
+                    </FormFieldLabel>
+                    <FormFieldController
+                      type="time"
+                      control={control}
+                      name={`stops.${index}.outwardTime`}
+                    />
+                  </FormField>
+                </div>
+                {fields.length > 2 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash2Icon className="size-4" />
+                  </Button>
+                )}
               </div>
-              {fields.length > 1 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
-                  onClick={() => remove(index)}
-                >
-                  <Trash2Icon className="size-4" />
-                </Button>
-              )}
             </div>
-          </div>
-        ))}
-      </div>
 
-      <Button
-        type="button"
-        variant="secondary"
-        size="sm"
-        className="w-full"
-        onClick={() => append(defaultStop)}
-      >
-        <PlusIcon className="size-3" />
-        {t(`${ns}:form.addStop`)}
-      </Button>
+            {/* "Add stop" button between every adjacent pair of stops */}
+            {!isLast && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
+                className="w-full border border-dashed"
+                onClick={() => insert(index + 1, defaultStop)}
+              >
+                <PlusIcon className="size-3" />
+                {t(`${ns}:form.addStop`)}
+              </Button>
+            )}
+          </Fragment>
+        );
+      })}
     </div>
   );
 };
