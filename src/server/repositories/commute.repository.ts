@@ -1,7 +1,7 @@
 import type { AppDB } from '@/server/db';
 import {
-  type Prisma,
   type CommuteType,
+  type Prisma,
   type RequestStatus,
 } from '@/server/db/generated/client';
 

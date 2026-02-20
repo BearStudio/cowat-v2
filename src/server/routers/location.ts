@@ -2,13 +2,16 @@ import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
 import { createLocationRepository } from '@/server/repositories/location.repository';
 import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['locations'];
 
-const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const procedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({ context: { locations: createLocationRepository(context.db) } })
   );

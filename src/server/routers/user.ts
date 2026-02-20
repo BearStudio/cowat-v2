@@ -4,13 +4,13 @@ import { z } from 'zod';
 
 import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
-import { protectedProcedure } from '@/server/orpc';
+import { protectedProcedure, type ProtectedProcedureArgs } from '@/server/orpc';
 import { createUserRepository } from '@/server/repositories/user.repository';
 import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['users'];
 
-const procedure = (args: Parameters<typeof protectedProcedure>[0]) =>
+const procedure = (args: ProtectedProcedureArgs) =>
   protectedProcedure(args).use(({ context, next }) =>
     next({ context: { users: createUserRepository(context.db) } })
   );

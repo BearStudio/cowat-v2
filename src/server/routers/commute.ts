@@ -8,7 +8,10 @@ import {
   zStop,
   zStopInput,
 } from '@/features/commute/schema';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
@@ -20,7 +23,7 @@ import {
 
 const tags = ['commutes'];
 
-const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const procedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({
       context: {

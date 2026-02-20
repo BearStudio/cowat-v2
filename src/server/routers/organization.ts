@@ -3,20 +3,25 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
 import { auth } from '@/server/auth';
-import { organizationProcedure, protectedProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+  protectedProcedure,
+  type ProtectedProcedureArgs,
+} from '@/server/orpc';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
 import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['organizations'];
 
-const adminProcedure = (args: Parameters<typeof protectedProcedure>[0]) =>
+const adminProcedure = (args: ProtectedProcedureArgs) =>
   protectedProcedure(args).use(({ context, next }) =>
     next({
       context: { organizations: createOrganizationRepository(context.db) },
     })
   );
 
-const orgProcedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const orgProcedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({
       context: { organizations: createOrganizationRepository(context.db) },

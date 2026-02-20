@@ -11,13 +11,16 @@ import {
   countPassengersByDirection,
   isTripTypeFull,
 } from '@/features/commute/commute-passenger-rules';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { getDisabledChannels } from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
-const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const procedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({ context: { bookings: createBookingRepository(context.db) } })
   );

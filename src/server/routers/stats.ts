@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
 import { zStatsUser } from '@/features/stats/schema';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
 import { createStatsRepository } from '@/server/repositories/stats.repository';
 
 const tags = ['stats'];
 
-const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const procedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({ context: { stats: createStatsRepository(context.db) } })
   );

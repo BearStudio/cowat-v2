@@ -8,13 +8,16 @@ import {
   zTemplateStop,
   zTemplateStopWithLocation,
 } from '@/features/commute-template/schema';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
 import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
 import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commute-templates'];
 
-const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+const procedure = (args: OrganizationProcedureArgs = {}) =>
   organizationProcedure(args).use(({ context, next }) =>
     next({
       context: { templates: createCommuteTemplateRepository(context.db) },
