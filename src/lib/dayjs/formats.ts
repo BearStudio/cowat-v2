@@ -46,7 +46,7 @@ export type DateFormatKey = FormatKey<DateFormats>;
 
 // ─── Plugin instance & helpers ───────────────────────────────────────
 
-export const { plugin: formatPlugin, getFormat } =
+export const { plugin: formatPlugin, getDateFormat } =
   createFormatPlugin(dateFormats);
 
 // ─── Type augmentation ───────────────────────────────────────────────

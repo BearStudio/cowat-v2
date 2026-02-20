@@ -1,7 +1,6 @@
 import type { Meta } from '@storybook/react-vite';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-
 import '@/lib/dayjs/config';
 
 import { Calendar } from '@/components/ui/calendar';

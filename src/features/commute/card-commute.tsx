@@ -1,10 +1,9 @@
 import { cva, type VariantProps } from 'class-variance-authority';
+import dayjs from 'dayjs';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-import dayjs from 'dayjs';
-
 import '@/lib/dayjs/config';
+
 import { tripTypeIcons } from '@/lib/feature-icons';
 import { cn } from '@/lib/tailwind/utils';
 

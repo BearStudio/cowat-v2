@@ -19,7 +19,7 @@ export type FormatKey<T extends FormatConfig> = {
  * feature-scoped date formatting.
  *
  * @example
- * const { plugin, getFormat } = createFormatPlugin({
+ * const { plugin, getDateFormat } = createFormatPlugin({
  *   common: { iso: 'YYYY-MM-DD', short: 'DD/MM/YYYY' },
  * } as const);
  *
@@ -27,7 +27,7 @@ export type FormatKey<T extends FormatConfig> = {
  * dayjs().f('common:short'); // => '20/02/2026'
  */
 export function createFormatPlugin<const T extends FormatConfig>(config: T) {
-  function getFormat(key: FormatKey<T>): string {
+  function getDateFormat(key: FormatKey<T>): string {
     const [ns, name] = key.split(':') as [string, string];
     return (config as FormatConfig)[ns]![name]!;
   }
@@ -36,9 +36,9 @@ export function createFormatPlugin<const T extends FormatConfig>(config: T) {
     // Type safety for callers is enforced by the consumer's `declare module 'dayjs'` augmentation.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dayjsClass.prototype.f = function (key: any) {
-      return this.format(getFormat(key));
+      return this.format(getDateFormat(key));
     };
   };
 
-  return { plugin, getFormat };
+  return { plugin, getDateFormat };
 }
