@@ -1,4 +1,8 @@
 import { ORPCError, os } from '@orpc/server';
+import type {
+  BuilderWithMiddlewares,
+  MergedCurrentContext,
+} from '@orpc/server';
 import { type ResponseHeadersPluginContext } from '@orpc/server/plugins';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { randomUUID } from 'node:crypto';
@@ -10,7 +14,7 @@ import {
   Permission,
 } from '@/features/auth/permissions';
 import { auth } from '@/server/auth';
-import { db } from '@/server/db';
+import { db, type AppDB } from '@/server/db';
 import { Prisma } from '@/server/db/generated/client';
 import { logger } from '@/server/logger';
 import type { NotificationEvent } from '@/server/notifications';
@@ -177,6 +181,52 @@ const base = os
       });
     }
   });
+
+// ORPC's `.use()` has the constraint `UOutContext extends IntersectPick<TCurrentContext, UOutContext>`.
+// For repository objects, keys never overlap with the existing context, so IntersectPick resolves to {}
+// and the constraint is always satisfied — but TypeScript can't verify this for a generic T at the
+// definition site. We bypass the constraint with `as any` and annotate the correct return type explicitly.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ExtendContext<TBuilder, TExtension extends Record<PropertyKey, any>> =
+  TBuilder extends BuilderWithMiddlewares<
+    infer I,
+    infer C,
+    infer IS,
+    infer OS,
+    infer EM,
+    infer M
+  >
+    ? BuilderWithMiddlewares<
+        I,
+        MergedCurrentContext<C, TExtension>,
+        IS,
+        OS,
+        EM,
+        M
+      >
+    : never;
+
+export const createOrgProcedure =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  <T extends Record<PropertyKey, any>>(createRepositories: (db: AppDB) => T) =>
+    (
+      ...args: Parameters<typeof organizationProcedure>
+    ): ExtendContext<ReturnType<typeof organizationProcedure>, T> =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (organizationProcedure(...args) as any).use(({ context, next }: any) =>
+        next({ context: createRepositories(context.db) })
+      ) as ExtendContext<ReturnType<typeof organizationProcedure>, T>;
+
+export const createProtectedProcedure =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  <T extends Record<PropertyKey, any>>(createRepositories: (db: AppDB) => T) =>
+    (
+      ...args: Parameters<typeof protectedProcedure>
+    ): ExtendContext<ReturnType<typeof protectedProcedure>, T> =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (protectedProcedure(...args) as any).use(({ context, next }: any) =>
+        next({ context: createRepositories(context.db) })
+      ) as ExtendContext<ReturnType<typeof protectedProcedure>, T>;
 
 export const publicProcedure = () => base;
 

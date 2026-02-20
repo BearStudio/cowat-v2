@@ -4,22 +4,18 @@ import { z } from 'zod';
 
 import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
-import { Prisma } from '@/server/db/generated/client';
-import { protectedProcedure } from '@/server/orpc';
+import { createUserRepository } from '@/server/repositories/user.repository';
+import { createProtectedProcedure } from '@/server/orpc';
 
 const tags = ['users'];
 
+const procedure = createProtectedProcedure((db) => ({
+  users: createUserRepository(db),
+}));
+
 export default {
-  getAll: protectedProcedure({
-    permission: {
-      user: ['list'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/users',
-      tags,
-    })
+  getAll: procedure({ permission: { user: ['list'] } })
+    .route({ method: 'GET', path: '/users', tags })
     .input(
       z
         .object({
@@ -50,60 +46,14 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        AND: [
-          ...(input.organizationId
-            ? [
-                {
-                  members: {
-                    some: { organizationId: input.organizationId },
-                  },
-                },
-              ]
-            : []),
-          {
-            OR: [
-              {
-                name: {
-                  contains: input.searchTerm,
-                  mode: 'insensitive' as const,
-                },
-              },
-              {
-                email: {
-                  contains: input.searchTerm,
-                  mode: 'insensitive' as const,
-                },
-              },
-            ],
-          },
-        ],
-      } satisfies Prisma.UserWhereInput;
-
       context.logger.info('Getting users from database');
-      const [total, items] = await Promise.all([
-        context.db.user.count({
-          where,
-        }),
-        context.db.user.findMany({
-          // Get an extra item at the end which we'll use as next cursor
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: {
-            name: 'asc',
-          },
-          where,
-          include: {
-            members: {
-              select: {
-                organization: {
-                  select: { id: true, name: true, slug: true },
-                },
-              },
-            },
-          },
-        }),
-      ]);
+
+      const [total, items] = await context.users.findPaginated({
+        searchTerm: input.searchTerm,
+        organizationId: input.organizationId,
+        cursor: input.cursor,
+        limit: input.limit,
+      });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
       if (items.length > input.limit) {
@@ -111,34 +61,16 @@ export default {
         nextCursor = nextItem?.id;
       }
 
-      return {
-        items,
-        nextCursor,
-        total,
-      };
+      return { items, nextCursor, total };
     }),
 
-  getById: protectedProcedure({
-    permission: {
-      user: ['list'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/users/{id}',
-      tags,
-    })
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
+  getById: procedure({ permission: { user: ['list'] } })
+    .route({ method: 'GET', path: '/users/{id}', tags })
+    .input(z.object({ id: z.string() }))
     .output(zUser())
     .handler(async ({ context, input }) => {
       context.logger.info('Getting user');
-      const user = await context.db.user.findUnique({
-        where: { id: input.id },
-      });
+      const user = await context.users.findById(input.id);
 
       if (!user) {
         context.logger.warn('Unable to find user with the provided input');
@@ -148,31 +80,13 @@ export default {
       return user;
     }),
 
-  updateById: protectedProcedure({
-    permission: {
-      user: ['set-role'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/users/{id}',
-      tags,
-    })
-    .input(
-      zUser().pick({
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-      })
-    )
+  updateById: procedure({ permission: { user: ['set-role'] } })
+    .route({ method: 'POST', path: '/users/{id}', tags })
+    .input(zUser().pick({ id: true, name: true, email: true, role: true }))
     .output(zUser())
     .handler(async ({ context, input }) => {
       context.logger.info('Getting current user email');
-      const currentUser = await context.db.user.findUnique({
-        where: { id: input.id },
-        select: { email: true },
-      });
+      const currentUser = await context.users.getEmail(input.id);
 
       if (!currentUser) {
         context.logger.warn('Unable to find user with the provided input');
@@ -180,64 +94,31 @@ export default {
       }
 
       context.logger.info('Update user');
-      return await context.db.user.update({
-        where: { id: input.id },
-        data: {
-          name: input.name ?? '',
-          // Prevent to change role of the connected user
-          role: context.user.id === input.id ? undefined : input.role,
-          email: input.email,
-          // Set email as verified if admin changed the email
-          emailVerified: currentUser.email !== input.email ? true : undefined,
-        },
+      return await context.users.update(input.id, {
+        name: input.name ?? '',
+        role: context.user.id === input.id ? undefined : input.role,
+        email: input.email,
+        emailVerified: currentUser.email !== input.email ? true : undefined,
       });
     }),
 
-  create: protectedProcedure({
-    permission: {
-      user: ['create'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/users',
-      tags,
-    })
-    .input(
-      zUser().pick({
-        name: true,
-        email: true,
-        role: true,
-      })
-    )
+  create: procedure({ permission: { user: ['create'] } })
+    .route({ method: 'POST', path: '/users', tags })
+    .input(zUser().pick({ name: true, email: true, role: true }))
     .output(zUser())
     .handler(async ({ context, input }) => {
       context.logger.info('Create user');
-      return await context.db.user.create({
-        data: {
-          email: input.email,
-          emailVerified: true,
-          name: input.name ?? '',
-          role: input.role ?? 'user',
-        },
+      return await context.users.create({
+        email: input.email,
+        emailVerified: true,
+        name: input.name ?? '',
+        role: input.role ?? undefined,
       });
     }),
 
-  deleteById: protectedProcedure({
-    permission: {
-      user: ['delete'],
-    },
-  })
-    .route({
-      method: 'DELETE',
-      path: '/users/{id}',
-      tags,
-    })
-    .input(
-      zUser().pick({
-        id: true,
-      })
-    )
+  deleteById: procedure({ permission: { user: ['delete'] } })
+    .route({ method: 'DELETE', path: '/users/{id}', tags })
+    .input(zUser().pick({ id: true }))
     .output(z.void())
     .handler(async ({ context, input }) => {
       if (context.user.id === input.id) {
@@ -249,9 +130,7 @@ export default {
 
       context.logger.info('Delete user');
       const response = await auth.api.removeUser({
-        body: {
-          userId: input.id,
-        },
+        body: { userId: input.id },
         headers: getRequestHeaders(),
       });
 
@@ -261,16 +140,8 @@ export default {
       }
     }),
 
-  getUserSessions: protectedProcedure({
-    permission: {
-      session: ['list'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/users/{userId}/sessions',
-      tags,
-    })
+  getUserSessions: procedure({ permission: { session: ['list'] } })
+    .route({ method: 'GET', path: '/users/{userId}/sessions', tags })
     .input(
       z.object({
         userId: z.string(),
@@ -286,25 +157,15 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        userId: input.userId,
-      } satisfies Prisma.SessionWhereInput;
-
       context.logger.info('Getting user sessions from database');
-      const [total, items] = await Promise.all([
-        context.db.session.count({
-          where,
-        }),
-        context.db.session.findMany({
-          // Get an extra item at the end which we'll use as next cursor
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: {
-            createdAt: 'desc',
-          },
-          where,
-        }),
-      ]);
+
+      const [total, items] = await context.users.findSessionsPaginated(
+        input.userId,
+        {
+          cursor: input.cursor,
+          limit: input.limit,
+        }
+      );
 
       let nextCursor: typeof input.cursor | undefined = undefined;
       if (items.length > input.limit) {
@@ -312,28 +173,12 @@ export default {
         nextCursor = nextItem?.id;
       }
 
-      return {
-        items,
-        nextCursor,
-        total,
-      };
+      return { items, nextCursor, total };
     }),
 
-  revokeUserSessions: protectedProcedure({
-    permission: {
-      session: ['revoke'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/users/{id}/sessions/revoke',
-      tags,
-    })
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
+  revokeUserSessions: procedure({ permission: { session: ['revoke'] } })
+    .route({ method: 'POST', path: '/users/{id}/sessions/revoke', tags })
+    .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
       if (context.user.id === input.id) {
@@ -347,9 +192,7 @@ export default {
 
       context.logger.info('Revoke all user sessions');
       const response = await auth.api.revokeUserSessions({
-        body: {
-          userId: input.id,
-        },
+        body: { userId: input.id },
         headers: getRequestHeaders(),
       });
 
@@ -359,22 +202,13 @@ export default {
       }
     }),
 
-  revokeUserSession: protectedProcedure({
-    permission: {
-      session: ['revoke'],
-    },
-  })
+  revokeUserSession: procedure({ permission: { session: ['revoke'] } })
     .route({
       method: 'POST',
       path: '/users/{id}/sessions/{sessionToken}/revoke',
       tags,
     })
-    .input(
-      z.object({
-        id: z.string(),
-        sessionToken: z.string(),
-      })
-    )
+    .input(z.object({ id: z.string(), sessionToken: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
       if (context.session.token === input.sessionToken) {
@@ -388,9 +222,7 @@ export default {
 
       context.logger.info('Revoke user session');
       const response = await auth.api.revokeUserSession({
-        body: {
-          sessionToken: input.sessionToken,
-        },
+        body: { sessionToken: input.sessionToken },
         headers: getRequestHeaders(),
       });
 

@@ -11,59 +11,22 @@ import {
   countPassengersByDirection,
   isTripTypeFull,
 } from '@/features/commute/commute-passenger-rules';
-import { Prisma } from '@/server/db/generated/client';
-import { organizationProcedure } from '@/server/orpc';
+import { createBookingRepository } from '@/server/repositories/booking.repository';
+import { createOrgProcedure } from '@/server/orpc';
 
 const tags = ['bookings'];
 
+const procedure = createOrgProcedure((db) => ({
+  bookings: createBookingRepository(db),
+}));
+
 export default {
-  request: organizationProcedure({
-    permissions: {
-      booking: ['request'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/bookings/request',
-      tags,
-    })
+  request: procedure({ permissions: { booking: ['request'] } })
+    .route({ method: 'POST', path: '/bookings/request', tags })
     .input(zBookingRequest())
     .output(zBooking())
     .handler(async ({ context, input }) => {
-      // Find the commute this stop belongs to, including driver's autoAccept setting
-      const stop = await context.db.stop.findUnique({
-        where: { id: input.stopId },
-        select: {
-          order: true,
-          commuteId: true,
-          commute: {
-            select: {
-              driverMemberId: true,
-              date: true,
-              type: true,
-              seats: true,
-              stops: { select: { order: true } },
-              driver: {
-                select: {
-                  organizationId: true,
-                  autoAccept: true,
-                  notificationPreferences: {
-                    where: { enabled: false },
-                    select: { channel: true },
-                  },
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
+      const stop = await context.bookings.findStopForRequest(input.stopId);
 
       if (
         !stop ||
@@ -88,14 +51,10 @@ export default {
         });
       }
 
-      // Check if user already has an active booking on any stop of this commute
-      const existingBooking = await context.db.passengersOnStops.findFirst({
-        where: {
-          passengerMemberId: context.memberId,
-          status: { in: ['REQUESTED', 'ACCEPTED'] },
-          stop: { commuteId: stop.commuteId },
-        },
-      });
+      const existingBooking = await context.bookings.findExistingBooking(
+        context.memberId,
+        stop.commuteId
+      );
 
       if (existingBooking) {
         throw new ORPCError('CONFLICT', {
@@ -103,14 +62,9 @@ export default {
         });
       }
 
-      // Check seat capacity
-      const acceptedBookings = await context.db.passengersOnStops.findMany({
-        where: {
-          status: 'ACCEPTED',
-          stop: { commuteId: stop.commuteId },
-        },
-        select: { passengerMemberId: true, tripType: true },
-      });
+      const acceptedBookings = await context.bookings.findAcceptedBookings(
+        stop.commuteId
+      );
 
       const counts = countPassengersByDirection(
         acceptedBookings.map((p) => ({
@@ -120,32 +74,19 @@ export default {
       );
 
       if (isTripTypeFull(input.tripType, stop.commute.seats, counts)) {
-        throw new ORPCError('CONFLICT', {
-          message: 'This commute is full',
-        });
+        throw new ORPCError('CONFLICT', { message: 'This commute is full' });
       }
 
       const driverMember = stop.commute.driver;
       const driverUser = driverMember.user;
       const status = driverMember.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
-      const booking = await context.db.passengersOnStops.upsert({
-        where: {
-          passengerMemberId_stopId: {
-            passengerMemberId: context.memberId,
-            stopId: input.stopId,
-          },
-        },
-        update: {
-          status,
-          tripType: input.tripType,
-          comment: input.comment,
-        },
-        create: {
-          ...input,
-          status,
-          passengerMemberId: context.memberId,
-        },
+      const booking = await context.bookings.upsertRequest({
+        passengerMemberId: context.memberId,
+        stopId: input.stopId,
+        tripType: input.tripType,
+        comment: input.comment,
+        status,
       });
 
       context.notify({
@@ -169,40 +110,12 @@ export default {
       return booking;
     }),
 
-  accept: organizationProcedure({
-    permissions: {
-      booking: ['manage'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/bookings/{id}/accept',
-      tags,
-    })
+  accept: procedure({ permissions: { booking: ['manage'] } })
+    .route({ method: 'POST', path: '/bookings/{id}/accept', tags })
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const booking = await context.db.passengersOnStops.findUnique({
-        where: { id: input.id },
-        include: {
-          passenger: {
-            include: {
-              notificationPreferences: {
-                where: { enabled: false },
-                select: { channel: true },
-              },
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-          },
-          stop: { include: { commute: true } },
-        },
-      });
+      const booking = await context.bookings.findForDriverAction(input.id);
 
       if (!booking) {
         throw new ORPCError('NOT_FOUND');
@@ -214,14 +127,9 @@ export default {
 
       validateStatusTransition(booking.status, 'ACCEPTED');
 
-      // Check seat capacity before accepting
-      const acceptedBookings = await context.db.passengersOnStops.findMany({
-        where: {
-          status: 'ACCEPTED',
-          stop: { commuteId: booking.stop.commuteId },
-        },
-        select: { passengerMemberId: true, tripType: true },
-      });
+      const acceptedBookings = await context.bookings.findAcceptedBookings(
+        booking.stop.commuteId
+      );
 
       const counts = countPassengersByDirection(
         acceptedBookings.map((p) => ({
@@ -233,15 +141,10 @@ export default {
       if (
         isTripTypeFull(booking.tripType, booking.stop.commute.seats, counts)
       ) {
-        throw new ORPCError('CONFLICT', {
-          message: 'This commute is full',
-        });
+        throw new ORPCError('CONFLICT', { message: 'This commute is full' });
       }
 
-      await context.db.passengersOnStops.update({
-        where: { id: input.id },
-        data: { status: 'ACCEPTED' },
-      });
+      await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
       const passengerUser = booking.passenger.user;
       context.notify({
@@ -262,40 +165,12 @@ export default {
       });
     }),
 
-  refuse: organizationProcedure({
-    permissions: {
-      booking: ['manage'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/bookings/{id}/refuse',
-      tags,
-    })
+  refuse: procedure({ permissions: { booking: ['manage'] } })
+    .route({ method: 'POST', path: '/bookings/{id}/refuse', tags })
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const booking = await context.db.passengersOnStops.findUnique({
-        where: { id: input.id },
-        include: {
-          passenger: {
-            include: {
-              notificationPreferences: {
-                where: { enabled: false },
-                select: { channel: true },
-              },
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-          },
-          stop: { include: { commute: true } },
-        },
-      });
+      const booking = await context.bookings.findForDriverAction(input.id);
 
       if (!booking) {
         throw new ORPCError('NOT_FOUND');
@@ -307,10 +182,7 @@ export default {
 
       validateStatusTransition(booking.status, 'REFUSED');
 
-      await context.db.passengersOnStops.update({
-        where: { id: input.id },
-        data: { status: 'REFUSED' },
-      });
+      await context.bookings.updateStatus(input.id, 'REFUSED');
 
       const passengerUser = booking.passenger.user;
       context.notify({
@@ -331,47 +203,12 @@ export default {
       });
     }),
 
-  cancel: organizationProcedure({
-    permissions: {
-      booking: ['manage'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/bookings/{id}/cancel',
-      tags,
-    })
+  cancel: procedure({ permissions: { booking: ['manage'] } })
+    .route({ method: 'POST', path: '/bookings/{id}/cancel', tags })
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const booking = await context.db.passengersOnStops.findUnique({
-        where: { id: input.id },
-        include: {
-          stop: {
-            include: {
-              commute: {
-                include: {
-                  driver: {
-                    include: {
-                      notificationPreferences: {
-                        where: { enabled: false },
-                        select: { channel: true },
-                      },
-                      user: {
-                        select: {
-                          id: true,
-                          name: true,
-                          email: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
+      const booking = await context.bookings.findForPassengerCancel(input.id);
 
       if (!booking) {
         throw new ORPCError('NOT_FOUND');
@@ -383,10 +220,7 @@ export default {
 
       validateStatusTransition(booking.status, 'CANCELED');
 
-      await context.db.passengersOnStops.update({
-        where: { id: input.id },
-        data: { status: 'CANCELED' },
-      });
+      await context.bookings.updateStatus(input.id, 'CANCELED');
 
       const driverMember = booking.stop.commute.driver;
       const driverUser = driverMember.user;
@@ -408,43 +242,19 @@ export default {
       });
     }),
 
-  pendingRequestCount: organizationProcedure({
-    permissions: {
-      booking: ['read'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/bookings/pending-count',
-      tags,
-    })
+  pendingRequestCount: procedure({ permissions: { booking: ['read'] } })
+    .route({ method: 'GET', path: '/bookings/pending-count', tags })
     .input(z.void())
     .output(z.object({ count: z.number() }))
     .handler(async ({ context }) => {
-      const count = await context.db.passengersOnStops.count({
-        where: {
-          status: 'REQUESTED',
-          stop: {
-            commute: {
-              driverMemberId: context.memberId,
-              date: { gte: new Date() },
-            },
-          },
-        },
-      });
+      const count = await context.bookings.countPendingForDriver(
+        context.memberId
+      );
       return { count };
     }),
 
-  getRequestsForDriver: organizationProcedure({
-    permissions: {
-      booking: ['read'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/bookings/driver-requests',
-      tags,
-    })
+  getRequestsForDriver: procedure({ permissions: { booking: ['read'] } })
+    .route({ method: 'GET', path: '/bookings/driver-requests', tags })
     .input(
       z
         .object({
@@ -461,47 +271,11 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        status: 'REQUESTED' as const,
-        stop: {
-          commute: {
-            driverMemberId: context.memberId,
-            date: { gte: new Date() },
-          },
-        },
-      } satisfies Prisma.PassengersOnStopsWhereInput;
-
-      const include = {
-        passenger: {
-          include: { user: { select: { id: true, name: true, image: true } } },
-        },
-        stop: {
-          select: {
-            id: true,
-            order: true,
-            outwardTime: true,
-            inwardTime: true,
-            commute: {
-              select: {
-                id: true,
-                date: true,
-                type: true,
-              },
-            },
-          },
-        },
-      } satisfies Prisma.PassengersOnStopsInclude;
-
-      const [total, rawItems] = await Promise.all([
-        context.db.passengersOnStops.count({ where }),
-        context.db.passengersOnStops.findMany({
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: { createdAt: 'desc' },
-          where,
-          include,
-        }),
-      ]);
+      const [total, rawItems] =
+        await context.bookings.findDriverRequestsPaginated(context.memberId, {
+          cursor: input.cursor,
+          limit: input.limit,
+        });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
       if (rawItems.length > input.limit) {
