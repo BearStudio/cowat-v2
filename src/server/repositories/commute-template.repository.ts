@@ -1,6 +1,8 @@
 import type { AppDB } from '@/server/db';
 import type { CommuteType } from '@/server/db/generated/client';
 
+import type { StopCreateInput } from './types';
+
 const templateWithLocationInclude = {
   stops: {
     orderBy: { order: 'asc' as const },
@@ -9,13 +11,6 @@ const templateWithLocationInclude = {
     },
   },
 } as const;
-
-type StopCreateInput = {
-  order: number;
-  outwardTime: string;
-  inwardTime?: string | null;
-  locationId: string;
-};
 
 export const createCommuteTemplateRepository = (db: AppDB) => ({
   create: (data: {
@@ -48,6 +43,7 @@ export const createCommuteTemplateRepository = (db: AppDB) => ({
       include: templateWithLocationInclude,
     }),
 
+  // Intentionally omits include — only needs driverMemberId for authorization
   findForMutation: (id: string, organizationId: string) =>
     db.commuteTemplate.findFirst({
       where: { id, driver: { organizationId } },
@@ -71,7 +67,3 @@ export const createCommuteTemplateRepository = (db: AppDB) => ({
 
   delete: (id: string) => db.commuteTemplate.delete({ where: { id } }),
 });
-
-export type CommuteTemplateRepository = ReturnType<
-  typeof createCommuteTemplateRepository
->;

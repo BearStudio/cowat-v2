@@ -206,27 +206,27 @@ type ExtendContext<TBuilder, TExtension extends Record<PropertyKey, any>> =
       >
     : never;
 
-export const createOrgProcedure =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  <T extends Record<PropertyKey, any>>(createRepositories: (db: AppDB) => T) =>
-    (
-      ...args: Parameters<typeof organizationProcedure>
-    ): ExtendContext<ReturnType<typeof organizationProcedure>, T> =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (organizationProcedure(...args) as any).use(({ context, next }: any) =>
-        next({ context: createRepositories(context.db) })
-      ) as ExtendContext<ReturnType<typeof organizationProcedure>, T>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function withRepositories<
+  TProc extends (...args: any[]) => any,
+  T extends Record<PropertyKey, any>,
+>(baseProcedure: TProc, createRepositories: (db: AppDB) => T) {
+  return (...args: Parameters<TProc>): ExtendContext<ReturnType<TProc>, T> =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (baseProcedure(...args) as any).use(({ context, next }: any) =>
+      next({ context: createRepositories(context.db) })
+    ) as ExtendContext<ReturnType<TProc>, T>;
+}
 
-export const createProtectedProcedure =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  <T extends Record<PropertyKey, any>>(createRepositories: (db: AppDB) => T) =>
-    (
-      ...args: Parameters<typeof protectedProcedure>
-    ): ExtendContext<ReturnType<typeof protectedProcedure>, T> =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (protectedProcedure(...args) as any).use(({ context, next }: any) =>
-        next({ context: createRepositories(context.db) })
-      ) as ExtendContext<ReturnType<typeof protectedProcedure>, T>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createOrgProcedure = <T extends Record<PropertyKey, any>>(
+  createRepositories: (db: AppDB) => T
+) => withRepositories(organizationProcedure, createRepositories);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createProtectedProcedure = <T extends Record<PropertyKey, any>>(
+  createRepositories: (db: AppDB) => T
+) => withRepositories(protectedProcedure, createRepositories);
 
 export const publicProcedure = () => base;
 

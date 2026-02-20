@@ -6,6 +6,7 @@ import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
 import { createProtectedProcedure } from '@/server/orpc';
 import { createUserRepository } from '@/server/repositories/user.repository';
+import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['users'];
 
@@ -55,13 +56,7 @@ export default {
         limit: input.limit,
       });
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   getById: procedure({ permission: { user: ['list'] } })
@@ -167,13 +162,7 @@ export default {
         }
       );
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   revokeUserSessions: procedure({ permission: { session: ['revoke'] } })

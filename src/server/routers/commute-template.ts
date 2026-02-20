@@ -10,6 +10,7 @@ import {
 } from '@/features/commute-template/schema';
 import { createOrgProcedure } from '@/server/orpc';
 import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
+import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commute-templates'];
 
@@ -61,13 +62,7 @@ export default {
         }
       );
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   getById: procedure({ permissions: { commuteTemplate: ['read'] } })
@@ -107,14 +102,7 @@ export default {
         input.id,
         context.organizationId
       );
-
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      assertDriverOwnership(existing, context.memberId);
 
       const { id, stops, ...data } = input;
 
@@ -133,14 +121,7 @@ export default {
         input.id,
         context.organizationId
       );
-
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      assertDriverOwnership(existing, context.memberId);
 
       await context.templates.delete(input.id);
     }),

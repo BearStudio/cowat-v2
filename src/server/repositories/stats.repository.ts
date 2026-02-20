@@ -27,5 +27,3 @@ export const createStatsRepository = (db: AppDB) => ({
       },
     }),
 });
-
-export type StatsRepository = ReturnType<typeof createStatsRepository>;

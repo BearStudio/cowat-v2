@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
 import { createOrgProcedure } from '@/server/orpc';
 import { createLocationRepository } from '@/server/repositories/location.repository';
+import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['locations'];
 
@@ -53,13 +54,7 @@ export default {
         }
       );
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   getById: procedure({

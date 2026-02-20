@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { auth } from '@/server/auth';
 import { createOrgProcedure, createProtectedProcedure } from '@/server/orpc';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
+import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['organizations'];
 
@@ -51,13 +52,7 @@ export default {
         limit: input.limit,
       });
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   getById: adminProcedure({ permission: { organization: ['list'] } })

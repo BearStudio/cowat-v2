@@ -79,5 +79,3 @@ export const createUserRepository = (db: AppDB) => ({
       }),
     ]),
 });
-
-export type UserRepository = ReturnType<typeof createUserRepository>;

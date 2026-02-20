@@ -45,5 +45,3 @@ export const createAccountRepository = (db: AppDB) => ({
       },
     }),
 });
-
-export type AccountRepository = ReturnType<typeof createAccountRepository>;

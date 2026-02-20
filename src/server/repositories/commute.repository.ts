@@ -1,5 +1,11 @@
 import type { AppDB } from '@/server/db';
-import type { CommuteType, RequestStatus } from '@/server/db/generated/client';
+import {
+  type Prisma,
+  type CommuteType,
+  type RequestStatus,
+} from '@/server/db/generated/client';
+
+import type { StopCreateInput } from './types';
 
 const enrichedCommuteInclude = {
   driver: {
@@ -26,12 +32,23 @@ const enrichedCommuteInclude = {
   },
 } as const;
 
-type StopCreateInput = {
-  order: number;
-  outwardTime: string;
-  inwardTime?: string | null;
-  locationId: string;
-};
+type EnrichedCommute = Prisma.CommuteGetPayload<{
+  include: typeof enrichedCommuteInclude;
+}>;
+
+function flattenEnrichedCommute(c: EnrichedCommute) {
+  return {
+    ...c,
+    driver: c.driver.user,
+    stops: c.stops.map((s) => ({
+      ...s,
+      passengers: s.passengers.map((p) => ({
+        ...p,
+        passenger: p.passenger.user,
+      })),
+    })),
+  };
+}
 
 export const createCommuteRepository = (db: AppDB) => ({
   create: (data: {
@@ -62,17 +79,7 @@ export const createCommuteRepository = (db: AppDB) => ({
       orderBy: { date: 'asc' },
       include: enrichedCommuteInclude,
     });
-    return commutes.map((c) => ({
-      ...c,
-      driver: c.driver.user,
-      stops: c.stops.map((s) => ({
-        ...s,
-        passengers: s.passengers.map((p) => ({
-          ...p,
-          passenger: p.passenger.user,
-        })),
-      })),
-    }));
+    return commutes.map(flattenEnrichedCommute);
   },
 
   findMyPaginated: async (params: {
@@ -113,21 +120,12 @@ export const createCommuteRepository = (db: AppDB) => ({
       }),
     ]);
 
-    const items = rawItems.map((c) => ({
-      ...c,
-      driver: c.driver.user,
-      stops: c.stops.map((s) => ({
-        ...s,
-        passengers: s.passengers.map((p) => ({
-          ...p,
-          passenger: p.passenger.user,
-        })),
-      })),
-    }));
+    const items = rawItems.map(flattenEnrichedCommute);
 
     return { total, items };
   },
 
+  // Intentionally omits include — only needs driverMemberId for authorization
   findForMutation: (id: string, organizationId: string) =>
     db.commute.findFirst({
       where: { id, driver: { organizationId } },
@@ -145,5 +143,3 @@ export const createCommuteRepository = (db: AppDB) => ({
 
   delete: (id: string) => db.commute.delete({ where: { id } }),
 });
-
-export type CommuteRepository = ReturnType<typeof createCommuteRepository>;

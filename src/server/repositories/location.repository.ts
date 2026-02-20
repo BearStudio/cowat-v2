@@ -33,5 +33,3 @@ export const createLocationRepository = (db: AppDB) => ({
 
   delete: (id: string) => db.location.delete({ where: { id } }),
 });
-
-export type LocationRepository = ReturnType<typeof createLocationRepository>;

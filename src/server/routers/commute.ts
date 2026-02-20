@@ -12,6 +12,11 @@ import { createOrgProcedure } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
+import {
+  assertDriverOwnership,
+  getDisabledChannels,
+  paginateResult,
+} from '@/server/routers/utils';
 
 const tags = ['commutes'];
 
@@ -113,13 +118,7 @@ export default {
         limit: input.limit,
       });
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
   update: procedure({ permissions: { commute: ['update'] } })
@@ -139,14 +138,7 @@ export default {
         input.id,
         context.organizationId
       );
-
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      assertDriverOwnership(existing, context.memberId);
 
       const { id, stops, ...data } = input;
 
@@ -166,8 +158,8 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: booking.passenger.notificationPreferences.map(
-              (p) => p.channel.toLowerCase()
+            disabledChannels: getDisabledChannels(
+              booking.passenger.notificationPreferences
             ),
           },
           payload: {
@@ -191,13 +183,7 @@ export default {
         context.organizationId
       );
 
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      assertDriverOwnership(existing, context.memberId);
 
       const affectedPassengers = await context.bookings.findAffectedPassengers(
         input.id
@@ -213,8 +199,8 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: booking.passenger.notificationPreferences.map(
-              (p) => p.channel.toLowerCase()
+            disabledChannels: getDisabledChannels(
+              booking.passenger.notificationPreferences
             ),
           },
           payload: {

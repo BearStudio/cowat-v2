@@ -13,6 +13,7 @@ import {
 } from '@/features/commute/commute-passenger-rules';
 import { createOrgProcedure } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
+import { getDisabledChannels } from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
@@ -95,8 +96,8 @@ export default {
           userId: driverUser.id,
           name: driverUser.name,
           email: driverUser.email,
-          disabledChannels: driverMember.notificationPreferences.map((p) =>
-            p.channel.toLowerCase()
+          disabledChannels: getDisabledChannels(
+            driverMember.notificationPreferences
           ),
         },
         payload: {
@@ -153,8 +154,8 @@ export default {
           userId: passengerUser.id,
           name: passengerUser.name,
           email: passengerUser.email,
-          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
-            p.channel.toLowerCase()
+          disabledChannels: getDisabledChannels(
+            booking.passenger.notificationPreferences
           ),
         },
         payload: {
@@ -191,8 +192,8 @@ export default {
           userId: passengerUser.id,
           name: passengerUser.name,
           email: passengerUser.email,
-          disabledChannels: booking.passenger.notificationPreferences.map((p) =>
-            p.channel.toLowerCase()
+          disabledChannels: getDisabledChannels(
+            booking.passenger.notificationPreferences
           ),
         },
         payload: {
@@ -230,8 +231,8 @@ export default {
           userId: driverUser.id,
           name: driverUser.name,
           email: driverUser.email,
-          disabledChannels: driverMember.notificationPreferences.map((p) =>
-            p.channel.toLowerCase()
+          disabledChannels: getDisabledChannels(
+            driverMember.notificationPreferences
           ),
         },
         payload: {
@@ -277,11 +278,8 @@ export default {
           limit: input.limit,
         });
 
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (rawItems.length > input.limit) {
-        const nextItem = rawItems.pop();
-        nextCursor = nextItem?.id;
-      }
+      let nextCursor: string | undefined;
+      if (rawItems.length > input.limit) nextCursor = rawItems.pop()?.id;
 
       const items = rawItems.map((item) => ({
         ...item,

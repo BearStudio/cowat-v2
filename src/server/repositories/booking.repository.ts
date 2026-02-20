@@ -1,28 +1,22 @@
 import type { AppDB } from '@/server/db';
 import type { RequestStatus, TripType } from '@/server/db/generated/client';
 
-const affectedPassengersInclude = {
-  passenger: {
-    include: {
-      notificationPreferences: {
-        where: { enabled: false },
-        select: { channel: true },
-      },
-      user: { select: { id: true, name: true, email: true } },
+const passengerWithNotifications = {
+  include: {
+    notificationPreferences: {
+      where: { enabled: false },
+      select: { channel: true },
     },
+    user: { select: { id: true, name: true, email: true } },
   },
 } as const;
 
+const affectedPassengersInclude = {
+  passenger: passengerWithNotifications,
+} as const;
+
 const bookingWithPassengerAndCommuteInclude = {
-  passenger: {
-    include: {
-      notificationPreferences: {
-        where: { enabled: false },
-        select: { channel: true },
-      },
-      user: { select: { id: true, name: true, email: true } },
-    },
-  },
+  passenger: passengerWithNotifications,
   stop: { include: { commute: true } },
 } as const;
 
@@ -189,5 +183,3 @@ export const createBookingRepository = (db: AppDB) => ({
     ]);
   },
 });
-
-export type BookingRepository = ReturnType<typeof createBookingRepository>;

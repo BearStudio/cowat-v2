@@ -82,7 +82,3 @@ export const createOrganizationRepository = (db: AppDB) => ({
 
   delete: (id: string) => db.organization.delete({ where: { id } }),
 });
-
-export type OrganizationRepository = ReturnType<
-  typeof createOrganizationRepository
->;
