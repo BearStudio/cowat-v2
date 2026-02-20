@@ -12,8 +12,8 @@ import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import '@/lib/dayjs/config';
 
-import { formatDate } from '@/lib/dayjs/formats';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
@@ -212,10 +212,7 @@ export const PageUser = (props: { id: string }) => {
                       {user.onboardedAt ? (
                         <>
                           {t('user:common.onboardingStatus.onboardedAt', {
-                            time: formatDate(
-                              user.onboardedAt,
-                              'user:onboardedAt'
-                            ),
+                            time: dayjs(user.onboardedAt).f('user:onboardedAt'),
                           })}
                         </>
                       ) : (

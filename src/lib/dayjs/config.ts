@@ -4,7 +4,10 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import isToday from 'dayjs/plugin/isToday';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
+import { formatPlugin } from './formats';
+
 dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
 dayjs.extend(isoWeek);
 dayjs.extend(isToday);
+dayjs.extend(formatPlugin);

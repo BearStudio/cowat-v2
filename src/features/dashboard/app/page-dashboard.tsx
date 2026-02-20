@@ -5,8 +5,8 @@ import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import '@/lib/dayjs/config';
 
-import { formatDate } from '@/lib/dayjs/formats';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
@@ -89,7 +89,7 @@ export const PageDashboard = () => {
   // Group commutes by day
   const commutesByDay = new Map<string, CommuteEnriched[]>();
   for (const commute of commutesQuery.data ?? []) {
-    const key = formatDate(commute.date, 'common:iso');
+    const key = dayjs(commute.date).f('common:iso');
     const existing = commutesByDay.get(key) ?? [];
     existing.push(commute);
     commutesByDay.set(key, existing);
@@ -129,7 +129,7 @@ export const PageDashboard = () => {
           .match('default', () => (
             <div className="flex flex-col gap-6">
               {days.map((day) => {
-                const key = formatDate(day, 'common:iso');
+                const key = dayjs(day).f('common:iso');
                 const isToday = day.isToday();
                 const dayCommutes = commutesByDay.get(key) ?? [];
 
@@ -139,7 +139,7 @@ export const PageDashboard = () => {
                       <h2 className="text-base font-semibold">
                         {isToday
                           ? t('dashboard:today')
-                          : formatDate(day, 'dashboard:dayHeader')}
+                          : dayjs(day).f('dashboard:dayHeader')}
                       </h2>
 
                       <OrgButtonLink

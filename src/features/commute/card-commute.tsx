@@ -1,8 +1,9 @@
 import { cva, type VariantProps } from 'class-variance-authority';
+import dayjs from 'dayjs';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import '@/lib/dayjs/config';
 
-import { formatDate } from '@/lib/dayjs/formats';
 import { tripTypeIcons } from '@/lib/feature-icons';
 import { cn } from '@/lib/tailwind/utils';
 
@@ -168,7 +169,7 @@ function CardCommuteHeader({
         </Avatar>
         <div className="flex flex-col gap-0.5">
           <CardTitle className="capitalize">
-            {formatDate(date, 'commute:dayHeader')}
+            {dayjs(date).f('commute:dayHeader')}
           </CardTitle>
 
           <CardDescription>{driver.name}</CardDescription>
