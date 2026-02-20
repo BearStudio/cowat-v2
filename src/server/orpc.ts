@@ -206,17 +206,17 @@ type ExtendContext<TBuilder, TExtension extends Record<PropertyKey, any>> =
       >
     : never;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function withRepositories<
   TProc extends (...args: any[]) => any,
   T extends Record<PropertyKey, any>,
 >(baseProcedure: TProc, createRepositories: (db: AppDB) => T) {
   return (...args: Parameters<TProc>): ExtendContext<ReturnType<TProc>, T> =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (baseProcedure(...args) as any).use(({ context, next }: any) =>
       next({ context: createRepositories(context.db) })
     ) as ExtendContext<ReturnType<TProc>, T>;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createOrgProcedure = <T extends Record<PropertyKey, any>>(
