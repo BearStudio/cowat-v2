@@ -4,15 +4,16 @@ import { z } from 'zod';
 
 import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
-import { createProtectedProcedure } from '@/server/orpc';
+import { protectedProcedure } from '@/server/orpc';
 import { createUserRepository } from '@/server/repositories/user.repository';
 import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['users'];
 
-const procedure = createProtectedProcedure((db) => ({
-  users: createUserRepository(db),
-}));
+const procedure = (args: Parameters<typeof protectedProcedure>[0]) =>
+  protectedProcedure(args).use(({ context, next }) =>
+    next({ context: { users: createUserRepository(context.db) } })
+  );
 
 export default {
   getAll: procedure({ permission: { user: ['list'] } })

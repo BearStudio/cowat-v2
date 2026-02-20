@@ -3,18 +3,20 @@ import { z } from 'zod';
 import { zFormFieldsOnboarding } from '@/features/auth/schema';
 import { zNotificationChannel } from '@/features/notification/schema';
 import { zUser } from '@/features/user/schema';
-import { createOrgProcedure, createProtectedProcedure } from '@/server/orpc';
+import { organizationProcedure, protectedProcedure } from '@/server/orpc';
 import { createAccountRepository } from '@/server/repositories/account.repository';
 
 const tags = ['account'];
 
-const authProcedure = createProtectedProcedure((db) => ({
-  account: createAccountRepository(db),
-}));
+const authProcedure = (args: Parameters<typeof protectedProcedure>[0]) =>
+  protectedProcedure(args).use(({ context, next }) =>
+    next({ context: { account: createAccountRepository(context.db) } })
+  );
 
-const orgProcedure = createOrgProcedure((db) => ({
-  account: createAccountRepository(db),
-}));
+const orgProcedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({ context: { account: createAccountRepository(context.db) } })
+  );
 
 export default {
   submitOnboarding: authProcedure({ permission: null })

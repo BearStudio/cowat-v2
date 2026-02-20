@@ -8,7 +8,7 @@ import {
   zStop,
   zStopInput,
 } from '@/features/commute/schema';
-import { createOrgProcedure } from '@/server/orpc';
+import { organizationProcedure } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
@@ -20,11 +20,16 @@ import {
 
 const tags = ['commutes'];
 
-const procedure = createOrgProcedure((db) => ({
-  commutes: createCommuteRepository(db),
-  bookings: createBookingRepository(db),
-  organizations: createOrganizationRepository(db),
-}));
+const procedure = (args: Parameters<typeof organizationProcedure>[0] = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({
+      context: {
+        commutes: createCommuteRepository(context.db),
+        bookings: createBookingRepository(context.db),
+        organizations: createOrganizationRepository(context.db),
+      },
+    })
+  );
 
 export default {
   create: procedure({ permissions: { commute: ['create'] } })
