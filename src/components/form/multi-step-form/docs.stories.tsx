@@ -7,7 +7,6 @@ import {
   Form,
   FormField,
   FormFieldController,
-  FormFieldError,
   FormFieldLabel,
 } from '@/components/form';
 import { onSubmit } from '@/components/form/docs.utils';
@@ -31,7 +30,7 @@ export const Default = () => {
       <MultiStepForm>
         <MultiStepFormContent className="p-4" />
 
-        <MultiStepFormStep label="Personal info">
+        <MultiStepFormStep name="Personal info">
           <div className="flex flex-col gap-3 px-4 pb-2">
             <input
               className="rounded-md border border-border px-3 py-2 text-sm"
@@ -46,7 +45,7 @@ export const Default = () => {
           </div>
         </MultiStepFormStep>
 
-        <MultiStepFormStep label="Address">
+        <MultiStepFormStep name="Address">
           <div className="flex flex-col gap-3 px-4 pb-2">
             <input
               className="rounded-md border border-border px-3 py-2 text-sm"
@@ -61,7 +60,7 @@ export const Default = () => {
           </div>
         </MultiStepFormStep>
 
-        <MultiStepFormStep label="Review">
+        <MultiStepFormStep name="Review">
           <div className="px-4 pb-2 text-sm text-muted-foreground">
             All looks good — ready to submit!
           </div>
@@ -103,7 +102,7 @@ export const WithValidation = () => {
         <MultiStepForm>
           <MultiStepFormContent className="p-4" />
 
-          <MultiStepFormStep label="Personal info" onNext={getStepOnNext(0)}>
+          <MultiStepFormStep name="Personal info" onNext={getStepOnNext(0)}>
             <div className="flex flex-col gap-4 px-4 pb-2">
               <FormField>
                 <FormFieldLabel>Name</FormFieldLabel>
@@ -120,12 +119,11 @@ export const WithValidation = () => {
                   control={form.control}
                   name="email"
                 />
-                <FormFieldError control={form.control} name="email" />
               </FormField>
             </div>
           </MultiStepFormStep>
 
-          <MultiStepFormStep label="Address" onNext={getStepOnNext(1)}>
+          <MultiStepFormStep name="Address" onNext={getStepOnNext(1)}>
             <div className="flex flex-col gap-4 px-4 pb-2">
               <FormField>
                 <FormFieldLabel>City</FormFieldLabel>
@@ -134,12 +132,11 @@ export const WithValidation = () => {
                   control={form.control}
                   name="city"
                 />
-                <FormFieldError control={form.control} name="city" />
               </FormField>
             </div>
           </MultiStepFormStep>
 
-          <MultiStepFormStep label="Review">
+          <MultiStepFormStep name="Review">
             <div className="px-4 pb-2 text-sm text-muted-foreground">
               All looks good — ready to submit!
             </div>
@@ -162,7 +159,7 @@ export const Submitting = () => {
     <div className="flex max-w-md flex-col overflow-hidden rounded-lg border border-border">
       <MultiStepForm>
         <MultiStepFormContent className="p-4" />
-        <MultiStepFormStep label="Review">
+        <MultiStepFormStep name="Review">
           <div className="px-4 pb-2 text-sm text-muted-foreground">
             Submitting…
           </div>
@@ -189,13 +186,13 @@ export const VisitedState = () => {
       <div className="flex max-w-md flex-col overflow-hidden rounded-lg border border-border">
         <MultiStepForm>
           <MultiStepFormContent className="p-4" />
-          <MultiStepFormStep label="Step 1">
+          <MultiStepFormStep name="Step 1">
             <div className="px-4 pb-2 text-sm">Step 1 content</div>
           </MultiStepFormStep>
-          <MultiStepFormStep label="Step 2">
+          <MultiStepFormStep name="Step 2">
             <div className="px-4 pb-2 text-sm">Step 2 content</div>
           </MultiStepFormStep>
-          <MultiStepFormStep label="Step 3">
+          <MultiStepFormStep name="Step 3">
             <div className="px-4 pb-2 text-sm">Step 3 content</div>
           </MultiStepFormStep>
           <MultiStepFormNavigation
@@ -217,8 +214,7 @@ const StepDebugInfo = () => {
       Step {currentStepIndex + 1} of {steps.length} ·{' '}
       {steps
         .map(
-          (s) =>
-            `${s.label}: ${isStepVisited(s.id) ? 'visited' : 'not visited'}`
+          (s) => `${s.name}: ${isStepVisited(s.id) ? 'visited' : 'not visited'}`
         )
         .join(' · ')}
     </div>
@@ -231,13 +227,13 @@ export const WithUseMultiStepForm = () => {
       <MultiStepForm>
         <MultiStepFormContent className="p-4" />
         <StepDebugInfo />
-        <MultiStepFormStep label="Step 1">
+        <MultiStepFormStep name="Step 1">
           <div className="px-4 pb-2 text-sm">Step 1 content</div>
         </MultiStepFormStep>
-        <MultiStepFormStep label="Step 2">
+        <MultiStepFormStep name="Step 2">
           <div className="px-4 pb-2 text-sm">Step 2 content</div>
         </MultiStepFormStep>
-        <MultiStepFormStep label="Step 3">
+        <MultiStepFormStep name="Step 3">
           <div className="px-4 pb-2 text-sm">Step 3 content</div>
         </MultiStepFormStep>
         <MultiStepFormNavigation

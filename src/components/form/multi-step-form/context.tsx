@@ -2,7 +2,7 @@ import { createContext, use } from 'react';
 
 export type StepConfig = {
   id: string;
-  label: string;
+  name: string;
   onNext: () => Promise<boolean> | boolean;
 };
 

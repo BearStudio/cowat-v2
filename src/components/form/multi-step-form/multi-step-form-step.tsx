@@ -3,13 +3,13 @@ import { ReactNode, useId, useLayoutEffect, useRef } from 'react';
 import { useMultiStepForm } from './context';
 
 type MultiStepFormStepProps = {
-  label: string;
+  name: string;
   onNext?: () => Promise<boolean> | boolean;
   children: ReactNode;
 };
 
 export const MultiStepFormStep = ({
-  label,
+  name,
   onNext,
   children,
 }: MultiStepFormStepProps) => {
@@ -25,12 +25,11 @@ export const MultiStepFormStep = ({
   useLayoutEffect(() => {
     return _registerStep({
       id,
-      label,
+      name,
       onNext: () => onNextRef.current?.() ?? true,
     });
-  }, [id, label, _registerStep]);
+  }, [id, name, _registerStep]);
 
   if (!isStepCurrent(id)) return null;
-
   return <>{children}</>;
 };
