@@ -18,7 +18,6 @@ import { Form } from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -32,12 +31,17 @@ import {
   ResponsiveDrawerTitle,
 } from '@/components/ui/responsive-drawer';
 
-import { FormCommute } from '@/features/commute/app/form-commute';
+import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
+import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
+import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
+import { StepRecap } from '@/features/commute/form-commute/step-recap';
+import { Stepper } from '@/features/commute/form-commute/stepper';
 import { TemplatePicker } from '@/features/commute/app/template-picker';
 import {
   FormFieldsCommute,
   zFormFieldsCommute,
 } from '@/features/commute/schema';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -63,14 +67,19 @@ export const PageCommuteNew = ({
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const [showForm, setShowForm] = useState(false);
+  const [step, setStep] = useState(0);
   const requestDrawer = useDisclosure();
   const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
   const [requestDestination, setRequestDestination] = useState('');
+
+  useShouldShowNav(showForm ? 'desktop-only' : 'all');
 
   const form = useForm<FormFieldsCommute>({
     resolver: zodResolver(zFormFieldsCommute()),
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
+
+  const commuteType = form.watch('type');
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
@@ -114,6 +123,58 @@ export const PageCommuteNew = ({
   );
 
   const today = dayjs().startOf('day').toDate();
+
+  const steps = [
+    {
+      label: t('commute:stepper.details'),
+      content: <StepDetailsCommute />,
+    },
+    {
+      label: t('commute:stepper.stops'),
+      content: (
+        <StepOutwardStops
+          control={form.control}
+          setValue={form.setValue}
+          ns="commute"
+          defaultStop={{ locationId: '', outwardTime: '', inwardTime: null }}
+        />
+      ),
+    },
+    ...(commuteType === 'ROUND'
+      ? [
+          {
+            label: t('commute:stepper.inwardStops'),
+            content: (
+              <StepInwardStops
+                control={form.control}
+                setValue={form.setValue}
+                ns="commute"
+              />
+            ),
+          },
+        ]
+      : []),
+    {
+      label: t('commute:stepper.recap'),
+      content: <StepRecap control={form.control} ns="commute" />,
+    },
+  ];
+
+  const handleNext = async () => {
+    let isValid = false;
+    if (step === 0) {
+      isValid = await form.trigger(['date', 'seats', 'type']);
+    } else if (step === 1) {
+      isValid = await form.trigger(['stops']);
+    } else if (step === 2 && commuteType === 'ROUND') {
+      isValid = await form.trigger(['stops']);
+    }
+    if (isValid) setStep((s) => s + 1);
+  };
+
+  const handleBack = () => {
+    setStep((s) => Math.max(0, s - 1));
+  };
 
   if (!showForm) {
     return (
@@ -221,42 +282,32 @@ export const PageCommuteNew = ({
         control={form.control}
         render={({ isDirty }) => <PreventNavigation shouldBlock={isDirty} />}
       />
-      <Form
-        {...form}
-        onSubmit={(values) => {
-          commuteCreate.mutate({
-            ...values,
-            stops: values.stops.map((stop, index) => ({
-              ...stop,
-              order: index,
-            })),
-          });
-        }}
-      >
+      <Form {...form} noHtmlForm>
         <PageLayout>
-          <PageLayoutTopBar
-            startActions={<BackButton />}
-            endActions={
-              <Button
-                size="sm"
-                type="submit"
-                className="min-w-20"
-                loading={commuteCreate.isPending}
-              >
-                {t('commute:new.submitButton')}
-              </Button>
-            }
-          >
+          <PageLayoutTopBar startActions={<BackButton />}>
             <PageLayoutTopBarTitle>
               {t('commute:new.title')}
             </PageLayoutTopBarTitle>
           </PageLayoutTopBar>
           <PageLayoutContent>
-            <Card>
-              <CardContent>
-                <FormCommute />
-              </CardContent>
-            </Card>
+            <Stepper
+              steps={steps}
+              currentStep={step}
+              onNext={handleNext}
+              onBack={handleBack}
+              onSubmit={form.handleSubmit((values) => {
+                commuteCreate.mutate({
+                  ...values,
+                  stops: values.stops.map((stop, index) => ({
+                    ...stop,
+                    order: index,
+                  })),
+                });
+              })}
+              onStepClick={setStep}
+              isSubmitting={commuteCreate.isPending}
+              ns="commute"
+            />
           </PageLayoutContent>
         </PageLayout>
       </Form>

@@ -48,6 +48,17 @@
   "view": {
     "title": "Commute view"
   },
+  "stepper": {
+    "details": "Details",
+    "stops": "Stops",
+    "inwardStops": "Return times",
+    "recap": "Summary",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Create",
+    "outboundTrip": "Outbound trip",
+    "inboundTrip": "Inbound trip"
+  },
   "form": {
     "date": "Date",
     "seats": "Seats",

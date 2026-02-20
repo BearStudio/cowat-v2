@@ -18,6 +18,17 @@
   "update": {
     "submitButton": "Enregistrer"
   },
+  "stepper": {
+    "details": "Détails",
+    "stops": "Arrêts",
+    "inwardStops": "Heures retour",
+    "recap": "Résumé",
+    "next": "Suivant",
+    "back": "Retour",
+    "submit": "Créer",
+    "outboundTrip": "Aller",
+    "inboundTrip": "Retour"
+  },
   "form": {
     "name": "Nom",
     "seats": "Places",
