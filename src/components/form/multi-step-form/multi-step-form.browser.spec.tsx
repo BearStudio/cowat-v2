@@ -19,13 +19,13 @@ const renderForm = ({
   render(
     <MultiStepForm>
       <MultiStepFormContent />
-      <MultiStepFormStep label="Step one" onNext={step1OnNext}>
+      <MultiStepFormStep name="Step one" onNext={step1OnNext}>
         <p>Content one</p>
       </MultiStepFormStep>
-      <MultiStepFormStep label="Step two">
+      <MultiStepFormStep name="Step two">
         <p>Content two</p>
       </MultiStepFormStep>
-      <MultiStepFormStep label="Step three">
+      <MultiStepFormStep name="Step three">
         <p>Content three</p>
       </MultiStepFormStep>
       <MultiStepFormNavigation
@@ -57,7 +57,7 @@ test('next button advances to the next step', async () => {
 
   await expect.element(page.getByText('Step two')).toBeVisible();
   await expect.element(page.getByText('Content two')).toBeVisible();
-  await expect.element(page.getByText('Content one')).not.toBeVisible();
+  await expect.element(page.getByText('Content one')).not.toBeInTheDocument();
 });
 
 test('back button returns to the previous step', async () => {

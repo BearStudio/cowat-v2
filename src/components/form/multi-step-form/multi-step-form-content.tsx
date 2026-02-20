@@ -34,7 +34,7 @@ export const MultiStepFormContent = ({
                   !isCurrent &&
                   'cursor-pointer bg-primary/20 hover:bg-primary/70'
               )}
-              aria-label={step.label}
+              aria-label={step.name}
               aria-current={isCurrent ? 'step' : undefined}
             />
           );
@@ -42,9 +42,7 @@ export const MultiStepFormContent = ({
       </div>
 
       {/* Step label */}
-      <h2 className="text-lg font-semibold">
-        {steps[currentStepIndex]?.label}
-      </h2>
+      <h2 className="text-lg font-semibold">{steps[currentStepIndex]?.name}</h2>
     </div>
   );
 };

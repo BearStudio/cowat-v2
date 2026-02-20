@@ -69,7 +69,7 @@ export const useMultiStepForms = <TSteps extends MultiStepFormStepConfig[]>(
 
   return {
     form,
-    handleSubmit: form.handleSubmit(onSubmit),
+    handleSubmit: form.handleSubmit((data) => onSubmit(data)),
     getStepOnNext,
   };
 };

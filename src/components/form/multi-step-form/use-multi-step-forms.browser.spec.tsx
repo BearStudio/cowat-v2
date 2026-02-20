@@ -1,11 +1,12 @@
 import { expect, test, vi } from 'vitest';
 import { z } from 'zod';
 
+import { zu } from '@/lib/zod/zod-utils';
+
 import {
   Form,
   FormField,
   FormFieldController,
-  FormFieldError,
   FormFieldLabel,
 } from '@/components/form';
 
@@ -23,9 +24,15 @@ import {
 // Test fixture
 // ---------------------------------------------------------------------------
 
-const nameSchema = z.object({ name: z.string().min(1, 'Name is required') });
+const nameSchema = z.object({
+  name: zu.fieldText.required('Name is required'),
+});
 const emailSchema = z.object({
-  email: z.string().email('Invalid email').min(1, 'Email is required'),
+  email: zu.fieldText.required().pipe(
+    z.email({
+      error: (issue) => (issue.input ? 'Invalid email' : 'Email is required'),
+    })
+  ),
 });
 
 type FixtureProps = {
@@ -47,7 +54,7 @@ const Fixture = ({ onSubmit = vi.fn() }: FixtureProps) => {
       <MultiStepForm>
         <MultiStepFormContent />
 
-        <MultiStepFormStep label="Name" onNext={getStepOnNext(0)}>
+        <MultiStepFormStep name="Name" onNext={getStepOnNext(0)}>
           <FormField>
             <FormFieldLabel>Name</FormFieldLabel>
             <FormFieldController
@@ -55,11 +62,10 @@ const Fixture = ({ onSubmit = vi.fn() }: FixtureProps) => {
               control={form.control}
               name="name"
             />
-            <FormFieldError control={form.control} name="name" />
           </FormField>
         </MultiStepFormStep>
 
-        <MultiStepFormStep label="Email" onNext={getStepOnNext(1)}>
+        <MultiStepFormStep name="Email" onNext={getStepOnNext(1)}>
           <FormField>
             <FormFieldLabel>Email</FormFieldLabel>
             <FormFieldController
@@ -67,11 +73,10 @@ const Fixture = ({ onSubmit = vi.fn() }: FixtureProps) => {
               control={form.control}
               name="email"
             />
-            <FormFieldError control={form.control} name="email" />
           </FormField>
         </MultiStepFormStep>
 
-        <MultiStepFormStep label="Review">
+        <MultiStepFormStep name="Review">
           <p>Ready to submit</p>
         </MultiStepFormStep>
 
@@ -96,7 +101,9 @@ test('blocks navigation when required field is empty', async () => {
 
   await user.click(page.getByRole('button', { name: 'Next' }));
 
-  await expect.element(page.getByText('Name')).toBeVisible();
+  await expect
+    .element(page.getByRole('heading', { name: 'Name' }))
+    .toBeVisible();
 });
 
 test('shows validation error when clicking Next with empty field', async () => {
@@ -112,12 +119,18 @@ test('shows validation error for invalid email', async () => {
   const user = setupUser();
   render(<Fixture />);
 
-  const nameInput = page.getByLabelText('Name').element() as HTMLInputElement;
+  const nameInput = page
+    .getByRole('textbox', { name: 'Name' })
+    .element() as HTMLInputElement;
   await user.type(nameInput, 'Alice');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
-  await expect.element(page.getByText('Email')).toBeVisible();
-  const emailInput = page.getByLabelText('Email').element() as HTMLInputElement;
+  await expect
+    .element(page.getByRole('heading', { name: 'Email' }))
+    .toBeVisible();
+  const emailInput = page
+    .getByRole('textbox', { name: 'Email' })
+    .element() as HTMLInputElement;
   await user.type(emailInput, 'not-an-email');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
@@ -132,22 +145,30 @@ test('allows navigation when required field is filled', async () => {
   const user = setupUser();
   render(<Fixture />);
 
-  const input = page.getByLabelText('Name').element() as HTMLInputElement;
+  const input = page
+    .getByRole('textbox', { name: 'Name' })
+    .element() as HTMLInputElement;
   await user.type(input, 'Alice');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
-  await expect.element(page.getByText('Email')).toBeVisible();
+  await expect
+    .element(page.getByRole('heading', { name: 'Email' }))
+    .toBeVisible();
 });
 
 test('allows navigation on step without a schema', async () => {
   const user = setupUser();
   render(<Fixture />);
 
-  const nameInput = page.getByLabelText('Name').element() as HTMLInputElement;
+  const nameInput = page
+    .getByRole('textbox', { name: 'Name' })
+    .element() as HTMLInputElement;
   await user.type(nameInput, 'Alice');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
-  const emailInput = page.getByLabelText('Email').element() as HTMLInputElement;
+  const emailInput = page
+    .getByRole('textbox', { name: 'Email' })
+    .element() as HTMLInputElement;
   await user.type(emailInput, 'alice@example.com');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
@@ -170,11 +191,15 @@ test('validation error clears once the field is corrected', async () => {
   await expect.element(page.getByText('Name is required')).toBeVisible();
 
   // Fix the field — blur triggers revalidation (mode: onBlur)
-  const input = page.getByLabelText('Name').element() as HTMLInputElement;
+  const input = page
+    .getByRole('textbox', { name: 'Name' })
+    .element() as HTMLInputElement;
   await user.type(input, 'Alice');
   await user.tab(); // blur
 
-  await expect.element(page.getByText('Name is required')).not.toBeVisible();
+  await expect
+    .element(page.getByText('Name is required'))
+    .not.toBeInTheDocument();
 });
 
 // ---------------------------------------------------------------------------
@@ -186,11 +211,15 @@ test('submit receives merged values from all steps', async () => {
   const mockedSubmit = vi.fn();
   render(<Fixture onSubmit={mockedSubmit} />);
 
-  const nameInput = page.getByLabelText('Name').element() as HTMLInputElement;
+  const nameInput = page
+    .getByRole('textbox', { name: 'Name' })
+    .element() as HTMLInputElement;
   await user.type(nameInput, 'Alice');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
-  const emailInput = page.getByLabelText('Email').element() as HTMLInputElement;
+  const emailInput = page
+    .getByRole('textbox', { name: 'Email' })
+    .element() as HTMLInputElement;
   await user.type(emailInput, 'alice@example.com');
   await user.click(page.getByRole('button', { name: 'Next' }));
 
@@ -217,7 +246,7 @@ test('submit is not called when validation fails on a step', async () => {
       <Form {...form} noHtmlForm>
         <MultiStepForm>
           <MultiStepFormContent />
-          <MultiStepFormStep label="Name" onNext={getStepOnNext(0)}>
+          <MultiStepFormStep name="Name" onNext={getStepOnNext(0)}>
             <FormField>
               <FormFieldLabel>Name</FormFieldLabel>
               <FormFieldController
