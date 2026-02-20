@@ -11,8 +11,8 @@ import {
   countPassengersByDirection,
   isTripTypeFull,
 } from '@/features/commute/commute-passenger-rules';
-import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createOrgProcedure } from '@/server/orpc';
+import { createBookingRepository } from '@/server/repositories/booking.repository';
 
 const tags = ['bookings'];
 

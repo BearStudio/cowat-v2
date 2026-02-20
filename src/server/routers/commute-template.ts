@@ -8,8 +8,8 @@ import {
   zTemplateStop,
   zTemplateStopWithLocation,
 } from '@/features/commute-template/schema';
-import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
 import { createOrgProcedure } from '@/server/orpc';
+import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
 
 const tags = ['commute-templates'];
 

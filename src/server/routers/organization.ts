@@ -3,8 +3,8 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
 import { auth } from '@/server/auth';
-import { createOrganizationRepository } from '@/server/repositories/organization.repository';
 import { createOrgProcedure, createProtectedProcedure } from '@/server/orpc';
+import { createOrganizationRepository } from '@/server/repositories/organization.repository';
 
 const tags = ['organizations'];
 

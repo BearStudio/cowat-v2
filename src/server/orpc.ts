@@ -1,8 +1,8 @@
-import { ORPCError, os } from '@orpc/server';
 import type {
   BuilderWithMiddlewares,
   MergedCurrentContext,
 } from '@orpc/server';
+import { ORPCError, os } from '@orpc/server';
 import { type ResponseHeadersPluginContext } from '@orpc/server/plugins';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { randomUUID } from 'node:crypto';
@@ -14,7 +14,7 @@ import {
   Permission,
 } from '@/features/auth/permissions';
 import { auth } from '@/server/auth';
-import { db, type AppDB } from '@/server/db';
+import { type AppDB, db } from '@/server/db';
 import { Prisma } from '@/server/db/generated/client';
 import { logger } from '@/server/logger';
 import type { NotificationEvent } from '@/server/notifications';

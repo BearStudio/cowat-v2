@@ -2,8 +2,8 @@ import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
-import { createLocationRepository } from '@/server/repositories/location.repository';
 import { createOrgProcedure } from '@/server/orpc';
+import { createLocationRepository } from '@/server/repositories/location.repository';
 
 const tags = ['locations'];
 

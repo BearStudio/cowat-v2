@@ -4,8 +4,8 @@ import { z } from 'zod';
 
 import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
-import { createUserRepository } from '@/server/repositories/user.repository';
 import { createProtectedProcedure } from '@/server/orpc';
+import { createUserRepository } from '@/server/repositories/user.repository';
 
 const tags = ['users'];
 

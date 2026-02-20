@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { zFormFieldsOnboarding } from '@/features/auth/schema';
 import { zNotificationChannel } from '@/features/notification/schema';
 import { zUser } from '@/features/user/schema';
-import { createAccountRepository } from '@/server/repositories/account.repository';
 import { createOrgProcedure, createProtectedProcedure } from '@/server/orpc';
+import { createAccountRepository } from '@/server/repositories/account.repository';
 
 const tags = ['account'];
 

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { zStatsUser } from '@/features/stats/schema';
-import { createStatsRepository } from '@/server/repositories/stats.repository';
 import { createOrgProcedure } from '@/server/orpc';
+import { createStatsRepository } from '@/server/repositories/stats.repository';
 
 const tags = ['stats'];
 
