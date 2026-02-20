@@ -42,11 +42,9 @@ export const StepOutwardStops = ({
       {fields.map((field, index) => {
         const isFirst = index === 0;
         const isLast = index === fields.length - 1;
-        const stopLabel = isFirst
-          ? t(`${ns}:form.departure`)
-          : isLast
-            ? t(`${ns}:form.arrival`)
-            : t(`${ns}:form.stopIndex`, { index });
+        let stopLabel = t(`${ns}:form.stopIndex`, { index });
+        if (isFirst) stopLabel = t(`${ns}:form.departure`);
+        else if (isLast) stopLabel = t(`${ns}:form.arrival`);
 
         return (
           <Fragment key={field.id}>

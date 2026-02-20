@@ -63,12 +63,11 @@ export const StepInwardStops = ({
         // In the return trip, the last outward stop is the departure and the first is the arrival
         const isInboundDeparture = displayPos === 0;
         const isInboundArrival = displayPos === reversedIndices.length - 1;
-        const stopLabel = isInboundDeparture
-          ? t(`${ns}:form.departure`)
-          : isInboundArrival
-            ? t(`${ns}:form.arrival`)
-            : (locationsMap.get(stop.locationId) ??
-              t(`${ns}:form.stopIndex`, { index: index + 1 }));
+        let stopLabel =
+          locationsMap.get(stop.locationId) ??
+          t(`${ns}:form.stopIndex`, { index: index + 1 });
+        if (isInboundDeparture) stopLabel = t(`${ns}:form.departure`);
+        else if (isInboundArrival) stopLabel = t(`${ns}:form.arrival`);
 
         return (
           <div
