@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import childProcess from 'node:child_process';
 import fs from 'node:fs';
 
-import { formatDate } from '@/lib/dayjs/formats';
+import '@/lib/dayjs/config';
 
 const getContent = () => {
   const getCommitHashShort = () => {
@@ -29,8 +29,7 @@ const getContent = () => {
   };
 
   return {
-    display:
-      getCommitHashShort() ?? formatDate(dayjs(), 'buildInfo:fallbackDisplay'),
+    display: getCommitHashShort() ?? dayjs().f('buildInfo:fallbackDisplay'),
     version: `${getCommitHashShort() ?? 'No commit'} - ${dayjs().format()}`,
     commit: getCommitHash() ?? 'No commit',
     date: dayjs().format(),

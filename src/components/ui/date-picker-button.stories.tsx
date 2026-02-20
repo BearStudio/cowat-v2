@@ -4,7 +4,7 @@ import { DateRange } from 'react-day-picker';
 import { useDisclosure } from 'react-use-disclosure';
 import { isNullish } from 'remeda';
 
-import { formatDate } from '@/lib/dayjs/formats';
+import '@/lib/dayjs/config';
 
 import { Calendar } from '@/components/ui/calendar';
 import { DatePickerButton } from '@/components/ui/date-picker-button';
@@ -37,9 +37,7 @@ export const NoValueString = () => {
 };
 
 export const Value = () => {
-  return (
-    <DatePickerButton>{formatDate(dayjs(), 'common:short')}</DatePickerButton>
-  );
+  return <DatePickerButton>{dayjs().f('common:short')}</DatePickerButton>;
 };
 
 export const UsageWithPopover = () => {
@@ -52,7 +50,7 @@ export const UsageWithPopover = () => {
       onOpenChange={(open) => datePicker.toggle(open)}
     >
       <PopoverTrigger render={<DatePickerButton />}>
-        {date ? formatDate(date, 'common:short') : null}
+        {date ? dayjs(date).f('common:short') : null}
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
@@ -78,10 +76,10 @@ export const UsageWithPopoverRange = () => {
     }
 
     if (isNullish(date?.to)) {
-      return formatDate(date.from, 'common:short');
+      return dayjs(date.from).f('common:short');
     }
 
-    return `${formatDate(date.from, 'common:short')} - ${formatDate(date.to, 'common:short')}`;
+    return `${dayjs(date.from).f('common:short')} - ${dayjs(date.to).f('common:short')}`;
   };
 
   return (
@@ -113,7 +111,7 @@ export const UsageWithDialog = () => {
       onOpenChange={(open) => datePicker.toggle(open)}
     >
       <DialogTrigger render={<DatePickerButton />}>
-        {date ? formatDate(date, 'common:short') : null}
+        {date ? dayjs(date).f('common:short') : null}
       </DialogTrigger>
       <DialogContent className="w-auto" hideCloseButton>
         <DialogBody>

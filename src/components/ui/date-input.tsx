@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 
-import { getDateFormat } from '@/lib/dayjs/formats';
+import { getFormat } from '@/lib/dayjs/formats';
 import { parseStringToDate } from '@/lib/dayjs/parse-string-to-date';
 import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 
@@ -89,7 +89,7 @@ export const DateInput = ({
   onBlur,
   onKeyDown,
   value,
-  format = getDateFormat('common:short'),
+  format = getFormat('common:short'),
   ...props
 }: Omit<ComponentProps<typeof Input>, 'onChange' | 'value'> & {
   onChange?: (date: Date | null) => void;

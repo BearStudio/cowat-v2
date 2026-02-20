@@ -1,4 +1,8 @@
-import dayjs, { type ConfigType } from 'dayjs';
+import {
+  createFormatPlugin,
+  type FormatConfig,
+  type FormatKey,
+} from './plugins/format';
 
 // ─── Format constants ────────────────────────────────────────────────
 
@@ -29,9 +33,7 @@ const dateFormats = {
   buildInfo: {
     fallbackDisplay: ISO_DATE,
   },
-} as const;
-
-export default dateFormats;
+} as const satisfies FormatConfig;
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -40,34 +42,18 @@ export type DateFormats = typeof dateFormats;
 export type DateFormatNamespace = keyof DateFormats;
 
 /** Union of all valid "namespace:key" strings, e.g. 'common:short' | 'dashboard:dayHeader' | ... */
-export type DateFormatKey = {
-  [NS in DateFormatNamespace]: `${NS}:${Extract<keyof DateFormats[NS], string>}`;
-}[DateFormatNamespace];
+export type DateFormatKey = FormatKey<DateFormats>;
 
-// ─── Helpers ─────────────────────────────────────────────────────────
+// ─── Plugin instance & helpers ───────────────────────────────────────
 
-/**
- * Returns the raw Day.js format string for a given date format key.
- *
- * Use this when you need the format string itself (not a formatted date),
- * for example as a `format` prop or placeholder in `DateInput`.
- *
- * @example
- * getDateFormat('common:short')  // => 'DD/MM/YYYY'
- */
-export function getDateFormat(key: DateFormatKey): string {
-  const [ns, name] = key.split(':') as [DateFormatNamespace, string];
+export const { plugin: formatPlugin, getFormat } =
+  createFormatPlugin(dateFormats);
 
-  return (dateFormats as ExplicitAny)[ns][name] as string;
-}
+// ─── Type augmentation ───────────────────────────────────────────────
 
-/**
- * Formats a date value using a feature-scoped date format key.
- *
- * @example
- * formatDate(new Date(), 'dashboard:dayHeader')    // => "lundi 12/05"
- * formatDate(user.onboardedAt, 'user:onboardedAt') // => "12/05/2025 at 14:30"
- */
-export function formatDate(date: ConfigType, key: DateFormatKey): string {
-  return dayjs(date).format(getDateFormat(key));
+declare module 'dayjs' {
+  interface Dayjs {
+    /** Format a date using a feature-scoped format key (e.g. `'common:short'`). */
+    f(key: DateFormatKey): string;
+  }
 }

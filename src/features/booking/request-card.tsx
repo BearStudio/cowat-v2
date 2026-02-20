@@ -2,7 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { formatDate } from '@/lib/dayjs/formats';
+import dayjs from 'dayjs';
+
+import '@/lib/dayjs/config';
 import { orpc } from '@/lib/orpc/client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -79,7 +81,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           <CardTitle>{request.passenger.name}</CardTitle>
         </div>
         <CardDescription>
-          {formatDate(request.stop.commute.date, 'booking:requestDate')}
+          {dayjs(request.stop.commute.date).f('booking:requestDate')}
           {' · '}
           {request.stop.outwardTime}
           {request.stop.inwardTime && ` – ${request.stop.inwardTime}`}
