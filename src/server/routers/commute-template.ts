@@ -8,48 +8,38 @@ import {
   zTemplateStop,
   zTemplateStopWithLocation,
 } from '@/features/commute-template/schema';
-import { Prisma } from '@/server/db/generated/client';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
+import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
+import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commute-templates'];
 
-export default {
-  create: organizationProcedure({
-    permissions: {
-      commuteTemplate: ['create'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/commute-templates',
-      tags,
+const procedure = (args: OrganizationProcedureArgs = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({
+      context: { templates: createCommuteTemplateRepository(context.db) },
     })
+  );
+
+export default {
+  create: procedure({ permissions: { commuteTemplate: ['create'] } })
+    .route({ method: 'POST', path: '/commute-templates', tags })
     .input(zFormFieldsCommuteTemplate())
     .output(zCommuteTemplate().extend({ stops: z.array(zTemplateStop()) }))
     .handler(async ({ context, input }) => {
       const { stops, ...templateData } = input;
-      return await context.db.commuteTemplate.create({
-        data: {
-          ...templateData,
-          driverMemberId: context.memberId,
-          stops: {
-            create: stops,
-          },
-        },
-        include: { stops: true },
+      return await context.templates.create({
+        ...templateData,
+        driverMemberId: context.memberId,
+        stops: { create: stops },
       });
     }),
 
-  getAll: organizationProcedure({
-    permissions: {
-      commuteTemplate: ['read'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/commute-templates',
-      tags,
-    })
+  getAll: procedure({ permissions: { commuteTemplate: ['read'] } })
+    .route({ method: 'GET', path: '/commute-templates', tags })
     .input(
       z
         .object({
@@ -70,68 +60,28 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        driverMemberId: context.memberId,
-      } satisfies Prisma.CommuteTemplateWhereInput;
+      const [total, items] = await context.templates.findPaginatedByMember(
+        context.memberId,
+        {
+          cursor: input.cursor,
+          limit: input.limit,
+        }
+      );
 
-      const [total, items] = await Promise.all([
-        context.db.commuteTemplate.count({ where }),
-        context.db.commuteTemplate.findMany({
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: { name: 'asc' },
-          where,
-          include: {
-            stops: {
-              orderBy: { order: 'asc' },
-              include: {
-                location: { select: { id: true, name: true } },
-              },
-            },
-          },
-        }),
-      ]);
-
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
-  getById: organizationProcedure({
-    permissions: {
-      commuteTemplate: ['read'],
-    },
-  })
-    .route({
-      method: 'GET',
-      path: '/commute-templates/{id}',
-      tags,
-    })
+  getById: procedure({ permissions: { commuteTemplate: ['read'] } })
+    .route({ method: 'GET', path: '/commute-templates/{id}', tags })
     .input(z.object({ id: z.string() }))
     .output(
-      zCommuteTemplate().extend({
-        stops: z.array(zTemplateStopWithLocation()),
-      })
+      zCommuteTemplate().extend({ stops: z.array(zTemplateStopWithLocation()) })
     )
     .handler(async ({ context, input }) => {
-      const template = await context.db.commuteTemplate.findFirst({
-        where: {
-          id: input.id,
-          driver: { organizationId: context.organizationId },
-        },
-        include: {
-          stops: {
-            orderBy: { order: 'asc' },
-            include: {
-              location: { select: { id: true, name: true } },
-            },
-          },
-        },
-      });
+      const template = await context.templates.findById(
+        input.id,
+        context.organizationId
+      );
 
       if (!template) {
         throw new ORPCError('NOT_FOUND');
@@ -140,16 +90,8 @@ export default {
       return template;
     }),
 
-  update: organizationProcedure({
-    permissions: {
-      commuteTemplate: ['update'],
-    },
-  })
-    .route({
-      method: 'POST',
-      path: '/commute-templates/{id}',
-      tags,
-    })
+  update: procedure({ permissions: { commuteTemplate: ['update'] } })
+    .route({ method: 'POST', path: '/commute-templates/{id}', tags })
     .input(
       z.object({
         id: z.string(),
@@ -162,68 +104,31 @@ export default {
     )
     .output(zCommuteTemplate().extend({ stops: z.array(zTemplateStop()) }))
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commuteTemplate.findFirst({
-        where: {
-          id: input.id,
-          driver: { organizationId: context.organizationId },
-        },
-      });
-
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      const existing = await context.templates.findForMutation(
+        input.id,
+        context.organizationId
+      );
+      assertDriverOwnership(existing, context.memberId);
 
       const { id, stops, ...data } = input;
 
-      return await context.db.commuteTemplate.update({
-        where: { id },
-        data: {
-          ...data,
-          ...(stops && {
-            stops: {
-              deleteMany: {},
-              create: stops,
-            },
-          }),
-        },
-        include: { stops: true },
+      return await context.templates.update(id, {
+        ...data,
+        ...(stops && { stops: { deleteMany: {}, create: stops } }),
       });
     }),
 
-  delete: organizationProcedure({
-    permissions: {
-      commuteTemplate: ['delete'],
-    },
-  })
-    .route({
-      method: 'DELETE',
-      path: '/commute-templates/{id}',
-      tags,
-    })
+  delete: procedure({ permissions: { commuteTemplate: ['delete'] } })
+    .route({ method: 'DELETE', path: '/commute-templates/{id}', tags })
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.commuteTemplate.findFirst({
-        where: {
-          id: input.id,
-          driver: { organizationId: context.organizationId },
-        },
-      });
+      const existing = await context.templates.findForMutation(
+        input.id,
+        context.organizationId
+      );
+      assertDriverOwnership(existing, context.memberId);
 
-      if (!existing) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      if (existing.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
-
-      await context.db.commuteTemplate.delete({
-        where: { id: input.id },
-      });
+      await context.templates.delete(input.id);
     }),
 };

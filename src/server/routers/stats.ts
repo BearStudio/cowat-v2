@@ -1,59 +1,29 @@
 import { z } from 'zod';
 
 import { zStatsUser } from '@/features/stats/schema';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
+import { createStatsRepository } from '@/server/repositories/stats.repository';
 
 const tags = ['stats'];
 
+const procedure = (args: OrganizationProcedureArgs = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({ context: { stats: createStatsRepository(context.db) } })
+  );
+
 export default {
-  getAll: organizationProcedure()
-    .route({
-      method: 'GET',
-      path: '/stats',
-      tags,
-    })
-    .output(
-      z.object({
-        users: z.array(zStatsUser()),
-      })
-    )
+  getAll: procedure()
+    .route({ method: 'GET', path: '/stats', tags })
+    .output(z.object({ users: z.array(zStatsUser()) }))
     .handler(async ({ context }) => {
       context.logger.info('Getting stats from database');
 
-      const orgId = context.organizationId;
-
       const [membersWithCounts, commutesWithStops] = await Promise.all([
-        context.db.member.findMany({
-          where: { organizationId: orgId },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
-            _count: {
-              select: {
-                drivenCommutes: true,
-                passengerBookings: true,
-                drivenTemplates: true,
-              },
-            },
-          },
-        }),
-        context.db.commute.findMany({
-          where: { driver: { organizationId: orgId } },
-          select: {
-            driverMemberId: true,
-            _count: {
-              select: {
-                stops: true,
-              },
-            },
-          },
-        }),
+        context.stats.getMembersWithCounts(context.organizationId),
+        context.stats.getCommuteStopCounts(context.organizationId),
       ]);
 
       const stopCountByMember = new Map<string, number>();

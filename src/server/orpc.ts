@@ -273,3 +273,8 @@ export const organizationProcedure = ({
       },
     });
   });
+
+export type ProtectedProcedureArgs = Parameters<typeof protectedProcedure>[0];
+export type OrganizationProcedureArgs = Parameters<
+  typeof organizationProcedure
+>[0];

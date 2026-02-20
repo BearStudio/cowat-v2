@@ -2,43 +2,38 @@ import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
-import { Prisma } from '@/server/db/generated/client';
-import { organizationProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
+import { createLocationRepository } from '@/server/repositories/location.repository';
+import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['locations'];
 
+const procedure = (args: OrganizationProcedureArgs = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({ context: { locations: createLocationRepository(context.db) } })
+  );
+
 export default {
-  create: organizationProcedure({
-    permissions: {
-      location: ['create'],
-    },
+  create: procedure({
+    permissions: { location: ['create'] },
   })
-    .route({
-      method: 'POST',
-      path: '/locations',
-      tags,
-    })
+    .route({ method: 'POST', path: '/locations', tags })
     .input(zFormFieldsLocation())
     .output(zLocation())
     .handler(async ({ context, input }) => {
-      return await context.db.location.create({
-        data: {
-          ...input,
-          memberId: context.memberId,
-        },
+      return await context.locations.create({
+        ...input,
+        memberId: context.memberId,
       });
     }),
 
-  getAll: organizationProcedure({
-    permissions: {
-      location: ['read'],
-    },
+  getAll: procedure({
+    permissions: { location: ['read'] },
   })
-    .route({
-      method: 'GET',
-      path: '/locations',
-      tags,
-    })
+    .route({ method: 'GET', path: '/locations', tags })
     .input(
       z
         .object({
@@ -55,52 +50,28 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        memberId: context.memberId,
-      } satisfies Prisma.LocationWhereInput;
+      const [total, items] = await context.locations.findPaginatedByMember(
+        context.memberId,
+        {
+          cursor: input.cursor,
+          limit: input.limit,
+        }
+      );
 
-      const [total, items] = await Promise.all([
-        context.db.location.count({ where }),
-        context.db.location.findMany({
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: { name: 'asc' },
-          where,
-        }),
-      ]);
-
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
-  getById: organizationProcedure({
-    permissions: {
-      location: ['read'],
-    },
+  getById: procedure({
+    permissions: { location: ['read'] },
   })
-    .route({
-      method: 'GET',
-      path: '/locations/{id}',
-      tags,
-    })
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
+    .route({ method: 'GET', path: '/locations/{id}', tags })
+    .input(z.object({ id: z.string() }))
     .output(zLocation())
     .handler(async ({ context, input }) => {
-      const location = await context.db.location.findFirst({
-        where: {
-          id: input.id,
-          member: { organizationId: context.organizationId },
-        },
-      });
+      const location = await context.locations.findByIdInOrg(
+        input.id,
+        context.organizationId
+      );
 
       if (!location) {
         throw new ORPCError('NOT_FOUND');
@@ -109,16 +80,10 @@ export default {
       return location;
     }),
 
-  update: organizationProcedure({
-    permissions: {
-      location: ['update'],
-    },
+  update: procedure({
+    permissions: { location: ['update'] },
   })
-    .route({
-      method: 'POST',
-      path: '/locations/{id}',
-      tags,
-    })
+    .route({ method: 'POST', path: '/locations/{id}', tags })
     .input(
       zLocation().pick({
         id: true,
@@ -128,56 +93,37 @@ export default {
     )
     .output(zLocation())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.location.findFirst({
-        where: {
-          id: input.id,
-          member: { organizationId: context.organizationId },
-        },
-      });
+      const existing = await context.locations.findByIdInOrg(
+        input.id,
+        context.organizationId
+      );
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      return await context.db.location.update({
-        where: { id: input.id },
-        data: {
-          name: input.name,
-          address: input.address,
-        },
+      return await context.locations.update(input.id, {
+        name: input.name,
+        address: input.address,
       });
     }),
 
-  delete: organizationProcedure({
-    permissions: {
-      location: ['delete'],
-    },
+  delete: procedure({
+    permissions: { location: ['delete'] },
   })
-    .route({
-      method: 'DELETE',
-      path: '/locations/{id}',
-      tags,
-    })
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
+    .route({ method: 'DELETE', path: '/locations/{id}', tags })
+    .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.db.location.findFirst({
-        where: {
-          id: input.id,
-          member: { organizationId: context.organizationId },
-        },
-      });
+      const existing = await context.locations.findByIdInOrg(
+        input.id,
+        context.organizationId
+      );
 
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      await context.db.location.delete({
-        where: { id: input.id },
-      });
+      await context.locations.delete(input.id);
     }),
 };

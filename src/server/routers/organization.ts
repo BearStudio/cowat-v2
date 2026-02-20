@@ -3,10 +3,30 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
 import { auth } from '@/server/auth';
-import { Prisma } from '@/server/db/generated/client';
-import { organizationProcedure, protectedProcedure } from '@/server/orpc';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+  protectedProcedure,
+  type ProtectedProcedureArgs,
+} from '@/server/orpc';
+import { createOrganizationRepository } from '@/server/repositories/organization.repository';
+import { paginateResult } from '@/server/routers/utils';
 
 const tags = ['organizations'];
+
+const adminProcedure = (args: ProtectedProcedureArgs) =>
+  protectedProcedure(args).use(({ context, next }) =>
+    next({
+      context: { organizations: createOrganizationRepository(context.db) },
+    })
+  );
+
+const orgProcedure = (args: OrganizationProcedureArgs = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({
+      context: { organizations: createOrganizationRepository(context.db) },
+    })
+  );
 
 const zOrganizationListItem = z.object({
   id: z.string(),
@@ -14,20 +34,12 @@ const zOrganizationListItem = z.object({
   slug: z.string(),
   logo: z.string().nullable(),
   createdAt: z.date(),
-  _count: z.object({
-    members: z.number(),
-  }),
+  _count: z.object({ members: z.number() }),
 });
 
 export default {
-  getAll: protectedProcedure({
-    permission: { organization: ['list'] },
-  })
-    .route({
-      method: 'GET',
-      path: '/organizations/all',
-      tags,
-    })
+  getAll: adminProcedure({ permission: { organization: ['list'] } })
+    .route({ method: 'GET', path: '/organizations/all', tags })
     .input(
       z
         .object({
@@ -45,55 +57,17 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const where = {
-        OR: [
-          {
-            name: {
-              contains: input.searchTerm,
-              mode: 'insensitive',
-            },
-          },
-          {
-            slug: {
-              contains: input.searchTerm,
-              mode: 'insensitive',
-            },
-          },
-        ],
-      } satisfies Prisma.OrganizationWhereInput;
+      const [total, items] = await context.organizations.findPaginated({
+        searchTerm: input.searchTerm,
+        cursor: input.cursor,
+        limit: input.limit,
+      });
 
-      const [total, items] = await Promise.all([
-        context.db.organization.count({ where }),
-        context.db.organization.findMany({
-          take: input.limit + 1,
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: { name: 'asc' },
-          where,
-          include: {
-            _count: {
-              select: { members: true },
-            },
-          },
-        }),
-      ]);
-
-      let nextCursor: typeof input.cursor | undefined = undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem?.id;
-      }
-
-      return { items, nextCursor, total };
+      return paginateResult(total, items, input.limit);
     }),
 
-  getById: protectedProcedure({
-    permission: { organization: ['list'] },
-  })
-    .route({
-      method: 'GET',
-      path: '/organizations/{id}',
-      tags,
-    })
+  getById: adminProcedure({ permission: { organization: ['list'] } })
+    .route({ method: 'GET', path: '/organizations/{id}', tags })
     .input(z.object({ id: z.string() }))
     .output(
       z.object({
@@ -126,28 +100,7 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const org = await context.db.organization.findUnique({
-        where: { id: input.id },
-        include: {
-          members: {
-            include: {
-              user: {
-                select: { id: true, name: true, email: true, image: true },
-              },
-            },
-          },
-          invitations: {
-            where: { status: 'pending' },
-            select: {
-              id: true,
-              email: true,
-              role: true,
-              status: true,
-              expiresAt: true,
-            },
-          },
-        },
-      });
+      const org = await context.organizations.findByIdWithDetails(input.id);
 
       if (!org) {
         throw new ORPCError('NOT_FOUND');
@@ -156,12 +109,8 @@ export default {
       return org;
     }),
 
-  getMyOrganizations: protectedProcedure({ permission: null })
-    .route({
-      method: 'GET',
-      path: '/organizations',
-      tags,
-    })
+  getMyOrganizations: adminProcedure({ permission: null })
+    .route({ method: 'GET', path: '/organizations', tags })
     .output(
       z.array(
         z.object({
@@ -174,27 +123,14 @@ export default {
       )
     )
     .handler(async ({ context }) => {
-      const memberships = await context.db.member.findMany({
-        where: { userId: context.user.id },
-        include: {
-          organization: {
-            select: { id: true, name: true, slug: true, logo: true },
-          },
-        },
-      });
-
-      return memberships.map((m) => ({
-        ...m.organization,
-        role: m.role,
-      }));
+      const memberships = await context.organizations.findMyMemberships(
+        context.user.id
+      );
+      return memberships.map((m) => ({ ...m.organization, role: m.role }));
     }),
 
-  getActiveOrganization: organizationProcedure()
-    .route({
-      method: 'GET',
-      path: '/organizations/active',
-      tags,
-    })
+  getActiveOrganization: orgProcedure()
+    .route({ method: 'GET', path: '/organizations/active', tags })
     .output(
       z.object({
         id: z.string(),
@@ -225,28 +161,9 @@ export default {
       })
     )
     .handler(async ({ context }) => {
-      const org = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        include: {
-          members: {
-            include: {
-              user: {
-                select: { id: true, name: true, email: true, image: true },
-              },
-            },
-          },
-          invitations: {
-            where: { status: 'pending' },
-            select: {
-              id: true,
-              email: true,
-              role: true,
-              status: true,
-              expiresAt: true,
-            },
-          },
-        },
-      });
+      const org = await context.organizations.findByIdWithDetails(
+        context.organizationId
+      );
 
       if (!org) {
         throw new ORPCError('NOT_FOUND');
@@ -255,14 +172,8 @@ export default {
       return org;
     }),
 
-  create: protectedProcedure({
-    permission: { organization: ['create'] },
-  })
-    .route({
-      method: 'POST',
-      path: '/organizations',
-      tags,
-    })
+  create: adminProcedure({ permission: { organization: ['create'] } })
+    .route({ method: 'POST', path: '/organizations', tags })
     .input(
       z.object({
         name: z.string().min(1).max(100),
@@ -271,13 +182,7 @@ export default {
         ownerUserId: z.string(),
       })
     )
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        slug: z.string(),
-      })
-    )
+    .output(z.object({ id: z.string(), name: z.string(), slug: z.string() }))
     .handler(async ({ context, input }) => {
       const result = await auth.api.createOrganization({
         body: {
@@ -302,7 +207,7 @@ export default {
       return result;
     }),
 
-  adminInviteMember: protectedProcedure({
+  adminInviteMember: adminProcedure({
     permission: { organization: ['create'] },
   })
     .route({
@@ -329,14 +234,8 @@ export default {
       });
     }),
 
-  inviteMember: organizationProcedure({
-    permissions: { invitation: ['create'] },
-  })
-    .route({
-      method: 'POST',
-      path: '/organizations/invite',
-      tags,
-    })
+  inviteMember: orgProcedure({ permissions: { invitation: ['create'] } })
+    .route({ method: 'POST', path: '/organizations/invite', tags })
     .input(
       z.object({
         email: z.string().email(),
@@ -345,14 +244,10 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Verify user is owner or admin of the org
-      const membership = await context.db.member.findFirst({
-        where: {
-          userId: context.user.id,
-          organizationId: context.organizationId,
-          role: { in: ['owner', 'admin'] },
-        },
-      });
+      const membership = await context.organizations.findOwnerMembership(
+        context.user.id,
+        context.organizationId
+      );
 
       if (!membership) {
         throw new ORPCError('FORBIDDEN', {
@@ -370,23 +265,15 @@ export default {
       });
     }),
 
-  removeMember: organizationProcedure({ permissions: { member: ['delete'] } })
-    .route({
-      method: 'POST',
-      path: '/organizations/remove-member',
-      tags,
-    })
+  removeMember: orgProcedure({ permissions: { member: ['delete'] } })
+    .route({ method: 'POST', path: '/organizations/remove-member', tags })
     .input(z.object({ memberIdOrEmail: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Verify user is owner or admin
-      const membership = await context.db.member.findFirst({
-        where: {
-          userId: context.user.id,
-          organizationId: context.organizationId,
-          role: { in: ['owner', 'admin'] },
-        },
-      });
+      const membership = await context.organizations.findOwnerMembership(
+        context.user.id,
+        context.organizationId
+      );
 
       if (!membership) {
         throw new ORPCError('FORBIDDEN', {
@@ -394,7 +281,6 @@ export default {
         });
       }
 
-      // Prevent self-removal
       if (input.memberIdOrEmail === context.user.id) {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Cannot remove yourself from the organization',
@@ -410,45 +296,29 @@ export default {
       });
     }),
 
-  cancelInvitation: organizationProcedure()
-    .route({
-      method: 'POST',
-      path: '/organizations/cancel-invitation',
-      tags,
-    })
+  cancelInvitation: orgProcedure()
+    .route({ method: 'POST', path: '/organizations/cancel-invitation', tags })
     .input(z.object({ invitationId: z.string() }))
     .output(z.void())
     .handler(async ({ input }) => {
       await auth.api.cancelInvitation({
         headers: getRequestHeaders(),
-        body: {
-          invitationId: input.invitationId,
-        },
+        body: { invitationId: input.invitationId },
       });
     }),
 
-  delete: protectedProcedure({
-    permission: { organization: ['delete'] },
-  })
-    .route({
-      method: 'POST',
-      path: '/organizations/delete',
-      tags,
-    })
+  delete: adminProcedure({ permission: { organization: ['delete'] } })
+    .route({ method: 'POST', path: '/organizations/delete', tags })
     .input(z.object({ organizationId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const org = await context.db.organization.findUnique({
-        where: { id: input.organizationId },
-      });
+      const org = await context.organizations.findById(input.organizationId);
 
       if (!org) {
         throw new ORPCError('NOT_FOUND');
       }
 
-      await context.db.organization.delete({
-        where: { id: input.organizationId },
-      });
+      await context.organizations.delete(input.organizationId);
 
       context.logger.info(
         { organizationId: input.organizationId },
