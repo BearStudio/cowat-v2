@@ -4,10 +4,12 @@ export { FormFieldController } from './form-field-controller';
 export { FormFieldError } from './form-field-error';
 export { FormFieldHelper } from './form-field-helper';
 export { FormFieldLabel } from './form-field-label';
-export type { MultiStepFormStep } from './multi-step-form';
+export type { MultiStepFormStepConfig } from './multi-step-form';
 export {
   MultiStepForm,
   MultiStepFormContent,
   MultiStepFormNavigation,
+  MultiStepFormStep,
   useMultiStepForm,
+  useMultiStepForms,
 } from './multi-step-form';
