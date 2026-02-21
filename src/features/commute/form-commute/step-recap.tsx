@@ -83,7 +83,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
             {stops?.map((stop, index) => {
               const isLast = index === (stops.length ?? 0) - 1;
               return (
-                <div key={index} className="flex items-start gap-3">
+                <div key={stop.locationId} className="flex items-start gap-3">
                   <div className="flex flex-col items-center self-stretch">
                     <div className="flex h-6 items-center">
                       <div className="size-3 shrink-0 rounded-full bg-primary" />
@@ -120,7 +120,10 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
                 .map((stop, index, arr) => {
                   const isLast = index === arr.length - 1;
                   return (
-                    <div key={index} className="flex items-start gap-3">
+                    <div
+                      key={stop.locationId}
+                      className="flex items-start gap-3"
+                    >
                       <div className="flex flex-col items-center self-stretch">
                         <div className="flex h-6 items-center">
                           <div className="size-3 shrink-0 rounded-full bg-primary" />
