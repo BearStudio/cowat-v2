@@ -4,12 +4,7 @@ import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
-import {
-  FieldPath,
-  FormStateSubscribe,
-  useForm,
-  useWatch,
-} from 'react-hook-form';
+import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
 import { toast } from 'sonner';
@@ -90,8 +85,6 @@ export const PageCommuteNew = ({
     resolver: zodResolver(zFormFieldsCommute()),
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
-
-  const commuteType = useWatch({ control: form.control, name: 'type' });
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
@@ -288,26 +281,32 @@ export const PageCommuteNew = ({
                   }}
                 />
               </MultiStepFormStep>
-              {commuteType === 'ROUND' && (
-                <MultiStepFormStep
-                  name={t('commute:stepper.inwardStops')}
-                  onNext={() => {
-                    const stops = form.getValues('stops');
-                    return form.trigger(
-                      stops.map(
-                        (_, i) =>
-                          `stops.${i}.inwardTime` as FieldPath<FormFieldsCommute>
-                      )
-                    );
-                  }}
-                >
-                  <StepInwardStops
-                    control={form.control}
-                    setValue={form.setValue}
-                    ns="commute"
-                  />
-                </MultiStepFormStep>
-              )}
+              <Watch
+                control={form.control}
+                names="type"
+                render={(type) =>
+                  type === 'ROUND' ? (
+                    <MultiStepFormStep
+                      name={t('commute:stepper.inwardStops')}
+                      onNext={() => {
+                        const stops = form.getValues('stops');
+                        return form.trigger(
+                          stops.map(
+                            (_, i) =>
+                              `stops.${i}.inwardTime` as FieldPath<FormFieldsCommute>
+                          )
+                        );
+                      }}
+                    >
+                      <StepInwardStops
+                        control={form.control}
+                        setValue={form.setValue}
+                        ns="commute"
+                      />
+                    </MultiStepFormStep>
+                  ) : null
+                }
+              />
               <MultiStepFormStep name={t('commute:stepper.recap')}>
                 <StepRecap control={form.control} ns="commute" />
               </MultiStepFormStep>
