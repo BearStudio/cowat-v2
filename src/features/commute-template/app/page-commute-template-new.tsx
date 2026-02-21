@@ -1,7 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
-import { FieldPath, FormStateSubscribe, useForm } from 'react-hook-form';
+import {
+  FieldPath,
+  FormStateSubscribe,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -51,7 +56,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
     },
   });
 
-  const commuteType = form.watch('type');
+  const commuteType = useWatch({ control: form.control, name: 'type' });
 
   const templateCreate = useMutation(
     orpc.commuteTemplate.create.mutationOptions({

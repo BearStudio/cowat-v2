@@ -4,7 +4,12 @@ import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
-import { FieldPath, FormStateSubscribe, useForm } from 'react-hook-form';
+import {
+  FieldPath,
+  FormStateSubscribe,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
 import { toast } from 'sonner';
@@ -86,7 +91,7 @@ export const PageCommuteNew = ({
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
 
-  const commuteType = form.watch('type');
+  const commuteType = useWatch({ control: form.control, name: 'type' });
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
