@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
@@ -22,13 +23,65 @@ export type FormFieldsCommuteTemplate = z.infer<
   ReturnType<typeof zFormFieldsCommuteTemplate>
 >;
 export const zFormFieldsCommuteTemplate = () =>
-  z.object({
-    name: zu.fieldText.required(),
-    seats: z.number().int().min(1),
-    type: zCommuteType(),
-    comment: zu.fieldText.nullish(),
-    stops: z.array(zFormFieldsTemplateStopInput()).min(2),
-  });
+  z
+    .object({
+      name: zu.fieldText.required(),
+      seats: z
+        .number({ error: t('common:errors.required') })
+        .int()
+        .min(1, t('commuteTemplate:form.errors.seatsMin')),
+      type: zCommuteType(),
+      comment: zu.fieldText.nullish(),
+      stops: z
+        .array(zFormFieldsTemplateStopInput())
+        .min(2, t('commuteTemplate:form.errors.stopsMin')),
+    })
+    .superRefine((data, ctx) => {
+      const isRound = data.type === 'ROUND';
+
+      data.stops.forEach((stop, index) => {
+        if (
+          isRound &&
+          stop.inwardTime &&
+          stop.outwardTime &&
+          stop.inwardTime <= stop.outwardTime
+        ) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.inwardBeforeOutward'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+
+        if (index > 0) {
+          const prevStop = data.stops[index - 1];
+          if (
+            stop.outwardTime &&
+            prevStop?.outwardTime &&
+            stop.outwardTime <= prevStop.outwardTime
+          ) {
+            ctx.addIssue({
+              code: 'custom',
+              message: t('commuteTemplate:form.errors.outwardNotIncreasing'),
+              path: ['stops', index, 'outwardTime'],
+            });
+          }
+
+          if (
+            isRound &&
+            stop.inwardTime &&
+            prevStop?.inwardTime &&
+            stop.inwardTime >= prevStop.inwardTime
+          ) {
+            ctx.addIssue({
+              code: 'custom',
+              message: t('commuteTemplate:form.errors.inwardNotDecreasing'),
+              path: ['stops', index, 'inwardTime'],
+            });
+          }
+        }
+      });
+    });
 
 export type FormFieldsTemplateStopInput = z.infer<
   ReturnType<typeof zFormFieldsTemplateStopInput>

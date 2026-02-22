@@ -42,6 +42,13 @@
     "addStop": "Add stop",
     "departure": "Departure",
     "arrival": "Arrival",
-    "stopIndex": "Stop {{index}}"
+    "stopIndex": "Stop {{index}}",
+    "errors": {
+      "seatsMin": "At least 1 seat is required",
+      "stopsMin": "At least 2 stops are required",
+      "inwardBeforeOutward": "Inbound time must be after outbound time",
+      "outwardNotIncreasing": "Must be after the previous stop's outbound time",
+      "inwardNotDecreasing": "Must be before the previous stop's inbound time"
+    }
   }
 }
