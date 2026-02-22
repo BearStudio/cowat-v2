@@ -86,10 +86,10 @@ export const PageCommuteTemplateUpdate = (props: {
     defaultValues: { type: 'ROUND' },
   });
 
-  const hasReset = useRef(false);
+  const hasResetRef = useRef(false);
   useEffect(() => {
-    if (templateQuery.data && !hasReset.current) {
-      hasReset.current = true;
+    if (templateQuery.data && !hasResetRef.current) {
+      hasResetRef.current = true;
       form.reset({
         name: templateQuery.data.name,
         seats: templateQuery.data.seats,
