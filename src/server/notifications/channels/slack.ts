@@ -5,8 +5,8 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import { envClient } from '@/env/client';
 import { envServer } from '@/env/server';
-import { getSlackTemplate } from '@/features/slack/templates';
-import { getSlackApp } from '@/server/slack';
+import { getSlackApp } from '@/features/slack/client';
+import { getSlackBlocks } from '@/features/slack/templates';
 
 import type { NotificationChannel } from '../types';
 
@@ -53,9 +53,7 @@ export function createSlackChannel(
           app.client.users.lookupByEmail({ email: emailToResolve })
         );
 
-        const slackId = userLookup.isOk()
-          ? userLookup.value.user?.id
-          : undefined;
+        const slackUser = userLookup.isOk() ? userLookup.value.user : undefined;
 
         if (userLookup.isErr()) {
           logger.warn(
@@ -64,15 +62,29 @@ export function createSlackChannel(
           );
         }
 
-        const text = getSlackTemplate(event, {
-          driverSlackId: event.type === 'commute.created' ? slackId : undefined,
+        const blocks = getSlackBlocks(event, {
+          driverSlackId:
+            event.type === 'commute.created' ? slackUser?.id : undefined,
+          driverAvatarUrl:
+            event.type === 'commute.created'
+              ? (slackUser?.profile?.image_72 ?? undefined)
+              : undefined,
           requesterSlackId:
-            event.type === 'commute.requested' ? slackId : undefined,
+            event.type === 'commute.requested' ? slackUser?.id : undefined,
           baseUrl: envClient.VITE_BASE_URL,
+          locale,
         });
 
         const postResult = await Result.tryPromise(() =>
-          app.client.chat.postMessage({ channel: defaultChannel, text })
+          app.client.chat.postMessage({
+            channel: defaultChannel,
+            blocks,
+            // Fallback text for notifications and accessibility
+            text:
+              event.type === 'commute.created'
+                ? `${event.payload.driverName} posted a new commute`
+                : `${event.payload.requesterName} is looking for a commute`,
+          })
         );
         if (postResult.isErr()) {
           logger.error(
@@ -92,7 +104,7 @@ export function createSlackChannel(
         return;
       }
 
-      const text = getSlackTemplate(event, { locale });
+      const blocks = getSlackBlocks(event, { locale });
 
       // All other events → DM the recipient
       const lookupResult = await Result.tryPromise(() =>
@@ -117,7 +129,12 @@ export function createSlackChannel(
       }
 
       const postResult = await Result.tryPromise(() =>
-        app.client.chat.postMessage({ channel, text })
+        app.client.chat.postMessage({
+          channel,
+          blocks,
+          // Fallback text for notifications and accessibility
+          text: `You have a new ${event.type.replace('.', ' ')} notification`,
+        })
       );
       if (postResult.isErr()) {
         logger.error(

@@ -62,6 +62,12 @@ export default {
           driverEmail: context.user.email,
           commuteDate: input.date,
           commuteType: input.type,
+          seats: input.seats,
+          stops: commute.stops.map((stop) => ({
+            locationName: stop.location.name,
+            outwardTime: stop.outwardTime,
+            inwardTime: stop.inwardTime,
+          })),
         },
       });
 

@@ -1,19 +1,25 @@
 {
   "booking": {
-    "requested": "New booking request from {{passengerName}} for your {{commuteType}} commute on {{date}}.",
-    "accepted": "{{driverName}} accepted your booking for the {{commuteType}} commute on {{date}}.",
-    "refused": "{{driverName}} declined your booking for the {{commuteType}} commute on {{date}}.",
-    "canceled": "{{passengerName}} canceled their booking on your {{commuteType}} commute on {{date}}."
+    "requested": "🙋 *New booking request!*\n*{{passengerName}}* wants to join your commute on *{{date}}* — *{{tripType}}*.",
+    "accepted": "✅ *Booking confirmed!*\n*{{driverName}}* accepted your *{{tripType}}* booking for *{{date}}*.",
+    "refused": "❌ *Booking declined*\n*{{driverName}}* declined your *{{tripType}}* booking for *{{date}}*.",
+    "canceled": "🙅 *Booking canceled*\n*{{passengerName}}* canceled their *{{tripType}}* booking on *{{date}}*."
   },
   "commute": {
-    "created": "{{driver}} created a new {{commuteType}} commute on {{date}}.",
-    "updated": "{{driverName}} updated the {{commuteType}} commute on {{date}}.",
-    "canceled": "{{driverName}} canceled the {{commuteType}} commute on {{date}}.",
-    "requested": "{{requester}} is looking for a commute on {{date}}. <{{link}}|Create one>",
-    "requestedWithLocation": "{{requester}} is looking for a commute to {{locationName}} on {{date}}. <{{link}}|Create one>"
+    "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*. 💺 *{{seats}}* seats available.",
+    "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute on *{{date}}*.",
+    "canceled": "❌ *Commute canceled*\n*{{driverName}}* canceled the *{{commuteType}}* commute on *{{date}}*.",
+    "requested": "🙋 *Ride request!*\n{{requester}} is looking for a commute on *{{date}}*.",
+    "requestedWithLocation": "🙋 *Ride request!*\n{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*.",
+    "offerRide": "Offer a ride →"
   },
   "commuteType": {
     "ROUND": "round-trip",
     "ONEWAY": "one-way"
+  },
+  "tripType": {
+    "ROUND": "round-trip",
+    "ONEWAY": "one-way",
+    "RETURN": "return"
   }
 }
