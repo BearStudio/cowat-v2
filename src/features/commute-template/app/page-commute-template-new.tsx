@@ -46,8 +46,8 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
       type: 'ROUND',
       comment: null,
       stops: [
-        { locationId: '', order: 0, outwardTime: '', inwardTime: null },
-        { locationId: '', order: 1, outwardTime: '', inwardTime: null },
+        { locationId: '', outwardTime: '', inwardTime: null },
+        { locationId: '', outwardTime: '', inwardTime: null },
       ],
     },
   });
@@ -75,10 +75,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
   );
 
   const handleSubmit = form.handleSubmit((values) => {
-    templateCreate.mutate({
-      ...values,
-      stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
-    });
+    templateCreate.mutate(values);
   });
 
   return (
@@ -127,7 +124,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
               </MultiStepFormStep>
               <Watch
                 control={form.control}
-                names="type"
+                name="type"
                 render={(type) =>
                   type === 'ROUND' ? (
                     <MultiStepFormStep

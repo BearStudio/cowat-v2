@@ -10,32 +10,29 @@ const isTimeInFuture = (date: Date, time: string) => {
   return dayjs(date).hour(hours).minute(minutes).isAfter(dayjs());
 };
 
-export const createCommuteRules = (data: FormFieldsCommute) => {
-  const isToday = dayjs(data.date).isToday();
+type StopOrderRulesData = {
+  type: string;
+  stops: Array<Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>>;
+};
+
+export const createStopOrderRules = (data: StopOrderRulesData) => {
   const isRound = data.type === 'ROUND';
 
   return {
-    isToday,
     isRound,
 
-    isOutwardInFuture: (stop: FormFieldsStopInput) =>
-      !isToday ||
-      !stop.outwardTime ||
-      isTimeInFuture(data.date, stop.outwardTime),
-
-    isInwardInFuture: (stop: FormFieldsStopInput) =>
-      !isToday ||
-      !isRound ||
-      !stop.inwardTime ||
-      isTimeInFuture(data.date, stop.inwardTime),
-
-    shouldInwardBeAfterOutward: (stop: FormFieldsStopInput) =>
+    shouldInwardBeAfterOutward: (
+      stop: Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>
+    ) =>
       !isRound ||
       !stop.inwardTime ||
       !stop.outwardTime ||
       stop.inwardTime > stop.outwardTime,
 
-    shouldOutwardBeIncreasing: (stop: FormFieldsStopInput, index: number) => {
+    shouldOutwardBeIncreasing: (
+      stop: Pick<FormFieldsStopInput, 'outwardTime'>,
+      index: number
+    ) => {
       if (index === 0) return true;
       const prevStop = data.stops[index - 1];
       return (
@@ -45,7 +42,10 @@ export const createCommuteRules = (data: FormFieldsCommute) => {
       );
     },
 
-    shouldInwardBeDecreasing: (stop: FormFieldsStopInput, index: number) => {
+    shouldInwardBeDecreasing: (
+      stop: Pick<FormFieldsStopInput, 'inwardTime'>,
+      index: number
+    ) => {
       if (index === 0 || !isRound) return true;
       const prevStop = data.stops[index - 1];
       return (
@@ -54,5 +54,26 @@ export const createCommuteRules = (data: FormFieldsCommute) => {
         stop.inwardTime < prevStop.inwardTime
       );
     },
+  };
+};
+
+export const createCommuteRules = (data: FormFieldsCommute) => {
+  const isToday = dayjs(data.date).isToday();
+  const stopOrderRules = createStopOrderRules(data);
+
+  return {
+    isToday,
+    ...stopOrderRules,
+
+    isOutwardInFuture: (stop: FormFieldsStopInput) =>
+      !isToday ||
+      !stop.outwardTime ||
+      isTimeInFuture(data.date, stop.outwardTime),
+
+    isInwardInFuture: (stop: FormFieldsStopInput) =>
+      !isToday ||
+      !stopOrderRules.isRound ||
+      !stop.inwardTime ||
+      isTimeInFuture(data.date, stop.inwardTime),
   };
 };

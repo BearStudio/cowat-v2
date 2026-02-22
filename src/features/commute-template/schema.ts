@@ -1,7 +1,9 @@
+import { t } from 'i18next';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import { createStopOrderRules } from '@/features/commute/form-commute-rules';
 import { zCommuteType } from '@/features/commute/schema';
 
 export type CommuteTemplate = z.infer<ReturnType<typeof zCommuteTemplate>>;
@@ -22,13 +24,48 @@ export type FormFieldsCommuteTemplate = z.infer<
   ReturnType<typeof zFormFieldsCommuteTemplate>
 >;
 export const zFormFieldsCommuteTemplate = () =>
-  z.object({
-    name: zu.fieldText.required(),
-    seats: z.number().int().min(1),
-    type: zCommuteType(),
-    comment: zu.fieldText.nullish(),
-    stops: z.array(zFormFieldsTemplateStopInput()).min(2),
-  });
+  z
+    .object({
+      name: zu.fieldText.required(),
+      seats: z
+        .number({ error: t('common:errors.required') })
+        .int()
+        .min(1, t('commuteTemplate:form.errors.seatsMin')),
+      type: zCommuteType(),
+      comment: zu.fieldText.nullish(),
+      stops: z
+        .array(zFormFieldsTemplateStopInput())
+        .min(2, t('commuteTemplate:form.errors.stopsMin')),
+    })
+    .superRefine((data, ctx) => {
+      const rules = createStopOrderRules(data);
+
+      data.stops.forEach((stop, index) => {
+        if (!rules.shouldInwardBeAfterOutward(stop)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.inwardBeforeOutward'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+
+        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.outwardNotIncreasing'),
+            path: ['stops', index, 'outwardTime'],
+          });
+        }
+
+        if (!rules.shouldInwardBeDecreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.inwardNotDecreasing'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+      });
+    });
 
 export type FormFieldsTemplateStopInput = z.infer<
   ReturnType<typeof zFormFieldsTemplateStopInput>
@@ -36,7 +73,6 @@ export type FormFieldsTemplateStopInput = z.infer<
 export const zFormFieldsTemplateStopInput = () =>
   z.object({
     locationId: zu.fieldText.required(),
-    order: z.number().int().min(0),
     outwardTime: zu.fieldText.required(),
     inwardTime: zu.fieldText.nullish(),
   });

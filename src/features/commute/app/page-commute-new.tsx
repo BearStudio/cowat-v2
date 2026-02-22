@@ -283,7 +283,7 @@ export const PageCommuteNew = ({
               </MultiStepFormStep>
               <Watch
                 control={form.control}
-                names="type"
+                name="type"
                 render={(type) =>
                   type === 'ROUND' ? (
                     <MultiStepFormStep
