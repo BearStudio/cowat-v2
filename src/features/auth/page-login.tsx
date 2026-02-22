@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -30,30 +29,6 @@ export default function PageLogin({
 }) {
   const { t } = useTranslation(['auth', 'common']);
   const router = useRouter();
-  const social = useMutation({
-    mutationFn: async (
-      provider: Parameters<typeof authClient.signIn.social>[0]['provider']
-    ) => {
-      try {
-        const response = await authClient.signIn.social({
-          provider,
-          callbackURL: search.redirect ?? '/',
-          errorCallbackURL: '/login/error',
-        });
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
-        return response.data;
-      } catch {
-        toast.error(t('auth:errorCode.UNKNOWN_ERROR'));
-      }
-    },
-    onError: (error) => {
-      form.setError('email', { message: error.message });
-      toast.error(error.message);
-    },
-  });
-
   const form = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(zFormFieldsLogin()),
@@ -130,23 +105,6 @@ export default function PageLogin({
           </Button>
           <LoginEmailHint />
         </div>
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            {t(`${I18N_KEY_PAGE_PREFIX}.spacer`)}
-          </span>
-        </div>
-        <Button
-          className="w-full"
-          variant="secondary"
-          loading={
-            social.variables === 'github' &&
-            (social.isPending || social.isSuccess)
-          }
-          size="lg"
-          onClick={() => social.mutate('github')}
-        >
-          {t(`${I18N_KEY_PAGE_PREFIX}.loginWithSocial`, { provider: 'GitHub' })}
-        </Button>
       </div>
     </Form>
   );
