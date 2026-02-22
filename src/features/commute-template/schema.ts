@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import { createStopOrderRules } from '@/features/commute/form-commute-rules';
 import { zCommuteType } from '@/features/commute/schema';
 
 export type CommuteTemplate = z.infer<ReturnType<typeof zCommuteTemplate>>;
@@ -37,15 +38,10 @@ export const zFormFieldsCommuteTemplate = () =>
         .min(2, t('commuteTemplate:form.errors.stopsMin')),
     })
     .superRefine((data, ctx) => {
-      const isRound = data.type === 'ROUND';
+      const rules = createStopOrderRules(data);
 
       data.stops.forEach((stop, index) => {
-        if (
-          isRound &&
-          stop.inwardTime &&
-          stop.outwardTime &&
-          stop.inwardTime <= stop.outwardTime
-        ) {
+        if (!rules.shouldInwardBeAfterOutward(stop)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commuteTemplate:form.errors.inwardBeforeOutward'),
@@ -53,32 +49,20 @@ export const zFormFieldsCommuteTemplate = () =>
           });
         }
 
-        if (index > 0) {
-          const prevStop = data.stops[index - 1];
-          if (
-            stop.outwardTime &&
-            prevStop?.outwardTime &&
-            stop.outwardTime <= prevStop.outwardTime
-          ) {
-            ctx.addIssue({
-              code: 'custom',
-              message: t('commuteTemplate:form.errors.outwardNotIncreasing'),
-              path: ['stops', index, 'outwardTime'],
-            });
-          }
+        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.outwardNotIncreasing'),
+            path: ['stops', index, 'outwardTime'],
+          });
+        }
 
-          if (
-            isRound &&
-            stop.inwardTime &&
-            prevStop?.inwardTime &&
-            stop.inwardTime >= prevStop.inwardTime
-          ) {
-            ctx.addIssue({
-              code: 'custom',
-              message: t('commuteTemplate:form.errors.inwardNotDecreasing'),
-              path: ['stops', index, 'inwardTime'],
-            });
-          }
+        if (!rules.shouldInwardBeDecreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commuteTemplate:form.errors.inwardNotDecreasing'),
+            path: ['stops', index, 'inwardTime'],
+          });
         }
       });
     });
