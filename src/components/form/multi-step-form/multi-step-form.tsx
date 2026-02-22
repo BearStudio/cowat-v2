@@ -56,7 +56,13 @@ export const MultiStepForm = ({
   const _registerStep = useCallback((config: StepConfig) => {
     setSteps((prev) => {
       if (prev.some((s) => s.id === config.id)) return prev;
-      return [...prev, config];
+      const next = [...prev, config];
+      if (next.some((s) => s.order !== undefined)) {
+        return next.sort(
+          (a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)
+        );
+      }
+      return next;
     });
     return () => {
       setSteps((prev) => prev.filter((s) => s.id !== config.id));

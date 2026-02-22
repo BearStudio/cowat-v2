@@ -188,6 +188,45 @@ test('unvisited progress steps are disabled', async () => {
     .toBeDisabled();
 });
 
+test('steps with explicit order are sorted regardless of DOM order', async () => {
+  const user = setupUser();
+
+  render(
+    <MultiStepForm>
+      <MultiStepFormContent />
+      <MultiStepFormStep name="Step C" order={3}>
+        <p>Content C</p>
+      </MultiStepFormStep>
+      <MultiStepFormStep name="Step A" order={1}>
+        <p>Content A</p>
+      </MultiStepFormStep>
+      <MultiStepFormStep name="Step B" order={2}>
+        <p>Content B</p>
+      </MultiStepFormStep>
+      <MultiStepFormNavigation
+        onSubmit={vi.fn()}
+        submitLabel="Submit"
+        nextLabel="Next"
+        backLabel="Back"
+      />
+    </MultiStepForm>
+  );
+
+  await expect.element(page.getByText('Step A')).toBeVisible();
+  await expect.element(page.getByText('Content A')).toBeVisible();
+
+  await user.click(page.getByRole('button', { name: 'Next' }));
+  await expect.element(page.getByText('Step B')).toBeVisible();
+  await expect.element(page.getByText('Content B')).toBeVisible();
+
+  await user.click(page.getByRole('button', { name: 'Next' }));
+  await expect.element(page.getByText('Step C')).toBeVisible();
+  await expect.element(page.getByText('Content C')).toBeVisible();
+  await expect
+    .element(page.getByRole('button', { name: 'Submit' }))
+    .toBeVisible();
+});
+
 test('navigating forward marks steps as visited', async () => {
   const user = setupUser();
   renderForm();
