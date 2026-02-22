@@ -10,7 +10,10 @@ import {
 } from '@/components/form';
 
 import { FormCommuteSharedFields } from '@/features/commute/form-commute-shared-fields';
-import type { FormFieldsCommute } from '@/features/commute/schema';
+import {
+  asCommuteBase,
+  type FormFieldsCommute,
+} from '@/features/commute/schema';
 
 const TodayWarning = ({ control }: { control: Control<FormFieldsCommute> }) => {
   const { t } = useTranslation(['commute']);
@@ -54,8 +57,7 @@ export const FormCommute = () => {
       </FormField>
 
       <FormCommuteSharedFields
-        control={form.control}
-        setValue={form.setValue}
+        {...asCommuteBase(form)}
         ns="commute"
         defaultStop={{ locationId: '', outwardTime: '', inwardTime: null }}
       />

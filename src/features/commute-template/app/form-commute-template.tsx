@@ -8,6 +8,7 @@ import {
 } from '@/components/form';
 
 import { FormCommuteSharedFields } from '@/features/commute/form-commute-shared-fields';
+import { asCommuteBase } from '@/features/commute/schema';
 import type { FormFieldsCommuteTemplate } from '@/features/commute-template/schema';
 
 export const FormCommuteTemplate = () => {
@@ -29,8 +30,7 @@ export const FormCommuteTemplate = () => {
       </FormField>
 
       <FormCommuteSharedFields
-        control={form.control}
-        setValue={form.setValue}
+        {...asCommuteBase(form)}
         ns="commuteTemplate"
         defaultStop={{
           locationId: '',

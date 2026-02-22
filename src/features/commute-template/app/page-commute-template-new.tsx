@@ -20,6 +20,7 @@ import { StepDetailsTemplate } from '@/features/commute/form-commute/step-detail
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
+import { asCommuteBase } from '@/features/commute/schema';
 import {
   FormFieldsCommuteTemplate,
   zFormFieldsCommuteTemplate,
@@ -115,8 +116,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                 }}
               >
                 <StepOutwardStops
-                  control={form.control}
-                  setValue={form.setValue}
+                  {...asCommuteBase(form)}
                   ns="commuteTemplate"
                   defaultStop={{
                     locationId: '',
@@ -143,8 +143,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                       }}
                     >
                       <StepInwardStops
-                        control={form.control}
-                        setValue={form.setValue}
+                        {...asCommuteBase(form)}
                         ns="commuteTemplate"
                       />
                     </MultiStepFormStep>
@@ -152,7 +151,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                 }
               />
               <MultiStepFormStep name={t('commuteTemplate:stepper.recap')}>
-                <StepRecap control={form.control} ns="commuteTemplate" />
+                <StepRecap {...asCommuteBase(form)} ns="commuteTemplate" />
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation

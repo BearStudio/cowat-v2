@@ -2,7 +2,7 @@ import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { Fragment } from 'react';
 import {
   Control,
-  SetFieldValue,
+  UseFormReturn,
   useFieldArray,
   useWatch,
 } from 'react-hook-form';
@@ -15,14 +15,14 @@ import {
 } from '@/components/form';
 import { Button } from '@/components/ui/button';
 
-import type { FormFieldsCommute } from '@/features/commute/schema';
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type StepOutwardStopsProps = {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
-  defaultStop: FormFieldsCommute['stops'][number];
+  defaultStop: FormFieldsCommuteBase['stops'][number];
 };
 
 export const StepOutwardStops = ({
@@ -32,10 +32,14 @@ export const StepOutwardStops = ({
   defaultStop,
 }: StepOutwardStopsProps) => {
   const { t } = useTranslation([ns]);
-  const { fields, insert, remove } = useFieldArray({ control, name: 'stops' });
-  const stops = useWatch({ control, name: 'stops' }) as
-    | FormFieldsCommute['stops']
-    | undefined;
+  const { fields, insert, remove } = useFieldArray({
+    control,
+    name: 'stops',
+  });
+  const stops = useWatch({
+    control,
+    name: 'stops',
+  });
 
   return (
     <div className="flex flex-col gap-3">

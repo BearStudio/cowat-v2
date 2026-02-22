@@ -1,4 +1,4 @@
-import { Control, SetFieldValue } from 'react-hook-form';
+import { Control, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -9,13 +9,13 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { FormFieldStops } from '@/features/commute/form-field-stops';
-import { FormFieldsCommute } from '@/features/commute/schema';
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 
 type FormCommuteSharedFieldsProps = {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
-  defaultStop: FormFieldsCommute['stops'][number];
+  defaultStop: FormFieldsCommuteBase['stops'][number];
 };
 
 export const FormCommuteSharedFields = ({
