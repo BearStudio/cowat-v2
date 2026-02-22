@@ -59,6 +59,37 @@ describe('stats router', () => {
       );
     });
 
+    it('should apply date range filter to commute counts when from/to are provided', async () => {
+      mockDb.member.findMany.mockResolvedValue([]);
+      mockDb.commute.findMany.mockResolvedValue([]);
+
+      const from = new Date('2025-01-01');
+      const to = new Date('2025-12-31');
+
+      await call(statsRouter.getAll, { from, to });
+
+      expect(mockDb.commute.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            date: { gte: from, lt: to },
+          }),
+        })
+      );
+    });
+
+    it('should not apply date filter when no date range is provided', async () => {
+      mockDb.member.findMany.mockResolvedValue([]);
+      mockDb.commute.findMany.mockResolvedValue([]);
+
+      await call(statsRouter.getAll, undefined);
+
+      expect(mockDb.commute.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { driver: { organizationId: mockOrganizationId } },
+        })
+      );
+    });
+
     it('should include user info and relation counts on member', async () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);

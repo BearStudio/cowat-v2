@@ -1,10 +1,12 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -22,6 +24,7 @@ import {
   DataListText,
   DataListTextHeader,
 } from '@/components/ui/datalist';
+import { DatePicker } from '@/components/ui/date-picker';
 
 import { RankingCard } from '@/features/stats/manager/ranking-card';
 import {
@@ -34,7 +37,17 @@ import {
 export const PageStats = () => {
   const { t } = useTranslation(['stats']);
 
-  const statsQuery = useQuery(orpc.stats.getAll.queryOptions());
+  const [from, setFrom] = useState<Date | null>(null);
+  const [to, setTo] = useState<Date | null>(null);
+
+  const statsQuery = useQuery(
+    orpc.stats.getAll.queryOptions({
+      input:
+        from || to
+          ? { from: from ?? undefined, to: to ?? undefined }
+          : undefined,
+    })
+  );
 
   const ui = getUiState((set) => {
     if (statsQuery.status === 'pending') return set('pending');
@@ -51,6 +64,32 @@ export const PageStats = () => {
           {t('stats:manager.title')}
         </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
+      <div className="flex flex-wrap items-center gap-3 px-4 py-4">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-muted-foreground">
+            {t('stats:manager.filters.from')}
+          </span>
+          <DatePicker value={from} onChange={setFrom} noCalendar={false} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-muted-foreground">
+            {t('stats:manager.filters.to')}
+          </span>
+          <DatePicker value={to} onChange={setTo} noCalendar={false} />
+        </div>
+        {(from || to) && (
+          <Button
+            variant="ghost"
+            size="xs"
+            onClick={() => {
+              setFrom(null);
+              setTo(null);
+            }}
+          >
+            {t('stats:manager.filters.reset')}
+          </Button>
+        )}
+      </div>
       <PageLayoutContent className="pb-20">
         {ui
           .match('pending', () => (
