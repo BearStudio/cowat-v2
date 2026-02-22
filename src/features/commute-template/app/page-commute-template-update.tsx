@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -83,21 +84,26 @@ export const PageCommuteTemplateUpdate = (props: {
   const form = useForm<FormFieldsCommuteTemplate>({
     resolver: zodResolver(zFormFieldsCommuteTemplate()),
     defaultValues: { type: 'ROUND' },
-    values: templateQuery.data
-      ? {
-          name: templateQuery.data.name,
-          seats: templateQuery.data.seats,
-          type: templateQuery.data.type,
-          comment: templateQuery.data.comment ?? null,
-          stops: templateQuery.data.stops.map((stop) => ({
-            locationId: stop.locationId,
-            order: stop.order,
-            outwardTime: stop.outwardTime,
-            inwardTime: stop.inwardTime ?? null,
-          })),
-        }
-      : undefined,
   });
+
+  const hasReset = useRef(false);
+  useEffect(() => {
+    if (templateQuery.data && !hasReset.current) {
+      hasReset.current = true;
+      form.reset({
+        name: templateQuery.data.name,
+        seats: templateQuery.data.seats,
+        type: templateQuery.data.type,
+        comment: templateQuery.data.comment ?? null,
+        stops: templateQuery.data.stops.map((stop) => ({
+          locationId: stop.locationId,
+          order: stop.order,
+          outwardTime: stop.outwardTime,
+          inwardTime: stop.inwardTime ?? null,
+        })),
+      });
+    }
+  }, [templateQuery.data, form]);
 
   const ui = getUiState((set) => {
     if (templateQuery.status === 'pending') return set('pending');
