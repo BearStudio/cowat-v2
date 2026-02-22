@@ -14,6 +14,7 @@ import { commuteUpdated } from './commute-updated';
 import type { SlackBlock } from './utils';
 
 export type { SlackBlock };
+export { getFallbackText } from './utils';
 
 export function getSlackBlocks(
   event: NotificationEvent,

@@ -3,6 +3,7 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 import type { CommuteUpdatedEvent } from '@/server/notifications/types';
 
 import {
+  contextBlock,
   formatDate,
   localizeCommuteType,
   type SlackBlock,
@@ -19,8 +20,12 @@ export function commuteUpdated(
       t(locale, 'commute.updated', {
         driverName: event.payload.driverName,
         commuteType: localizeCommuteType(locale, event.payload.commuteType),
-        date: formatDate(event.payload.commuteDate, locale),
       })
     ),
+    contextBlock([
+      t(locale, 'commute.updatedContext', {
+        date: formatDate(event.payload.commuteDate, locale),
+      }),
+    ]),
   ];
 }

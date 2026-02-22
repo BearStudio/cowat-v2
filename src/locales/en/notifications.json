@@ -1,14 +1,21 @@
 {
   "booking": {
-    "requested": "🙋 *New booking request!*\n*{{passengerName}}* wants to join your commute on *{{date}}* — *{{tripType}}*.",
-    "accepted": "✅ *Booking confirmed!*\n*{{driverName}}* accepted your *{{tripType}}* booking for *{{date}}*.",
-    "refused": "❌ *Booking declined*\n*{{driverName}}* declined your *{{tripType}}* booking for *{{date}}*.",
-    "canceled": "🙅 *Booking canceled*\n*{{passengerName}}* canceled their *{{tripType}}* booking on *{{date}}*."
+    "requested": "🙋 *New booking request!*\n*{{passengerName}}* wants to join your commute.",
+    "requestedContext": "📅 {{date}} · {{tripType}}",
+    "accepted": "✅ *Booking confirmed!*\n*{{driverName}}* accepted your booking.",
+    "acceptedContext": "📅 {{date}} · {{tripType}}",
+    "refused": "❌ *Booking declined*\n*{{driverName}}* declined your booking.",
+    "refusedContext": "📅 {{date}} · {{tripType}}",
+    "canceled": "🙅 *Booking canceled*\n*{{passengerName}}* canceled their booking.",
+    "canceledContext": "📅 {{date}} · {{tripType}}"
   },
   "commute": {
-    "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*. 💺 *{{seats}}* seats available.",
-    "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute on *{{date}}*.",
-    "canceled": "❌ *Commute canceled*\n*{{driverName}}* canceled the *{{commuteType}}* commute on *{{date}}*.",
+    "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*.",
+    "createdContext": "💺 {{seats}} seats available",
+    "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute.",
+    "updatedContext": "📅 {{date}}",
+    "canceled": "❌ *Commute canceled*\n*{{driverName}}* canceled the *{{commuteType}}* commute.",
+    "canceledContext": "📅 {{date}}",
     "requested": "🙋 *Ride request!*\n{{requester}} is looking for a commute on *{{date}}*.",
     "requestedWithLocation": "🙋 *Ride request!*\n{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*.",
     "offerRide": "Offer a ride →"

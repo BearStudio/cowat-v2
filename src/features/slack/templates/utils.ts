@@ -71,3 +71,32 @@ export function textBlock(text: string): SlackBlock {
     text: { type: 'mrkdwn', text },
   };
 }
+
+export function contextBlock(elements: string[]): SlackBlock {
+  return {
+    type: 'context',
+    elements: elements.map((text) => ({ type: 'mrkdwn', text })),
+  };
+}
+
+export function getFallbackText(blocks: SlackBlock[]): string {
+  for (const block of blocks) {
+    if (
+      block.type === 'section' &&
+      typeof block.text === 'object' &&
+      block.text !== null
+    ) {
+      const text = (block.text as { text?: string }).text;
+      if (typeof text === 'string') {
+        return text
+          .replace(/[*_~`]/g, '')
+          .replace(/<@[^>]+>/g, '@user')
+          .replace(/<!here>/g, '@here')
+          .replace(/<!channel>/g, '@channel')
+          .replace(/\n/g, ' ')
+          .trim();
+      }
+    }
+  }
+  return 'New notification';
+}

@@ -2,7 +2,13 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 
 import type { CommuteCreatedEvent } from '@/server/notifications/types';
 
-import { formatDate, localizeCommuteType, type SlackBlock, t } from './utils';
+import {
+  contextBlock,
+  formatDate,
+  localizeCommuteType,
+  type SlackBlock,
+  t,
+} from './utils';
 
 export function commuteCreated(
   event: CommuteCreatedEvent,
@@ -18,7 +24,6 @@ export function commuteCreated(
     driver,
     commuteType: localizeCommuteType(locale, event.payload.commuteType),
     date: formatDate(event.payload.commuteDate, locale),
-    seats: String(event.payload.seats),
   });
 
   const headerBlock: SlackBlock = {
@@ -44,5 +49,9 @@ export function commuteCreated(
     };
   });
 
-  return [headerBlock, { type: 'divider' }, ...stopBlocks];
+  const seatsContext = contextBlock([
+    t(locale, 'commute.createdContext', { seats: String(event.payload.seats) }),
+  ]);
+
+  return [headerBlock, { type: 'divider' }, ...stopBlocks, seatsContext];
 }
