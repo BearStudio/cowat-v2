@@ -19,7 +19,6 @@
     "editAction": "Edit",
     "cancelAction": "Cancel",
     "callDriver": "Call",
-    "openCommuteView": "Open commute view",
     "speedDial": {
       "myLocations": "My Locations",
       "myCommutes": "My Commutes",
@@ -44,9 +43,6 @@
     "title": "My templates",
     "emptyState": "Save time: create a template",
     "fromScratch": "Create from scratch"
-  },
-  "view": {
-    "title": "Commute view"
   },
   "stepper": {
     "details": "Details",
