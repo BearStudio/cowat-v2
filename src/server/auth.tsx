@@ -70,15 +70,6 @@ export const auth = betterAuth({
     throw: true,
     errorURL: '/login/error',
   },
-  socialProviders: {
-    github: {
-      enabled: !!(envServer.GITHUB_CLIENT_ID && envServer.GITHUB_CLIENT_SECRET),
-      clientId: envServer.GITHUB_CLIENT_ID!,
-      clientSecret: envServer.GITHUB_CLIENT_SECRET!,
-      disableImplicitSignUp: !AUTH_SIGNUP_ENABLED,
-    },
-  },
-
   plugins: [
     expo(), // Allows an Expo native app to use auth, can be delete if no needed
     openAPI({
