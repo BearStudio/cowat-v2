@@ -42,7 +42,7 @@ export const StepOutwardStops = ({
   });
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 py-4">
       {fields.map((field, index) => {
         const isFirst = index === 0;
         const isLast = index === fields.length - 1;
@@ -52,7 +52,7 @@ export const StepOutwardStops = ({
 
         return (
           <Fragment key={field.id}>
-            <div className="flex flex-col gap-3 rounded-sm border border-border p-4">
+            <div className="flex flex-col gap-2 py-3">
               <span className="text-sm font-semibold">{stopLabel}</span>
 
               <FormFieldLocationSelect

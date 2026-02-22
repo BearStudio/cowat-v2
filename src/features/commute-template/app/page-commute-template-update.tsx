@@ -97,7 +97,6 @@ export const PageCommuteTemplateUpdate = (props: {
         comment: templateQuery.data.comment ?? null,
         stops: templateQuery.data.stops.map((stop) => ({
           locationId: stop.locationId,
-          order: stop.order,
           outwardTime: stop.outwardTime,
           inwardTime: stop.inwardTime ?? null,
         })),
@@ -112,11 +111,7 @@ export const PageCommuteTemplateUpdate = (props: {
   });
 
   const handleSubmit = form.handleSubmit((values) => {
-    templateUpdate.mutate({
-      id: props.id,
-      ...values,
-      stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
-    });
+    templateUpdate.mutate({ id: props.id, ...values });
   });
 
   return (
@@ -171,7 +166,7 @@ export const PageCommuteTemplateUpdate = (props: {
               </MultiStepFormStep>
               <Watch
                 control={form.control}
-                names="type"
+                name="type"
                 render={(type) =>
                   type === 'ROUND' ? (
                     <MultiStepFormStep

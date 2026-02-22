@@ -36,7 +36,6 @@ export type FormFieldsTemplateStopInput = z.infer<
 export const zFormFieldsTemplateStopInput = () =>
   z.object({
     locationId: zu.fieldText.required(),
-    order: z.number().int().min(0),
     outwardTime: zu.fieldText.required(),
     inwardTime: zu.fieldText.nullish(),
   });
