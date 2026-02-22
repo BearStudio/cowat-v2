@@ -30,11 +30,8 @@ export function createSlackChannel(
       const app = getSlackApp();
       if (!app) return;
 
-      // Broadcast events — always go to the default channel
-      if (
-        event.type === 'commute.created' ||
-        event.type === 'commute.requested'
-      ) {
+      // commute.created — broadcast to default channel with driver @mention and avatar
+      if (event.type === 'commute.created') {
         const defaultChannel = envServer.SLACK_DEFAULT_CHANNEL;
         if (!defaultChannel) {
           logger.warn(
@@ -44,33 +41,69 @@ export function createSlackChannel(
           return;
         }
 
-        const emailToResolve =
-          event.type === 'commute.created'
-            ? event.payload.driverEmail
-            : event.payload.requesterEmail;
-
         const userLookup = await Result.tryPromise(() =>
-          app.client.users.lookupByEmail({ email: emailToResolve })
+          app.client.users.lookupByEmail({ email: event.payload.driverEmail })
         );
 
         const slackUser = userLookup.isOk() ? userLookup.value.user : undefined;
 
         if (userLookup.isErr()) {
           logger.warn(
-            { email: emailToResolve, error: userLookup.error },
-            'Slack: could not resolve user for @mention, falling back to name'
+            { email: event.payload.driverEmail, error: userLookup.error },
+            'Slack: could not resolve driver for @mention, falling back to name'
           );
         }
 
         const blocks = getSlackBlocks(event, {
-          driverSlackId:
-            event.type === 'commute.created' ? slackUser?.id : undefined,
-          driverAvatarUrl:
-            event.type === 'commute.created'
-              ? (slackUser?.profile?.image_72 ?? undefined)
-              : undefined,
-          requesterSlackId:
-            event.type === 'commute.requested' ? slackUser?.id : undefined,
+          driverSlackId: slackUser?.id,
+          driverAvatarUrl: slackUser?.profile?.image_72 ?? undefined,
+          locale,
+        });
+
+        const postResult = await Result.tryPromise(() =>
+          app.client.chat.postMessage({
+            channel: defaultChannel,
+            blocks,
+            text: `${event.payload.driverName} posted a new commute`,
+          })
+        );
+        if (postResult.isErr()) {
+          logger.error(
+            { channel: defaultChannel, error: postResult.error },
+            'Slack: failed to post commute.created broadcast'
+          );
+        }
+        return;
+      }
+
+      // commute.requested — broadcast to default channel with requester @mention
+      if (event.type === 'commute.requested') {
+        const defaultChannel = envServer.SLACK_DEFAULT_CHANNEL;
+        if (!defaultChannel) {
+          logger.warn(
+            { eventType: event.type },
+            'Slack: no default channel configured, skipping broadcast'
+          );
+          return;
+        }
+
+        const userLookup = await Result.tryPromise(() =>
+          app.client.users.lookupByEmail({
+            email: event.payload.requesterEmail,
+          })
+        );
+
+        const slackUser = userLookup.isOk() ? userLookup.value.user : undefined;
+
+        if (userLookup.isErr()) {
+          logger.warn(
+            { email: event.payload.requesterEmail, error: userLookup.error },
+            'Slack: could not resolve requester for @mention, falling back to name'
+          );
+        }
+
+        const blocks = getSlackBlocks(event, {
+          requesterSlackId: slackUser?.id,
           baseUrl: envClient.VITE_BASE_URL,
           locale,
         });
@@ -79,17 +112,13 @@ export function createSlackChannel(
           app.client.chat.postMessage({
             channel: defaultChannel,
             blocks,
-            // Fallback text for notifications and accessibility
-            text:
-              event.type === 'commute.created'
-                ? `${event.payload.driverName} posted a new commute`
-                : `${event.payload.requesterName} is looking for a commute`,
+            text: `${event.payload.requesterName} is looking for a commute`,
           })
         );
         if (postResult.isErr()) {
           logger.error(
             { channel: defaultChannel, error: postResult.error },
-            'Slack: failed to post broadcast message'
+            'Slack: failed to post commute.requested broadcast'
           );
         }
         return;
