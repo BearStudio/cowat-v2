@@ -43,6 +43,7 @@ import { StepInwardStops } from '@/features/commute/form-commute/step-inward-sto
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
 import {
+  asCommuteBase,
   FormFieldsCommute,
   zFormFieldsCommute,
 } from '@/features/commute/schema';
@@ -271,8 +272,7 @@ export const PageCommuteNew = ({
                 }}
               >
                 <StepOutwardStops
-                  control={form.control}
-                  setValue={form.setValue}
+                  {...asCommuteBase(form)}
                   ns="commute"
                   defaultStop={{
                     locationId: '',
@@ -298,17 +298,13 @@ export const PageCommuteNew = ({
                         );
                       }}
                     >
-                      <StepInwardStops
-                        control={form.control}
-                        setValue={form.setValue}
-                        ns="commute"
-                      />
+                      <StepInwardStops {...asCommuteBase(form)} ns="commute" />
                     </MultiStepFormStep>
                   ) : null
                 }
               />
               <MultiStepFormStep name={t('commute:stepper.recap')}>
-                <StepRecap control={form.control} ns="commute" />
+                <StepRecap {...asCommuteBase(form)} ns="commute" />
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation

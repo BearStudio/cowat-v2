@@ -22,17 +22,15 @@ export const FormMocked = <T extends ZodType<FieldValues>>({
   useFormOptions?: UseFormProps<z.infer<T>>;
   onSubmit?: SubmitHandler<z.infer<T>>;
 }) => {
-  const form = useForm({
+  const form = useForm<z.infer<T>>({
     mode: 'onBlur',
-    resolver: zodResolver(schema as TODO),
+    resolver: zodResolver(schema as ExplicitAny),
     ...useFormOptions,
   });
   return (
     <Form
       {...form}
-      onSubmit={
-        onSubmit ? form.handleSubmit((values) => onSubmit(values)) : undefined
-      }
+      onSubmit={onSubmit ? (values) => onSubmit(values) : undefined}
     >
       {children({ form })}
       <button type="submit">Submit</button>

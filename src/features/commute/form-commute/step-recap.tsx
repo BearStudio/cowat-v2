@@ -8,14 +8,17 @@ import { orpc } from '@/lib/orpc/client';
 
 import { Badge } from '@/components/ui/badge';
 
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+
 type StepRecapProps = {
-  control: Control<TODO>;
+  control: Control<FormFieldsCommuteBase>;
   ns: 'commute' | 'commuteTemplate';
 };
 
 export const StepRecap = ({ control, ns }: StepRecapProps) => {
   const { t } = useTranslation([ns, 'commute']);
-  const values = useWatch({ control });
+  const values = useWatch({ control }) as FormFieldsCommuteBase &
+    Record<string, unknown>;
 
   const locationsQuery = useInfiniteQuery(
     orpc.location.getAll.infiniteOptions({
@@ -32,14 +35,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
       .map((loc) => [loc.id, loc.name]) ?? []
   );
 
-  const stops = values.stops as
-    | Array<{
-        locationId: string;
-        outwardTime: string;
-        inwardTime: string | null;
-      }>
-    | undefined;
-
+  const { stops } = values;
   const isRound = values.type === 'ROUND';
   const hasInwardTimes = stops?.some((s) => s.inwardTime);
   const OnewayIcon = tripTypeIcons.ONEWAY;
@@ -49,13 +45,13 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
     <div className="flex flex-col gap-4">
       {/* Meta info */}
       <div className="flex flex-wrap gap-2">
-        {ns === 'commute' && values.date && (
+        {ns === 'commute' && values.date != null && (
           <Badge variant="secondary">
             {dayjs(values.date as Date).format('DD/MM/YYYY')}
           </Badge>
         )}
-        {ns === 'commuteTemplate' && values.name && (
-          <Badge variant="secondary">{values.name as string}</Badge>
+        {ns === 'commuteTemplate' && values.name != null && (
+          <Badge variant="secondary">{String(values.name)}</Badge>
         )}
         <Badge variant="default">
           {isRound
@@ -63,7 +59,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
             : t('commute:list.type.ONEWAY')}
         </Badge>
         <Badge variant="secondary">
-          {t('commute:list.seats', { count: values.seats as number })}
+          {t('commute:list.seats', { count: values.seats })}
         </Badge>
       </div>
 
@@ -150,9 +146,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
 
       {/* Comment */}
       {values.comment && (
-        <p className="text-sm text-muted-foreground">
-          {values.comment as string}
-        </p>
+        <p className="text-sm text-muted-foreground">{values.comment}</p>
       )}
     </div>
   );

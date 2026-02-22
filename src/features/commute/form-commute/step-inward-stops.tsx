@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
-import { Control, SetFieldValue } from 'react-hook-form';
+import { Control, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -17,11 +17,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 import { useAutoInwardTimes } from '@/features/commute/use-auto-inward-times';
 
 type StepInwardStopsProps = {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
 };
 

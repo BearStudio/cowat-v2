@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Control, UseFormReturn, useWatch } from 'react-hook-form';
 
-import { FormFieldsCommute } from '@/features/commute/schema';
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 
 const timeToMinutes = (time: string): number => {
   const [hours = 0, minutes = 0] = time.split(':').map(Number);
@@ -32,17 +32,24 @@ export const useAutoInwardTimes = ({
   control,
   setValue,
 }: {
-  control: Control<FormFieldsCommute>;
-  setValue: UseFormReturn<FormFieldsCommute>['setValue'];
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
 }) => {
-  const commuteType = useWatch({ control, name: 'type' });
-  const stops = useWatch({ control, name: 'stops' });
+  const commuteType = useWatch({
+    control,
+    name: 'type',
+  });
+
+  const stops = useWatch({
+    control,
+    name: 'stops',
+  });
 
   const lastIndex = (stops?.length ?? 1) - 1;
 
   const computeKey = [
     commuteType,
-    ...(stops?.map((s: TODO) => s?.outwardTime) ?? []),
+    ...(stops?.map((s) => s?.outwardTime) ?? []),
     stops?.[lastIndex]?.inwardTime,
     stops?.length,
   ].join('|');
