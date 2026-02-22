@@ -58,7 +58,16 @@ export const createCommuteRepository = (db: AppDB) => ({
     comment?: string | null;
     driverMemberId: string;
     stops: { create: StopCreateInput[] };
-  }) => db.commute.create({ data, include: { stops: true } }),
+  }) =>
+    db.commute.create({
+      data,
+      include: {
+        stops: {
+          orderBy: { order: 'asc' as const },
+          include: { location: { select: { name: true } } },
+        },
+      },
+    }),
 
   findById: (id: string, organizationId: string) =>
     db.commute.findFirst({

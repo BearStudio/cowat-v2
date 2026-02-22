@@ -5,8 +5,8 @@
 
 @theme {
   --font-sans:
-    'Public Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    'Public Sans Variable', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --color-*: initial;
   --color-white: #fff;
   --color-black: #000;

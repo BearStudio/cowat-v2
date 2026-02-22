@@ -41,10 +41,9 @@ export default {
       }
 
       const orders = stop.commute.stops.map((s) => s.order);
-      const isFirstStop = stop.order === Math.min(...orders);
       const isLastStop = stop.order === Math.max(...orders);
       const allowOutward = !isLastStop;
-      const allowInward = stop.commute.type === 'ROUND' && !isFirstStop;
+      const allowInward = stop.commute.type === 'ROUND';
 
       if (
         (input.tripType === 'ONEWAY' && !allowOutward) ||
@@ -107,7 +106,7 @@ export default {
         payload: {
           passengerName: context.user.name,
           commuteDate: stop.commute.date,
-          commuteType: stop.commute.type,
+          tripType: input.tripType,
           status,
         },
       });
@@ -165,7 +164,7 @@ export default {
         payload: {
           driverName: context.user.name,
           commuteDate: booking.stop.commute.date,
-          commuteType: booking.stop.commute.type,
+          tripType: booking.tripType,
         },
       });
     }),
@@ -203,7 +202,7 @@ export default {
         payload: {
           driverName: context.user.name,
           commuteDate: booking.stop.commute.date,
-          commuteType: booking.stop.commute.type,
+          tripType: booking.tripType,
         },
       });
     }),
@@ -242,7 +241,7 @@ export default {
         payload: {
           passengerName: context.user.name,
           commuteDate: booking.stop.commute.date,
-          commuteType: booking.stop.commute.type,
+          tripType: booking.tripType,
         },
       });
     }),

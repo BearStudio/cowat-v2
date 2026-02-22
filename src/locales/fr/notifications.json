@@ -1,19 +1,25 @@
 {
   "booking": {
-    "requested": "Nouvelle demande de réservation de {{passengerName}} pour votre trajet {{commuteType}} du {{date}}.",
-    "accepted": "{{driverName}} a accepté votre réservation pour le trajet {{commuteType}} du {{date}}.",
-    "refused": "{{driverName}} a refusé votre réservation pour le trajet {{commuteType}} du {{date}}.",
-    "canceled": "{{passengerName}} a annulé sa réservation sur votre trajet {{commuteType}} du {{date}}."
+    "requested": "🙋 *Nouvelle demande de réservation !*\n*{{passengerName}}* souhaite rejoindre votre trajet du *{{date}}* — *{{tripType}}*.",
+    "accepted": "✅ *Réservation confirmée !*\n*{{driverName}}* a accepté votre réservation *{{tripType}}* pour le *{{date}}*.",
+    "refused": "❌ *Réservation refusée*\n*{{driverName}}* a refusé votre réservation *{{tripType}}* pour le *{{date}}*.",
+    "canceled": "🙅 *Réservation annulée*\n*{{passengerName}}* a annulé sa réservation *{{tripType}}* du *{{date}}*."
   },
   "commute": {
-    "created": "{{driver}} a créé un nouveau trajet {{commuteType}} le {{date}}.",
-    "updated": "{{driverName}} a mis à jour le trajet {{commuteType}} du {{date}}.",
-    "canceled": "{{driverName}} a annulé le trajet {{commuteType}} du {{date}}.",
-    "requested": "{{requester}} cherche un trajet le {{date}}. <{{link}}|Créer un trajet>",
-    "requestedWithLocation": "{{requester}} cherche un trajet vers {{locationName}} le {{date}}. <{{link}}|Créer un trajet>"
+    "created": "🚗 *Nouveau trajet disponible !*\n{{driver}} — *{{commuteType}}* le *{{date}}*. 💺 *{{seats}}* places disponibles.",
+    "updated": "📝 *Trajet mis à jour*\n*{{driverName}}* a modifié le trajet *{{commuteType}}* du *{{date}}*.",
+    "canceled": "❌ *Trajet annulé*\n*{{driverName}}* a annulé le trajet *{{commuteType}}* du *{{date}}*.",
+    "requested": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet le *{{date}}*.",
+    "requestedWithLocation": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet vers *{{locationName}}* le *{{date}}*.",
+    "offerRide": "Proposer un trajet →"
   },
   "commuteType": {
     "ROUND": "aller-retour",
     "ONEWAY": "aller simple"
+  },
+  "tripType": {
+    "ROUND": "aller-retour",
+    "ONEWAY": "aller simple",
+    "RETURN": "retour"
   }
 }
