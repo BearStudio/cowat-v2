@@ -40,21 +40,6 @@ export const useRedirectAfterLogin = () => {
         authClient.admin.checkRolePermission({
           role: userRole as Role,
           permission: {
-            apps: ['manager'],
-          },
-        })
-      ) {
-        router.navigate({
-          replace: true,
-          to: '/manager',
-        });
-        return;
-      }
-
-      if (
-        authClient.admin.checkRolePermission({
-          role: userRole as Role,
-          permission: {
             apps: ['app'],
           },
         })
