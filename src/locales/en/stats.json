@@ -11,6 +11,11 @@
       "mostStops": "Most Stops",
       "mostStopsDescription": "Most stops across commutes"
     },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "reset": "Reset filters"
+    },
     "table": {
       "title": "All Users",
       "description": "Overview of all users and their activity",

@@ -1,8 +1,15 @@
 import type { AppDB } from '@/server/db';
 
+type DateRange = { from?: Date; to?: Date };
+
 export const createStatsRepository = (db: AppDB) => ({
-  getMembersWithCounts: (organizationId: string) =>
-    db.member.findMany({
+  getMembersWithCounts: (organizationId: string, dateRange?: DateRange) => {
+    const dateFilter =
+      dateRange?.from || dateRange?.to
+        ? { gte: dateRange.from, lt: dateRange.to }
+        : undefined;
+
+    return db.member.findMany({
       where: { organizationId },
       include: {
         user: {
@@ -10,20 +17,36 @@ export const createStatsRepository = (db: AppDB) => ({
         },
         _count: {
           select: {
-            drivenCommutes: true,
-            passengerBookings: true,
+            drivenCommutes: dateFilter ? { where: { date: dateFilter } } : true,
+            passengerBookings: dateFilter
+              ? {
+                  where: {
+                    stop: { commute: { date: dateFilter } },
+                  },
+                }
+              : true,
             drivenTemplates: true,
           },
         },
       },
-    }),
+    });
+  },
 
-  getCommuteStopCounts: (organizationId: string) =>
-    db.commute.findMany({
-      where: { driver: { organizationId } },
+  getCommuteStopCounts: (organizationId: string, dateRange?: DateRange) => {
+    const dateFilter =
+      dateRange?.from || dateRange?.to
+        ? { gte: dateRange.from, lt: dateRange.to }
+        : undefined;
+
+    return db.commute.findMany({
+      where: {
+        driver: { organizationId },
+        ...(dateFilter ? { date: dateFilter } : {}),
+      },
       select: {
         driverMemberId: true,
         _count: { select: { stops: true } },
       },
-    }),
+    });
+  },
 });
