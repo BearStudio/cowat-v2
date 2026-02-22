@@ -2,7 +2,13 @@ import { ReactNode, useCallback, useState } from 'react';
 
 import { MultiStepFormContext, StepConfig } from './context';
 
-export const MultiStepForm = ({ children }: { children: ReactNode }) => {
+export const MultiStepForm = ({
+  children,
+  freeNavigation = false,
+}: {
+  children: ReactNode;
+  freeNavigation?: boolean;
+}) => {
   const [steps, setSteps] = useState<StepConfig[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [visitedIndices, setVisitedIndices] = useState<Set<number>>(
@@ -40,10 +46,11 @@ export const MultiStepForm = ({ children }: { children: ReactNode }) => {
 
   const isStepVisited = useCallback(
     (id: string) => {
+      if (freeNavigation) return steps.some((s) => s.id === id);
       const index = steps.findIndex((s) => s.id === id);
       return index !== -1 && visitedIndices.has(index);
     },
-    [steps, visitedIndices]
+    [steps, visitedIndices, freeNavigation]
   );
 
   const _registerStep = useCallback((config: StepConfig) => {

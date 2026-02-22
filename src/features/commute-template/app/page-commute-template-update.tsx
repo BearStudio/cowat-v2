@@ -119,7 +119,7 @@ export const PageCommuteTemplateUpdate = (props: {
         render={({ isDirty }) => <PreventNavigation shouldBlock={isDirty} />}
       />
       <Form {...form} noHtmlForm>
-        <MultiStepForm>
+        <MultiStepForm freeNavigation>
           <PageLayout>
             <PageLayoutTopBar startActions={<BackButton />}>
               <PageLayoutTopBarTitle>
