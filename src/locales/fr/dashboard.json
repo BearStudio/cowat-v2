@@ -4,7 +4,6 @@
   "today": "Aujourd'hui",
   "noCommutesForDay": "Aucun trajet pour ce jour",
   "noCommutesForWeek": "Aucun trajet cette semaine",
-  "openCommuteView": "Ouvrir la vue trajet",
   "booking": {
     "title": "Réserver un trajet",
     "selectStop": "Sélectionner un arrêt",
