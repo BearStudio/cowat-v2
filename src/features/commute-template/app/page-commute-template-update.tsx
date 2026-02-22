@@ -82,6 +82,7 @@ export const PageCommuteTemplateUpdate = (props: {
 
   const form = useForm<FormFieldsCommuteTemplate>({
     resolver: zodResolver(zFormFieldsCommuteTemplate()),
+    defaultValues: { type: 'ROUND' },
     values: templateQuery.data
       ? {
           name: templateQuery.data.name,
