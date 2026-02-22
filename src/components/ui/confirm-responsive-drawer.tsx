@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   ResponsiveDrawer,
   ResponsiveDrawerClose,
@@ -28,9 +29,11 @@ export const ConfirmResponsiveDrawer = (props: {
   confirmText?: ReactNode;
   confirmVariant?: ComponentProps<typeof Button>['variant'];
   cancelText?: ReactNode;
+  requiredConfirmation?: string;
 }) => {
   const { t } = useTranslation(['common', 'components']);
   const [isPending, setIsPending] = useState(false);
+  const [confirmationInput, setConfirmationInput] = useState('');
   const { close, open, isOpen } = useDisclosure();
 
   const displayHeading =
@@ -55,15 +58,22 @@ export const ConfirmResponsiveDrawer = (props: {
     },
   });
 
+  const isConfirmDisabled =
+    props.requiredConfirmation !== undefined &&
+    confirmationInput !== props.requiredConfirmation;
+
   const handleCancel = () => {
     setIsPending(false);
+    setConfirmationInput('');
     close();
   };
 
   const handleConfirm = async () => {
+    if (isConfirmDisabled) return;
     setIsPending(true);
     await props.onConfirm();
     setIsPending(false);
+    setConfirmationInput('');
     close();
   };
 
@@ -82,9 +92,9 @@ export const ConfirmResponsiveDrawer = (props: {
       >
         <ResponsiveDrawerContent
           hideCloseButton
-          className="sm:max-w-xs"
+          className="sm:max-w-sm"
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !isConfirmDisabled) {
               e.preventDefault();
               handleConfirm();
             }
@@ -96,6 +106,21 @@ export const ConfirmResponsiveDrawer = (props: {
               {props.description}
             </ResponsiveDrawerDescription>
           </ResponsiveDrawerHeader>
+          {props.requiredConfirmation !== undefined && (
+            <div className="px-4 pb-2">
+              <p className="mb-2 text-sm text-muted-foreground">
+                {t('components:confirmResponsiveDrawer.typeToConfirm', {
+                  text: props.requiredConfirmation,
+                })}
+              </p>
+              <Input
+                value={confirmationInput}
+                onChange={(e) => setConfirmationInput(e.target.value)}
+                placeholder={props.requiredConfirmation}
+                autoComplete="off"
+              />
+            </div>
+          )}
           <ResponsiveDrawerFooter>
             <ResponsiveDrawerClose
               render={<Button variant="secondary" className="max-sm:w-full" />}
@@ -107,6 +132,7 @@ export const ConfirmResponsiveDrawer = (props: {
               variant={props.confirmVariant ?? 'default'}
               className="max-sm:w-full"
               loading={isPending}
+              disabled={isConfirmDisabled}
               onClick={handleConfirm}
             >
               {props.confirmText ??

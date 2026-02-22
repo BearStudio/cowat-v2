@@ -50,7 +50,8 @@
   "confirmResponsiveDrawer": {
     "cancelText": "Annuler",
     "confirmText": "Confirmer",
-    "heading": "Êtes-vous sûr ?"
+    "heading": "Êtes-vous sûr ?",
+    "typeToConfirm": "Tapez \"{{text}}\" pour confirmer"
   },
   "searchButton": {
     "label": "Rechercher"
