@@ -3,6 +3,7 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 import type { CommuteCanceledEvent } from '@/server/notifications/types';
 
 import {
+  contextBlock,
   formatDate,
   localizeCommuteType,
   type SlackBlock,
@@ -19,8 +20,12 @@ export function commuteCanceled(
       t(locale, 'commute.canceled', {
         driverName: event.payload.driverName,
         commuteType: localizeCommuteType(locale, event.payload.commuteType),
-        date: formatDate(event.payload.commuteDate, locale),
       })
     ),
+    contextBlock([
+      t(locale, 'commute.canceledContext', {
+        date: formatDate(event.payload.commuteDate, locale),
+      }),
+    ]),
   ];
 }

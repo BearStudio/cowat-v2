@@ -3,6 +3,7 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 import type { BookingRefusedEvent } from '@/server/notifications/types';
 
 import {
+  contextBlock,
   formatDate,
   localizeTripType,
   type SlackBlock,
@@ -18,9 +19,13 @@ export function bookingRefused(
     textBlock(
       t(locale, 'booking.refused', {
         driverName: event.payload.driverName,
-        tripType: localizeTripType(locale, event.payload.tripType),
-        date: formatDate(event.payload.commuteDate, locale),
       })
     ),
+    contextBlock([
+      t(locale, 'booking.refusedContext', {
+        date: formatDate(event.payload.commuteDate, locale),
+        tripType: localizeTripType(locale, event.payload.tripType),
+      }),
+    ]),
   ];
 }

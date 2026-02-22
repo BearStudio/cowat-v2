@@ -6,7 +6,7 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 import { envClient } from '@/env/client';
 import { envServer } from '@/env/server';
 import { getSlackApp } from '@/features/slack/client';
-import { getSlackBlocks } from '@/features/slack/templates';
+import { getFallbackText, getSlackBlocks } from '@/features/slack/templates';
 
 import type { NotificationChannel } from '../types';
 
@@ -64,7 +64,7 @@ export function createSlackChannel(
           app.client.chat.postMessage({
             channel: defaultChannel,
             blocks,
-            text: `${event.payload.driverName} posted a new commute`,
+            text: getFallbackText(blocks),
           })
         );
         if (postResult.isErr()) {
@@ -112,7 +112,7 @@ export function createSlackChannel(
           app.client.chat.postMessage({
             channel: defaultChannel,
             blocks,
-            text: `${event.payload.requesterName} is looking for a commute`,
+            text: getFallbackText(blocks),
           })
         );
         if (postResult.isErr()) {
@@ -161,8 +161,7 @@ export function createSlackChannel(
         app.client.chat.postMessage({
           channel,
           blocks,
-          // Fallback text for notifications and accessibility
-          text: `You have a new ${event.type.replace('.', ' ')} notification`,
+          text: getFallbackText(blocks),
         })
       );
       if (postResult.isErr()) {
