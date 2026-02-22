@@ -55,21 +55,24 @@ export default {
         stops: { create: stops },
       });
 
-      context.notify({
-        type: 'commute.created',
-        payload: {
-          driverName: context.user.name,
-          driverEmail: context.user.email,
-          commuteDate: input.date,
-          commuteType: input.type,
-          seats: input.seats,
-          stops: commute.stops.map((stop) => ({
-            locationName: stop.location.name,
-            outwardTime: stop.outwardTime,
-            inwardTime: stop.inwardTime,
-          })),
+      context.notify(
+        {
+          type: 'commute.created',
+          payload: {
+            driverName: context.user.name,
+            driverEmail: context.user.email,
+            commuteDate: input.date,
+            commuteType: input.type,
+            seats: input.seats,
+            stops: commute.stops.map((stop) => ({
+              locationName: stop.location.name,
+              outwardTime: stop.outwardTime,
+              inwardTime: stop.inwardTime,
+            })),
+          },
         },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
 
       return commute;
     }),
@@ -166,22 +169,25 @@ export default {
 
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
-        context.notify({
-          type: 'commute.updated',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            disabledChannels: getDisabledChannels(
-              booking.passenger.notificationPreferences
-            ),
+        context.notify(
+          {
+            type: 'commute.updated',
+            recipient: {
+              userId: passengerUser.id,
+              name: passengerUser.name,
+              email: passengerUser.email,
+              disabledChannels: getDisabledChannels(
+                booking.passenger.notificationPreferences
+              ),
+            },
+            payload: {
+              driverName: context.user.name,
+              commuteDate: existing.date,
+              commuteType: existing.type,
+            },
           },
-          payload: {
-            driverName: context.user.name,
-            commuteDate: existing.date,
-            commuteType: existing.type,
-          },
-        });
+          { db: context.db, organizationId: context.organizationId }
+        );
       }
 
       return commute;
@@ -207,22 +213,25 @@ export default {
 
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
-        context.notify({
-          type: 'commute.canceled',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            disabledChannels: getDisabledChannels(
-              booking.passenger.notificationPreferences
-            ),
+        context.notify(
+          {
+            type: 'commute.canceled',
+            recipient: {
+              userId: passengerUser.id,
+              name: passengerUser.name,
+              email: passengerUser.email,
+              disabledChannels: getDisabledChannels(
+                booking.passenger.notificationPreferences
+              ),
+            },
+            payload: {
+              driverName: context.user.name,
+              commuteDate: existing.date,
+              commuteType: existing.type,
+            },
           },
-          payload: {
-            driverName: context.user.name,
-            commuteDate: existing.date,
-            commuteType: existing.type,
-          },
-        });
+          { db: context.db, organizationId: context.organizationId }
+        );
       }
     }),
 
@@ -239,15 +248,18 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      context.notify({
-        type: 'commute.requested',
-        payload: {
-          requesterName: context.user.name,
-          requesterEmail: context.user.email,
-          commuteDate: input.date,
-          orgSlug: organization.slug,
-          locationName: input.destination || undefined,
+      context.notify(
+        {
+          type: 'commute.requested',
+          payload: {
+            requesterName: context.user.name,
+            requesterEmail: context.user.email,
+            commuteDate: input.date,
+            orgSlug: organization.slug,
+            locationName: input.destination || undefined,
+          },
         },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
     }),
 };

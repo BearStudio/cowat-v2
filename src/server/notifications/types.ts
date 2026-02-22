@@ -3,6 +3,7 @@ import type { Logger } from 'pino';
 import type { RequestStatus, TripType } from '@/features/booking/schema';
 import type { Commute, CommuteType } from '@/features/commute/schema';
 import type { User } from '@/features/user/schema';
+import type { AppDB } from '@/server/db';
 
 export type Recipient = {
   userId: User['id'];
@@ -110,8 +111,17 @@ export type NotificationEvent =
   | CommuteCanceledEvent
   | CommuteRequestedEvent;
 
+export type NotifyOrgContext = {
+  db: AppDB;
+  organizationId: string;
+};
+
 export interface NotificationChannel {
   name: string;
   canSend(event: NotificationEvent): boolean;
-  send(event: NotificationEvent, logger: Logger): Promise<void>;
+  send(
+    event: NotificationEvent,
+    logger: Logger,
+    orgContext?: NotifyOrgContext
+  ): Promise<void>;
 }

@@ -1,4 +1,20 @@
 {
+  "slack": {
+    "title": "Intégration Slack",
+    "description": "Configurez le bot Slack pour cette organisation. Les notifications utiliseront ce token, ce canal de diffusion et cette langue.",
+    "enabledLabel": "Activer les notifications Slack",
+    "tokenLabel": "Token du bot",
+    "tokenPlaceholder": "xoxb-...",
+    "tokenHelper": "Le token du bot Slack pour cette organisation.",
+    "broadcastChannelIdLabel": "ID du canal de diffusion",
+    "broadcastChannelIdHelper": "ID du canal Slack pour les annonces de covoiturage (ex. C01234ABCDE). Disponible dans les détails du canal.",
+    "localeLabel": "Langue des notifications",
+    "localeDefault": "Défaut du serveur",
+    "localeHelper": "Langue utilisée pour les messages Slack. Laisser vide pour utiliser la langue par défaut du serveur.",
+    "save": "Enregistrer",
+    "saveSuccess": "Intégration Slack enregistrée",
+    "saveError": "Échec de l'enregistrement de l'intégration Slack"
+  },
   "switcher": {
     "label": "Organisation",
     "switchTo": "Passer à {{name}}"
