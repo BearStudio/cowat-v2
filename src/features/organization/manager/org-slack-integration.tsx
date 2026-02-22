@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -91,7 +91,7 @@ export const OrgSlackIntegration = () => {
     });
   };
 
-  const enabled = form.watch('enabled');
+  const enabled = useWatch({ control: form.control, name: 'enabled' });
 
   return (
     <Card>
