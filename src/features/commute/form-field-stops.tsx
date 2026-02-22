@@ -1,5 +1,5 @@
 import { PlusIcon, SparklesIcon, Trash2Icon } from 'lucide-react';
-import { Control, UseFormReturn, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {

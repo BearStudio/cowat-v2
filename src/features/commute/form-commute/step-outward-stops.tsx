@@ -2,8 +2,8 @@ import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { Fragment } from 'react';
 import {
   Control,
-  UseFormReturn,
   useFieldArray,
+  UseFormReturn,
   useWatch,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
