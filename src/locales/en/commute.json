@@ -48,6 +48,17 @@
   "view": {
     "title": "Commute view"
   },
+  "stepper": {
+    "details": "Details",
+    "stops": "Stops",
+    "inwardStops": "Return times",
+    "recap": "Summary",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Create",
+    "outboundTrip": "Outbound trip",
+    "inboundTrip": "Inbound trip"
+  },
   "form": {
     "date": "Date",
     "seats": "Seats",
@@ -60,6 +71,8 @@
     "commentPlaceholder": "Optional comment...",
     "stops": "Stops",
     "addStop": "Add stop",
+    "departure": "Departure",
+    "arrival": "Arrival",
     "stopIndex": "Stop {{index}}",
     "location": "Location",
     "locationPlaceholder": "Select a location...",
@@ -70,7 +83,7 @@
     "todayWarning": "You are creating a commute for today. Make sure the times are still valid.",
     "errors": {
       "seatsMin": "At least 1 seat required",
-      "stopsMin": "At least 1 stop required",
+      "stopsMin": "At least 2 stops required",
       "inwardBeforeOutward": "Inbound time must be after outbound time",
       "inwardInPast": "Inbound time must be in the future",
       "outwardInPast": "Outbound time must be in the future",

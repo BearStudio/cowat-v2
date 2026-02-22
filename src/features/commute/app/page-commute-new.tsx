@@ -4,7 +4,7 @@ import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
-import { FormStateSubscribe, useForm } from 'react-hook-form';
+import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
 import { toast } from 'sonner';
@@ -14,11 +14,16 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
-import { Form } from '@/components/form';
+import {
+  Form,
+  MultiStepForm,
+  MultiStepFormContent,
+  MultiStepFormNavigation,
+  MultiStepFormStep,
+} from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -32,12 +37,16 @@ import {
   ResponsiveDrawerTitle,
 } from '@/components/ui/responsive-drawer';
 
-import { FormCommute } from '@/features/commute/app/form-commute';
 import { TemplatePicker } from '@/features/commute/app/template-picker';
+import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
+import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
+import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
+import { StepRecap } from '@/features/commute/form-commute/step-recap';
 import {
   FormFieldsCommute,
   zFormFieldsCommute,
 } from '@/features/commute/schema';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -49,7 +58,10 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
   seats: 1,
   type: 'ROUND',
   comment: null,
-  stops: [{ locationId: '', outwardTime: '', inwardTime: null }],
+  stops: [
+    { locationId: '', outwardTime: '', inwardTime: null },
+    { locationId: '', outwardTime: '', inwardTime: null },
+  ],
 };
 
 export const PageCommuteNew = ({
@@ -66,6 +78,8 @@ export const PageCommuteNew = ({
   const requestDrawer = useDisclosure();
   const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
   const [requestDestination, setRequestDestination] = useState('');
+
+  useShouldShowNav(showForm ? 'desktop-only' : 'all');
 
   const form = useForm<FormFieldsCommute>({
     resolver: zodResolver(zFormFieldsCommute()),
@@ -114,6 +128,13 @@ export const PageCommuteNew = ({
   );
 
   const today = dayjs().startOf('day').toDate();
+
+  const handleSubmit = form.handleSubmit((values) => {
+    commuteCreate.mutate({
+      ...values,
+      stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
+    });
+  });
 
   if (!showForm) {
     return (
@@ -221,44 +242,84 @@ export const PageCommuteNew = ({
         control={form.control}
         render={({ isDirty }) => <PreventNavigation shouldBlock={isDirty} />}
       />
-      <Form
-        {...form}
-        onSubmit={(values) => {
-          commuteCreate.mutate({
-            ...values,
-            stops: values.stops.map((stop, index) => ({
-              ...stop,
-              order: index,
-            })),
-          });
-        }}
-      >
-        <PageLayout>
-          <PageLayoutTopBar
-            startActions={<BackButton />}
-            endActions={
-              <Button
-                size="sm"
-                type="submit"
-                className="min-w-20"
-                loading={commuteCreate.isPending}
+      <Form {...form} noHtmlForm>
+        <MultiStepForm>
+          <PageLayout>
+            <PageLayoutTopBar startActions={<BackButton />}>
+              <PageLayoutTopBarTitle>
+                {t('commute:new.title')}
+              </PageLayoutTopBarTitle>
+            </PageLayoutTopBar>
+            <PageLayoutContent>
+              <MultiStepFormContent />
+              <MultiStepFormStep
+                name={t('commute:stepper.details')}
+                onNext={() => form.trigger(['date', 'seats', 'type'])}
               >
-                {t('commute:new.submitButton')}
-              </Button>
-            }
-          >
-            <PageLayoutTopBarTitle>
-              {t('commute:new.title')}
-            </PageLayoutTopBarTitle>
-          </PageLayoutTopBar>
-          <PageLayoutContent>
-            <Card>
-              <CardContent>
-                <FormCommute />
-              </CardContent>
-            </Card>
-          </PageLayoutContent>
-        </PageLayout>
+                <StepDetailsCommute />
+              </MultiStepFormStep>
+              <MultiStepFormStep
+                name={t('commute:stepper.stops')}
+                onNext={() => {
+                  const stops = form.getValues('stops');
+                  return form.trigger(
+                    stops.flatMap((_, i) => [
+                      `stops.${i}.locationId` as FieldPath<FormFieldsCommute>,
+                      `stops.${i}.outwardTime` as FieldPath<FormFieldsCommute>,
+                    ])
+                  );
+                }}
+              >
+                <StepOutwardStops
+                  control={form.control}
+                  setValue={form.setValue}
+                  ns="commute"
+                  defaultStop={{
+                    locationId: '',
+                    outwardTime: '',
+                    inwardTime: null,
+                  }}
+                />
+              </MultiStepFormStep>
+              <Watch
+                control={form.control}
+                names="type"
+                render={(type) =>
+                  type === 'ROUND' ? (
+                    <MultiStepFormStep
+                      name={t('commute:stepper.inwardStops')}
+                      onNext={() => {
+                        const stops = form.getValues('stops');
+                        return form.trigger(
+                          stops.map(
+                            (_, i) =>
+                              `stops.${i}.inwardTime` as FieldPath<FormFieldsCommute>
+                          )
+                        );
+                      }}
+                    >
+                      <StepInwardStops
+                        control={form.control}
+                        setValue={form.setValue}
+                        ns="commute"
+                      />
+                    </MultiStepFormStep>
+                  ) : null
+                }
+              />
+              <MultiStepFormStep name={t('commute:stepper.recap')}>
+                <StepRecap control={form.control} ns="commute" />
+              </MultiStepFormStep>
+            </PageLayoutContent>
+            <MultiStepFormNavigation
+              onSubmit={handleSubmit}
+              isSubmitting={commuteCreate.isPending}
+              submitLabel={t('commute:stepper.submit')}
+              nextLabel={t('commute:stepper.next')}
+              backLabel={t('commute:stepper.back')}
+            />
+          </PageLayout>
+        </MultiStepForm>
       </Form>
     </>
   );

@@ -52,18 +52,35 @@ describe('commute-template router', () => {
           outwardTime: '08:00',
           inwardTime: '18:00',
         },
+        {
+          locationId: 'location-2',
+          order: 1,
+          outwardTime: '09:00',
+          inwardTime: '17:00',
+        },
       ],
     };
 
     it('should create a template with stops', async () => {
+      const mockStop2 = {
+        ...mockStop,
+        id: 'stop-2',
+        order: 1,
+        outwardTime: '09:00',
+        inwardTime: '17:00',
+        locationId: 'location-2',
+      };
       mockDb.commuteTemplate.create.mockResolvedValue({
         ...mockTemplateFromDb,
-        stops: [mockStop],
+        stops: [mockStop, mockStop2],
       });
 
       const result = await call(commuteTemplateRouter.create, createInput);
 
-      expect(result).toEqual({ ...mockTemplateFromDb, stops: [mockStop] });
+      expect(result).toEqual({
+        ...mockTemplateFromDb,
+        stops: [mockStop, mockStop2],
+      });
       expect(mockDb.commuteTemplate.create).toHaveBeenCalledWith({
         data: {
           name: createInput.name,
