@@ -117,7 +117,7 @@ export const PageOrganization = () => {
                   confirmText={t('common:actions.confirm')}
                   onConfirm={() => deleteOrganization.mutateAsync(org.id)}
                   isPending={deleteOrganization.isPending}
-                  requiredConfirmation={org.name}
+                  requiredConfirmation={org.slug}
                 />
               </DangerZone>
             </div>
