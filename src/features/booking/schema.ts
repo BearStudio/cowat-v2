@@ -46,6 +46,7 @@ export const zBookingForDriver = () =>
       order: z.number(),
       outwardTime: z.string(),
       inwardTime: z.string().nullish(),
+      location: z.object({ id: z.string(), name: z.string() }),
       commute: z.object({
         id: z.string(),
         date: z.date(),

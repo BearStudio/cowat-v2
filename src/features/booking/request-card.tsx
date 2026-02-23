@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
+import { tripTypeIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -70,28 +71,54 @@ export const RequestCard = ({ request }: RequestCardProps) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <Avatar size="sm">
-            <AvatarImage src={request.passenger.image ?? undefined} />
+        <div className="flex items-start gap-2">
+          <Avatar size="xl" className="rounded-sm">
+            <AvatarImage
+              src={request.passenger.image ?? undefined}
+              className="rounded-md"
+            />
             <AvatarFallback
               variant="boring"
               name={request.passenger.name ?? '?'}
             />
           </Avatar>
-          <CardTitle>{request.passenger.name}</CardTitle>
+          <div className="flex flex-col gap-0.5">
+            <CardTitle className="capitalize">
+              {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
+            </CardTitle>
+            <CardDescription>{request.passenger.name}</CardDescription>
+          </div>
         </div>
-        <CardDescription>
-          {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
-          {' · '}
-          {request.stop.outwardTime}
-          {request.stop.inwardTime && ` – ${request.stop.inwardTime}`}
-        </CardDescription>
+        <div className="col-span-full flex items-center gap-2">
+          <Badge variant="secondary" size="sm">
+            {t(`booking:request.tripType.${request.tripType}`)}
+          </Badge>
+        </div>
+        <div className="col-span-full flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <tripTypeIcons.ONEWAY className="size-3" />
+            {request.stop.outwardTime}
+          </span>
+          {request.stop.inwardTime && (
+            <span className="flex items-center gap-0.5">
+              <tripTypeIcons.RETURN className="size-3" />
+              {request.stop.inwardTime}
+            </span>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
-          <Badge variant="secondary" size="sm" className="self-start">
-            {t(`booking:request.tripType.${request.tripType}`)}
-          </Badge>
+          <div className="flex items-start gap-4">
+            <div className="flex flex-col items-center self-stretch">
+              <div className="flex h-6 items-center">
+                <div className="size-3 shrink-0 rounded-full bg-primary" />
+              </div>
+            </div>
+            <span className="truncate text-base leading-6 font-medium">
+              {request.stop.location.name}
+            </span>
+          </div>
           {request.comment && (
             <p className="text-sm text-muted-foreground">{request.comment}</p>
           )}
