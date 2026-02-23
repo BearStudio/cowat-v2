@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
-import { tripTypeIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -94,18 +93,6 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           <Badge variant="secondary" size="sm">
             {t(`booking:request.tripType.${request.tripType}`)}
           </Badge>
-        </div>
-        <div className="col-span-full flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="flex items-center gap-0.5">
-            <tripTypeIcons.ONEWAY className="size-3" />
-            {request.stop.outwardTime}
-          </span>
-          {request.stop.inwardTime && (
-            <span className="flex items-center gap-0.5">
-              <tripTypeIcons.RETURN className="size-3" />
-              {request.stop.inwardTime}
-            </span>
-          )}
         </div>
       </CardHeader>
       <CardContent>
