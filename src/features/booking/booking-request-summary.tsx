@@ -18,7 +18,7 @@ export const BookingRequestSummary = ({
   const { t } = useTranslation(['booking']);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 rounded-md border bg-muted/40 p-3 text-sm">
       <div className="flex items-center gap-2">
         <Avatar size="sm">
           <AvatarImage src={request.passenger.image ?? undefined} />

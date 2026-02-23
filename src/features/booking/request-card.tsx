@@ -77,9 +77,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           description={
             <div className="flex flex-col gap-3">
               <span>{t('booking:request.refuseConfirmDescription')}</span>
-              <div className="rounded-md border bg-muted/40 p-3 text-sm">
-                <BookingRequestSummary request={request} />
-              </div>
+              <BookingRequestSummary request={request} />
             </div>
           }
           confirmText={t('booking:request.refuseButton')}
