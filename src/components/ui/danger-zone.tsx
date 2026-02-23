@@ -27,6 +27,7 @@ export const DangerZoneCardItem = (props: {
   confirmText: React.ReactNode;
   onConfirm: () => unknown | Promise<unknown>;
   isPending?: boolean;
+  requiredConfirmation?: string;
 }) => {
   return (
     <div className="flex flex-col justify-between gap-4 border-t px-4 py-3 first:border-t-0 sm:flex-row sm:items-center">
@@ -39,6 +40,7 @@ export const DangerZoneCardItem = (props: {
         confirmText={props.confirmText}
         confirmVariant="destructive-secondary"
         onConfirm={props.onConfirm}
+        requiredConfirmation={props.requiredConfirmation}
       >
         <Button
           variant="destructive-secondary"

@@ -34,7 +34,7 @@ export default {
       return await context.templates.create({
         ...templateData,
         driverMemberId: context.memberId,
-        stops: { create: stops },
+        stops: { create: stops.map((stop, i) => ({ ...stop, order: i })) },
       });
     }),
 
@@ -114,7 +114,12 @@ export default {
 
       return await context.templates.update(id, {
         ...data,
-        ...(stops && { stops: { deleteMany: {}, create: stops } }),
+        ...(stops && {
+          stops: {
+            deleteMany: {},
+            create: stops.map((stop, i) => ({ ...stop, order: i })),
+          },
+        }),
       });
     }),
 

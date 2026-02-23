@@ -15,6 +15,7 @@ import { Prisma } from '@/server/db/generated/client';
 import { logger } from '@/server/logger';
 import type { NotificationEvent } from '@/server/notifications';
 import { notifier } from '@/server/notifications';
+import type { NotifyOrgContext } from '@/server/notifications/types';
 import { timingStore } from '@/server/timing-store';
 
 const base = os
@@ -86,8 +87,8 @@ const base = os
   .use(async ({ next, context }) => {
     return await next({
       context: {
-        notify: (event: NotificationEvent) => {
-          notifier.notify(event, context.logger);
+        notify: (event: NotificationEvent, orgContext?: NotifyOrgContext) => {
+          notifier.notify(event, context.logger, orgContext);
         },
       },
     });

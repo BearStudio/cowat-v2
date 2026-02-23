@@ -20,6 +20,7 @@ import { StepDetailsTemplate } from '@/features/commute/form-commute/step-detail
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
+import { asCommuteBase } from '@/features/commute/schema';
 import {
   FormFieldsCommuteTemplate,
   zFormFieldsCommuteTemplate,
@@ -45,8 +46,8 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
       type: 'ROUND',
       comment: null,
       stops: [
-        { locationId: '', order: 0, outwardTime: '', inwardTime: null },
-        { locationId: '', order: 1, outwardTime: '', inwardTime: null },
+        { locationId: '', outwardTime: '', inwardTime: null },
+        { locationId: '', outwardTime: '', inwardTime: null },
       ],
     },
   });
@@ -74,10 +75,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
   );
 
   const handleSubmit = form.handleSubmit((values) => {
-    templateCreate.mutate({
-      ...values,
-      stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
-    });
+    templateCreate.mutate(values);
   });
 
   return (
@@ -115,8 +113,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                 }}
               >
                 <StepOutwardStops
-                  control={form.control}
-                  setValue={form.setValue}
+                  {...asCommuteBase(form)}
                   ns="commuteTemplate"
                   defaultStop={{
                     locationId: '',
@@ -127,7 +124,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
               </MultiStepFormStep>
               <Watch
                 control={form.control}
-                names="type"
+                name="type"
                 render={(type) =>
                   type === 'ROUND' ? (
                     <MultiStepFormStep
@@ -143,8 +140,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                       }}
                     >
                       <StepInwardStops
-                        control={form.control}
-                        setValue={form.setValue}
+                        {...asCommuteBase(form)}
                         ns="commuteTemplate"
                       />
                     </MultiStepFormStep>
@@ -152,7 +148,7 @@ export const PageCommuteTemplateNew = ({ orgSlug }: { orgSlug: string }) => {
                 }
               />
               <MultiStepFormStep name={t('commuteTemplate:stepper.recap')}>
-                <StepRecap control={form.control} ns="commuteTemplate" />
+                <StepRecap {...asCommuteBase(form)} ns="commuteTemplate" />
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation

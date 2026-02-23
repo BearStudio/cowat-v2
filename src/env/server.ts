@@ -20,13 +20,6 @@ export const envServer = createEnv({
       .optional()
       .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
 
-    GITHUB_CLIENT_ID: zOptionalWithReplaceMe(),
-    GITHUB_CLIENT_SECRET: zOptionalWithReplaceMe(),
-
-    SLACK_BOT_TOKEN: zOptionalWithReplaceMe(),
-    SLACK_DEFAULT_CHANNEL: zOptionalWithReplaceMe(),
-    SLACK_LOCALE: z.enum(['en', 'fr']).default('en'),
-
     EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
     EMAIL_FROM: z.string(),
     RESEND_API_KEY: zOptionalWithReplaceMe(),

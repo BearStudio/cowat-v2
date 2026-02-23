@@ -19,7 +19,6 @@
     "editAction": "Modifier",
     "cancelAction": "Annuler",
     "callDriver": "Appeler",
-    "openCommuteView": "Ouvrir la vue trajet",
     "speedDial": {
       "myLocations": "Mes Lieux",
       "myCommutes": "Mes Trajets",
@@ -44,9 +43,6 @@
     "title": "Mes modèles",
     "emptyState": "Gagnez du temps : créez un modèle",
     "fromScratch": "Créer de zéro"
-  },
-  "view": {
-    "title": "Vue trajet"
   },
   "stepper": {
     "details": "Détails",

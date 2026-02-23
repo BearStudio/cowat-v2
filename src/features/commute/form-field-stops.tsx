@@ -1,5 +1,5 @@
 import { PlusIcon, SparklesIcon, Trash2Icon } from 'lucide-react';
-import { Control, SetFieldValue, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -15,15 +15,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { FormFieldsCommute } from '@/features/commute/schema';
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 import { useAutoInwardTimes } from '@/features/commute/use-auto-inward-times';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type FormFieldStopsProps = {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
-  defaultStop: FormFieldsCommute['stops'][number];
+  defaultStop: FormFieldsCommuteBase['stops'][number];
 };
 
 export const FormFieldStops = ({

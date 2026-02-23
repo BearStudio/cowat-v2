@@ -11,6 +11,11 @@
       "mostStops": "Plus d'arrêts",
       "mostStopsDescription": "Plus d'arrêts sur les trajets"
     },
+    "filters": {
+      "from": "Du",
+      "to": "Au",
+      "reset": "Réinitialiser les filtres"
+    },
     "table": {
       "title": "Tous les utilisateurs",
       "description": "Vue d'ensemble de tous les utilisateurs et leur activité",

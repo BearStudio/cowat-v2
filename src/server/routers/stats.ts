@@ -17,13 +17,23 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
 export default {
   getAll: procedure()
     .route({ method: 'GET', path: '/stats', tags })
+    .input(
+      z
+        .object({
+          from: z.coerce.date().optional(),
+          to: z.coerce.date().optional(),
+        })
+        .optional()
+    )
     .output(z.object({ users: z.array(zStatsUser()) }))
-    .handler(async ({ context }) => {
+    .handler(async ({ context, input }) => {
       context.logger.info('Getting stats from database');
 
+      const dateRange = input?.from || input?.to ? input : undefined;
+
       const [membersWithCounts, commutesWithStops] = await Promise.all([
-        context.stats.getMembersWithCounts(context.organizationId),
-        context.stats.getCommuteStopCounts(context.organizationId),
+        context.stats.getMembersWithCounts(context.organizationId, dateRange),
+        context.stats.getCommuteStopCounts(context.organizationId, dateRange),
       ]);
 
       const stopCountByMember = new Map<string, number>();

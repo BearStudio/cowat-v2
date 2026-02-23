@@ -3,28 +3,29 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import type { NotificationEvent } from '@/server/notifications/types';
 
-import {
-  bookingAccepted,
-  bookingCanceled,
-  bookingRefused,
-  bookingRequested,
-} from './booking';
-import {
-  commuteCanceled,
-  commuteCreated,
-  commuteRequested,
-  commuteUpdated,
-} from './commute';
+import { bookingAccepted } from './booking-accepted';
+import { bookingCanceled } from './booking-canceled';
+import { bookingRefused } from './booking-refused';
+import { bookingRequested } from './booking-requested';
+import { commuteCanceled } from './commute-canceled';
+import { commuteCreated } from './commute-created';
+import { commuteRequested } from './commute-requested';
+import { commuteUpdated } from './commute-updated';
+import type { SlackBlock } from './utils';
 
-export function getSlackTemplate(
+export type { SlackBlock };
+export { getFallbackText } from './utils';
+
+export function getSlackBlocks(
   event: NotificationEvent,
   opts?: {
     driverSlackId?: string;
+    driverAvatarUrl?: string;
     requesterSlackId?: string;
     baseUrl?: string;
     locale?: LanguageKey;
   }
-): string {
+): SlackBlock[] {
   const locale = opts?.locale ?? DEFAULT_LANGUAGE_KEY;
 
   switch (event.type) {
@@ -37,7 +38,12 @@ export function getSlackTemplate(
     case 'booking.canceled':
       return bookingCanceled(event, locale);
     case 'commute.created':
-      return commuteCreated(event, locale, opts?.driverSlackId);
+      return commuteCreated(
+        event,
+        locale,
+        opts?.driverSlackId,
+        opts?.driverAvatarUrl
+      );
     case 'commute.updated':
       return commuteUpdated(event, locale);
     case 'commute.canceled':

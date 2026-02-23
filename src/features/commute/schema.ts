@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
@@ -59,6 +60,39 @@ export const zFormFieldsStopInput = () =>
     inwardTime: zu.fieldText.nullish(),
     locationId: zu.fieldText.required(t('common:errors.required')),
   });
+
+/**
+ * Shared fields between FormFieldsCommute and FormFieldsCommuteTemplate.
+ * Used as the concrete type for shared form components.
+ */
+export type FormFieldsCommuteBase = {
+  seats: number;
+  type: CommuteType;
+  comment?: string | null | undefined;
+  stops: Array<{
+    outwardTime: string;
+    inwardTime?: string | null | undefined;
+    locationId: string;
+  }>;
+};
+
+/**
+ * Type-safe bridge for passing a form typed with a specific commute schema
+ * (FormFieldsCommute or FormFieldsCommuteTemplate) to shared components
+ * that use FormFieldsCommuteBase.
+ *
+ * Control<T> is invariant, so we need this cast. The generic constraint
+ * ensures only forms whose fields are a superset of FormFieldsCommuteBase
+ * can be bridged.
+ */
+export function asCommuteBase<
+  T extends FormFieldsCommuteBase & FieldValues,
+>(form: { control: Control<T>; setValue: UseFormReturn<T>['setValue'] }) {
+  return form as unknown as {
+    control: Control<FormFieldsCommuteBase>;
+    setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
+  };
+}
 
 export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>

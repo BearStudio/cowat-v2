@@ -22,6 +22,7 @@ import { Spinner } from '@/components/ui/spinner';
 
 import { OrgInvitations } from '@/features/organization/manager/org-invitations';
 import { OrgMembers } from '@/features/organization/manager/org-members';
+import { OrgSlackIntegration } from '@/features/organization/manager/org-slack-integration';
 import {
   PageLayout,
   PageLayoutContent,
@@ -102,6 +103,7 @@ export const PageOrganization = () => {
 
               <OrgInvitations orgId={org.id} invitations={org.invitations} />
               <OrgMembers orgId={org.id} members={org.members} />
+              <OrgSlackIntegration />
 
               <DangerZone>
                 <DangerZoneCardItem
@@ -117,6 +119,7 @@ export const PageOrganization = () => {
                   confirmText={t('common:actions.confirm')}
                   onConfirm={() => deleteOrganization.mutateAsync(org.id)}
                   isPending={deleteOrganization.isPending}
+                  requiredConfirmation={org.slug}
                 />
               </DangerZone>
             </div>

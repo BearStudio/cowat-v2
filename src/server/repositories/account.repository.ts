@@ -1,5 +1,5 @@
 import type { AppDB } from '@/server/db';
-import type { NotificationChannel } from '@/server/db/generated/client';
+import type { NotificationChannelType } from '@/server/db/generated/client';
 
 export const createAccountRepository = (db: AppDB) => ({
   updateUser: (
@@ -27,7 +27,7 @@ export const createAccountRepository = (db: AppDB) => ({
 
   upsertNotificationPreference: (params: {
     memberId: string;
-    channel: NotificationChannel;
+    channel: NotificationChannelType;
     enabled: boolean;
   }) =>
     db.notificationPreference.upsert({

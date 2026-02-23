@@ -35,7 +35,6 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { isCommuteActive } from '@/features/commute/is-commute-active';
 import {
   OrgButtonLink,
   OrgResponsiveIconButtonLink,
@@ -189,64 +188,49 @@ export const PageCommutes = () => {
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
 
-                const active = isCommuteActive(item);
-
                 return (
-                  <div key={item.id} className="flex flex-col gap-1.5">
-                    <CardCommute bookingStatus={bookingStatus}>
-                      <CardCommuteTrigger>
-                        <CardCommuteHeader
-                          driver={item.driver}
-                          date={item.date}
-                          type={item.type}
-                          totalSeats={item.seats}
-                          outwardAvailable={item.seats - outwardCount}
-                          inwardAvailable={
-                            item.type === 'ROUND'
-                              ? item.seats - inwardCount
-                              : undefined
-                          }
-                          outwardDeparture={item.stops.at(0)?.outwardTime}
-                          inwardDeparture={
-                            item.stops.at(-1)?.inwardTime ?? undefined
-                          }
-                          passengers={[...acceptedPassengers.values()]}
-                          badge={<BookingStatusBadge status={bookingStatus} />}
-                        />
-                      </CardCommuteTrigger>
-                      <CardCommuteContent>
-                        <div className="flex flex-col gap-2">
-                          {item.comment && (
-                            <p className="text-sm text-muted-foreground">
-                              {item.comment}
-                            </p>
+                  <CardCommute key={item.id} bookingStatus={bookingStatus}>
+                    <CardCommuteTrigger>
+                      <CardCommuteHeader
+                        driver={item.driver}
+                        date={item.date}
+                        type={item.type}
+                        totalSeats={item.seats}
+                        outwardAvailable={item.seats - outwardCount}
+                        inwardAvailable={
+                          item.type === 'ROUND'
+                            ? item.seats - inwardCount
+                            : undefined
+                        }
+                        outwardDeparture={item.stops.at(0)?.outwardTime}
+                        inwardDeparture={
+                          item.stops.at(-1)?.inwardTime ?? undefined
+                        }
+                        passengers={[...acceptedPassengers.values()]}
+                        badge={<BookingStatusBadge status={bookingStatus} />}
+                      />
+                    </CardCommuteTrigger>
+                    <CardCommuteContent>
+                      <div className="flex flex-col gap-2">
+                        {item.comment && (
+                          <p className="text-sm text-muted-foreground">
+                            {item.comment}
+                          </p>
+                        )}
+                        <CardCommuteStopsList stops={item.stops} />
+                        <CardCommuteActions
+                          isDriver={isDriver}
+                          driverPhone={item.driver.phone}
+                          cancelConfirmDescription={t(
+                            'commute:list.cancelConfirmDescription'
                           )}
-                          <CardCommuteStopsList stops={item.stops} />
-                          <CardCommuteActions
-                            isDriver={isDriver}
-                            driverPhone={item.driver.phone}
-                            cancelConfirmDescription={t(
-                              'commute:list.cancelConfirmDescription'
-                            )}
-                            onCancel={() =>
-                              commuteCancel.mutateAsync({ id: item.id })
-                            }
-                          />
-                        </div>
-                      </CardCommuteContent>
-                    </CardCommute>
-                    {active && (
-                      <OrgButtonLink
-                        variant="secondary"
-                        className="w-full"
-                        to="/app/$orgSlug/commutes/$commuteId"
-                        params={{ commuteId: item.id }}
-                      >
-                        <featureIcons.CommuteView />
-                        {t('commute:list.openCommuteView')}
-                      </OrgButtonLink>
-                    )}
-                  </div>
+                          onCancel={() =>
+                            commuteCancel.mutateAsync({ id: item.id })
+                          }
+                        />
+                      </div>
+                    </CardCommuteContent>
+                  </CardCommute>
                 );
               })}
               {commutesQuery.hasNextPage && (

@@ -4,12 +4,14 @@ import { useMultiStepForm } from './context';
 
 type MultiStepFormStepProps = {
   name: string;
+  order?: number;
   onNext?: () => Promise<boolean> | boolean;
   children: ReactNode;
 };
 
 export const MultiStepFormStep = ({
   name,
+  order,
   onNext,
   children,
 }: MultiStepFormStepProps) => {
@@ -26,9 +28,10 @@ export const MultiStepFormStep = ({
     return _registerStep({
       id,
       name,
+      order,
       onNext: () => onNextRef.current?.() ?? true,
     });
-  }, [id, name, _registerStep]);
+  }, [id, name, order, _registerStep]);
 
   if (!isStepCurrent(id)) return null;
   return <>{children}</>;

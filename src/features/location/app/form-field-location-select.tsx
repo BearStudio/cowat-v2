@@ -5,7 +5,8 @@ import {
   Control,
   FieldPath,
   FieldValues,
-  SetFieldValue,
+  PathValue,
+  UseFormReturn,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +29,7 @@ type FormFieldLocationSelectProps<
   name: TName;
   label?: string;
   placeholder?: string;
-  setValue: SetFieldValue<TFieldValues>;
+  setValue: UseFormReturn<TFieldValues>['setValue'];
   excludeLocationIds?: string[];
 } & Omit<ComponentProps<typeof FormField>, 'children'>;
 
@@ -94,7 +95,7 @@ export const FormFieldLocationSelect = <
         open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         onCreated={(locationId) => {
-          setValue(name, locationId as TFieldValues[TName], {
+          setValue(name, locationId as PathValue<TFieldValues, TName>, {
             shouldValidate: true,
           });
         }}

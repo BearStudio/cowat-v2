@@ -3,6 +3,7 @@ import { createContext, use } from 'react';
 export type StepConfig = {
   id: string;
   name: string;
+  order?: number;
   onNext: () => Promise<boolean> | boolean;
 };
 

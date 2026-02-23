@@ -5,6 +5,7 @@ import { FieldComboboxMultiple } from './field-combobox-multiple';
 import { FieldDate } from './field-date';
 import { FieldNumber } from './field-number';
 import { FieldOtp } from './field-otp';
+import { FieldPassword } from './field-password';
 import { FieldRadioGroup } from './field-radio-group';
 import { FieldSelect } from './field-select';
 import { FieldText } from './field-text';
@@ -12,6 +13,7 @@ import { FieldTextarea } from './field-textarea';
 
 export const fieldComponents = {
   text: FieldText,
+  password: FieldPassword,
   textarea: FieldTextarea,
   email: FieldText,
   tel: FieldText,

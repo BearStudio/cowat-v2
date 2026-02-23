@@ -44,6 +44,12 @@ const mockCommuteFromDb = {
   stops: [mockStop],
 };
 
+// Shape returned by commute.create (stops include location for notify payload)
+const mockCommuteFromDbWithLocation = {
+  ...mockCommuteFromDb,
+  stops: [{ ...mockStop, location: { name: 'Office' } }],
+};
+
 // Raw DB shape (driver is a Member with nested user)
 const mockCommuteEnrichedRawFromDb = {
   ...mockCommuteFromDb,
@@ -76,7 +82,7 @@ describe('commute router', () => {
     };
 
     it('should create a commute with stops and return it', async () => {
-      mockDb.commute.create.mockResolvedValue(mockCommuteFromDb);
+      mockDb.commute.create.mockResolvedValue(mockCommuteFromDbWithLocation);
       mockDb.user.findMany.mockResolvedValue([]);
 
       const result = await call(commuteRouter.create, createInput);

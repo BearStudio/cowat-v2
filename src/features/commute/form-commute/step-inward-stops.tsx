@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
-import { Control, SetFieldValue } from 'react-hook-form';
+import { Control, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -17,11 +17,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 import { useAutoInwardTimes } from '@/features/commute/use-auto-inward-times';
 
 type StepInwardStopsProps = {
-  control: Control<TODO>;
-  setValue: SetFieldValue<TODO>;
+  control: Control<FormFieldsCommuteBase>;
+  setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
 };
 
@@ -57,7 +58,7 @@ export const StepInwardStops = ({
     : [];
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 py-4">
       {reversedIndices.map((index, displayPos) => {
         const stop = stops![index]!;
         // In the return trip, the last outward stop is the departure and the first is the arrival
@@ -70,10 +71,7 @@ export const StepInwardStops = ({
         else if (isInboundArrival) stopLabel = t(`${ns}:form.arrival`);
 
         return (
-          <div
-            key={index}
-            className="flex flex-col gap-2 rounded-sm border border-border p-4"
-          >
+          <div key={index} className="flex flex-col gap-2 py-3">
             <span className="truncate text-sm font-semibold">{stopLabel}</span>
             {(isInboundDeparture || isInboundArrival) && (
               <span className="truncate text-xs text-muted-foreground">

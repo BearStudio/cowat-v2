@@ -53,7 +53,7 @@ enum TripType {
   RETURN
 }
 
-enum NotificationChannel {
+enum NotificationChannelType {
   SLACK
 }
 
@@ -246,28 +246,46 @@ model TemplateStop {
 }
 
 model NotificationPreference {
-  id        String              @id @default(cuid())
-  enabled   Boolean             @default(true)
-  channel   NotificationChannel
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  id        String                  @id @default(cuid())
+  enabled   Boolean                 @default(true)
+  channel   NotificationChannelType
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
   memberId  String
-  member    Member              @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  member    Member                  @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@unique([memberId, channel])
   @@index([memberId])
   @@map("notification_preference")
 }
 
+model OrgNotificationChannel {
+  id               String                  @id @default(cuid())
+  orgId            String
+  org              Organization            @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  type             NotificationChannelType
+  enabled          Boolean                 @default(true)
+  token            String?
+  broadcastChannel String?
+  locale           String?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  @@unique([orgId, type])
+  @@index([orgId])
+  @@map("org_notification_channel")
+}
+
 model Organization {
-  id               String            @id
-  name             String
-  slug             String
-  logo             String?
-  createdAt        DateTime
-  metadata         String?
-  members          Member[]
-  invitations      Invitation[]
+  id                   String                   @id
+  name                 String
+  slug                 String
+  logo                 String?
+  createdAt            DateTime
+  metadata             String?
+  members              Member[]
+  invitations          Invitation[]
+  notificationChannels OrgNotificationChannel[]
 
   @@unique([slug])
   @@map("organization")
