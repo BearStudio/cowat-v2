@@ -1,13 +1,5 @@
 /** @jsxImportSource jsx-slack */
-import {
-  Blocks,
-  Button,
-  Context,
-  Divider,
-  Image,
-  Mrkdwn,
-  Section,
-} from 'jsx-slack';
+import { Blocks, Context, Divider, Image, Mrkdwn, Section } from 'jsx-slack';
 
 import type { LanguageKey } from '@/lib/i18n/constants';
 
