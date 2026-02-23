@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-import { type CommuteType, type StopEnriched } from '@/features/commute/schema';
 import { CommuteSummary } from '@/features/commute/commute-summary';
+import { type CommuteType, type StopEnriched } from '@/features/commute/schema';
 
 type CommuteCancelDescriptionProps = {
   date: Date;
