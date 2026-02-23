@@ -6,14 +6,12 @@ import { cn } from '@/lib/tailwind/utils';
 import { Badge } from '@/components/ui/badge';
 
 import { bookingStatusBadgeVariants } from '@/features/booking/booking-status-badge';
-import { StopEnriched, StopPassenger } from '@/features/commute/schema';
+import { StopEnriched } from '@/features/commute/schema';
 
-export type StopForTimeline = {
-  location: { name: string };
-  outwardTime: string;
-  inwardTime?: string | null;
-  passengers?: StopPassenger[];
-};
+export type StopForTimeline = Pick<
+  StopEnriched,
+  'location' | 'outwardTime' | 'inwardTime'
+> & { passengers?: StopEnriched['passengers'] };
 
 type StopsTimelineItemProps = {
   stop: StopForTimeline;
