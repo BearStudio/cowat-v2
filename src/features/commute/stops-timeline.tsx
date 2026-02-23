@@ -34,34 +34,35 @@ export const StopsTimelineItem = ({
   stop,
   isLast,
   actions,
-}: StopsTimelineItemProps) => (
-  <div className="flex items-start gap-4">
-    <TimelineMarker isLast={isLast} />
-    <div
-      className={`flex min-w-0 flex-1 flex-col gap-1.5 ${isLast ? '' : 'pb-4'}`}
-    >
-      <span className="truncate text-base leading-3 font-medium">
-        {stop.location.name}
-      </span>
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <tripTypeIcons.ONEWAY className="size-3.5" />
-          {stop.outwardTime}
+}: StopsTimelineItemProps) => {
+  const activePassengers = (stop.passengers ?? []).filter(
+    (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
+  );
+
+  return (
+    <div className="flex items-start gap-4">
+      <TimelineMarker isLast={isLast} />
+      <div
+        className={`flex min-w-0 flex-1 flex-col gap-1.5 ${isLast ? '' : 'pb-4'}`}
+      >
+        <span className="truncate text-base leading-3 font-medium">
+          {stop.location.name}
         </span>
-        {stop.inwardTime && (
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <tripTypeIcons.RETURN className="size-3.5" />
-            {stop.inwardTime}
+            <tripTypeIcons.ONEWAY className="size-3.5" />
+            {stop.outwardTime}
           </span>
-        )}
-      </div>
-      {(stop.passengers ?? []).filter(
-        (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
-      ).length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {(stop.passengers ?? [])
-            .filter((p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED')
-            .map((p) => {
+          {stop.inwardTime && (
+            <span className="flex items-center gap-1">
+              <tripTypeIcons.RETURN className="size-3.5" />
+              {stop.inwardTime}
+            </span>
+          )}
+        </div>
+        {activePassengers.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {activePassengers.map((p) => {
               const TripIcon = tripTypeIcons[p.tripType];
               return (
                 <Badge
@@ -78,12 +79,13 @@ export const StopsTimelineItem = ({
                 </Badge>
               );
             })}
-        </div>
-      )}
-      {actions}
+          </div>
+        )}
+        {actions}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 type StopsTimelineProps = {
   stops: Array<StopEnriched>;

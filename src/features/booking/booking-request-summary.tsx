@@ -15,7 +15,7 @@ type BookingRequestSummaryProps = {
 
 export const BookingRequestSummary = ({
   request,
-  avatarSize = 'sm' as const,
+  avatarSize = 'sm',
 }: BookingRequestSummaryProps) => {
   const { t } = useTranslation(['booking']);
 
