@@ -25,6 +25,7 @@ export const StepDetailsTemplate = () => {
           control={form.control}
           name="name"
           autoFocus
+          placeholder={t('commuteTemplate:form.namePlaceholder')}
         />
       </FormField>
 

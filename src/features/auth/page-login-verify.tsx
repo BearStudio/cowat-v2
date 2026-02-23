@@ -112,6 +112,7 @@ export default function PageLoginVerify({
             maxLength={6}
             autoSubmit
             autoFocus
+            autoComplete="one-time-code"
           />
           <FormFieldHelper className="text-xs">
             {t(`${I18N_KEY_PAGE_PREFIX}.expireHint`, {
