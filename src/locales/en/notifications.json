@@ -11,6 +11,7 @@
   },
   "commute": {
     "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*.",
+    "createdAnnouncement": "🚗 *New commute posted!*",
     "createdContext": "💺 {{seats}} seats available",
     "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute.",
     "updatedContext": "📅 {{date}}",

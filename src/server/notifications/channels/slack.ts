@@ -1,11 +1,16 @@
 import { App } from '@slack/bolt';
 import { Result } from 'better-result';
+import JSXSlack from 'jsx-slack';
 
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import { envClient } from '@/env/client';
-import { getFallbackText, getSlackBlocks } from '@/features/slack/templates';
+import {
+  getBroadcastBlocks,
+  getFallbackText,
+  getPrivateBlocks,
+} from '@/features/slack/templates';
 import { decrypt } from '@/server/encryption';
 
 import type { NotificationChannel, NotifyOrgContext } from '../types';
@@ -57,6 +62,38 @@ export function createSlackChannel(): NotificationChannel {
 
       if (!app) return;
 
+      async function lookupUser(email: string) {
+        const result = await Result.tryPromise(() =>
+          app!.client.users.lookupByEmail({ email })
+        );
+        if (result.isErr()) {
+          logger.warn(
+            { email, error: result.error },
+            'Slack: could not resolve user, falling back to name'
+          );
+        }
+        return result.isOk() ? result.value.user : undefined;
+      }
+
+      async function post(
+        channel: string,
+        blocks: ReturnType<typeof JSXSlack>
+      ) {
+        const result = await Result.tryPromise(() =>
+          app!.client.chat.postMessage({
+            channel,
+            blocks,
+            text: getFallbackText(blocks),
+          })
+        );
+        if (result.isErr()) {
+          logger.error(
+            { channel, eventType: event.type, error: result.error },
+            'Slack: failed to post message'
+          );
+        }
+      }
+
       // commute.created — broadcast to default channel with driver @mention and avatar
       if (event.type === 'commute.created') {
         if (!defaultChannel) {
@@ -66,39 +103,17 @@ export function createSlackChannel(): NotificationChannel {
           );
           return;
         }
-
-        const userLookup = await Result.tryPromise(() =>
-          app.client.users.lookupByEmail({ email: event.payload.driverEmail })
+        const slackUser = await lookupUser(event.payload.driverEmail);
+        await post(
+          defaultChannel,
+          JSXSlack(
+            getBroadcastBlocks(event, {
+              driverSlackId: slackUser?.id,
+              driverAvatarUrl: slackUser?.profile?.image_72 ?? undefined,
+              locale,
+            })
+          )
         );
-
-        const slackUser = userLookup.isOk() ? userLookup.value.user : undefined;
-
-        if (userLookup.isErr()) {
-          logger.warn(
-            { email: event.payload.driverEmail, error: userLookup.error },
-            'Slack: could not resolve driver for @mention, falling back to name'
-          );
-        }
-
-        const blocks = getSlackBlocks(event, {
-          driverSlackId: slackUser?.id,
-          driverAvatarUrl: slackUser?.profile?.image_72 ?? undefined,
-          locale,
-        });
-
-        const postResult = await Result.tryPromise(() =>
-          app.client.chat.postMessage({
-            channel: defaultChannel,
-            blocks,
-            text: getFallbackText(blocks),
-          })
-        );
-        if (postResult.isErr()) {
-          logger.error(
-            { channel: defaultChannel, error: postResult.error },
-            'Slack: failed to post commute.created broadcast'
-          );
-        }
         return;
       }
 
@@ -111,81 +126,30 @@ export function createSlackChannel(): NotificationChannel {
           );
           return;
         }
-
-        const userLookup = await Result.tryPromise(() =>
-          app.client.users.lookupByEmail({
-            email: event.payload.requesterEmail,
-          })
+        const slackUser = await lookupUser(event.payload.requesterEmail);
+        await post(
+          defaultChannel,
+          JSXSlack(
+            getBroadcastBlocks(event, {
+              requesterSlackId: slackUser?.id,
+              baseUrl: envClient.VITE_BASE_URL,
+              locale,
+            })
+          )
         );
-
-        const slackUser = userLookup.isOk() ? userLookup.value.user : undefined;
-
-        if (userLookup.isErr()) {
-          logger.warn(
-            { email: event.payload.requesterEmail, error: userLookup.error },
-            'Slack: could not resolve requester for @mention, falling back to name'
-          );
-        }
-
-        const blocks = getSlackBlocks(event, {
-          requesterSlackId: slackUser?.id,
-          baseUrl: envClient.VITE_BASE_URL,
-          locale,
-        });
-
-        const postResult = await Result.tryPromise(() =>
-          app.client.chat.postMessage({
-            channel: defaultChannel,
-            blocks,
-            text: getFallbackText(blocks),
-          })
-        );
-        if (postResult.isErr()) {
-          logger.error(
-            { channel: defaultChannel, error: postResult.error },
-            'Slack: failed to post commute.requested broadcast'
-          );
-        }
         return;
       }
 
-      const blocks = getSlackBlocks(event, { locale });
-
       // All other events → DM the recipient
-      const lookupResult = await Result.tryPromise(() =>
-        app.client.users.lookupByEmail({ email: event.recipient.email })
-      );
-
-      if (lookupResult.isErr()) {
+      const slackUser = await lookupUser(event.recipient.email);
+      if (!slackUser?.id) {
         logger.warn(
-          { email: event.recipient.email, error: lookupResult.error },
+          { email: event.recipient.email },
           'Slack: no Slack user found for email, skipping DM'
         );
         return;
       }
-
-      const channel = lookupResult.value.user?.id;
-      if (!channel) {
-        logger.warn(
-          { email: event.recipient.email },
-          'Slack: lookupByEmail returned no user ID, skipping DM'
-        );
-        return;
-      }
-
-      const postResult = await Result.tryPromise(() =>
-        app.client.chat.postMessage({
-          channel,
-          blocks,
-          text: getFallbackText(blocks),
-        })
-      );
-      if (postResult.isErr()) {
-        logger.error(
-          { channel, eventType: event.type, error: postResult.error },
-          'Slack: failed to send DM'
-        );
-      }
+      await post(slackUser.id, JSXSlack(getPrivateBlocks(event, { locale })));
     },
   };
 }

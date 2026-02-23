@@ -116,6 +116,9 @@ importers:
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      jsx-slack:
+        specifier: 6.1.2
+        version: 6.1.2
       lucide-react:
         specifier: 0.563.0
         version: 0.563.0(react@19.2.4)
@@ -4926,6 +4929,10 @@ packages:
   jsx-ast-utils-x@0.1.0:
     resolution: {integrity: sha512-eQQBjBnsVtGacsG9uJNB8qOr3yA8rga4wAaGG1qRcBzSIvfhERLrWxMAM1hp5fcS6Abo8M4+bUBTekYR0qTPQw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  jsx-slack@6.1.2:
+    resolution: {integrity: sha512-IQ182499drvMKIhnrYDvYKKs/0vc9hk7yz0ssowfLJp9mRtXmwaVSxoceuWz76zjG2sl1uXaOX75nQPVXNMxXA==}
+    engines: {node: '>=14'}
 
   junk@4.0.1:
     resolution: {integrity: sha512-Qush0uP+G8ZScpGMZvHUiRfI0YBWuB3gVBYlI0v0vvOJt5FLicco+IkP0a50LqTTQhmts/m6tP5SWE+USyIvcQ==}
@@ -13032,6 +13039,10 @@ snapshots:
       semver: 7.7.3
 
   jsx-ast-utils-x@0.1.0: {}
+
+  jsx-slack@6.1.2:
+    dependencies:
+      '@slack/types': 2.20.0
 
   junk@4.0.1: {}
 

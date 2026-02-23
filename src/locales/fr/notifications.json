@@ -11,6 +11,7 @@
   },
   "commute": {
     "created": "🚗 *Nouveau trajet disponible !*\n{{driver}} — *{{commuteType}}* le *{{date}}*.",
+    "createdAnnouncement": "🚗 *Nouveau trajet disponible !*",
     "createdContext": "💺 {{seats}} places disponibles",
     "updated": "📝 *Trajet mis à jour*\n*{{driverName}}* a modifié le trajet *{{commuteType}}*.",
     "updatedContext": "📅 {{date}}",
