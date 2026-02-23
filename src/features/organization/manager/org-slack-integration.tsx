@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -15,8 +14,6 @@ import {
   FormFieldHelper,
   FormFieldLabel,
 } from '@/components/form';
-import { FormFieldContainer } from '@/components/form/form-field-container';
-import { FormFieldError } from '@/components/form/form-field-error';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -25,8 +22,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { PasswordInput } from '@/components/ui/password-input';
 import { Separator } from '@/components/ui/separator';
 
 const zFormFields = z.object({
@@ -49,24 +44,13 @@ export const OrgSlackIntegration = () => {
 
   const form = useForm<FormFields>({
     resolver: zodResolver(zFormFields),
-    defaultValues: {
-      enabled: false,
-      token: null,
-      broadcastChannelId: null,
-      locale: '',
+    values: {
+      enabled: configQuery.data?.enabled ?? false,
+      token: configQuery.data?.token ?? null,
+      broadcastChannelId: configQuery.data?.broadcastChannel ?? null,
+      locale: (configQuery.data?.locale ?? '') as 'en' | 'fr' | '',
     },
   });
-
-  useEffect(() => {
-    if (configQuery.data !== undefined) {
-      form.reset({
-        enabled: configQuery.data?.enabled ?? false,
-        token: configQuery.data?.token ?? null,
-        broadcastChannelId: configQuery.data?.broadcastChannel ?? null,
-        locale: configQuery.data?.locale ?? '',
-      });
-    }
-  }, [configQuery.data, form]);
 
   const updateConfig = useMutation(
     orpc.orgNotificationChannel.updateSlack.mutationOptions({
@@ -91,8 +75,6 @@ export const OrgSlackIntegration = () => {
     });
   };
 
-  const enabled = useWatch({ control: form.control, name: 'enabled' });
-
   return (
     <Card>
       <CardHeader>
@@ -102,96 +84,96 @@ export const OrgSlackIntegration = () => {
       <CardContent>
         <Form {...form} onSubmit={onSubmit} className="gap-4">
           <FormField>
-            <Checkbox
-              checked={enabled}
+            <FormFieldController
+              type="checkbox"
+              control={form.control}
+              name="enabled"
               disabled={updateConfig.isPending}
-              onCheckedChange={(checked) =>
-                form.setValue('enabled', !!checked, { shouldDirty: true })
-              }
             >
               <span className="font-medium">
                 {t('organization:slack.enabledLabel')}
               </span>
-            </Checkbox>
+            </FormFieldController>
           </FormField>
 
-          {enabled && (
-            <>
-              <Separator />
+          <Watch
+            control={form.control}
+            name="enabled"
+            render={(enabled) => {
+              if (!enabled) return;
+              return (
+                <>
+                  <Separator />
 
-              <FormField>
-                <FormFieldLabel>
-                  {t('organization:slack.tokenLabel')}
-                </FormFieldLabel>
-                <FormFieldController
-                  type="custom"
-                  control={form.control}
-                  name="token"
-                  render={({ field }) => (
-                    <FormFieldContainer>
-                      <PasswordInput
-                        placeholder={t('organization:slack.tokenPlaceholder')}
-                        value={field.value ?? ''}
-                        onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        disabled={field.disabled}
-                      />
-                      <FormFieldError />
-                    </FormFieldContainer>
-                  )}
-                />
-                <FormFieldHelper>
-                  {t('organization:slack.tokenHelper')}
-                </FormFieldHelper>
-              </FormField>
+                  <FormField>
+                    <FormFieldLabel>
+                      {t('organization:slack.tokenLabel')}
+                    </FormFieldLabel>
+                    <FormFieldController
+                      type="password"
+                      control={form.control}
+                      name="token"
+                      placeholder={t('organization:slack.tokenPlaceholder')}
+                    />
+                    <FormFieldHelper>
+                      {t('organization:slack.tokenHelper')}
+                    </FormFieldHelper>
+                  </FormField>
 
-              <FormField>
-                <FormFieldLabel>
-                  {t('organization:slack.broadcastChannelIdLabel')}
-                </FormFieldLabel>
-                <FormFieldController
-                  type="text"
-                  control={form.control}
-                  name="broadcastChannelId"
-                  placeholder="C01234ABCDE"
-                />
-                <FormFieldHelper>
-                  {t('organization:slack.broadcastChannelIdHelper')}
-                </FormFieldHelper>
-              </FormField>
+                  <FormField>
+                    <FormFieldLabel>
+                      {t('organization:slack.broadcastChannelIdLabel')}
+                    </FormFieldLabel>
+                    <FormFieldController
+                      type="text"
+                      control={form.control}
+                      name="broadcastChannelId"
+                      placeholder="C01234ABCDE"
+                    />
+                    <FormFieldHelper>
+                      {t('organization:slack.broadcastChannelIdHelper')}
+                    </FormFieldHelper>
+                  </FormField>
 
-              <FormField>
-                <FormFieldLabel>
-                  {t('organization:slack.localeLabel')}
-                </FormFieldLabel>
-                <FormFieldController
-                  type="select"
-                  control={form.control}
-                  name="locale"
-                  items={[
-                    {
-                      value: '',
-                      label: t('organization:slack.localeDefault'),
-                    },
-                    { value: 'en', label: 'English' },
-                    { value: 'fr', label: 'Français' },
-                  ]}
-                />
-                <FormFieldHelper>
-                  {t('organization:slack.localeHelper')}
-                </FormFieldHelper>
-              </FormField>
-            </>
-          )}
+                  <FormField>
+                    <FormFieldLabel>
+                      {t('organization:slack.localeLabel')}
+                    </FormFieldLabel>
+                    <FormFieldController
+                      type="select"
+                      control={form.control}
+                      name="locale"
+                      items={[
+                        {
+                          value: '',
+                          label: t('organization:slack.localeDefault'),
+                        },
+                        { value: 'en', label: 'English' },
+                        { value: 'fr', label: 'Français' },
+                      ]}
+                    />
+                    <FormFieldHelper>
+                      {t('organization:slack.localeHelper')}
+                    </FormFieldHelper>
+                  </FormField>
+                </>
+              );
+            }}
+          />
 
           <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={updateConfig.isPending || !form.formState.isDirty}
-              loading={updateConfig.isPending}
-            >
-              {t('organization:slack.save')}
-            </Button>
+            <FormStateSubscribe
+              control={form.control}
+              render={({ isDirty }) => (
+                <Button
+                  type="submit"
+                  disabled={updateConfig.isPending || !isDirty}
+                  loading={updateConfig.isPending}
+                >
+                  {t('organization:slack.save')}
+                </Button>
+              )}
+            />
           </div>
         </Form>
       </CardContent>

@@ -10,7 +10,7 @@ import { decrypt } from '@/server/encryption';
 
 import type { NotificationChannel, NotifyOrgContext } from '../types';
 
-async function resolveSlackConfig(orgContext?: NotifyOrgContext): Promise<{
+async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
   app: App | null;
   defaultChannel: string | undefined;
   locale: LanguageKey;
@@ -20,8 +20,6 @@ async function resolveSlackConfig(orgContext?: NotifyOrgContext): Promise<{
     defaultChannel: undefined,
     locale: DEFAULT_LANGUAGE_KEY,
   } as const;
-
-  if (!orgContext) return disabled;
 
   const orgChannel = await orgContext.db.orgNotificationChannel.findUnique({
     where: { orgId_type: { orgId: orgContext.organizationId, type: 'SLACK' } },
@@ -46,13 +44,14 @@ export function createSlackChannel(): NotificationChannel {
   return {
     name: 'slack',
 
-    canSend() {
-      // Always allow — canSend doesn't have DB access; actual availability is
-      // checked in send() using org-level config or global env vars.
-      return true;
+    async canSend(_event, orgContext) {
+      if (!orgContext) return false;
+      const { app } = await resolveSlackConfig(orgContext);
+      return app !== null;
     },
 
-    async send(event, logger, orgContext?: NotifyOrgContext) {
+    async send(event, logger, orgContext) {
+      if (!orgContext) return;
       const { app, defaultChannel, locale } =
         await resolveSlackConfig(orgContext);
 
@@ -147,15 +146,6 @@ export function createSlackChannel(): NotificationChannel {
             'Slack: failed to post commute.requested broadcast'
           );
         }
-        return;
-      }
-
-      // Skip DM if recipient opted out of Slack notifications
-      if (event.recipient.disabledChannels?.includes('slack')) {
-        logger.info(
-          { userId: event.recipient.userId, eventType: event.type },
-          'Slack: recipient opted out of Slack DMs, skipping'
-        );
         return;
       }
 

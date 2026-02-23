@@ -16,7 +16,6 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
-import { getDisabledChannels } from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
@@ -100,9 +99,7 @@ export default {
             userId: driverUser.id,
             name: driverUser.name,
             email: driverUser.email,
-            disabledChannels: getDisabledChannels(
-              driverMember.notificationPreferences
-            ),
+            notificationPreferences: driverMember.notificationPreferences,
           },
           payload: {
             passengerName: context.user.name,
@@ -161,9 +158,7 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: getDisabledChannels(
-              booking.passenger.notificationPreferences
-            ),
+            notificationPreferences: booking.passenger.notificationPreferences,
           },
           payload: {
             driverName: context.user.name,
@@ -202,9 +197,7 @@ export default {
             userId: passengerUser.id,
             name: passengerUser.name,
             email: passengerUser.email,
-            disabledChannels: getDisabledChannels(
-              booking.passenger.notificationPreferences
-            ),
+            notificationPreferences: booking.passenger.notificationPreferences,
           },
           payload: {
             driverName: context.user.name,
@@ -244,9 +237,7 @@ export default {
             userId: driverUser.id,
             name: driverUser.name,
             email: driverUser.email,
-            disabledChannels: getDisabledChannels(
-              driverMember.notificationPreferences
-            ),
+            notificationPreferences: driverMember.notificationPreferences,
           },
           payload: {
             passengerName: context.user.name,

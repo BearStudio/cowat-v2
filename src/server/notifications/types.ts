@@ -10,7 +10,7 @@ export type Recipient = {
   name: string;
   email: string;
   phone?: string | null;
-  disabledChannels?: string[];
+  notificationPreferences?: ReadonlyArray<{ channel: string }>;
 };
 
 // Used by commute events (driver's commute type: ROUND | ONEWAY)
@@ -118,7 +118,10 @@ export type NotifyOrgContext = {
 
 export interface NotificationChannel {
   name: string;
-  canSend(event: NotificationEvent): boolean;
+  canSend(
+    event: NotificationEvent,
+    orgContext?: NotifyOrgContext
+  ): boolean | Promise<boolean>;
   send(
     event: NotificationEvent,
     logger: Logger,

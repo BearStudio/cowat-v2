@@ -15,11 +15,7 @@ import {
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
-import {
-  assertDriverOwnership,
-  getDisabledChannels,
-  paginateResult,
-} from '@/server/routers/utils';
+import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commutes'];
 
@@ -176,9 +172,8 @@ export default {
               userId: passengerUser.id,
               name: passengerUser.name,
               email: passengerUser.email,
-              disabledChannels: getDisabledChannels(
-                booking.passenger.notificationPreferences
-              ),
+              notificationPreferences:
+                booking.passenger.notificationPreferences,
             },
             payload: {
               driverName: context.user.name,
@@ -220,9 +215,8 @@ export default {
               userId: passengerUser.id,
               name: passengerUser.name,
               email: passengerUser.email,
-              disabledChannels: getDisabledChannels(
-                booking.passenger.notificationPreferences
-              ),
+              notificationPreferences:
+                booking.passenger.notificationPreferences,
             },
             payload: {
               driverName: context.user.name,

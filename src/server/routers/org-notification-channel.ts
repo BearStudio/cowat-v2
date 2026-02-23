@@ -48,7 +48,9 @@ export default {
       };
     }),
 
-  updateSlack: procedure({ permissions: { invitation: ['create'] } })
+  updateSlack: procedure({
+    permissions: { orgNotificationChannel: ['manage'] },
+  })
     .route({
       method: 'POST',
       path: '/organizations/notification-channel/slack',
