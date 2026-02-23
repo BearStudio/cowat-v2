@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
+import { BookingRequestSummary } from '@/features/booking/booking-request-summary';
 import { BookingForDriver } from '@/features/booking/schema';
 
 type RequestCardProps = {
@@ -96,7 +97,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           )}
         </div>
       </CardContent>
-      <CardFooter className="gap-2">
+      <CardFooter className="w-full justify-between gap-2">
         <Button
           size="sm"
           loading={accept.isPending}
@@ -106,7 +107,12 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           {t('booking:request.acceptButton')}
         </Button>
         <ConfirmResponsiveDrawer
-          description={t('booking:request.refuseConfirmDescription')}
+          description={
+            <div className="flex flex-col gap-3">
+              <span>{t('booking:request.refuseConfirmDescription')}</span>
+              <BookingRequestSummary request={request} />
+            </div>
+          }
           confirmText={t('booking:request.refuseButton')}
           confirmVariant="destructive"
           onConfirm={() => refuse.mutateAsync({ id: request.id })}

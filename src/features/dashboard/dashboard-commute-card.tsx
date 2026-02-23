@@ -1,10 +1,7 @@
 import { UseMutationResult } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '@/lib/dayjs/config';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
@@ -18,8 +15,8 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { StopsTimeline } from '@/features/commute/stops-timeline';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
+import { CommuteSummary } from '@/features/commute/commute-summary';
 import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
@@ -153,17 +150,11 @@ export const DashboardCommuteCard = ({
                       : 'dashboard:cancelCommute.confirmDescription'
                   )}
                 </span>
-                <div className="rounded-md border bg-muted/40 p-3 text-sm">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="font-medium capitalize">
-                      {dayjs(commute.date).f('commute:dayHeader')}
-                    </span>
-                    <Badge variant="secondary" size="sm">
-                      {t(`commute:list.type.${commute.type}`)}
-                    </Badge>
-                  </div>
-                  <StopsTimeline stops={commute.stops} />
-                </div>
+                <CommuteSummary
+                  date={commute.date}
+                  type={commute.type}
+                  stops={commute.stops}
+                />
               </div>
             }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
