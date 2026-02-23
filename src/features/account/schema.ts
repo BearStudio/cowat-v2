@@ -17,3 +17,11 @@ export const zFormFieldsAccountUpdatePhone = () =>
   z.object({
     phone: zu.fieldText.nullish(),
   });
+
+export type FormFieldsAccountUpdateImage = z.infer<
+  ReturnType<typeof zFormFieldsAccountUpdateImage>
+>;
+export const zFormFieldsAccountUpdateImage = () =>
+  z.object({
+    image: zu.fieldText.nullish(),
+  });

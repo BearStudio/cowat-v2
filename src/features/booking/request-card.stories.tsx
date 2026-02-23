@@ -25,6 +25,7 @@ const baseRequest: BookingForDriver = {
     order: 1,
     outwardTime: '07:30',
     inwardTime: '17:00',
+    location: { id: 'location-1', name: 'Downtown Office' },
     commute: {
       id: 'commute-1',
       date: new Date('2025-06-12'),

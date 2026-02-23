@@ -1,4 +1,5 @@
 import { PencilIcon, PhoneIcon, Trash2 } from 'lucide-react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 type CardCommuteActionsProps = {
   isDriver: boolean;
   driverPhone?: string | null;
-  cancelConfirmDescription: string;
+  cancelConfirmDescription: ReactNode;
   onCancel: () => void | Promise<void>;
 };
 
