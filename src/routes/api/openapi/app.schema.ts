@@ -1,7 +1,6 @@
 import { OpenAPIGenerator } from '@orpc/openapi';
 import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4';
 import { createFileRoute } from '@tanstack/react-router';
-import { json } from '@tanstack/react-start';
 
 import { envClient } from '@/env/client';
 import { router } from '@/server/router';
@@ -48,7 +47,7 @@ export const Route = createFileRoute('/api/openapi/app/schema')({
           },
         });
 
-        return json(spec);
+        return Response.json(spec);
       },
     },
   },

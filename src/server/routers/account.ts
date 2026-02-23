@@ -61,7 +61,7 @@ export default {
 
   getAutoAccept: orgProcedure()
     .route({ method: 'GET', path: '/account/auto-accept', tags })
-    .input(z.void())
+    .input(z.object({}).prefault({}))
     .output(z.object({ autoAccept: z.boolean() }))
     .handler(async ({ context }) => {
       return context.account.getMemberAutoAccept(context.memberId);
@@ -80,7 +80,7 @@ export default {
 
   getNotificationPreferences: orgProcedure()
     .route({ method: 'GET', path: '/account/notification-preferences', tags })
-    .input(z.void())
+    .input(z.object({}).prefault({}))
     .output(
       z.array(
         z.object({ channel: zNotificationChannel(), enabled: z.boolean() })

@@ -251,7 +251,7 @@ export default {
 
   pendingRequestCount: procedure({ permissions: { booking: ['read'] } })
     .route({ method: 'GET', path: '/bookings/pending-count', tags })
-    .input(z.void())
+    .input(z.object({}).prefault({}))
     .output(z.object({ count: z.number() }))
     .handler(async ({ context }) => {
       const count = await context.bookings.countPendingForDriver(
