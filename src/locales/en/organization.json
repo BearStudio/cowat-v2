@@ -1,4 +1,20 @@
 {
+  "slack": {
+    "title": "Slack integration",
+    "description": "Configure the Slack bot for this organization. Notifications will use this token, broadcast channel, and locale.",
+    "enabledLabel": "Enable Slack notifications",
+    "tokenLabel": "Bot token",
+    "tokenPlaceholder": "xoxb-...",
+    "tokenHelper": "The Slack bot token for this organization.",
+    "broadcastChannelIdLabel": "Broadcast channel ID",
+    "broadcastChannelIdHelper": "Slack channel ID for commute announcements (e.g. C01234ABCDE). Find it in the channel details.",
+    "localeLabel": "Notification language",
+    "localeDefault": "Server default",
+    "localeHelper": "Language used for Slack messages. Leave empty to use the server default.",
+    "save": "Save",
+    "saveSuccess": "Slack integration saved",
+    "saveError": "Failed to save Slack integration"
+  },
   "switcher": {
     "label": "Organization",
     "switchTo": "Switch to {{name}}"

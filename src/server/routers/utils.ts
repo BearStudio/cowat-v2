@@ -12,12 +12,6 @@ export function paginateResult<T extends { id: string }>(
   return { items, nextCursor, total };
 }
 
-export function getDisabledChannels(
-  prefs: ReadonlyArray<{ channel: string }>
-): string[] {
-  return prefs.map((p) => p.channel.toLowerCase());
-}
-
 export function assertDriverOwnership<T extends { driverMemberId: string }>(
   entity: T | null | undefined,
   memberId: string

@@ -1,38 +1,64 @@
+import { App } from '@slack/bolt';
 import { Result } from 'better-result';
 
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import { envClient } from '@/env/client';
-import { envServer } from '@/env/server';
-import { getSlackApp } from '@/features/slack/client';
 import { getFallbackText, getSlackBlocks } from '@/features/slack/templates';
+import { decrypt } from '@/server/encryption';
 
-import type { NotificationChannel } from '../types';
+import type { NotificationChannel, NotifyOrgContext } from '../types';
 
-type SlackChannelConfig = {
-  locale?: LanguageKey;
-};
+async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
+  app: App | null;
+  defaultChannel: string | undefined;
+  locale: LanguageKey;
+}> {
+  const disabled = {
+    app: null,
+    defaultChannel: undefined,
+    locale: DEFAULT_LANGUAGE_KEY,
+  } as const;
 
-export function createSlackChannel(
-  config?: SlackChannelConfig
-): NotificationChannel {
-  const locale = config?.locale ?? DEFAULT_LANGUAGE_KEY;
+  const orgChannel = await orgContext.db.orgNotificationChannel.findUnique({
+    where: { orgId_type: { orgId: orgContext.organizationId, type: 'SLACK' } },
+  });
 
+  if (!orgChannel) return disabled;
+  if (!orgChannel.enabled) return disabled;
+
+  const token = orgChannel.token ? decrypt(orgChannel.token) : null;
+  if (!token) return disabled;
+
+  return {
+    app: new App({ token, signingSecret: '' }),
+    defaultChannel: orgChannel.broadcastChannel
+      ? decrypt(orgChannel.broadcastChannel)
+      : undefined,
+    locale: (orgChannel.locale as LanguageKey | null) ?? DEFAULT_LANGUAGE_KEY,
+  };
+}
+
+export function createSlackChannel(): NotificationChannel {
   return {
     name: 'slack',
 
-    canSend() {
-      return getSlackApp() !== null;
+    async canSend(_event, orgContext) {
+      if (!orgContext) return false;
+      const { app } = await resolveSlackConfig(orgContext);
+      return app !== null;
     },
 
-    async send(event, logger) {
-      const app = getSlackApp();
+    async send(event, logger, orgContext) {
+      if (!orgContext) return;
+      const { app, defaultChannel, locale } =
+        await resolveSlackConfig(orgContext);
+
       if (!app) return;
 
       // commute.created — broadcast to default channel with driver @mention and avatar
       if (event.type === 'commute.created') {
-        const defaultChannel = envServer.SLACK_DEFAULT_CHANNEL;
         if (!defaultChannel) {
           logger.warn(
             { eventType: event.type },
@@ -78,7 +104,6 @@ export function createSlackChannel(
 
       // commute.requested — broadcast to default channel with requester @mention
       if (event.type === 'commute.requested') {
-        const defaultChannel = envServer.SLACK_DEFAULT_CHANNEL;
         if (!defaultChannel) {
           logger.warn(
             { eventType: event.type },
@@ -121,15 +146,6 @@ export function createSlackChannel(
             'Slack: failed to post commute.requested broadcast'
           );
         }
-        return;
-      }
-
-      // Skip DM if recipient opted out of Slack notifications
-      if (event.recipient.disabledChannels?.includes('slack')) {
-        logger.info(
-          { userId: event.recipient.userId, eventType: event.type },
-          'Slack: recipient opted out of Slack DMs, skipping'
-        );
         return;
       }
 

@@ -16,7 +16,15 @@ const customStatements = {
   commuteTemplate: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;
 
-const organizationStatements = { ...defaultStatements, ...customStatements };
+const ownerOnlyStatements = {
+  orgNotificationChannel: ['manage'],
+} satisfies Statements;
+
+const organizationStatements = {
+  ...defaultStatements,
+  ...customStatements,
+  ...ownerOnlyStatements,
+};
 
 const ac = createAccessControl(organizationStatements);
 
@@ -36,6 +44,7 @@ const roleAdmin = ac.newRole({
 const roleOwner = ac.newRole({
   ...ownerAc.statements,
   ...customStatements,
+  ...ownerOnlyStatements,
 });
 
 export const organizationRolesNames = ['owner', 'admin', 'member'] as const;

@@ -16,7 +16,6 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
-import { getDisabledChannels } from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
@@ -93,23 +92,24 @@ export default {
         status,
       });
 
-      context.notify({
-        type: 'booking.requested',
-        recipient: {
-          userId: driverUser.id,
-          name: driverUser.name,
-          email: driverUser.email,
-          disabledChannels: getDisabledChannels(
-            driverMember.notificationPreferences
-          ),
+      context.notify(
+        {
+          type: 'booking.requested',
+          recipient: {
+            userId: driverUser.id,
+            name: driverUser.name,
+            email: driverUser.email,
+            notificationPreferences: driverMember.notificationPreferences,
+          },
+          payload: {
+            passengerName: context.user.name,
+            commuteDate: stop.commute.date,
+            tripType: input.tripType,
+            status,
+          },
         },
-        payload: {
-          passengerName: context.user.name,
-          commuteDate: stop.commute.date,
-          tripType: input.tripType,
-          status,
-        },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
 
       return booking;
     }),
@@ -151,22 +151,23 @@ export default {
       await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
       const passengerUser = booking.passenger.user;
-      context.notify({
-        type: 'booking.accepted',
-        recipient: {
-          userId: passengerUser.id,
-          name: passengerUser.name,
-          email: passengerUser.email,
-          disabledChannels: getDisabledChannels(
-            booking.passenger.notificationPreferences
-          ),
+      context.notify(
+        {
+          type: 'booking.accepted',
+          recipient: {
+            userId: passengerUser.id,
+            name: passengerUser.name,
+            email: passengerUser.email,
+            notificationPreferences: booking.passenger.notificationPreferences,
+          },
+          payload: {
+            driverName: context.user.name,
+            commuteDate: booking.stop.commute.date,
+            tripType: booking.tripType,
+          },
         },
-        payload: {
-          driverName: context.user.name,
-          commuteDate: booking.stop.commute.date,
-          tripType: booking.tripType,
-        },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
     }),
 
   refuse: procedure({ permissions: { booking: ['manage'] } })
@@ -189,22 +190,23 @@ export default {
       await context.bookings.updateStatus(input.id, 'REFUSED');
 
       const passengerUser = booking.passenger.user;
-      context.notify({
-        type: 'booking.refused',
-        recipient: {
-          userId: passengerUser.id,
-          name: passengerUser.name,
-          email: passengerUser.email,
-          disabledChannels: getDisabledChannels(
-            booking.passenger.notificationPreferences
-          ),
+      context.notify(
+        {
+          type: 'booking.refused',
+          recipient: {
+            userId: passengerUser.id,
+            name: passengerUser.name,
+            email: passengerUser.email,
+            notificationPreferences: booking.passenger.notificationPreferences,
+          },
+          payload: {
+            driverName: context.user.name,
+            commuteDate: booking.stop.commute.date,
+            tripType: booking.tripType,
+          },
         },
-        payload: {
-          driverName: context.user.name,
-          commuteDate: booking.stop.commute.date,
-          tripType: booking.tripType,
-        },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
     }),
 
   cancel: procedure({ permissions: { booking: ['manage'] } })
@@ -228,22 +230,23 @@ export default {
 
       const driverMember = booking.stop.commute.driver;
       const driverUser = driverMember.user;
-      context.notify({
-        type: 'booking.canceled',
-        recipient: {
-          userId: driverUser.id,
-          name: driverUser.name,
-          email: driverUser.email,
-          disabledChannels: getDisabledChannels(
-            driverMember.notificationPreferences
-          ),
+      context.notify(
+        {
+          type: 'booking.canceled',
+          recipient: {
+            userId: driverUser.id,
+            name: driverUser.name,
+            email: driverUser.email,
+            notificationPreferences: driverMember.notificationPreferences,
+          },
+          payload: {
+            passengerName: context.user.name,
+            commuteDate: booking.stop.commute.date,
+            tripType: booking.tripType,
+          },
         },
-        payload: {
-          passengerName: context.user.name,
-          commuteDate: booking.stop.commute.date,
-          tripType: booking.tripType,
-        },
-      });
+        { db: context.db, organizationId: context.organizationId }
+      );
     }),
 
   pendingRequestCount: procedure({ permissions: { booking: ['read'] } })
