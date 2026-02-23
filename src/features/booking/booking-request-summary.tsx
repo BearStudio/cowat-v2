@@ -10,29 +10,33 @@ import { StopsTimelineItem } from '@/features/commute/stops-timeline';
 
 type BookingRequestSummaryProps = {
   request: BookingForDriver;
+  avatarSize?: 'sm' | 'lg';
 };
 
 export const BookingRequestSummary = ({
   request,
+  avatarSize = 'sm' as const,
 }: BookingRequestSummaryProps) => {
   const { t } = useTranslation(['booking']);
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border bg-muted/40 p-3 text-sm">
+    <div className="flex flex-col gap-2 text-sm">
       <div className="flex items-center gap-2">
-        <Avatar size="sm">
+        <Avatar size={avatarSize}>
           <AvatarImage src={request.passenger.image ?? undefined} />
           <AvatarFallback
             variant="boring"
             name={request.passenger.name ?? '?'}
           />
         </Avatar>
-        <span className="font-medium capitalize">
-          {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
-        </span>
-        <Badge variant="secondary" size="sm">
-          {t(`booking:request.tripType.${request.tripType}`)}
-        </Badge>
+        <div className="flex flex-col">
+          <span className="font-medium capitalize">
+            {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
+          </span>
+          <Badge variant="secondary" size="sm" className="w-fit">
+            {t(`booking:request.tripType.${request.tripType}`)}
+          </Badge>
+        </div>
       </div>
       <StopsTimelineItem stop={request.stop} isLast />
     </div>

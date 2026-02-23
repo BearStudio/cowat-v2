@@ -59,7 +59,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
   return (
     <Card>
       <CardContent className="flex flex-col gap-2">
-        <BookingRequestSummary request={request} />
+        <BookingRequestSummary request={request} avatarSize="lg" />
         {request.comment && (
           <p className="text-sm text-muted-foreground">{request.comment}</p>
         )}
@@ -77,7 +77,9 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           description={
             <div className="flex flex-col gap-3">
               <span>{t('booking:request.refuseConfirmDescription')}</span>
-              <BookingRequestSummary request={request} />
+              <div className="rounded-md border bg-muted/40 p-3">
+                <BookingRequestSummary request={request} />
+              </div>
             </div>
           }
           confirmText={t('booking:request.refuseButton')}

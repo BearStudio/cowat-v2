@@ -15,8 +15,8 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CommuteCancelDescription } from '@/features/commute/commute-cancel-description';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
@@ -142,20 +142,12 @@ export const DashboardCommuteCard = ({
             isDriver={isDriver}
             driverPhone={commute.driver.phone}
             cancelConfirmDescription={
-              <div className="flex flex-col gap-3">
-                <span>
-                  {t(
-                    hasPassengers
-                      ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
-                      : 'dashboard:cancelCommute.confirmDescription'
-                  )}
-                </span>
-                <CommuteSummary
-                  date={commute.date}
-                  type={commute.type}
-                  stops={commute.stops}
-                />
-              </div>
+              <CommuteCancelDescription
+                date={commute.date}
+                type={commute.type}
+                stops={commute.stops}
+                hasPassengers={hasPassengers}
+              />
             }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
           />
