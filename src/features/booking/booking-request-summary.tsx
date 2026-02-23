@@ -2,12 +2,11 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import '@/lib/dayjs/config';
 
-import { tripTypeIcons } from '@/lib/feature-icons';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 import { type BookingForDriver } from '@/features/booking/schema';
+import { StopsTimelineItem } from '@/features/commute/stops-timeline';
 
 type BookingRequestSummaryProps = {
   request: BookingForDriver;
@@ -35,30 +34,7 @@ export const BookingRequestSummary = ({
           {t(`booking:request.tripType.${request.tripType}`)}
         </Badge>
       </div>
-      <div className="flex items-start gap-4">
-        <div className="flex flex-col items-center self-stretch">
-          <div className="flex h-6 items-center">
-            <div className="size-3 shrink-0 rounded-full bg-primary" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="leading-6 font-medium">
-            {request.stop.location.name}
-          </span>
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <tripTypeIcons.ONEWAY className="size-3.5" />
-              {request.stop.outwardTime}
-            </span>
-            {request.stop.inwardTime && (
-              <span className="flex items-center gap-1">
-                <tripTypeIcons.RETURN className="size-3.5" />
-                {request.stop.inwardTime}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
+      <StopsTimelineItem stop={request.stop} isLast />
     </div>
   );
 };

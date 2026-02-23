@@ -22,6 +22,7 @@ import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-draw
 
 import { BookingRequestSummary } from '@/features/booking/booking-request-summary';
 import { BookingForDriver } from '@/features/booking/schema';
+import { StopsTimelineItem } from '@/features/commute/stops-timeline';
 
 type RequestCardProps = {
   request: BookingForDriver;
@@ -109,16 +110,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
-          <div className="flex items-start gap-4">
-            <div className="flex flex-col items-center self-stretch">
-              <div className="flex h-6 items-center">
-                <div className="size-3 shrink-0 rounded-full bg-primary" />
-              </div>
-            </div>
-            <span className="truncate text-base leading-6 font-medium">
-              {request.stop.location.name}
-            </span>
-          </div>
+          <StopsTimelineItem stop={request.stop} isLast />
           {request.comment && (
             <p className="text-sm text-muted-foreground">{request.comment}</p>
           )}

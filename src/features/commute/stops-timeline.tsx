@@ -6,10 +6,17 @@ import { cn } from '@/lib/tailwind/utils';
 import { Badge } from '@/components/ui/badge';
 
 import { bookingStatusBadgeVariants } from '@/features/booking/booking-status-badge';
-import { StopEnriched } from '@/features/commute/schema';
+import { StopEnriched, StopPassenger } from '@/features/commute/schema';
+
+export type StopForTimeline = {
+  location: { name: string };
+  outwardTime: string;
+  inwardTime?: string | null;
+  passengers?: StopPassenger[];
+};
 
 type StopsTimelineItemProps = {
-  stop: StopEnriched;
+  stop: StopForTimeline;
   isLast: boolean;
   actions?: ReactNode;
 };
@@ -48,11 +55,11 @@ export const StopsTimelineItem = ({
           </span>
         )}
       </div>
-      {stop.passengers.filter(
+      {(stop.passengers ?? []).filter(
         (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
       ).length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {stop.passengers
+          {(stop.passengers ?? [])
             .filter((p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED')
             .map((p) => {
               const TripIcon = tripTypeIcons[p.tripType];
