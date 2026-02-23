@@ -20,10 +20,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { FormLocation } from '@/features/location/app/form-location';
-import {
-  FormFieldsLocation,
-  zFormFieldsLocation,
-} from '@/features/location/schema';
+import { zFormFieldsLocation } from '@/features/location/schema';
 
 export const LocationDrawer = ({
   open,
@@ -46,7 +43,7 @@ export const LocationDrawer = ({
     })
   );
 
-  const form = useForm<FormFieldsLocation>({
+  const form = useForm({
     resolver: zodResolver(zFormFieldsLocation()),
     values: isUpdate
       ? {

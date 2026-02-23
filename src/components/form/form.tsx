@@ -22,11 +22,15 @@ type FormProps<
     })
 >;
 
-export const Form = <TFieldValues extends FieldValues>({
+export const Form = <
+  TFieldValues extends FieldValues,
+  TContext = ExplicitAny,
+  TTransformedValues = TFieldValues,
+>({
   noHtmlForm = false,
   className,
   ...props
-}: FormProps<TFieldValues>) => {
+}: FormProps<TFieldValues, TContext, TTransformedValues>) => {
   if (noHtmlForm) {
     return <FormProvider {...props} />;
   }

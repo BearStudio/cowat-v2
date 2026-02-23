@@ -23,6 +23,7 @@ export const FormLocation = () => {
           name="name"
           autoFocus
           autoComplete="off"
+          data-1p-ignore
         />
       </FormField>
       <FormField>
@@ -32,6 +33,7 @@ export const FormLocation = () => {
           control={form.control}
           name="address"
           autoComplete="off"
+          data-1p-ignore
         />
       </FormField>
     </div>
