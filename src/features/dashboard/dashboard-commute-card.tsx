@@ -1,6 +1,8 @@
 import { UseMutationResult } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import '@/lib/dayjs/config';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
@@ -140,11 +142,24 @@ export const DashboardCommuteCard = ({
           <CardCommuteActions
             isDriver={isDriver}
             driverPhone={commute.driver.phone}
-            cancelConfirmDescription={t(
-              hasPassengers
-                ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
-                : 'dashboard:cancelCommute.confirmDescription'
-            )}
+            cancelConfirmDescription={
+              <div className="flex flex-col gap-1">
+                <span>
+                  {t(
+                    hasPassengers
+                      ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
+                      : 'dashboard:cancelCommute.confirmDescription'
+                  )}
+                </span>
+                <span className="font-medium">
+                  {dayjs(commute.date).f('dashboard:dayHeader')}
+                  {' · '}
+                  {commute.stops.at(0)?.outwardTime}
+                  {commute.stops.at(-1)?.inwardTime &&
+                    ` – ${commute.stops.at(-1)?.inwardTime}`}
+                </span>
+              </div>
+            }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
           />
         </div>

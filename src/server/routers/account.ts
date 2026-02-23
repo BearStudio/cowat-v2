@@ -48,6 +48,17 @@ export default {
       });
     }),
 
+  updateImage: authProcedure({ permission: null })
+    .route({ method: 'POST', path: '/account/image', tags })
+    .input(zUser().pick({ image: true }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      context.logger.info('Update user image');
+      await context.account.updateUser(context.user.id, {
+        image: input.image ?? null,
+      });
+    }),
+
   getAutoAccept: orgProcedure()
     .route({ method: 'GET', path: '/account/auto-accept', tags })
     .input(z.void())

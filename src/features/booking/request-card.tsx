@@ -80,7 +80,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           <CardTitle>{request.passenger.name}</CardTitle>
         </div>
         <CardDescription>
-          {dayjs(request.stop.commute.date).f('booking:requestDate')}
+          {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
           {' · '}
           {request.stop.outwardTime}
           {request.stop.inwardTime && ` – ${request.stop.inwardTime}`}
@@ -97,16 +97,6 @@ export const RequestCard = ({ request }: RequestCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="gap-2">
-        <ConfirmResponsiveDrawer
-          description={t('booking:request.refuseConfirmDescription')}
-          confirmText={t('booking:request.refuseButton')}
-          confirmVariant="destructive"
-          onConfirm={() => refuse.mutateAsync({ id: request.id })}
-        >
-          <Button variant="destructive" size="sm" disabled={isMutating}>
-            {t('booking:request.refuseButton')}
-          </Button>
-        </ConfirmResponsiveDrawer>
         <Button
           size="sm"
           loading={accept.isPending}
@@ -115,6 +105,20 @@ export const RequestCard = ({ request }: RequestCardProps) => {
         >
           {t('booking:request.acceptButton')}
         </Button>
+        <ConfirmResponsiveDrawer
+          description={t('booking:request.refuseConfirmDescription')}
+          confirmText={t('booking:request.refuseButton')}
+          confirmVariant="destructive"
+          onConfirm={() => refuse.mutateAsync({ id: request.id })}
+        >
+          <Button
+            variant="destructive-secondary"
+            size="sm"
+            disabled={isMutating}
+          >
+            {t('booking:request.refuseButton')}
+          </Button>
+        </ConfirmResponsiveDrawer>
       </CardFooter>
     </Card>
   );

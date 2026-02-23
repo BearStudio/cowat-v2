@@ -23,6 +23,10 @@
       "label": "Phone",
       "updateAction": "Update your phone number"
     },
+    "image": {
+      "label": "Profile picture",
+      "updateAction": "Update your profile picture"
+    },
     "autoAccept": {
       "label": "Auto-accept",
       "description": "Automatically accept ride requests"
@@ -45,6 +49,14 @@
     "submitButton": "Update",
     "successMessage": "Phone number updated",
     "errorMessage": "Failed to update your phone number"
+  },
+  "editImageDrawer": {
+    "title": "Update your profile picture",
+    "description": "Form to update your profile picture",
+    "label": "Profile picture URL",
+    "submitButton": "Update",
+    "successMessage": "Profile picture updated",
+    "errorMessage": "Failed to update your profile picture"
   },
   "autoAccept": {
     "successMessage": "Auto-accept updated",

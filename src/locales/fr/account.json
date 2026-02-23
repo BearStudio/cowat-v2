@@ -23,6 +23,10 @@
       "label": "Téléphone",
       "updateAction": "Modifier votre numéro de téléphone"
     },
+    "image": {
+      "label": "Photo de profil",
+      "updateAction": "Modifier votre photo de profil"
+    },
     "autoAccept": {
       "label": "Acceptation auto.",
       "description": "Accepter automatiquement les demandes de trajet"
@@ -45,6 +49,14 @@
     "submitButton": "Modifier",
     "successMessage": "Numéro de téléphone mis à jour",
     "errorMessage": "Échec de la mise à jour de votre numéro de téléphone"
+  },
+  "editImageDrawer": {
+    "title": "Modifier votre photo de profil",
+    "description": "Formulaire pour modifier votre photo de profil",
+    "label": "URL de la photo de profil",
+    "submitButton": "Modifier",
+    "successMessage": "Photo de profil mise à jour",
+    "errorMessage": "Échec de la mise à jour de votre photo de profil"
   },
   "autoAccept": {
     "successMessage": "Acceptation automatique mise à jour",

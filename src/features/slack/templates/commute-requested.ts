@@ -34,7 +34,7 @@ export function commuteRequested(
   return [
     {
       type: 'section',
-      text: { type: 'mrkdwn', text },
+      text: { type: 'mrkdwn', text: `<!here> ${text}` },
       accessory: {
         type: 'button',
         text: {
