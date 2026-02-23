@@ -1,27 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
 import { BookingRequestSummary } from '@/features/booking/booking-request-summary';
 import { BookingForDriver } from '@/features/booking/schema';
-import { StopsTimelineItem } from '@/features/commute/stops-timeline';
 
 type RequestCardProps = {
   request: BookingForDriver;
@@ -70,38 +58,11 @@ export const RequestCard = ({ request }: RequestCardProps) => {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-start gap-2">
-          <Avatar size="xl" className="rounded-sm">
-            <AvatarImage
-              src={request.passenger.image ?? undefined}
-              className="rounded-md"
-            />
-            <AvatarFallback
-              variant="boring"
-              name={request.passenger.name ?? '?'}
-            />
-          </Avatar>
-          <div className="flex flex-col gap-0.5">
-            <CardTitle className="capitalize">
-              {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
-            </CardTitle>
-            <CardDescription>{request.passenger.name}</CardDescription>
-          </div>
-        </div>
-        <div className="col-span-full flex items-center gap-2">
-          <Badge variant="secondary" size="sm">
-            {t(`booking:request.tripType.${request.tripType}`)}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-2">
-          <StopsTimelineItem stop={request.stop} isLast />
-          {request.comment && (
-            <p className="text-sm text-muted-foreground">{request.comment}</p>
-          )}
-        </div>
+      <CardContent className="flex flex-col gap-2">
+        <BookingRequestSummary request={request} />
+        {request.comment && (
+          <p className="text-sm text-muted-foreground">{request.comment}</p>
+        )}
       </CardContent>
       <CardFooter className="w-full justify-between gap-2">
         <Button
@@ -116,7 +77,9 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           description={
             <div className="flex flex-col gap-3">
               <span>{t('booking:request.refuseConfirmDescription')}</span>
-              <BookingRequestSummary request={request} />
+              <div className="rounded-md border bg-muted/40 p-3 text-sm">
+                <BookingRequestSummary request={request} />
+              </div>
             </div>
           }
           confirmText={t('booking:request.refuseButton')}
