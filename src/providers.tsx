@@ -1,4 +1,5 @@
 import { ThemeProvider } from 'next-themes';
+import { NuqsAdapter } from 'nuqs/adapters/tanstack-router';
 import type { ReactNode } from 'react';
 import '@/lib/dayjs/config';
 import '@/lib/i18n';
@@ -15,10 +16,12 @@ export const Providers = (props: { children: ReactNode }) => {
       storageKey="theme"
       disableTransitionOnChange
     >
-      <QueryClientProvider>
-        {props.children}
-        <Sonner richColors />
-      </QueryClientProvider>
+      <NuqsAdapter>
+        <QueryClientProvider>
+          {props.children}
+          <Sonner richColors />
+        </QueryClientProvider>
+      </NuqsAdapter>
     </ThemeProvider>
   );
 };

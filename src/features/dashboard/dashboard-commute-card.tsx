@@ -16,18 +16,16 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
+import { CommuteEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
   currentUserId: string;
   commuteCancel: UseMutationResult<void, unknown, { id: string }>;
   bookingCancel: UseMutationResult<void, unknown, { id: string }>;
-  onBookStop: (
-    stopId: string,
-    commuteType: CommuteType,
-    options: { isFirstStop: boolean; isLastStop: boolean }
-  ) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onBookStop: (stopId: string) => void;
 };
 
 export const DashboardCommuteCard = ({
@@ -35,16 +33,14 @@ export const DashboardCommuteCard = ({
   currentUserId,
   commuteCancel,
   bookingCancel,
+  open,
+  onOpenChange,
   onBookStop,
 }: DashboardCommuteCardProps) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
 
   const { outwardCount, inwardCount, acceptedPassengers } =
     getCommutePassengerStats(commute);
-
-  const stopOrders = commute.stops.map((s) => s.order);
-  const minOrder = Math.min(...stopOrders);
-  const maxOrder = Math.max(...stopOrders);
 
   const isDriver = currentUserId === commute.driver.id;
   const bookingStatus = getUserBookingStatus(commute, currentUserId);
@@ -63,7 +59,11 @@ export const DashboardCommuteCard = ({
     commute.type === 'ROUND' ? outwardFull && inwardFull : outwardFull;
 
   return (
-    <CardCommute bookingStatus={bookingStatus}>
+    <CardCommute
+      bookingStatus={bookingStatus}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={commute.driver}
@@ -125,12 +125,7 @@ export const DashboardCommuteCard = ({
                 <Button
                   variant="secondary"
                   className="w-2/3"
-                  onClick={() =>
-                    onBookStop(stop.id, commute.type, {
-                      isFirstStop: stop.order === minOrder,
-                      isLastStop: stop.order === maxOrder,
-                    })
-                  }
+                  onClick={() => onBookStop(stop.id)}
                 >
                   {t('dashboard:booking.submitButton')}
                 </Button>
