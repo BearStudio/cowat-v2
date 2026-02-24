@@ -7,10 +7,12 @@
     "refused": "❌ *Booking declined*\n*{{driverName}}* declined your booking.",
     "refusedContext": "📅 {{date}} · {{tripType}}",
     "canceled": "🙅 *Booking canceled*\n*{{passengerName}}* canceled their booking.",
-    "canceledContext": "📅 {{date}} · {{tripType}}"
+    "canceledContext": "📅 {{date}} · {{tripType}}",
+    "viewRequests": "View requests →"
   },
   "commute": {
     "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*.",
+    "createdAnnouncement": "🚗 *New commute posted!*",
     "createdContext": "💺 {{seats}} seats available",
     "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute.",
     "updatedContext": "📅 {{date}}",
@@ -18,7 +20,8 @@
     "canceledContext": "📅 {{date}}",
     "requested": "🙋 *Ride request!*\n{{requester}} is looking for a commute on *{{date}}*.",
     "requestedWithLocation": "🙋 *Ride request!*\n{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*.",
-    "offerRide": "Offer a ride →"
+    "offerRide": "Offer a ride →",
+    "seeAllCommutes": "See all commutes →"
   },
   "commuteType": {
     "ROUND": "round-trip",

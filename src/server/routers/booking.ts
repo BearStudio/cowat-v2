@@ -92,6 +92,11 @@ export default {
         status,
       });
 
+      const organization = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
+
       context.notify(
         {
           type: 'booking.requested',
@@ -106,6 +111,7 @@ export default {
             commuteDate: stop.commute.date,
             tripType: input.tripType,
             status,
+            orgSlug: organization?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }

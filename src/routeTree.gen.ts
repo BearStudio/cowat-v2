@@ -45,6 +45,7 @@ import { Route as AppOrgSlugCommutesIndexRouteImport } from './routes/app/$orgSl
 import { Route as AppOrgSlugAccountIndexRouteImport } from './routes/app/$orgSlug/account/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
+import { Route as ApiDevSlackTemplateRouteImport } from './routes/api/dev.slack.$template'
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
 import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
 import { Route as ManagerOrgSlugUsersNewIndexRouteImport } from './routes/manager/$orgSlug/users/new.index'
@@ -242,6 +243,11 @@ const ApiOpenapiAppSchemaRoute = ApiOpenapiAppSchemaRouteImport.update({
   path: '/schema',
   getParentRoute: () => ApiOpenapiAppRoute,
 } as any)
+const ApiDevSlackTemplateRoute = ApiDevSlackTemplateRouteImport.update({
+  id: '/api/dev/slack/$template',
+  path: '/api/dev/slack/$template',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDevEmailTemplateRoute = ApiDevEmailTemplateRouteImport.update({
   id: '/api/dev/email/$template',
   path: '/api/dev/email/$template',
@@ -329,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
@@ -370,6 +377,7 @@ export interface FileRoutesByTo {
   '/manager/organizations': typeof ManagerOrganizationsIndexRoute
   '/manager/users': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account': typeof AppOrgSlugAccountIndexRoute
@@ -419,6 +427,7 @@ export interface FileRoutesById {
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
@@ -469,6 +478,7 @@ export interface FileRouteTypes {
     | '/manager/organizations/'
     | '/manager/users/'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account/'
@@ -510,6 +520,7 @@ export interface FileRouteTypes {
     | '/manager/organizations'
     | '/manager/users'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/manager/organizations/'
     | '/manager/users/'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account/'
@@ -594,6 +606,7 @@ export interface RootRouteChildren {
   ApiRestSplatRoute: typeof ApiRestSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   ApiDevEmailTemplateRoute: typeof ApiDevEmailTemplateRoute
+  ApiDevSlackTemplateRoute: typeof ApiDevSlackTemplateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -850,6 +863,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOpenapiAppSchemaRouteImport
       parentRoute: typeof ApiOpenapiAppRoute
     }
+    '/api/dev/slack/$template': {
+      id: '/api/dev/slack/$template'
+      path: '/api/dev/slack/$template'
+      fullPath: '/api/dev/slack/$template'
+      preLoaderRoute: typeof ApiDevSlackTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/dev/email/$template': {
       id: '/api/dev/email/$template'
       path: '/api/dev/email/$template'
@@ -1096,6 +1116,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRestSplatRoute: ApiRestSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
   ApiDevEmailTemplateRoute: ApiDevEmailTemplateRoute,
+  ApiDevSlackTemplateRoute: ApiDevSlackTemplateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

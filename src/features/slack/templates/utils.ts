@@ -65,20 +65,6 @@ export function localizeTripType(locale: LanguageKey, type: TripType): string {
   return t(locale, `tripType.${type}`);
 }
 
-export function textBlock(text: string): SlackBlock {
-  return {
-    type: 'section',
-    text: { type: 'mrkdwn', text },
-  };
-}
-
-export function contextBlock(elements: string[]): SlackBlock {
-  return {
-    type: 'context',
-    elements: elements.map((text) => ({ type: 'mrkdwn', text })),
-  };
-}
-
 export function getFallbackText(blocks: SlackBlock[]): string {
   for (const block of blocks) {
     if (

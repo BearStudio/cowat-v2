@@ -1,15 +1,25 @@
+/** @jsxImportSource jsx-slack */
+import { Blocks, Button, Mrkdwn, Section } from 'jsx-slack';
+
 import type { LanguageKey } from '@/lib/i18n/constants';
 
 import type { CommuteRequestedEvent } from '@/server/notifications/types';
 
-import { formatDate, type SlackBlock, t } from './utils';
+import { formatDate, t } from './utils';
 
-export function commuteRequested(
-  event: CommuteRequestedEvent,
-  locale: LanguageKey,
-  baseUrl: string,
-  requesterSlackId?: string
-): SlackBlock[] {
+type Props = {
+  event: CommuteRequestedEvent;
+  locale: LanguageKey;
+  baseUrl: string;
+  requesterSlackId?: string;
+};
+
+export function CommuteRequested({
+  event,
+  locale,
+  baseUrl,
+  requesterSlackId,
+}: Props) {
   const requester = requesterSlackId
     ? `<@${requesterSlackId}>`
     : event.payload.requesterName;
@@ -25,25 +35,18 @@ export function commuteRequested(
     ? 'commute.requestedWithLocation'
     : 'commute.requested';
 
-  const text = t(locale, templateKey, {
+  const text = `<!here> ${t(locale, templateKey, {
     requester,
     date: formatDate(event.payload.commuteDate, locale),
     locationName: event.payload.locationName ?? '',
-  });
+  })}`;
 
-  return [
-    {
-      type: 'section',
-      text: { type: 'mrkdwn', text },
-      accessory: {
-        type: 'button',
-        text: {
-          type: 'plain_text',
-          text: t(locale, 'commute.offerRide'),
-          emoji: true,
-        },
-        url: link,
-      },
-    },
-  ];
+  return (
+    <Blocks>
+      <Section>
+        <Mrkdwn>{text}</Mrkdwn>
+        <Button url={link}>{t(locale, 'commute.offerRide')}</Button>
+      </Section>
+    </Blocks>
+  );
 }

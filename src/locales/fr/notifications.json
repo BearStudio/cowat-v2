@@ -7,10 +7,12 @@
     "refused": "❌ *Réservation refusée*\n*{{driverName}}* a refusé votre réservation.",
     "refusedContext": "📅 {{date}} · {{tripType}}",
     "canceled": "🙅 *Réservation annulée*\n*{{passengerName}}* a annulé sa réservation.",
-    "canceledContext": "📅 {{date}} · {{tripType}}"
+    "canceledContext": "📅 {{date}} · {{tripType}}",
+    "viewRequests": "Voir les demandes →"
   },
   "commute": {
     "created": "🚗 *Nouveau trajet disponible !*\n{{driver}} — *{{commuteType}}* le *{{date}}*.",
+    "createdAnnouncement": "🚗 *Nouveau trajet disponible !*",
     "createdContext": "💺 {{seats}} places disponibles",
     "updated": "📝 *Trajet mis à jour*\n*{{driverName}}* a modifié le trajet *{{commuteType}}*.",
     "updatedContext": "📅 {{date}}",
@@ -18,7 +20,8 @@
     "canceledContext": "📅 {{date}}",
     "requested": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet le *{{date}}*.",
     "requestedWithLocation": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet vers *{{locationName}}* le *{{date}}*.",
-    "offerRide": "Proposer un trajet →"
+    "offerRide": "Proposer un trajet →",
+    "seeAllCommutes": "Voir tous les trajets →"
   },
   "commuteType": {
     "ROUND": "aller-retour",
