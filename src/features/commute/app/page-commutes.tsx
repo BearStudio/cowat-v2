@@ -56,7 +56,6 @@ export const PageCommutes = () => {
   ]);
   const isMobile = useIsMobile();
   const session = authClient.useSession();
-
   const commutesQuery = useInfiniteQuery(
     orpc.commute.getMyCommutes.infiniteOptions({
       input: (cursor: string | undefined) => ({
@@ -222,6 +221,7 @@ export const PageCommutes = () => {
                         <CardCommuteStopsList stops={item.stops} />
                         <CardCommuteActions
                           isDriver={isDriver}
+                          commuteId={item.id}
                           driverPhone={item.driver.phone}
                           cancelConfirmDescription={
                             <CommuteCancelDescription

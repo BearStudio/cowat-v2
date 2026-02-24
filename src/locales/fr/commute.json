@@ -40,6 +40,10 @@
       "success": "Demande envoyée !"
     }
   },
+  "update": {
+    "title": "Modifier le trajet",
+    "submitButton": "Enregistrer"
+  },
   "templatePicker": {
     "title": "Mes modèles",
     "emptyState": "Gagnez du temps : créez un modèle",
