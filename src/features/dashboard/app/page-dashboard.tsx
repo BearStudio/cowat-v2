@@ -22,7 +22,12 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
-import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
+import {
+  CommuteEnriched,
+  type CommuteType,
+  type StopEnriched,
+  type UserSummary,
+} from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
 import {
@@ -68,6 +73,9 @@ export const PageDashboard = () => {
         return commute.stops.map((stop) => ({
           stopId: stop.id,
           commuteType: commute.type as CommuteType,
+          commuteDate: commute.date,
+          stop: stop as StopEnriched,
+          driver: commute.driver as UserSummary,
           isFirstStop: stop.order === minOrder,
           isLastStop: stop.order === maxOrder,
         }));
@@ -220,6 +228,9 @@ export const PageDashboard = () => {
         <BookingDrawer
           stopId={bookingInfo?.stopId ?? ''}
           commuteType={bookingInfo?.commuteType ?? 'ROUND'}
+          commuteDate={bookingInfo?.commuteDate ?? new Date()}
+          stop={bookingInfo?.stop ?? null}
+          driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}
           isLastStop={bookingInfo?.isLastStop ?? false}
           open={bookingInfo !== null}

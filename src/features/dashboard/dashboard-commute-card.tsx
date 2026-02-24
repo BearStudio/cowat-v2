@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
+import { BookingCancelDescription } from '@/features/booking/booking-cancel-description';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
@@ -105,9 +106,14 @@ export const DashboardCommuteCard = ({
               if (userBooking) {
                 return (
                   <ConfirmResponsiveDrawer
-                    description={t(
-                      'dashboard:cancelBooking.confirmDescription'
-                    )}
+                    description={
+                      <BookingCancelDescription
+                        date={commute.date}
+                        type={commute.type}
+                        stop={stop}
+                        driver={commute.driver}
+                      />
+                    }
                     confirmText={t('common:actions.delete')}
                     confirmVariant="destructive"
                     onConfirm={() =>
@@ -143,6 +149,7 @@ export const DashboardCommuteCard = ({
                 type={commute.type}
                 stops={commute.stops}
                 hasPassengers={hasPassengers}
+                driver={commute.driver}
               />
             }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
