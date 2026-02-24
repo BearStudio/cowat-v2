@@ -53,6 +53,7 @@ export function CommuteCreated({
         <Mrkdwn>*⏰ Outward*</Mrkdwn>
       </Section>
       {event.payload.stops.map((stop) => (
+        // eslint-disable-next-line @eslint-react/no-missing-key
         <Section>
           <Mrkdwn>{`📍 *${stop.locationName}*   ⏰ ${stop.outwardTime}`}</Mrkdwn>
         </Section>
@@ -64,6 +65,7 @@ export function CommuteCreated({
             <Mrkdwn>*↩ Inward*</Mrkdwn>
           </Section>
           {inwardStops.map((stop) => (
+            // eslint-disable-next-line @eslint-react/no-missing-key
             <Section>
               <Mrkdwn>{`📍 *${stop.locationName}*   ↩ ${stop.inwardTime}`}</Mrkdwn>
             </Section>
