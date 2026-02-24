@@ -35,11 +35,11 @@ export function CommuteRequested({
     ? 'commute.requestedWithLocation'
     : 'commute.requested';
 
-  const text = t(locale, templateKey, {
+  const text = `<!here> ${t(locale, templateKey, {
     requester,
     date: formatDate(event.payload.commuteDate, locale),
     locationName: event.payload.locationName ?? '',
-  });
+  })}`;
 
   return (
     <Blocks>

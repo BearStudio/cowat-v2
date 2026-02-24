@@ -31,6 +31,7 @@ export type BookingRequestedEvent = {
   payload: BookingPayload & {
     passengerName: string;
     status: Extract<RequestStatus, 'REQUESTED' | 'ACCEPTED'>;
+    orgSlug: string;
   };
 };
 
@@ -71,6 +72,7 @@ export type CommuteCreatedEvent = {
     driverEmail: string;
     seats: number;
     stops: CommuteCreatedStop[];
+    orgSlug: string;
   };
 };
 

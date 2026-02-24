@@ -149,7 +149,12 @@ export function createSlackChannel(): NotificationChannel {
         );
         return;
       }
-      await post(slackUser.id, JSXSlack(getPrivateBlocks(event, { locale })));
+      await post(
+        slackUser.id,
+        JSXSlack(
+          getPrivateBlocks(event, { locale, baseUrl: envClient.VITE_BASE_URL })
+        )
+      );
     },
   };
 }

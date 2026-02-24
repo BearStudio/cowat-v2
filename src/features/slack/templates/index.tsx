@@ -58,6 +58,7 @@ export function getBroadcastBlocks(
       <CommuteCreated
         event={e}
         locale={locale}
+        baseUrl={opts?.baseUrl ?? ''}
         driverSlackId={opts?.driverSlackId}
         driverAvatarUrl={opts?.driverAvatarUrl}
       />
@@ -75,13 +76,17 @@ export function getBroadcastBlocks(
 
 export function getPrivateBlocks(
   event: PrivateEvent,
-  opts?: { locale?: LanguageKey }
+  opts?: { locale?: LanguageKey; baseUrl?: string }
 ): JSXSlack.JSX.Element {
   const locale = opts?.locale ?? DEFAULT_LANGUAGE_KEY;
 
   return match(event)
     .with({ type: 'booking.requested' }, (e) => (
-      <BookingRequested event={e} locale={locale} />
+      <BookingRequested
+        event={e}
+        locale={locale}
+        baseUrl={opts?.baseUrl ?? ''}
+      />
     ))
     .with({ type: 'booking.accepted' }, (e) => (
       <BookingAccepted event={e} locale={locale} />

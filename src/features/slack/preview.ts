@@ -38,6 +38,7 @@ const FIXTURES: Record<string, TemplateFixture> = {
         tripType: 'ROUND',
         passengerName: 'Alice Passenger',
         status: 'REQUESTED',
+        orgSlug: 'acme-corp',
       },
     },
   },
@@ -99,9 +100,11 @@ const FIXTURES: Record<string, TemplateFixture> = {
           { locationName: 'Home', outwardTime: '08:30', inwardTime: '18:00' },
           { locationName: 'Office', outwardTime: '09:00', inwardTime: '17:30' },
         ],
+        orgSlug: 'acme-corp',
       },
     },
     opts: {
+      baseUrl: 'http://localhost:3000',
       driverAvatarUrl:
         'https://api.dicebear.com/9.x/avataaars/svg?seed=John&backgroundColor=b6e3f4',
     },
@@ -265,7 +268,10 @@ export function previewSlackRoute(
         ...fixture.opts,
         locale,
       })
-    : getPrivateBlocks(fixture.event as PrivateEvent, { locale });
+    : getPrivateBlocks(fixture.event as PrivateEvent, {
+        locale,
+        baseUrl: 'http://localhost:3000',
+      });
 
   const blocks = JSXSlack(element) as SlackBlock[];
 

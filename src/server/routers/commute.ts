@@ -51,6 +51,11 @@ export default {
         stops: { create: stops },
       });
 
+      const organization = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
+
       context.notify(
         {
           type: 'commute.created',
@@ -65,6 +70,7 @@ export default {
               outwardTime: stop.outwardTime,
               inwardTime: stop.inwardTime,
             })),
+            orgSlug: organization?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }
