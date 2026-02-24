@@ -229,6 +229,7 @@ export const PageCommutes = () => {
                               type={item.type}
                               stops={item.stops}
                               hasPassengers={hasPassengers}
+                              driver={item.driver}
                             />
                           }
                           onCancel={() =>
