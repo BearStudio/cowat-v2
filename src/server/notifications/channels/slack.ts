@@ -110,6 +110,7 @@ export function createSlackChannel(): NotificationChannel {
             getBroadcastBlocks(event, {
               driverSlackId: slackUser?.id,
               driverAvatarUrl: slackUser?.profile?.image_72 ?? undefined,
+              baseUrl: envClient.VITE_BASE_URL,
               locale,
             })
           )
