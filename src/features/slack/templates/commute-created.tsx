@@ -37,14 +37,23 @@ function mapsUrl(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
-function stopLabel(stop: CommuteCreatedStop): string {
+function StopLabel({ stop }: { stop: CommuteCreatedStop }) {
   const times = stop.inwardTime
     ? `⬆ ${stop.outwardTime}   ⬇ ${stop.inwardTime}`
     : `⬆ ${stop.outwardTime}`;
-  const addressLine = stop.locationAddress
-    ? `\n<${mapsUrl(stop.locationAddress)}|${stop.locationAddress}>`
-    : '';
-  return `📍 *${stop.locationName}*   ${times}${addressLine}`;
+  return (
+    <>
+      {'📍 '}
+      <b>{stop.locationName}</b>
+      {`   ${times}`}
+      {stop.locationAddress && (
+        <>
+          <br />
+          <a href={mapsUrl(stop.locationAddress)}>{stop.locationAddress}</a>
+        </>
+      )}
+    </>
+  );
 }
 
 export function CommuteCreated({
@@ -54,12 +63,6 @@ export function CommuteCreated({
   driverAvatarUrl,
 }: Props) {
   const { payload } = event;
-  const driver = driverSlackId ? `<@${driverSlackId}>` : payload.driverName;
-
-  const headerText = [
-    `*${driver}* — *${localizeCommuteType(payload.commuteType)}*`,
-    formatDate(payload.commuteDate),
-  ].join('\n');
 
   const seatsKey =
     payload.seats === 1
@@ -69,7 +72,10 @@ export function CommuteCreated({
   return (
     <Blocks>
       <SlackHeader>
-        {`<!here> ${i18n.t('notifications:commute.createdAnnouncement')}`}
+        <>
+          <a href="@here" />{' '}
+          {i18n.t('notifications:commute.createdAnnouncement')}
+        </>
       </SlackHeader>
       <Divider />
       <SlackBody
@@ -79,12 +85,26 @@ export function CommuteCreated({
           ) : null
         }
       >
-        {headerText}
+        <>
+          <b>
+            {driverSlackId ? (
+              <a href={`@${driverSlackId}`} />
+            ) : (
+              payload.driverName
+            )}
+          </b>
+          {` — `}
+          <b>{localizeCommuteType(payload.commuteType)}</b>
+          <br />
+          {formatDate(payload.commuteDate)}
+        </>
       </SlackBody>
       {payload.stops.map((stop) => (
         // eslint-disable-next-line @eslint-react/no-missing-key
         <Section>
-          <Mrkdwn>{stopLabel(stop)}</Mrkdwn>
+          <Mrkdwn>
+            <StopLabel stop={stop} />
+          </Mrkdwn>
           <Button
             url={stopBookingUrl(
               baseUrl,

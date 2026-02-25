@@ -17,10 +17,6 @@ type Props = {
 };
 
 export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
-  const requester = requesterSlackId
-    ? `<@${requesterSlackId}>`
-    : event.payload.requesterName;
-
   const dateParam =
     event.payload.commuteDate instanceof Date
       ? event.payload.commuteDate.toISOString()
@@ -31,17 +27,12 @@ export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
   const { locationName } = event.payload;
   const formattedDate = formatDate(event.payload.commuteDate);
 
-  const headline = `<!here> ${i18n.t('notifications:commute.requested.headline')}`;
-  const body = locationName
+  const bodySuffix = locationName
     ? i18n.t('notifications:commute.requestedWithLocation.body', {
-        requester,
         date: formattedDate,
         locationName,
       })
-    : i18n.t('notifications:commute.requested.body', {
-        requester,
-        date: formattedDate,
-      });
+    : i18n.t('notifications:commute.requested.body', { date: formattedDate });
 
   const contextText = locationName
     ? i18n.t('notifications:commute.requestedContextWithLocation', {
@@ -59,9 +50,21 @@ export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
           </Button>
         }
       >
-        {headline}
+        <>
+          <a href="@here" />{' '}
+          {i18n.t('notifications:commute.requested.headline')}
+        </>
       </SlackHeader>
-      <SlackBody>{body}</SlackBody>
+      <SlackBody>
+        <>
+          {requesterSlackId ? (
+            <a href={`@${requesterSlackId}`} />
+          ) : (
+            event.payload.requesterName
+          )}{' '}
+          {bodySuffix}
+        </>
+      </SlackBody>
       <SlackFooter>{contextText}</SlackFooter>
     </Blocks>
   );
