@@ -151,7 +151,13 @@
     "vite": "7.3.1",
     "vite-tsconfig-paths": "6.0.5",
     "vitest": "4.0.18",
-    "vitest-browser-react": "2.0.4"
+    "vitest-browser-react": "2.0.4",
+    "semantic-release": "24.2.5",
+    "@semantic-release/commit-analyzer": "13.0.1",
+    "@semantic-release/release-notes-generator": "14.0.3",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/github": "11.0.2"
   },
   "license": "MIT",
   "pnpm": {
