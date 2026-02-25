@@ -1,10 +1,11 @@
 /** @jsxImportSource jsx-slack */
 import { Blocks, Button } from 'jsx-slack';
 
+import i18n from '@/lib/i18n';
+
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackFooter } from '@/features/slack/components/footer';
 import { SlackHeader } from '@/features/slack/components/header';
-import i18n from '@/lib/i18n';
 import type { BookingCanceledEvent } from '@/server/notifications/types';
 
 import { formatDate, localizeTripType } from '../utils';

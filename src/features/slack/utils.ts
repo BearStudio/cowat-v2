@@ -1,7 +1,8 @@
-import type { TripType } from '@/features/booking/schema';
-import type { CommuteType } from '@/features/commute/schema';
 import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
+
+import type { TripType } from '@/features/booking/schema';
+import type { CommuteType } from '@/features/commute/schema';
 import type { NotificationEvent } from '@/server/notifications/types';
 
 export type SlackBlock = {

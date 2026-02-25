@@ -1,9 +1,10 @@
 /** @jsxImportSource jsx-slack */
 import { Blocks, Button, Divider, Mrkdwn, Section } from 'jsx-slack';
 
+import i18n from '@/lib/i18n';
+
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackHeader } from '@/features/slack/components/header';
-import i18n from '@/lib/i18n';
 import type { CommuteUpdatedEvent } from '@/server/notifications/types';
 
 import { formatDate, localizeCommuteType } from '../utils';
