@@ -44,10 +44,10 @@
     "canceledContext": "📅 {{date}}",
     "requested": {
       "headline": "🙋 *Ride request!*",
-      "body": "{{requester}} is looking for a commute on *{{date}}*."
+      "body": "is looking for a commute on *{{date}}*."
     },
     "requestedWithLocation": {
-      "body": "{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*."
+      "body": "is looking for a commute to *{{locationName}}* on *{{date}}*."
     },
     "requestedContext": "📅 {{date}}",
     "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
