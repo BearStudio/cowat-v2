@@ -18,6 +18,9 @@ export const RoundMiddleStop = () => {
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
+        commuteDate={new Date()}
+        stop={null}
+        driver={null}
         isFirstStop={false}
         isLastStop={false}
         open={open}
@@ -36,6 +39,9 @@ export const RoundFirstStop = () => {
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
+        commuteDate={new Date()}
+        stop={null}
+        driver={null}
         isFirstStop={true}
         isLastStop={false}
         open={open}
@@ -54,6 +60,9 @@ export const RoundLastStop = () => {
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
+        commuteDate={new Date()}
+        stop={null}
+        driver={null}
         isFirstStop={false}
         isLastStop={true}
         open={open}
@@ -72,6 +81,9 @@ export const OneWayCommute = () => {
       <BookingDrawer
         stopId="stop-1"
         commuteType="ONEWAY"
+        commuteDate={new Date()}
+        stop={null}
+        driver={null}
         isFirstStop={false}
         isLastStop={false}
         open={open}

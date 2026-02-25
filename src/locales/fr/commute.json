@@ -3,6 +3,7 @@
     "title": "Trajets",
     "newAction": "Nouveau trajet",
     "cancelConfirmDescription": "Vous êtes sur le point d'annuler ce trajet.",
+    "cancelConfirmDescriptionWithPassengers": "Ce trajet a des passagers. Êtes-vous sûr de vouloir l'annuler ?",
     "cancelSuccessMessage": "Trajet annulé",
     "emptyState": "Aucun trajet pour le moment",
     "loadMore": "Charger plus",
@@ -38,6 +39,10 @@
       "submit": "Envoyer la demande",
       "success": "Demande envoyée !"
     }
+  },
+  "update": {
+    "title": "Modifier le trajet",
+    "submitButton": "Enregistrer"
   },
   "templatePicker": {
     "title": "Mes modèles",

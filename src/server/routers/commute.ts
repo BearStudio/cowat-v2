@@ -51,20 +51,29 @@ export default {
         stops: { create: stops },
       });
 
+      const organization = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
+
       context.notify(
         {
           type: 'commute.created',
           payload: {
+            commuteId: commute.id,
             driverName: context.user.name,
             driverEmail: context.user.email,
             commuteDate: input.date,
             commuteType: input.type,
             seats: input.seats,
             stops: commute.stops.map((stop) => ({
+              stopId: stop.id,
               locationName: stop.location.name,
+              locationAddress: stop.location.address,
               outwardTime: stop.outwardTime,
               inwardTime: stop.inwardTime,
             })),
+            orgSlug: organization?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -163,6 +172,10 @@ export default {
       const affectedPassengers =
         await context.bookings.findAffectedPassengers(id);
 
+      const updatedOrg = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
         context.notify(
@@ -179,6 +192,11 @@ export default {
               driverName: context.user.name,
               commuteDate: existing.date,
               commuteType: existing.type,
+              orgSlug: updatedOrg?.slug ?? '',
+              newCommuteDate: commute.date,
+              newCommuteType: commute.type,
+              previousSeats: existing.seats,
+              newSeats: commute.seats,
             },
           },
           { db: context.db, organizationId: context.organizationId }
@@ -206,6 +224,10 @@ export default {
 
       await context.commutes.delete(input.id);
 
+      const canceledOrg = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
         context.notify(
@@ -222,6 +244,7 @@ export default {
               driverName: context.user.name,
               commuteDate: existing.date,
               commuteType: existing.type,
+              orgSlug: canceledOrg?.slug ?? '',
             },
           },
           { db: context.db, organizationId: context.organizationId }

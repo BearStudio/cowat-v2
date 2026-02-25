@@ -3,6 +3,7 @@
     "title": "Commutes",
     "newAction": "New Commute",
     "cancelConfirmDescription": "You are about to cancel this commute.",
+    "cancelConfirmDescriptionWithPassengers": "This commute has passengers. Are you sure you want to cancel it?",
     "cancelSuccessMessage": "Commute cancelled",
     "emptyState": "No commutes yet",
     "loadMore": "Load more",
@@ -38,6 +39,10 @@
       "submit": "Send request",
       "success": "Request sent!"
     }
+  },
+  "update": {
+    "title": "Edit Commute",
+    "submitButton": "Save"
   },
   "templatePicker": {
     "title": "My templates",

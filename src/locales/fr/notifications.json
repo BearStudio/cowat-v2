@@ -1,24 +1,64 @@
 {
   "booking": {
-    "requested": "🙋 *Nouvelle demande de réservation !*\n*{{passengerName}}* souhaite rejoindre votre trajet.",
+    "requested": {
+      "headline": "🙋 *Nouvelle demande de réservation !*",
+      "body": "*{{passengerName}}* souhaite rejoindre votre trajet."
+    },
     "requestedContext": "📅 {{date}} · {{tripType}}",
-    "accepted": "✅ *Réservation confirmée !*\n*{{driverName}}* a accepté votre réservation.",
+    "accepted": {
+      "headline": "✅ *Réservation confirmée !*",
+      "body": "*{{driverName}}* a accepté votre réservation."
+    },
     "acceptedContext": "📅 {{date}} · {{tripType}}",
-    "refused": "❌ *Réservation refusée*\n*{{driverName}}* a refusé votre réservation.",
+    "refused": {
+      "headline": "❌ *Réservation refusée*",
+      "body": "*{{driverName}}* a refusé votre réservation."
+    },
     "refusedContext": "📅 {{date}} · {{tripType}}",
-    "canceled": "🙅 *Réservation annulée*\n*{{passengerName}}* a annulé sa réservation.",
-    "canceledContext": "📅 {{date}} · {{tripType}}"
+    "canceled": {
+      "headline": "🙅 *Réservation annulée*",
+      "body": "*{{passengerName}}* a annulé sa réservation."
+    },
+    "canceledContext": "📅 {{date}} · {{tripType}}",
+    "viewRequests": "Voir les demandes →",
+    "viewCommutes": "Voir les trajets →",
+    "findCommute": "Trouver un trajet →"
   },
   "commute": {
-    "created": "🚗 *Nouveau trajet disponible !*\n{{driver}} — *{{commuteType}}* le *{{date}}*.",
-    "createdContext": "💺 {{seats}} places disponibles",
-    "updated": "📝 *Trajet mis à jour*\n*{{driverName}}* a modifié le trajet *{{commuteType}}*.",
-    "updatedContext": "📅 {{date}}",
-    "canceled": "❌ *Trajet annulé*\n*{{driverName}}* a annulé le trajet *{{commuteType}}*.",
+    "createdAnnouncement": "🚗 *Nouveau trajet disponible !*",
+    "createdContext": "💺 {{seats}} place disponible",
+    "createdContextPlural": "💺 {{seats}} places disponibles",
+    "outward": "Aller",
+    "inward": "Retour",
+    "updated": {
+      "headline": "📝 *Trajet mis à jour*",
+      "body": "*{{driverName}}* a apporté des modifications à votre trajet."
+    },
+    "updatedDate": "📅 ~{{previousDate}}~ → *{{newDate}}*",
+    "updatedType": "🚗 ~{{previousType}}~ → *{{newType}}*",
+    "updatedSeats": "💺 ~{{previousSeats}}~ → *{{newSeats}}*",
+    "canceled": {
+      "headline": "❌ *Trajet annulé*",
+      "body": "*{{driverName}}* a annulé le trajet *{{commuteType}}*."
+    },
     "canceledContext": "📅 {{date}}",
-    "requested": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet le *{{date}}*.",
-    "requestedWithLocation": "🙋 *Recherche de trajet !*\n{{requester}} cherche un trajet vers *{{locationName}}* le *{{date}}*.",
-    "offerRide": "Proposer un trajet →"
+    "requested": {
+      "headline": "🙋 *Recherche de trajet !*",
+      "body": "{{requester}} cherche un trajet le *{{date}}*."
+    },
+    "requestedWithLocation": {
+      "body": "{{requester}} cherche un trajet vers *{{locationName}}* le *{{date}}*."
+    },
+    "requestedContext": "📅 {{date}}",
+    "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
+    "bookStop": "Réserver →",
+    "offerRide": "Proposer un trajet →",
+    "seeAllCommutes": "Voir tous les trajets →",
+    "viewCommutes": "Voir les trajets →",
+    "findCommute": "Trouver un trajet →"
+  },
+  "common": {
+    "viewDashboard": "Voir le tableau de bord →"
   },
   "commuteType": {
     "ROUND": "aller-retour",

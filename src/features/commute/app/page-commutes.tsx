@@ -34,6 +34,7 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CommuteCancelDescription } from '@/features/commute/commute-cancel-description';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import {
   OrgButtonLink,
@@ -55,7 +56,6 @@ export const PageCommutes = () => {
   ]);
   const isMobile = useIsMobile();
   const session = authClient.useSession();
-
   const commutesQuery = useInfiniteQuery(
     orpc.commute.getMyCommutes.infiniteOptions({
       input: (cursor: string | undefined) => ({
@@ -184,6 +184,7 @@ export const PageCommutes = () => {
               {items.map((item) => {
                 const { outwardCount, inwardCount, acceptedPassengers } =
                   getCommutePassengerStats(item);
+                const hasPassengers = acceptedPassengers.size > 0;
                 const currentUserId = session.data?.user.id ?? '';
                 const isDriver = currentUserId === item.driver.id;
                 const bookingStatus = getUserBookingStatus(item, currentUserId);
@@ -220,10 +221,17 @@ export const PageCommutes = () => {
                         <CardCommuteStopsList stops={item.stops} />
                         <CardCommuteActions
                           isDriver={isDriver}
+                          commuteId={item.id}
                           driverPhone={item.driver.phone}
-                          cancelConfirmDescription={t(
-                            'commute:list.cancelConfirmDescription'
-                          )}
+                          cancelConfirmDescription={
+                            <CommuteCancelDescription
+                              date={item.date}
+                              type={item.type}
+                              stops={item.stops}
+                              hasPassengers={hasPassengers}
+                              driver={item.driver}
+                            />
+                          }
                           onCancel={() =>
                             commuteCancel.mutateAsync({ id: item.id })
                           }

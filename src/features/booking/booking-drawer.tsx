@@ -26,7 +26,12 @@ import {
 } from '@/components/ui/responsive-drawer';
 
 import { type TripType, zTripType } from '@/features/booking/schema';
-import { type CommuteType } from '@/features/commute/schema';
+import { CommuteSummary } from '@/features/commute/commute-summary';
+import {
+  type CommuteType,
+  type StopEnriched,
+  type UserSummary,
+} from '@/features/commute/schema';
 
 const zBookingForm = () =>
   z.object({
@@ -99,6 +104,9 @@ const useBookingForm = ({
 export const BookingDrawer = (props: {
   stopId: string;
   commuteType: CommuteType;
+  commuteDate: Date;
+  stop: StopEnriched | null;
+  driver: UserSummary | null;
   isFirstStop: boolean;
   isLastStop: boolean;
   open: boolean;
@@ -161,6 +169,14 @@ export const BookingDrawer = (props: {
             </ResponsiveDrawerDescription>
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody className="flex flex-col gap-4">
+            {props.stop && (
+              <CommuteSummary
+                date={props.commuteDate}
+                type={props.commuteType}
+                stops={[props.stop]}
+                driver={props.driver ?? undefined}
+              />
+            )}
             {tripTypeOptions.length > 1 && (
               <FormField>
                 <FormFieldLabel required>

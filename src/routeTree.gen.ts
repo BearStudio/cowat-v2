@@ -45,6 +45,7 @@ import { Route as AppOrgSlugCommutesIndexRouteImport } from './routes/app/$orgSl
 import { Route as AppOrgSlugAccountIndexRouteImport } from './routes/app/$orgSlug/account/index'
 import { Route as ApiOpenapiAuthSchemaRouteImport } from './routes/api/openapi/auth.schema'
 import { Route as ApiOpenapiAppSchemaRouteImport } from './routes/api/openapi/app.schema'
+import { Route as ApiDevSlackTemplateRouteImport } from './routes/api/dev.slack.$template'
 import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.$template'
 import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
 import { Route as ManagerOrgSlugUsersNewIndexRouteImport } from './routes/manager/$orgSlug/users/new.index'
@@ -53,6 +54,7 @@ import { Route as AppOrgSlugCommutesNewIndexRouteImport } from './routes/app/$or
 import { Route as AppOrgSlugAccountLocationsIndexRouteImport } from './routes/app/$orgSlug/account/locations/index'
 import { Route as AppOrgSlugAccountCommuteTemplatesIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/index'
 import { Route as ManagerOrgSlugUsersIdUpdateIndexRouteImport } from './routes/manager/$orgSlug/users/$id.update.index'
+import { Route as AppOrgSlugCommutesIdUpdateIndexRouteImport } from './routes/app/$orgSlug/commutes/$id.update.index'
 import { Route as AppOrgSlugAccountCommuteTemplatesNewIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/new.index'
 import { Route as AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/$id.update.index'
 
@@ -242,6 +244,11 @@ const ApiOpenapiAppSchemaRoute = ApiOpenapiAppSchemaRouteImport.update({
   path: '/schema',
   getParentRoute: () => ApiOpenapiAppRoute,
 } as any)
+const ApiDevSlackTemplateRoute = ApiDevSlackTemplateRouteImport.update({
+  id: '/api/dev/slack/$template',
+  path: '/api/dev/slack/$template',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDevEmailTemplateRoute = ApiDevEmailTemplateRouteImport.update({
   id: '/api/dev/email/$template',
   path: '/api/dev/email/$template',
@@ -289,6 +296,12 @@ const ManagerOrgSlugUsersIdUpdateIndexRoute =
     path: '/users/$id/update/',
     getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
+const AppOrgSlugCommutesIdUpdateIndexRoute =
+  AppOrgSlugCommutesIdUpdateIndexRouteImport.update({
+    id: '/commutes/$id/update/',
+    path: '/commutes/$id/update/',
+    getParentRoute: () => AppOrgSlugRouteRoute,
+  } as any)
 const AppOrgSlugAccountCommuteTemplatesNewIndexRoute =
   AppOrgSlugAccountCommuteTemplatesNewIndexRouteImport.update({
     id: '/account/commute-templates/new/',
@@ -329,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
@@ -347,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/commutes/$id/update/': typeof AppOrgSlugCommutesIdUpdateIndexRoute
   '/manager/$orgSlug/users/$id/update/': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/$id/update/': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
 }
@@ -370,6 +385,7 @@ export interface FileRoutesByTo {
   '/manager/organizations': typeof ManagerOrganizationsIndexRoute
   '/manager/users': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account': typeof AppOrgSlugAccountIndexRoute
@@ -388,6 +404,7 @@ export interface FileRoutesByTo {
   '/manager/$orgSlug/users/new': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/new': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/commutes/$id/update': typeof AppOrgSlugCommutesIdUpdateIndexRoute
   '/manager/$orgSlug/users/$id/update': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/$id/update': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
 }
@@ -419,6 +436,7 @@ export interface FileRoutesById {
   '/manager/organizations/': typeof ManagerOrganizationsIndexRoute
   '/manager/users/': typeof ManagerUsersIndexRoute
   '/api/dev/email/$template': typeof ApiDevEmailTemplateRoute
+  '/api/dev/slack/$template': typeof ApiDevSlackTemplateRoute
   '/api/openapi/app/schema': typeof ApiOpenapiAppSchemaRoute
   '/api/openapi/auth/schema': typeof ApiOpenapiAuthSchemaRoute
   '/app/$orgSlug/account/': typeof AppOrgSlugAccountIndexRoute
@@ -437,6 +455,7 @@ export interface FileRoutesById {
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/new/': typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  '/app/$orgSlug/commutes/$id/update/': typeof AppOrgSlugCommutesIdUpdateIndexRoute
   '/manager/$orgSlug/users/$id/update/': typeof ManagerOrgSlugUsersIdUpdateIndexRoute
   '/app/$orgSlug/account/commute-templates/$id/update/': typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
 }
@@ -469,6 +488,7 @@ export interface FileRouteTypes {
     | '/manager/organizations/'
     | '/manager/users/'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account/'
@@ -487,6 +507,7 @@ export interface FileRouteTypes {
     | '/manager/$orgSlug/users/new/'
     | '/manager/users/$id/update/'
     | '/app/$orgSlug/account/commute-templates/new/'
+    | '/app/$orgSlug/commutes/$id/update/'
     | '/manager/$orgSlug/users/$id/update/'
     | '/app/$orgSlug/account/commute-templates/$id/update/'
   fileRoutesByTo: FileRoutesByTo
@@ -510,6 +531,7 @@ export interface FileRouteTypes {
     | '/manager/organizations'
     | '/manager/users'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account'
@@ -528,6 +550,7 @@ export interface FileRouteTypes {
     | '/manager/$orgSlug/users/new'
     | '/manager/users/$id/update'
     | '/app/$orgSlug/account/commute-templates/new'
+    | '/app/$orgSlug/commutes/$id/update'
     | '/manager/$orgSlug/users/$id/update'
     | '/app/$orgSlug/account/commute-templates/$id/update'
   id:
@@ -558,6 +581,7 @@ export interface FileRouteTypes {
     | '/manager/organizations/'
     | '/manager/users/'
     | '/api/dev/email/$template'
+    | '/api/dev/slack/$template'
     | '/api/openapi/app/schema'
     | '/api/openapi/auth/schema'
     | '/app/$orgSlug/account/'
@@ -576,6 +600,7 @@ export interface FileRouteTypes {
     | '/manager/$orgSlug/users/new/'
     | '/manager/users/$id/update/'
     | '/app/$orgSlug/account/commute-templates/new/'
+    | '/app/$orgSlug/commutes/$id/update/'
     | '/manager/$orgSlug/users/$id/update/'
     | '/app/$orgSlug/account/commute-templates/$id/update/'
   fileRoutesById: FileRoutesById
@@ -594,6 +619,7 @@ export interface RootRouteChildren {
   ApiRestSplatRoute: typeof ApiRestSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   ApiDevEmailTemplateRoute: typeof ApiDevEmailTemplateRoute
+  ApiDevSlackTemplateRoute: typeof ApiDevSlackTemplateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -850,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOpenapiAppSchemaRouteImport
       parentRoute: typeof ApiOpenapiAppRoute
     }
+    '/api/dev/slack/$template': {
+      id: '/api/dev/slack/$template'
+      path: '/api/dev/slack/$template'
+      fullPath: '/api/dev/slack/$template'
+      preLoaderRoute: typeof ApiDevSlackTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/dev/email/$template': {
       id: '/api/dev/email/$template'
       path: '/api/dev/email/$template'
@@ -906,6 +939,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerOrgSlugUsersIdUpdateIndexRouteImport
       parentRoute: typeof ManagerOrgSlugRouteRoute
     }
+    '/app/$orgSlug/commutes/$id/update/': {
+      id: '/app/$orgSlug/commutes/$id/update/'
+      path: '/commutes/$id/update'
+      fullPath: '/app/$orgSlug/commutes/$id/update/'
+      preLoaderRoute: typeof AppOrgSlugCommutesIdUpdateIndexRouteImport
+      parentRoute: typeof AppOrgSlugRouteRoute
+    }
     '/app/$orgSlug/account/commute-templates/new/': {
       id: '/app/$orgSlug/account/commute-templates/new/'
       path: '/account/commute-templates/new'
@@ -932,6 +972,7 @@ interface AppOrgSlugRouteRouteChildren {
   AppOrgSlugAccountLocationsIndexRoute: typeof AppOrgSlugAccountLocationsIndexRoute
   AppOrgSlugCommutesNewIndexRoute: typeof AppOrgSlugCommutesNewIndexRoute
   AppOrgSlugAccountCommuteTemplatesNewIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
+  AppOrgSlugCommutesIdUpdateIndexRoute: typeof AppOrgSlugCommutesIdUpdateIndexRoute
   AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
 }
 
@@ -946,6 +987,7 @@ const AppOrgSlugRouteRouteChildren: AppOrgSlugRouteRouteChildren = {
   AppOrgSlugCommutesNewIndexRoute: AppOrgSlugCommutesNewIndexRoute,
   AppOrgSlugAccountCommuteTemplatesNewIndexRoute:
     AppOrgSlugAccountCommuteTemplatesNewIndexRoute,
+  AppOrgSlugCommutesIdUpdateIndexRoute: AppOrgSlugCommutesIdUpdateIndexRoute,
   AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute:
     AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute,
 }
@@ -1096,6 +1138,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRestSplatRoute: ApiRestSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
   ApiDevEmailTemplateRoute: ApiDevEmailTemplateRoute,
+  ApiDevSlackTemplateRoute: ApiDevSlackTemplateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

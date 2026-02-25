@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
+import { BookingCancelDescription } from '@/features/booking/booking-cancel-description';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
@@ -15,19 +16,18 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CommuteCancelDescription } from '@/features/commute/commute-cancel-description';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
+import { CommuteEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
   currentUserId: string;
   commuteCancel: UseMutationResult<void, unknown, { id: string }>;
   bookingCancel: UseMutationResult<void, unknown, { id: string }>;
-  onBookStop: (
-    stopId: string,
-    commuteType: CommuteType,
-    options: { isFirstStop: boolean; isLastStop: boolean }
-  ) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onBookStop: (stopId: string) => void;
 };
 
 export const DashboardCommuteCard = ({
@@ -35,16 +35,14 @@ export const DashboardCommuteCard = ({
   currentUserId,
   commuteCancel,
   bookingCancel,
+  open,
+  onOpenChange,
   onBookStop,
 }: DashboardCommuteCardProps) => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
 
   const { outwardCount, inwardCount, acceptedPassengers } =
     getCommutePassengerStats(commute);
-
-  const stopOrders = commute.stops.map((s) => s.order);
-  const minOrder = Math.min(...stopOrders);
-  const maxOrder = Math.max(...stopOrders);
 
   const isDriver = currentUserId === commute.driver.id;
   const bookingStatus = getUserBookingStatus(commute, currentUserId);
@@ -63,7 +61,11 @@ export const DashboardCommuteCard = ({
     commute.type === 'ROUND' ? outwardFull && inwardFull : outwardFull;
 
   return (
-    <CardCommute bookingStatus={bookingStatus}>
+    <CardCommute
+      bookingStatus={bookingStatus}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={commute.driver}
@@ -104,9 +106,14 @@ export const DashboardCommuteCard = ({
               if (userBooking) {
                 return (
                   <ConfirmResponsiveDrawer
-                    description={t(
-                      'dashboard:cancelBooking.confirmDescription'
-                    )}
+                    description={
+                      <BookingCancelDescription
+                        date={commute.date}
+                        type={commute.type}
+                        stop={stop}
+                        driver={commute.driver}
+                      />
+                    }
                     confirmText={t('common:actions.delete')}
                     confirmVariant="destructive"
                     onConfirm={() =>
@@ -125,12 +132,7 @@ export const DashboardCommuteCard = ({
                 <Button
                   variant="secondary"
                   className="w-2/3"
-                  onClick={() =>
-                    onBookStop(stop.id, commute.type, {
-                      isFirstStop: stop.order === minOrder,
-                      isLastStop: stop.order === maxOrder,
-                    })
-                  }
+                  onClick={() => onBookStop(stop.id)}
                 >
                   {t('dashboard:booking.submitButton')}
                 </Button>
@@ -139,12 +141,17 @@ export const DashboardCommuteCard = ({
           />
           <CardCommuteActions
             isDriver={isDriver}
+            commuteId={commute.id}
             driverPhone={commute.driver.phone}
-            cancelConfirmDescription={t(
-              hasPassengers
-                ? 'dashboard:cancelCommute.confirmDescriptionWithPassengers'
-                : 'dashboard:cancelCommute.confirmDescription'
-            )}
+            cancelConfirmDescription={
+              <CommuteCancelDescription
+                date={commute.date}
+                type={commute.type}
+                stops={commute.stops}
+                hasPassengers={hasPassengers}
+                driver={commute.driver}
+              />
+            }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
           />
         </div>

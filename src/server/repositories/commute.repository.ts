@@ -64,7 +64,7 @@ export const createCommuteRepository = (db: AppDB) => ({
       include: {
         stops: {
           orderBy: { order: 'asc' as const },
-          include: { location: { select: { name: true } } },
+          include: { location: { select: { name: true, address: true } } },
         },
       },
     }),

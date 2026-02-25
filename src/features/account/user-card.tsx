@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { AccountCardRow } from '@/features/account/account-card-row';
+import { EditImageDrawer } from '@/features/account/edit-image-drawer';
 import { EditNameDrawer } from '@/features/account/edit-name-drawer';
 import { EditPhoneDrawer } from '@/features/account/edit-phone-drawer';
 import { authClient } from '@/features/auth/client';
@@ -89,6 +90,21 @@ export const UserCard = () => {
             </span>
           </Button>
         </EditPhoneDrawer>
+      </AccountCardRow>
+      <AccountCardRow label={t('account:userCard.image.label')}>
+        <EditImageDrawer>
+          <Button variant="link" size="sm" className="-my-1.5">
+            <span className="truncate">
+              {session.data?.user.image || (
+                <span className="text-xs text-muted-foreground">--</span>
+              )}
+            </span>
+            <PenLineIcon className="size-3" />
+            <span className="sr-only">
+              {t('account:userCard.image.updateAction')}
+            </span>
+          </Button>
+        </EditImageDrawer>
       </AccountCardRow>
     </Card>
   );

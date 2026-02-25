@@ -175,6 +175,7 @@ export const createBookingRepository = (db: AppDB) => ({
               order: true,
               outwardTime: true,
               inwardTime: true,
+              location: { select: { id: true, name: true } },
               commute: { select: { id: true, date: true, type: true } },
             },
           },

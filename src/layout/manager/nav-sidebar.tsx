@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BuildingIcon,
+  MessageSquareIcon,
   PanelLeftIcon,
   SettingsIcon,
   UsersIcon,
@@ -165,6 +166,25 @@ export const NavSidebar = (props: {
               </SidebarGroupContent>
             </SidebarGroup>
           </WithPermissions>
+          {import.meta.env.DEV && (
+            <SidebarGroup>
+              <SidebarGroupLabel>Devtools</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      render={
+                        <a href="/api/dev/slack/booking-requested">
+                          <MessageSquareIcon />
+                          <span>Slack templates</span>
+                        </a>
+                      }
+                    />
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
         </SidebarContent>
         <SidebarFooter>
           <NavUser orgSlug={orgSlug} />

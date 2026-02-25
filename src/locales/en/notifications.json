@@ -1,24 +1,64 @@
 {
   "booking": {
-    "requested": "🙋 *New booking request!*\n*{{passengerName}}* wants to join your commute.",
+    "requested": {
+      "headline": "🙋 *New booking request!*",
+      "body": "*{{passengerName}}* wants to join your commute."
+    },
     "requestedContext": "📅 {{date}} · {{tripType}}",
-    "accepted": "✅ *Booking confirmed!*\n*{{driverName}}* accepted your booking.",
+    "accepted": {
+      "headline": "✅ *Booking confirmed!*",
+      "body": "*{{driverName}}* accepted your booking."
+    },
     "acceptedContext": "📅 {{date}} · {{tripType}}",
-    "refused": "❌ *Booking declined*\n*{{driverName}}* declined your booking.",
+    "refused": {
+      "headline": "❌ *Booking declined*",
+      "body": "*{{driverName}}* declined your booking."
+    },
     "refusedContext": "📅 {{date}} · {{tripType}}",
-    "canceled": "🙅 *Booking canceled*\n*{{passengerName}}* canceled their booking.",
-    "canceledContext": "📅 {{date}} · {{tripType}}"
+    "canceled": {
+      "headline": "🙅 *Booking canceled*",
+      "body": "*{{passengerName}}* canceled their booking."
+    },
+    "canceledContext": "📅 {{date}} · {{tripType}}",
+    "viewRequests": "View requests →",
+    "viewCommutes": "View commutes →",
+    "findCommute": "Find a commute →"
   },
   "commute": {
-    "created": "🚗 *New commute posted!*\n{{driver}} — *{{commuteType}}* on *{{date}}*.",
-    "createdContext": "💺 {{seats}} seats available",
-    "updated": "📝 *Commute updated*\n*{{driverName}}* updated the *{{commuteType}}* commute.",
-    "updatedContext": "📅 {{date}}",
-    "canceled": "❌ *Commute canceled*\n*{{driverName}}* canceled the *{{commuteType}}* commute.",
+    "createdAnnouncement": "🚗 *New commute posted!*",
+    "createdContext": "💺 {{seats}} seat available",
+    "createdContextPlural": "💺 {{seats}} seats available",
+    "outward": "Outward",
+    "inward": "Return",
+    "updated": {
+      "headline": "📝 *Commute updated*",
+      "body": "*{{driverName}}* made changes to your commute."
+    },
+    "updatedDate": "📅 ~{{previousDate}}~ → *{{newDate}}*",
+    "updatedType": "🚗 ~{{previousType}}~ → *{{newType}}*",
+    "updatedSeats": "💺 ~{{previousSeats}}~ → *{{newSeats}}*",
+    "canceled": {
+      "headline": "❌ *Commute canceled*",
+      "body": "*{{driverName}}* canceled the *{{commuteType}}* commute."
+    },
     "canceledContext": "📅 {{date}}",
-    "requested": "🙋 *Ride request!*\n{{requester}} is looking for a commute on *{{date}}*.",
-    "requestedWithLocation": "🙋 *Ride request!*\n{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*.",
-    "offerRide": "Offer a ride →"
+    "requested": {
+      "headline": "🙋 *Ride request!*",
+      "body": "{{requester}} is looking for a commute on *{{date}}*."
+    },
+    "requestedWithLocation": {
+      "body": "{{requester}} is looking for a commute to *{{locationName}}* on *{{date}}*."
+    },
+    "requestedContext": "📅 {{date}}",
+    "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
+    "bookStop": "Book →",
+    "offerRide": "Offer a ride →",
+    "seeAllCommutes": "See all commutes →",
+    "viewCommutes": "View commutes →",
+    "findCommute": "Find a commute →"
+  },
+  "common": {
+    "viewDashboard": "Go to dashboard →"
   },
   "commuteType": {
     "ROUND": "round-trip",

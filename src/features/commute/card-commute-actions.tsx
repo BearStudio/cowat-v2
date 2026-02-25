@@ -1,19 +1,24 @@
 import { PencilIcon, PhoneIcon, Trash2 } from 'lucide-react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
+import { OrgButtonLink } from '@/features/organization/org-button-link';
+
 type CardCommuteActionsProps = {
   isDriver: boolean;
+  commuteId: string;
   driverPhone?: string | null;
-  cancelConfirmDescription: string;
+  cancelConfirmDescription: ReactNode;
   onCancel: () => void | Promise<void>;
 };
 
 export function CardCommuteActions({
   isDriver,
+  commuteId,
   driverPhone,
   cancelConfirmDescription,
   onCancel,
@@ -24,10 +29,15 @@ export function CardCommuteActions({
     <div className="ms-auto flex items-center gap-2">
       {isDriver && (
         <>
-          <Button size="sm" variant="secondary">
+          <OrgButtonLink
+            size="sm"
+            variant="secondary"
+            to="/app/$orgSlug/commutes/$id/update"
+            params={{ id: commuteId }}
+          >
             <PencilIcon />
             {t('commute:list.editAction')}
-          </Button>
+          </OrgButtonLink>
           <ConfirmResponsiveDrawer
             description={cancelConfirmDescription}
             confirmText={t('common:actions.delete')}

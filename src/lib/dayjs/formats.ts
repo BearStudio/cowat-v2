@@ -26,6 +26,7 @@ const dateFormats = {
   },
   booking: {
     requestDate: SHORT_DATE,
+    requestDateFull: 'dddd D MMM[.] YYYY',
   },
   user: {
     onboardedAt: SHORT_DATE_WITH_TIME,

@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { json } from '@tanstack/react-start';
 
 import { envClient } from '@/env/client';
 import { auth } from '@/server/auth';
@@ -16,7 +15,7 @@ export const Route = createFileRoute('/api/openapi/auth/schema')({
             url: `${envClient.VITE_BASE_URL}/api/auth`,
           },
         ];
-        return json(spec);
+        return Response.json(spec);
       },
     },
   },

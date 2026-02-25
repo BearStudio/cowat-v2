@@ -2,7 +2,6 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -23,8 +22,14 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
-import { CommuteEnriched, type CommuteType } from '@/features/commute/schema';
+import {
+  CommuteEnriched,
+  type CommuteType,
+  type StopEnriched,
+  type UserSummary,
+} from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
+import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
 import {
   OrgButtonLink,
   OrgFloatingActionButtonLink,
@@ -41,12 +46,11 @@ export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
-  const [bookingInfo, setBookingInfo] = useState<{
-    stopId: string;
-    commuteType: CommuteType;
-    isFirstStop: boolean;
-    isLastStop: boolean;
-  } | null>(null);
+
+  const [
+    { bookingStop: bookingStopId, openCommutes: openCommuteIds },
+    setSearchParams,
+  ] = useDashboardSearchParams();
 
   const today = dayjs().startOf('day');
   const rangeEnd = today.add(7, 'day');
@@ -59,6 +63,24 @@ export const PageDashboard = () => {
       },
     })
   );
+
+  const bookingInfo =
+    commutesQuery.data
+      ?.flatMap((commute) => {
+        const orders = commute.stops.map((s) => s.order);
+        const minOrder = Math.min(...orders);
+        const maxOrder = Math.max(...orders);
+        return commute.stops.map((stop) => ({
+          stopId: stop.id,
+          commuteType: commute.type as CommuteType,
+          commuteDate: commute.date,
+          stop: stop as StopEnriched,
+          driver: commute.driver as UserSummary,
+          isFirstStop: stop.order === minOrder,
+          isLastStop: stop.order === maxOrder,
+        }));
+      })
+      .find((s) => s.stopId === bookingStopId) ?? null;
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({
@@ -179,12 +201,18 @@ export const PageDashboard = () => {
                             currentUserId={currentUserId}
                             commuteCancel={commuteCancel}
                             bookingCancel={bookingCancel}
-                            onBookStop={(stopId, commuteType, options) =>
-                              setBookingInfo({
-                                stopId,
-                                commuteType,
-                                ...options,
+                            open={openCommuteIds.includes(item.id)}
+                            onOpenChange={(open) =>
+                              setSearchParams({
+                                openCommutes: open
+                                  ? [...openCommuteIds, item.id]
+                                  : openCommuteIds.filter(
+                                      (id) => id !== item.id
+                                    ),
                               })
+                            }
+                            onBookStop={(stopId) =>
+                              setSearchParams({ bookingStop: stopId })
                             }
                           />
                         ))}
@@ -200,11 +228,14 @@ export const PageDashboard = () => {
         <BookingDrawer
           stopId={bookingInfo?.stopId ?? ''}
           commuteType={bookingInfo?.commuteType ?? 'ROUND'}
+          commuteDate={bookingInfo?.commuteDate ?? new Date()}
+          stop={bookingInfo?.stop ?? null}
+          driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}
           isLastStop={bookingInfo?.isLastStop ?? false}
           open={bookingInfo !== null}
           onOpenChange={(open) => {
-            if (!open) setBookingInfo(null);
+            if (!open) setSearchParams({ bookingStop: null });
           }}
         />
       </PageLayoutContent>
