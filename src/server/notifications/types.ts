@@ -40,6 +40,7 @@ export type BookingAcceptedEvent = {
   recipient: Recipient;
   payload: BookingPayload & {
     driverName: string;
+    orgSlug: string;
   };
 };
 
@@ -48,6 +49,7 @@ export type BookingRefusedEvent = {
   recipient: Recipient;
   payload: BookingPayload & {
     driverName: string;
+    orgSlug: string;
   };
 };
 
@@ -56,11 +58,14 @@ export type BookingCanceledEvent = {
   recipient: Recipient;
   payload: BookingPayload & {
     passengerName: string;
+    orgSlug: string;
   };
 };
 
 export type CommuteCreatedStop = {
+  stopId: string;
   locationName: string;
+  locationAddress?: string | null;
   outwardTime: string;
   inwardTime?: string | null;
 };
@@ -68,6 +73,7 @@ export type CommuteCreatedStop = {
 export type CommuteCreatedEvent = {
   type: 'commute.created';
   payload: CommutePayload & {
+    commuteId: string;
     driverName: string;
     driverEmail: string;
     seats: number;
@@ -81,6 +87,12 @@ export type CommuteUpdatedEvent = {
   recipient: Recipient;
   payload: CommutePayload & {
     driverName: string;
+    orgSlug: string;
+    // New values after the update (CommutePayload fields hold the previous values)
+    newCommuteDate: Commute['date'];
+    newCommuteType: CommuteType;
+    previousSeats: number;
+    newSeats: number;
   };
 };
 
@@ -89,6 +101,7 @@ export type CommuteCanceledEvent = {
   recipient: Recipient;
   payload: CommutePayload & {
     driverName: string;
+    orgSlug: string;
   };
 };
 

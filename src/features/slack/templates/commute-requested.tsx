@@ -1,25 +1,21 @@
 /** @jsxImportSource jsx-slack */
-import { Blocks, Button, Mrkdwn, Section } from 'jsx-slack';
+import { Blocks, Button } from 'jsx-slack';
 
-import type { LanguageKey } from '@/lib/i18n/constants';
-
+import { SlackBody } from '@/features/slack/components/body';
+import { SlackFooter } from '@/features/slack/components/footer';
+import { SlackHeader } from '@/features/slack/components/header';
+import i18n from '@/lib/i18n';
 import type { CommuteRequestedEvent } from '@/server/notifications/types';
 
-import { formatDate, t } from './utils';
+import { formatDate } from '../utils';
 
 type Props = {
   event: CommuteRequestedEvent;
-  locale: LanguageKey;
   baseUrl: string;
   requesterSlackId?: string;
 };
 
-export function CommuteRequested({
-  event,
-  locale,
-  baseUrl,
-  requesterSlackId,
-}: Props) {
+export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
   const requester = requesterSlackId
     ? `<@${requesterSlackId}>`
     : event.payload.requesterName;
@@ -31,22 +27,41 @@ export function CommuteRequested({
 
   const link = `${baseUrl}/app/${event.payload.orgSlug}/commutes/new?date=${encodeURIComponent(dateParam)}`;
 
-  const templateKey = event.payload.locationName
-    ? 'commute.requestedWithLocation'
-    : 'commute.requested';
+  const { locationName } = event.payload;
+  const formattedDate = formatDate(event.payload.commuteDate);
 
-  const text = `<!here> ${t(locale, templateKey, {
-    requester,
-    date: formatDate(event.payload.commuteDate, locale),
-    locationName: event.payload.locationName ?? '',
-  })}`;
+  const headline = `<!here> ${i18n.t('notifications:commute.requested.headline')}`;
+  const body = locationName
+    ? i18n.t('notifications:commute.requestedWithLocation.body', {
+        requester,
+        date: formattedDate,
+        locationName,
+      })
+    : i18n.t('notifications:commute.requested.body', {
+        requester,
+        date: formattedDate,
+      });
+
+  const contextText = locationName
+    ? i18n.t('notifications:commute.requestedContextWithLocation', {
+        date: formattedDate,
+        locationName,
+      })
+    : i18n.t('notifications:commute.requestedContext', { date: formattedDate });
 
   return (
     <Blocks>
-      <Section>
-        <Mrkdwn>{text}</Mrkdwn>
-        <Button url={link}>{t(locale, 'commute.offerRide')}</Button>
-      </Section>
+      <SlackHeader
+        aside={
+          <Button url={link}>
+            {i18n.t('notifications:commute.offerRide')}
+          </Button>
+        }
+      >
+        {headline}
+      </SlackHeader>
+      <SlackBody>{body}</SlackBody>
+      <SlackFooter>{contextText}</SlackFooter>
     </Blocks>
   );
 }

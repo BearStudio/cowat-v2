@@ -1,27 +1,44 @@
 /** @jsxImportSource jsx-slack */
-import { Blocks } from 'jsx-slack';
+import { Blocks, Button } from 'jsx-slack';
 
-import type { LanguageKey } from '@/lib/i18n/constants';
-
+import { SlackBody } from '@/features/slack/components/body';
+import { SlackFooter } from '@/features/slack/components/footer';
+import { SlackHeader } from '@/features/slack/components/header';
+import i18n from '@/lib/i18n';
 import type { BookingCanceledEvent } from '@/server/notifications/types';
 
-import { SimpleNotification } from './components';
-import { formatDate, localizeTripType, t } from './utils';
+import { formatDate, localizeTripType } from '../utils';
 
-type Props = { event: BookingCanceledEvent; locale: LanguageKey };
+type Props = {
+  event: BookingCanceledEvent;
+  baseUrl: string;
+};
 
-export function BookingCanceled({ event, locale }: Props) {
+export function BookingCanceled({ event, baseUrl }: Props) {
+  const requestsUrl = `${baseUrl}/app/${event.payload.orgSlug}/requests`;
+
   return (
     <Blocks>
-      <SimpleNotification
-        text={t(locale, 'booking.canceled', {
+      <SlackHeader
+        aside={
+          <Button url={requestsUrl}>
+            {i18n.t('notifications:booking.viewRequests')}
+          </Button>
+        }
+      >
+        {i18n.t('notifications:booking.canceled.headline')}
+      </SlackHeader>
+      <SlackBody>
+        {i18n.t('notifications:booking.canceled.body', {
           passengerName: event.payload.passengerName,
         })}
-        context={t(locale, 'booking.canceledContext', {
-          date: formatDate(event.payload.commuteDate, locale),
-          tripType: localizeTripType(locale, event.payload.tripType),
+      </SlackBody>
+      <SlackFooter>
+        {i18n.t('notifications:booking.canceledContext', {
+          date: formatDate(event.payload.commuteDate),
+          tripType: localizeTripType(event.payload.tripType),
         })}
-      />
+      </SlackFooter>
     </Blocks>
   );
 }
