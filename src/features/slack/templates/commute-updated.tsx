@@ -67,6 +67,12 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
                     {diffLines[1]}
                   </>
                 )}
+                {diffLines[2] !== undefined && (
+                  <>
+                    <br />
+                    {diffLines[2]}
+                  </>
+                )}
               </>
             </Mrkdwn>
           </Section>
