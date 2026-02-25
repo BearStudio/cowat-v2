@@ -1,13 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
 import { CommuteSummary } from '@/features/commute/commute-summary';
-import { type CommuteType, type StopEnriched } from '@/features/commute/schema';
+import {
+  type CommuteType,
+  type StopEnriched,
+  type UserSummary,
+} from '@/features/commute/schema';
 
 type CommuteCancelDescriptionProps = {
   date: Date;
   type: CommuteType;
   stops: StopEnriched[];
   hasPassengers: boolean;
+  driver: UserSummary;
 };
 
 export const CommuteCancelDescription = ({
@@ -15,6 +20,7 @@ export const CommuteCancelDescription = ({
   type,
   stops,
   hasPassengers,
+  driver,
 }: CommuteCancelDescriptionProps) => {
   const { t } = useTranslation(['commute']);
 
@@ -27,7 +33,7 @@ export const CommuteCancelDescription = ({
             : 'commute:list.cancelConfirmDescription'
         )}
       </span>
-      <CommuteSummary date={date} type={type} stops={stops} />
+      <CommuteSummary date={date} type={type} stops={stops} driver={driver} />
     </div>
   );
 };
