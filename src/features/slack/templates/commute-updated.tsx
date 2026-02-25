@@ -62,7 +62,23 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
         <>
           <Divider />
           <Section>
-            <Mrkdwn>{diffLines.join('\n')}</Mrkdwn>
+            <Mrkdwn>
+              <>
+                {diffLines[0]}
+                {diffLines[1] !== undefined && (
+                  <>
+                    <br />
+                    {diffLines[1]}
+                  </>
+                )}
+                {diffLines[2] !== undefined && (
+                  <>
+                    <br />
+                    {diffLines[2]}
+                  </>
+                )}
+              </>
+            </Mrkdwn>
           </Section>
         </>
       ) : null}

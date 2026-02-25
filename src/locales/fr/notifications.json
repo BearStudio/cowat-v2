@@ -44,10 +44,10 @@
     "canceledContext": "📅 {{date}}",
     "requested": {
       "headline": "🙋 *Recherche de trajet !*",
-      "body": "{{requester}} cherche un trajet le *{{date}}*."
+      "body": "cherche un trajet le *{{date}}*."
     },
     "requestedWithLocation": {
-      "body": "{{requester}} cherche un trajet vers *{{locationName}}* le *{{date}}*."
+      "body": "cherche un trajet vers *{{locationName}}* le *{{date}}*."
     },
     "requestedContext": "📅 {{date}}",
     "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
