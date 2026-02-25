@@ -2,6 +2,7 @@
 import type JSXSlack from 'jsx-slack';
 import { match } from 'ts-pattern';
 
+import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
@@ -24,10 +25,10 @@ import { CommuteCanceled } from './commute-canceled';
 import { CommuteCreated } from './commute-created';
 import { CommuteRequested } from './commute-requested';
 import { CommuteUpdated } from './commute-updated';
-import type { SlackBlock } from './utils';
+import type { SlackBlock } from '../utils';
 
 export type { SlackBlock };
-export { getFallbackText } from './utils';
+export { getFallbackText } from '../utils';
 
 export type BroadcastEvent = CommuteCreatedEvent | CommuteRequestedEvent;
 
@@ -51,13 +52,12 @@ export function getBroadcastBlocks(
   event: BroadcastEvent,
   opts?: BroadcastOpts
 ): JSXSlack.JSX.Element {
-  const locale = opts?.locale ?? DEFAULT_LANGUAGE_KEY;
+  i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
   return match(event)
     .with({ type: 'commute.created' }, (e) => (
       <CommuteCreated
         event={e}
-        locale={locale}
         baseUrl={opts?.baseUrl ?? ''}
         driverSlackId={opts?.driverSlackId}
         driverAvatarUrl={opts?.driverAvatarUrl}
@@ -66,7 +66,6 @@ export function getBroadcastBlocks(
     .with({ type: 'commute.requested' }, (e) => (
       <CommuteRequested
         event={e}
-        locale={locale}
         baseUrl={opts?.baseUrl ?? ''}
         requesterSlackId={opts?.requesterSlackId}
       />
@@ -78,30 +77,26 @@ export function getPrivateBlocks(
   event: PrivateEvent,
   opts?: { locale?: LanguageKey; baseUrl?: string }
 ): JSXSlack.JSX.Element {
-  const locale = opts?.locale ?? DEFAULT_LANGUAGE_KEY;
+  i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
   return match(event)
     .with({ type: 'booking.requested' }, (e) => (
-      <BookingRequested
-        event={e}
-        locale={locale}
-        baseUrl={opts?.baseUrl ?? ''}
-      />
+      <BookingRequested event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'booking.accepted' }, (e) => (
-      <BookingAccepted event={e} locale={locale} />
+      <BookingAccepted event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'booking.refused' }, (e) => (
-      <BookingRefused event={e} locale={locale} />
+      <BookingRefused event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'booking.canceled' }, (e) => (
-      <BookingCanceled event={e} locale={locale} />
+      <BookingCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'commute.updated' }, (e) => (
-      <CommuteUpdated event={e} locale={locale} />
+      <CommuteUpdated event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'commute.canceled' }, (e) => (
-      <CommuteCanceled event={e} locale={locale} />
+      <CommuteCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .exhaustive();
 }

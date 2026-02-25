@@ -1,27 +1,45 @@
 /** @jsxImportSource jsx-slack */
-import { Blocks } from 'jsx-slack';
+import { Blocks, Button } from 'jsx-slack';
 
-import type { LanguageKey } from '@/lib/i18n/constants';
+import i18n from '@/lib/i18n';
 
+import { SlackBody } from '@/features/slack/components/body';
+import { SlackFooter } from '@/features/slack/components/footer';
+import { SlackHeader } from '@/features/slack/components/header';
 import type { BookingAcceptedEvent } from '@/server/notifications/types';
 
-import { SimpleNotification } from './components';
-import { formatDate, localizeTripType, t } from './utils';
+import { formatDate, localizeTripType } from '../utils';
 
-type Props = { event: BookingAcceptedEvent; locale: LanguageKey };
+type Props = {
+  event: BookingAcceptedEvent;
+  baseUrl: string;
+};
 
-export function BookingAccepted({ event, locale }: Props) {
+export function BookingAccepted({ event, baseUrl }: Props) {
+  const commutesUrl = `${baseUrl}/app/${event.payload.orgSlug}/commutes`;
+
   return (
     <Blocks>
-      <SimpleNotification
-        text={t(locale, 'booking.accepted', {
+      <SlackHeader
+        aside={
+          <Button url={commutesUrl}>
+            {i18n.t('notifications:booking.viewCommutes')}
+          </Button>
+        }
+      >
+        {i18n.t('notifications:booking.accepted.headline')}
+      </SlackHeader>
+      <SlackBody>
+        {i18n.t('notifications:booking.accepted.body', {
           driverName: event.payload.driverName,
         })}
-        context={t(locale, 'booking.acceptedContext', {
-          date: formatDate(event.payload.commuteDate, locale),
-          tripType: localizeTripType(locale, event.payload.tripType),
+      </SlackBody>
+      <SlackFooter>
+        {i18n.t('notifications:booking.acceptedContext', {
+          date: formatDate(event.payload.commuteDate),
+          tripType: localizeTripType(event.payload.tripType),
         })}
-      />
+      </SlackFooter>
     </Blocks>
   );
 }

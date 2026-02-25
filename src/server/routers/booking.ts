@@ -157,6 +157,10 @@ export default {
       await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
       const passengerUser = booking.passenger.user;
+      const acceptOrg = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
       context.notify(
         {
           type: 'booking.accepted',
@@ -170,6 +174,7 @@ export default {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
+            orgSlug: acceptOrg?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -196,6 +201,10 @@ export default {
       await context.bookings.updateStatus(input.id, 'REFUSED');
 
       const passengerUser = booking.passenger.user;
+      const refuseOrg = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
       context.notify(
         {
           type: 'booking.refused',
@@ -209,6 +218,7 @@ export default {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
+            orgSlug: refuseOrg?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -236,6 +246,10 @@ export default {
 
       const driverMember = booking.stop.commute.driver;
       const driverUser = driverMember.user;
+      const cancelOrg = await context.db.organization.findUnique({
+        where: { id: context.organizationId },
+        select: { slug: true },
+      });
       context.notify(
         {
           type: 'booking.canceled',
@@ -249,6 +263,7 @@ export default {
             passengerName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
+            orgSlug: cancelOrg?.slug ?? '',
           },
         },
         { db: context.db, organizationId: context.organizationId }

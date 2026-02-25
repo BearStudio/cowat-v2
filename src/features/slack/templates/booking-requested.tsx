@@ -1,36 +1,45 @@
 /** @jsxImportSource jsx-slack */
 import { Blocks, Button } from 'jsx-slack';
 
-import type { LanguageKey } from '@/lib/i18n/constants';
+import i18n from '@/lib/i18n';
 
+import { SlackBody } from '@/features/slack/components/body';
+import { SlackFooter } from '@/features/slack/components/footer';
+import { SlackHeader } from '@/features/slack/components/header';
 import type { BookingRequestedEvent } from '@/server/notifications/types';
 
-import { SimpleNotification } from './components';
-import { formatDate, localizeTripType, t } from './utils';
+import { formatDate, localizeTripType } from '../utils';
 
 type Props = {
   event: BookingRequestedEvent;
-  locale: LanguageKey;
   baseUrl: string;
 };
 
-export function BookingRequested({ event, locale, baseUrl }: Props) {
+export function BookingRequested({ event, baseUrl }: Props) {
   const requestsUrl = `${baseUrl}/app/${event.payload.orgSlug}/requests`;
 
   return (
     <Blocks>
-      <SimpleNotification
-        text={t(locale, 'booking.requested', {
+      <SlackHeader
+        aside={
+          <Button url={requestsUrl}>
+            {i18n.t('notifications:booking.viewRequests')}
+          </Button>
+        }
+      >
+        {i18n.t('notifications:booking.requested.headline')}
+      </SlackHeader>
+      <SlackBody>
+        {i18n.t('notifications:booking.requested.body', {
           passengerName: event.payload.passengerName,
         })}
-        context={t(locale, 'booking.requestedContext', {
-          date: formatDate(event.payload.commuteDate, locale),
-          tripType: localizeTripType(locale, event.payload.tripType),
+      </SlackBody>
+      <SlackFooter>
+        {i18n.t('notifications:booking.requestedContext', {
+          date: formatDate(event.payload.commuteDate),
+          tripType: localizeTripType(event.payload.tripType),
         })}
-        action={
-          <Button url={requestsUrl}>{t(locale, 'booking.viewRequests')}</Button>
-        }
-      />
+      </SlackFooter>
     </Blocks>
   );
 }
