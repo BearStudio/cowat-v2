@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/BearStudio/cowat-v2/compare/v1.0.1...v1.0.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* replace raw Slack mrkdwn syntax with jsx-slack components ([#116](https://github.com/BearStudio/cowat-v2/issues/116)) ([50794ed](https://github.com/BearStudio/cowat-v2/commit/50794ed1b503012d081e3453cb5288537d60b805))
+
 ## [1.0.1](https://github.com/BearStudio/cowat-v2/compare/v1.0.0...v1.0.1) (2026-02-25)
 
 
