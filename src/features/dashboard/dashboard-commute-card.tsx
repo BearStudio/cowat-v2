@@ -135,6 +135,7 @@ export const DashboardCommuteCard = ({
           />
           <CardCommuteActions
             isDriver={isDriver}
+            commuteId={commute.id}
             driverPhone={commute.driver.phone}
             cancelConfirmDescription={
               <CommuteCancelDescription

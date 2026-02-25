@@ -4,7 +4,10 @@ import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
-import { createCommuteRules } from '@/features/commute/form-commute-rules';
+import {
+  createCommuteRules,
+  createStopOrderRules,
+} from '@/features/commute/form-commute-rules';
 import { zLocation } from '@/features/location/schema';
 import { zUser } from '@/features/user/schema';
 
@@ -94,21 +97,23 @@ export function asCommuteBase<
   };
 }
 
+const zFormFieldsCommuteShared = () =>
+  z.object({
+    seats: z
+      .number({ error: t('common:errors.required') })
+      .int()
+      .min(1, t('commute:form.errors.seatsMin')),
+    type: zCommuteType(),
+    comment: zu.fieldText.nullish(),
+    stops: z
+      .array(zFormFieldsStopInput())
+      .min(2, t('commute:form.errors.stopsMin')),
+  });
+
 export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
-  z
-    .object({
-      date: z.date({ error: t('common:errors.required') }),
-      seats: z
-        .number({ error: t('common:errors.required') })
-        .int()
-        .min(1, t('commute:form.errors.seatsMin')),
-      type: zCommuteType(),
-      comment: zu.fieldText.nullish(),
-      stops: z
-        .array(zFormFieldsStopInput())
-        .min(2, t('commute:form.errors.stopsMin')),
-    })
+  zFormFieldsCommuteShared()
+    .extend({ date: z.date({ error: t('common:errors.required') }) })
     .superRefine((data, ctx) => {
       const rules = createCommuteRules(data);
 
@@ -154,6 +159,40 @@ export const zFormFieldsCommute = () =>
         }
       });
     });
+
+export type FormFieldsCommuteUpdate = z.infer<
+  ReturnType<typeof zFormFieldsCommuteUpdate>
+>;
+export const zFormFieldsCommuteUpdate = () =>
+  zFormFieldsCommuteShared().superRefine((data, ctx) => {
+    const rules = createStopOrderRules(data);
+
+    data.stops.forEach((stop, index) => {
+      if (!rules.shouldInwardBeAfterOutward(stop)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.inwardBeforeOutward'),
+          path: ['stops', index, 'inwardTime'],
+        });
+      }
+
+      if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.outwardNotIncreasing'),
+          path: ['stops', index, 'outwardTime'],
+        });
+      }
+
+      if (!rules.shouldInwardBeDecreasing(stop, index)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.inwardNotDecreasing'),
+          path: ['stops', index, 'inwardTime'],
+        });
+      }
+    });
+  });
 
 export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
 export const zUserSummary = () =>

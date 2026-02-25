@@ -40,6 +40,10 @@
       "success": "Request sent!"
     }
   },
+  "update": {
+    "title": "Edit Commute",
+    "submitButton": "Save"
+  },
   "templatePicker": {
     "title": "My templates",
     "emptyState": "Save time: create a template",
