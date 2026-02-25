@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/BearStudio/cowat-v2/compare/v1.0.0...v1.0.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* pass baseUrl to commute.created Slack broadcast blocks ([d384da6](https://github.com/BearStudio/cowat-v2/commit/d384da6183bb2f5c9f276453ea5985189be821bb))
+
 # 1.0.0 (2026-02-25)
 
 
