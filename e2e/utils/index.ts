@@ -7,6 +7,7 @@ import {
   LoginPage,
   LocationsPage,
   ManagerUsersPage,
+  RequestsPage,
 } from 'e2e/pages';
 import { ExtendedPage, pageWithUtils } from 'e2e/utils/page';
 
@@ -18,6 +19,7 @@ type PageFixtures = {
   commuteTemplatesPage: CommuteTemplatesPage;
   locationsPage: LocationsPage;
   usersPage: ManagerUsersPage;
+  requestsPage: RequestsPage;
 };
 
 const testWithPage = base.extend<ExtendedPage>({
@@ -45,6 +47,9 @@ const test = testWithPage.extend<PageFixtures>({
   },
   usersPage: async ({ page }, use) => {
     await use(new ManagerUsersPage(page));
+  },
+  requestsPage: async ({ page }, use) => {
+    await use(new RequestsPage(page));
   },
 });
 
