@@ -5,3 +5,5 @@ export const USER_EMAIL = 'user@user.com';
 
 export const ADMIN_FILE = `${AUTH_FILE_BASE}/admin.json`;
 export const ADMIN_EMAIL = 'admin@admin.com';
+
+export const ORG_SLUG = 'default';
