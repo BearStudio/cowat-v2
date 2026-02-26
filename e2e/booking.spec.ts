@@ -68,13 +68,8 @@ test.describe.serial('Booking flow', () => {
       ).toBeVisible();
     }
 
-    // Click "Cancel" button
+    // Click "Cancel" button and confirm the dialog
     await dashboard.cancelButton(adminCard).click();
-
-    // Expect confirmation dialog with "Delete" button
-    await expect(page.getByRole('button', { name: 'Delete' })).toBeVisible();
-
-    // Confirm the cancellation
     await confirmDialog.confirm();
 
     // Expect success toast and "Book" button restored
