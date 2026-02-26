@@ -94,7 +94,7 @@ export async function createCommutes(organizationId: string) {
             await db.passengersOnStops.create({
               data: {
                 tripType: type === 'ROUND' ? 'ROUND' : 'ONEWAY',
-                status: 'ACCEPTED',
+                status: 'REQUESTED',
                 passengerMemberId: otherMember.id,
                 stopId: stop.id,
               },
