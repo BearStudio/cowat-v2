@@ -43,7 +43,7 @@ export class LocationsPage {
 
   async clickDeleteOnRow(locationName: string) {
     await this.locationRow(locationName)
-      .getByRole('button', { name: 'Delete' })
+      .getByRole('button', { name: 'Delete', exact: true })
       .click();
   }
 
