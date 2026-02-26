@@ -5,6 +5,7 @@ on:
     branches: [main, dev]
   pull_request:
     branches-ignore: [main, dev]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   linter:

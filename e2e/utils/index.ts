@@ -4,6 +4,7 @@ import {
   ConfirmDialog,
   DashboardPage,
   LoginPage,
+  LocationsPage,
   ManagerUsersPage,
 } from 'e2e/pages';
 import { ExtendedPage, pageWithUtils } from 'e2e/utils/page';
@@ -13,6 +14,7 @@ type PageFixtures = {
   dashboard: DashboardPage;
   bookingDrawer: BookingDrawer;
   confirmDialog: ConfirmDialog;
+  locationsPage: LocationsPage;
   usersPage: ManagerUsersPage;
 };
 
@@ -32,6 +34,9 @@ const test = testWithPage.extend<PageFixtures>({
   },
   confirmDialog: async ({ page }, use) => {
     await use(new ConfirmDialog(page));
+  },
+  locationsPage: async ({ page }, use) => {
+    await use(new LocationsPage(page));
   },
   usersPage: async ({ page }, use) => {
     await use(new ManagerUsersPage(page));
