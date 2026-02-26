@@ -5,70 +5,54 @@ import { randomString } from 'remeda';
 test.describe('User management as user', () => {
   test.use({ storageState: USER_FILE });
 
-  test('Should not have access', async ({ page }) => {
-    await page.to('/manager');
-
-    await expect(
-      page.getByText("You don't have access to this page")
-    ).toBeVisible();
+  test('Should not have access', async ({ usersPage }) => {
+    await usersPage.goto();
+    await usersPage.expectNoAccess();
   });
 });
 
 test.describe('User management as manager', () => {
   test.use({ storageState: ADMIN_FILE });
 
-  test.beforeEach(async ({ page }) => {
-    await page.to('/manager');
+  test.beforeEach(async ({ usersPage }) => {
+    await usersPage.goto();
+    await usersPage.waitForUsersPage();
   });
 
-  test('Create a user', async ({ page }) => {
-    await page.getByText('New User').click();
+  test('Create a user', async ({ usersPage }) => {
+    await usersPage.newUserButton.click();
+    await usersPage.waitForNewUserPage();
 
-    const randomId = randomString(8);
-    const uniqueEmail = `new-user-${randomId}@user.com`;
+    const uniqueEmail = `new-user-${randomString(8)}@user.com`;
+    await usersPage.nameInput.fill('New user');
+    await usersPage.emailInput.fill(uniqueEmail);
+    await usersPage.clickCreate();
 
-    // Fill the form
-    await page.waitForURL('**/manager/*/users/new');
-    await page.getByLabel('Name').fill('New user');
-    await page.getByLabel('Email').fill(uniqueEmail);
-    await page.getByText('Create').click();
-
-    await page.waitForURL('**/manager/*/users');
-    await page.getByPlaceholder('Search...').fill('new-user');
-    await expect(page.getByText(uniqueEmail)).toBeVisible();
+    await usersPage.waitForUsersPage();
+    await usersPage.searchInput.fill('new-user');
+    await usersPage.expectUserVisible(uniqueEmail);
   });
 
-  test('Edit a user', async ({ page }) => {
-    await page.getByText('admin@admin.com').click({
-      force: true,
-    });
+  test('Edit a user', async ({ page, usersPage }) => {
+    await usersPage.clickUser('admin@admin.com');
+    await usersPage.clickEditUser();
 
-    await page.getByRole('link', { name: 'Edit user' }).click();
-
-    const randomId = randomString(8);
-    const newAdminName = `Admin ${randomId}`;
-    await page.getByLabel('Name').fill(newAdminName);
-    await page.getByText('Save').click();
+    const newAdminName = `Admin ${randomString(8)}`;
+    await usersPage.nameInput.fill(newAdminName);
+    await usersPage.clickSave();
 
     await expect(page.getByText(newAdminName).first()).toBeVisible();
   });
 
-  test('Delete a user', async ({ page }) => {
-    await page
-      .getByText('user', {
-        exact: true,
-      })
-      .first()
-      .click({ force: true });
-
-    await page.getByRole('button', { name: 'Delete' }).click();
+  test('Delete a user', async ({ page, usersPage, confirmDialog }) => {
+    await usersPage.clickUser('user', { exact: true });
+    await usersPage.clickDelete();
 
     await expect(
       page.getByText('You are about to permanently delete this user.')
     ).toBeVisible();
+    await confirmDialog.confirm();
 
-    await page.getByRole('button', { name: 'Delete' }).click();
-
-    await expect(page.getByText('User deleted')).toBeVisible();
+    await usersPage.expectUserDeleted();
   });
 });
