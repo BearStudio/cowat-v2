@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
+  /* Seed the database before running any test */
+  globalSetup: './e2e/global-setup.ts',
   /* Max time for the full CI tests */
   globalTimeout: 15 * 60 * 1000,
   /* Max test failure */
@@ -38,7 +40,7 @@ export default defineConfig({
       // We keep only chromium for now for faster feedback loop
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: process.env.CI ? ['setup'] : [],
+      dependencies: ['setup'],
     },
   ],
 

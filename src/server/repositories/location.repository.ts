@@ -18,7 +18,7 @@ export const createLocationRepository = (db: AppDB) => ({
       db.location.findMany({
         take: opts.limit + 1,
         cursor: opts.cursor ? { id: opts.cursor } : undefined,
-        orderBy: { name: 'asc' },
+        orderBy: { updatedAt: 'desc' },
         where: { memberId },
       }),
     ]),
