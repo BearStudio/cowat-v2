@@ -8,6 +8,7 @@ import {
   DashboardPage,
   LoginPage,
   LocationsPage,
+  ManagerOrgPage,
   ManagerUsersPage,
   RequestsPage,
 } from 'e2e/pages';
@@ -22,6 +23,7 @@ type PageFixtures = {
   commuteFormPage: CommuteFormPage;
   commuteTemplatesPage: CommuteTemplatesPage;
   locationsPage: LocationsPage;
+  managerOrgPage: ManagerOrgPage;
   usersPage: ManagerUsersPage;
   requestsPage: RequestsPage;
 };
@@ -54,6 +56,9 @@ const test = testWithPage.extend<PageFixtures>({
   },
   locationsPage: async ({ page }, use) => {
     await use(new LocationsPage(page));
+  },
+  managerOrgPage: async ({ page }, use) => {
+    await use(new ManagerOrgPage(page));
   },
   usersPage: async ({ page }, use) => {
     await use(new ManagerUsersPage(page));

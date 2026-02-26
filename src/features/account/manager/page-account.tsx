@@ -7,6 +7,7 @@ import { MemberPreferences } from '@/features/account/member-preferences';
 import { UserCard } from '@/features/account/user-card';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
+import { OrgSettingsCard } from '@/features/organization/manager/org-settings-card';
 import {
   PageLayout,
   PageLayoutContent,
@@ -35,6 +36,7 @@ export const PageAccount = () => {
             <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               {t('account:sections.organization')}
             </h2>
+            <OrgSettingsCard />
             <MemberPreferences />
           </section>
 

@@ -70,6 +70,13 @@
     "new": {
       "createError": "Impossible de créer l'organisation"
     },
+    "account": {
+      "title": "Paramètres de l'organisation",
+      "nameLabel": "Nom",
+      "save": "Enregistrer",
+      "updateSuccess": "Organisation mise à jour",
+      "updateError": "Impossible de mettre à jour l'organisation"
+    },
     "detail": {
       "memberCount_one": "{{count}} membre",
       "memberCount_other": "{{count}} membres",
