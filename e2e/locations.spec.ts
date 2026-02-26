@@ -9,7 +9,7 @@ test.describe('Location management', () => {
     await expect(locationsPage.heading).toBeVisible();
   });
 
-  test('6.1 — Create a new location', async ({ page, locationsPage }) => {
+  test('Create a new location', async ({ page, locationsPage }) => {
     await locationsPage.newLocationButton.click();
     await expect(page.getByText('New Location').first()).toBeVisible();
 
@@ -21,7 +21,7 @@ test.describe('Location management', () => {
     await locationsPage.expectLocationVisible('Home - Test');
   });
 
-  test('6.2 — Edit an existing location', async ({ page, locationsPage }) => {
+  test('Edit an existing location', async ({ page, locationsPage }) => {
     await locationsPage.clickLocationName('Home');
     await expect(page.getByText('Edit Location').first()).toBeVisible();
 
@@ -33,11 +33,7 @@ test.describe('Location management', () => {
     await locationsPage.expectLocationVisible('Home - Updated');
   });
 
-  test('6.3 — Delete a location', async ({
-    page,
-    locationsPage,
-    confirmDialog,
-  }) => {
+  test('Delete a location', async ({ page, locationsPage, confirmDialog }) => {
     // Create a location to delete so the test is self-contained
     await locationsPage.newLocationButton.click();
     await locationsPage.nameInput.fill('To Delete');
