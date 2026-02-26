@@ -1,5 +1,6 @@
 import { test as base } from '@playwright/test';
 import {
+  AccountPage,
   BookingDrawer,
   CommuteTemplatesPage,
   ConfirmDialog,
@@ -12,6 +13,7 @@ import {
 import { ExtendedPage, pageWithUtils } from 'e2e/utils/page';
 
 type PageFixtures = {
+  accountPage: AccountPage;
   loginPage: LoginPage;
   dashboard: DashboardPage;
   bookingDrawer: BookingDrawer;
@@ -27,6 +29,9 @@ const testWithPage = base.extend<ExtendedPage>({
 });
 
 const test = testWithPage.extend<PageFixtures>({
+  accountPage: async ({ page }, use) => {
+    await use(new AccountPage(page));
+  },
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
   },
