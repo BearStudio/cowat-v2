@@ -29,10 +29,13 @@ test.describe.serial('Booking flow', () => {
     // Expect booking drawer to open
     await bookingDrawer.expectOpen();
 
-    // Expect trip type selector and optional comment textarea to be visible
+    // Expect comment textarea; trip type selector only rendered when multiple
+    // options exist (ROUND commute on a non-terminal stop)
     const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('radio').first()).toBeVisible();
     await expect(dialog.getByRole('textbox')).toBeVisible();
+    if ((await dialog.getByRole('radio').count()) > 0) {
+      await expect(dialog.getByRole('radio').first()).toBeVisible();
+    }
 
     // Submit the booking
     await bookingDrawer.submit();

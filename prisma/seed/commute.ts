@@ -51,10 +51,24 @@ export async function createCommutes(organizationId: string) {
     });
     if (locations.length === 0) continue;
 
-    const existingCount = await db.commute.count({
+    // If commutes already exist, refresh their dates so they always cover
+    // today → today+6. Without this, commutes created by a past seed run
+    // fall outside the dashboard's 7-day window and tests can't find them.
+    const existingCommutes = await db.commute.findMany({
       where: { driverMemberId: driverMember.id },
+      select: { id: true },
+      orderBy: { date: 'asc' },
     });
-    if (existingCount > 0) continue;
+    if (existingCommutes.length > 0) {
+      for (let i = 0; i < existingCommutes.length; i++) {
+        await db.commute.update({
+          where: { id: existingCommutes[i]!.id },
+          data: { date: addDays(today, i % 7) },
+        });
+      }
+      commutesCreated += existingCommutes.length;
+      continue;
+    }
 
     // Create one commute per day for the next 7 days (today + 6)
     for (let dayOffset = 0; dayOffset < 7; dayOffset++) {

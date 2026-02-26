@@ -7,12 +7,16 @@ export class ManagerOrgPage {
 
   async gotoOrgDashboard() {
     await this.page.goto(`/manager/${ORG_SLUG}`);
-    await this.page.waitForLoadState('networkidle');
+    // networkidle may fire before the org query resolves; wait for the layout
+    // shell first so that expectOrgNameVisible has a full 15s for the data.
+    await this.page.getByTestId('layout-manager').waitFor({ timeout: 15_000 });
   }
 
   async gotoAccount() {
     await this.page.goto(`/manager/${ORG_SLUG}/account`);
-    await this.page.waitForLoadState('networkidle');
+    // Wait for the org settings form to be ready (not just networkidle) so that
+    // nameInput.fill() operates on the rendered input, not a skeleton.
+    await this.page.getByLabel('Name').waitFor({ timeout: 15_000 });
   }
 
   get orgSettingsCard() {
@@ -28,7 +32,9 @@ export class ManagerOrgPage {
   }
 
   async expectOrgNameVisible(name: string) {
-    await expect(this.page.getByText(name).first()).toBeVisible();
+    await expect(this.page.getByText(name).first()).toBeVisible({
+      timeout: 15_000,
+    });
   }
 
   async expectMembersSectionVisible() {

@@ -84,7 +84,15 @@ export class CommuteTemplatesPage {
   }
 
   async expectTemplateVisible(name: string) {
-    await expect(this.page.getByText(name).first()).toBeVisible();
+    const item = this.page.getByText(name).first();
+    const loadMore = this.page.getByRole('button', { name: 'Load more' });
+    await expect(async () => {
+      if (await item.isVisible()) return;
+      if ((await loadMore.isVisible()) && !(await loadMore.isDisabled())) {
+        await loadMore.click();
+      }
+      await expect(item).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 30_000 });
   }
 
   async expectTemplateNotVisible(name: string) {
