@@ -15,8 +15,8 @@ setup('authenticate as admin', async ({ page }) => {
   await page.to('/login');
   await page.login({ email: ADMIN_EMAIL });
 
-  await page.waitForURL('/manager');
-  await expect(page.getByTestId('layout-manager')).toBeVisible();
+  await page.waitForURL('/app');
+  await expect(page.getByTestId('layout-app')).toBeVisible();
 
   await page.context().storageState({ path: ADMIN_FILE });
 });
