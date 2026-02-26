@@ -46,20 +46,21 @@ test.describe('Location management', () => {
   });
 
   test('Delete a location', async ({ page, locationsPage, confirmDialog }) => {
-    // Create a location to delete so the test is self-contained
+    const name = `To Delete ${randomString(6)}`;
+
     await locationsPage.newLocationButton.click();
-    await locationsPage.nameInput.fill('To Delete');
+    await locationsPage.nameInput.fill(name);
     await locationsPage.addressInput.fill('123 Test Street, Paris');
     await locationsPage.clickCreate();
     await expect(page.getByText('Location created').first()).toBeVisible();
 
-    await locationsPage.clickDeleteOnRow('To Delete');
+    await locationsPage.clickDeleteOnRow(name);
     await expect(
       page.getByText('You are about to delete this location.').first()
     ).toBeVisible();
     await confirmDialog.confirm();
 
     await expect(page.getByText('Location deleted').first()).toBeVisible();
-    await locationsPage.expectLocationNotVisible('To Delete');
+    await locationsPage.expectLocationNotVisible(name);
   });
 });
