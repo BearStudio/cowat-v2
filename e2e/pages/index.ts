@@ -1,3 +1,4 @@
+export { AccountPage } from './account.page';
 export { BookingDrawer } from './booking-drawer.page';
 export { CommuteFormPage } from './commute-form.page';
 export { CommuteTemplatesPage } from './commute-templates.page';
