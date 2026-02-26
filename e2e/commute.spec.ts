@@ -1,0 +1,193 @@
+import dayjs from 'dayjs';
+import { expect, test } from 'e2e/utils';
+import { USER_FILE } from 'e2e/utils/constants';
+import { randomString } from 'remeda';
+
+/** Format a date for the DateInput (DD/MM/YYYY). */
+function formatDate(date: Date): string {
+  return dayjs(date).format('DD/MM/YYYY');
+}
+
+/** Return a date N days from today. */
+function daysFromNow(n: number): Date {
+  return dayjs().add(n, 'day').toDate();
+}
+
+test.describe('Commute creation', () => {
+  test.use({ storageState: USER_FILE });
+
+  test.beforeEach(async ({ commuteFormPage }) => {
+    await commuteFormPage.goto();
+  });
+
+  test('Create a one-way commute from scratch', async ({
+    page,
+    commuteFormPage,
+  }) => {
+    const date = daysFromNow(14);
+    const dateStr = formatDate(date);
+
+    // Step 1 — Template picker: start from scratch
+    await commuteFormPage.fromScratchButton.click();
+
+    // Step 2 — Details
+    await commuteFormPage.dateInput.fill(dateStr);
+    await commuteFormPage.dateInput.blur();
+
+    // Uncheck round trip for ONEWAY
+    const roundTrip = commuteFormPage.roundTripCheckbox;
+    if (await roundTrip.isChecked()) {
+      await roundTrip.click();
+    }
+
+    await commuteFormPage.seatsInput.clear();
+    await commuteFormPage.seatsInput.fill('2');
+
+    await commuteFormPage.clickNext();
+
+    // Step 3 — Outward stops (2 stops pre-populated)
+    await commuteFormPage.selectLocation(0, 'Home');
+    await commuteFormPage.fillOutwardTime(0, '08:00');
+    await commuteFormPage.selectLocation(1, 'Office');
+    await commuteFormPage.fillOutwardTime(1, '08:30');
+
+    await commuteFormPage.clickNext();
+
+    // Step 4 — Recap (no inward stops for ONEWAY)
+    await expect(page.getByText('One way').first()).toBeVisible();
+    await expect(page.getByText('2 seats').first()).toBeVisible();
+
+    await commuteFormPage.clickCreate();
+
+    // Expect redirect to commutes list
+    await expect(commuteFormPage.commutesListHeading).toBeVisible({
+      timeout: 10_000,
+    });
+    await commuteFormPage.expectCommuteInList();
+  });
+
+  test('Create a round-trip commute from scratch', async ({
+    page,
+    commuteFormPage,
+  }) => {
+    const date = daysFromNow(15);
+    const dateStr = formatDate(date);
+
+    // Step 1 — Template picker: start from scratch
+    await commuteFormPage.fromScratchButton.click();
+
+    // Step 2 — Details
+    await commuteFormPage.dateInput.fill(dateStr);
+    await commuteFormPage.dateInput.blur();
+
+    // Ensure round trip is checked (ROUND type)
+    const roundTrip = commuteFormPage.roundTripCheckbox;
+    if (!(await roundTrip.isChecked())) {
+      await roundTrip.click();
+    }
+
+    await commuteFormPage.seatsInput.clear();
+    await commuteFormPage.seatsInput.fill('3');
+
+    await commuteFormPage.clickNext();
+
+    // Step 3 — Outward stops
+    await commuteFormPage.selectLocation(0, 'Home');
+    await commuteFormPage.fillOutwardTime(0, '08:00');
+    await commuteFormPage.selectLocation(1, 'Office');
+    await commuteFormPage.fillOutwardTime(1, '08:30');
+
+    await commuteFormPage.clickNext();
+
+    // Step 4 — Inward times (ROUND only; stops shown in reverse: Office→Home)
+    await commuteFormPage.fillInwardTime(0, '18:30'); // Office (display index 0)
+    await commuteFormPage.fillInwardTime(1, '19:00'); // Home (display index 1)
+
+    await commuteFormPage.clickNext();
+
+    // Step 5 — Recap
+    await expect(page.getByText('Round trip').first()).toBeVisible();
+    await expect(page.getByText('3 seats').first()).toBeVisible();
+
+    await commuteFormPage.clickCreate();
+
+    // Expect redirect to commutes list
+    await expect(commuteFormPage.commutesListHeading).toBeVisible({
+      timeout: 10_000,
+    });
+    await commuteFormPage.expectCommuteInList();
+  });
+
+  test('Create a commute from a saved template', async ({
+    page,
+    commuteFormPage,
+    commuteTemplatesPage,
+  }) => {
+    // Pre-condition: create a valid ROUND template with proper time ordering
+    const templateName = `Commute Template ${randomString(6)}`;
+
+    await commuteTemplatesPage.goto();
+    await commuteTemplatesPage.newTemplateButton.click();
+
+    await commuteTemplatesPage.nameInput.fill(templateName);
+    await commuteTemplatesPage.seatsInput.clear();
+    await commuteTemplatesPage.seatsInput.fill('2');
+
+    const roundTrip = commuteTemplatesPage.roundTripCheckbox;
+    if (!(await roundTrip.isChecked())) {
+      await roundTrip.click();
+    }
+
+    await commuteTemplatesPage.clickNext();
+
+    await commuteTemplatesPage.selectLocation(0, 'Home');
+    await commuteTemplatesPage.fillOutwardTime(0, '08:00');
+    await commuteTemplatesPage.selectLocation(1, 'Office');
+    await commuteTemplatesPage.fillOutwardTime(1, '08:30');
+
+    await commuteTemplatesPage.clickNext();
+
+    // Inward times (ROUND; stops in reverse: Office→Home)
+    await commuteTemplatesPage.fillInwardTime(0, '18:30'); // Office
+    await commuteTemplatesPage.fillInwardTime(1, '19:00'); // Home
+
+    await commuteTemplatesPage.clickNext();
+    await commuteTemplatesPage.clickCreate();
+
+    await expect(commuteTemplatesPage.heading).toBeVisible({ timeout: 10_000 });
+
+    // Navigate to commute creation and pick the template
+    const date = daysFromNow(16);
+    const dateStr = formatDate(date);
+
+    await commuteFormPage.goto();
+
+    // Step 1 — Template picker: select the template we just created
+    await expect(page.getByText('My templates').first()).toBeVisible();
+    await commuteFormPage.selectTemplate(templateName);
+
+    // Step 2 — Details: fields pre-populated from template; update the date
+    await commuteFormPage.dateInput.fill(dateStr);
+    await commuteFormPage.dateInput.blur();
+
+    await commuteFormPage.clickNext();
+
+    // Step 3 — Outward stops pre-populated from template (Home 08:00, Office 08:30)
+    await commuteFormPage.clickNext();
+
+    // Step 4 — Inward times pre-populated from template (Office 18:30, Home 19:00)
+    await commuteFormPage.clickNext();
+
+    // Step 5 — Recap
+    await expect(page.getByText('Round trip').first()).toBeVisible();
+    await expect(page.getByText('2 seats').first()).toBeVisible();
+
+    await commuteFormPage.clickCreate();
+
+    // Expect redirect to commutes list
+    await expect(commuteFormPage.commutesListHeading).toBeVisible({
+      timeout: 10_000,
+    });
+    await commuteFormPage.expectCommuteInList();
+  });
+});

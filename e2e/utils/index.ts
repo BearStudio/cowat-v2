@@ -1,6 +1,7 @@
 import { test as base } from '@playwright/test';
 import {
   BookingDrawer,
+  CommuteFormPage,
   CommuteTemplatesPage,
   ConfirmDialog,
   DashboardPage,
@@ -16,6 +17,7 @@ type PageFixtures = {
   dashboard: DashboardPage;
   bookingDrawer: BookingDrawer;
   confirmDialog: ConfirmDialog;
+  commuteFormPage: CommuteFormPage;
   commuteTemplatesPage: CommuteTemplatesPage;
   locationsPage: LocationsPage;
   usersPage: ManagerUsersPage;
@@ -38,6 +40,9 @@ const test = testWithPage.extend<PageFixtures>({
   },
   confirmDialog: async ({ page }, use) => {
     await use(new ConfirmDialog(page));
+  },
+  commuteFormPage: async ({ page }, use) => {
+    await use(new CommuteFormPage(page));
   },
   commuteTemplatesPage: async ({ page }, use) => {
     await use(new CommuteTemplatesPage(page));
