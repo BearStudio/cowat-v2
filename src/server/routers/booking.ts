@@ -39,6 +39,12 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
+      if (stop.commute.driverMemberId === context.memberId) {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Drivers cannot book seats on their own commutes',
+        });
+      }
+
       const orders = stop.commute.stops.map((s) => s.order);
       const isLastStop = stop.order === Math.max(...orders);
       const allowOutward = !isLastStop;

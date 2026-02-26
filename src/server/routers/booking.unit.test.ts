@@ -220,6 +220,35 @@ describe('booking router', () => {
       });
     });
 
+    it('should throw FORBIDDEN when the driver tries to book their own commute', async () => {
+      mockDb.stop.findUnique.mockResolvedValue({
+        order: 1,
+        commuteId: 'commute-1',
+        commute: {
+          driverMemberId: mockMemberId,
+          type: 'ROUND',
+          seats: 4,
+          stops: [{ order: 0 }, { order: 1 }, { order: 2 }],
+          driver: {
+            organizationId: mockOrganizationId,
+            autoAccept: false,
+            notificationPreferences: [],
+            user: {
+              id: 'driver-user-1',
+              name: 'Driver',
+              email: 'driver@test.com',
+            },
+          },
+        },
+      });
+
+      await expect(
+        call(bookingRouter.request, requestInput)
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
+    });
+
     it('should throw CONFLICT when user already has a booking on this commute', async () => {
       mockDb.stop.findUnique.mockResolvedValue({
         order: 1,
