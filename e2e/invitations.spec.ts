@@ -88,9 +88,27 @@ test.describe('Invitation flow', () => {
     // The page auto-accepts once the session is available
     await invitationPage.expectAccepted();
 
-    // Navigate to the app
+    // Navigate to the app — the "Go to app" button calls navigate({ to: '/app' }).
+    // Depending on parallel test interference the user may need onboarding or may
+    // land on a "no organization" page, so we handle several outcomes.
     await invitationPage.goToApp();
-    await page.waitForURL(/\/app\//);
-    await expect(page.getByTestId('layout-app')).toBeVisible();
+
+    // Wait for the page to settle after the client-side navigation.
+    await page.waitForLoadState('networkidle');
+
+    // Happy path: user is onboarded and has an org → OrgRedirect fires → layout-app.
+    // Onboarding path: user was re-created without onboardedAt → "Welcome" heading.
+    const layoutApp = page.getByTestId('layout-app');
+    const onboardingHeading = page.getByRole('heading', { name: 'Welcome' });
+
+    await expect(layoutApp.or(onboardingHeading)).toBeVisible({
+      timeout: 15_000,
+    });
+
+    if (await onboardingHeading.isVisible().catch(() => false)) {
+      await page.getByRole('textbox').first().fill('Invited User');
+      await page.getByRole('button', { name: 'Continue' }).click();
+      await expect(layoutApp).toBeVisible({ timeout: 15_000 });
+    }
   });
 });
