@@ -70,6 +70,13 @@
     "new": {
       "createError": "Failed to create organization"
     },
+    "account": {
+      "title": "Organization Settings",
+      "nameLabel": "Name",
+      "save": "Save",
+      "updateSuccess": "Organization updated",
+      "updateError": "Failed to update organization"
+    },
     "detail": {
       "memberCount_one": "{{count}} member",
       "memberCount_other": "{{count}} members",

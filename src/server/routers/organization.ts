@@ -307,6 +307,24 @@ export default {
       });
     }),
 
+  update: orgProcedure({ permissions: { organization: ['update'] } })
+    .route({ method: 'POST', path: '/organizations/update', tags })
+    .input(z.object({ name: z.string().min(1).max(100) }))
+    .output(z.object({ id: z.string(), name: z.string() }))
+    .handler(async ({ context, input }) => {
+      const result = await context.organizations.update(
+        context.organizationId,
+        { name: input.name }
+      );
+
+      context.logger.info(
+        { organizationId: context.organizationId },
+        'Organization updated'
+      );
+
+      return result;
+    }),
+
   delete: adminProcedure({ permission: { organization: ['delete'] } })
     .route({ method: 'POST', path: '/organizations/delete', tags })
     .input(z.object({ organizationId: z.string() }))
