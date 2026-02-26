@@ -53,6 +53,7 @@ test.describe('Location management', () => {
     await locationsPage.addressInput.fill('123 Test Street, Paris');
     await locationsPage.clickCreate();
     await expect(page.getByText('Location created').first()).toBeVisible();
+    await locationsPage.expectLocationVisible(name);
 
     await locationsPage.clickDeleteOnRow(name);
     await expect(
