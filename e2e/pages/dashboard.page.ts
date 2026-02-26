@@ -12,9 +12,11 @@ export class DashboardPage {
 
   async expandCard(card: Locator) {
     await card.locator('[data-slot="card-commute-trigger"]').click();
-    await expect(
-      card.locator('[data-slot="card-commute-content"]')
-    ).toBeVisible();
+    const content = card.locator('[data-slot="card-commute-content"]');
+    await expect(content).toBeVisible();
+    // Wait for the collapsible open animation to finish so that child
+    // buttons are no longer intercepted by overlapping elements.
+    await expect(content).not.toHaveAttribute('data-starting-style', /.*/);
   }
 
   cardContent(card: Locator) {

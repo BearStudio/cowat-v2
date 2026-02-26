@@ -1,5 +1,76 @@
+import dayjs from 'dayjs';
+
 import { expect, test } from 'e2e/utils';
-import { USER_FILE } from 'e2e/utils/constants';
+import { ADMIN_FILE, ORG_SLUG, USER_FILE } from 'e2e/utils/constants';
+
+test.describe('[REGRESSION] Driver cannot open booking drawer for their own commute', () => {
+  test.use({ storageState: ADMIN_FILE });
+
+  test('booking drawer does not open via URL params for driver own commute', async ({
+    page,
+    commuteFormPage,
+  }) => {
+    // Create a commute as admin (driver) so we have one with known stop IDs
+    const createResponsePromise = page.waitForResponse(
+      (r) => r.url().includes('/api/rpc/commute/create') && r.status() === 200
+    );
+
+    await commuteFormPage.goto();
+    await commuteFormPage.fromScratchButton.click();
+
+    // Use a date within the dashboard's 7-day range so getByDate returns it
+    const futureDate = dayjs().add(3, 'day').format('DD/MM/YYYY');
+    await commuteFormPage.dateInput.fill(futureDate);
+    await commuteFormPage.dateInput.blur();
+
+    const roundTrip = commuteFormPage.roundTripCheckbox;
+    if (await roundTrip.isChecked()) {
+      await roundTrip.click();
+    }
+
+    await commuteFormPage.seatsInput.clear();
+    await commuteFormPage.seatsInput.fill('2');
+    await commuteFormPage.clickNext();
+
+    // Outward stops
+    await commuteFormPage.selectLocation(0, 'Home');
+    await commuteFormPage.fillOutwardTime(0, '08:00');
+    await commuteFormPage.selectLocation(1, 'Office');
+    await commuteFormPage.fillOutwardTime(1, '08:30');
+    await commuteFormPage.clickNext();
+
+    // Recap & create
+    await commuteFormPage.clickCreate();
+
+    // Extract stop ID from the creation response
+    const createResponse = await createResponsePromise;
+    const createBody = await createResponse.json();
+    const createdCommute: { id: string; stops: Array<{ id: string }> } =
+      createBody?.json ?? createBody;
+
+    const stopId = createdCommute.stops[0]?.id;
+    const commuteId = createdCommute.id;
+    expect(stopId).toBeTruthy();
+
+    // Navigate to the dashboard with URL params that would open the booking drawer
+    await page.goto(
+      `/app/${ORG_SLUG}/?bookingStop=${stopId}&openCommutes=${commuteId}`
+    );
+
+    // Wait for the dashboard to fully load (commute cards render after data fetch)
+    await expect(
+      page.locator('[data-slot="card-commute"]').first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    // The booking drawer must NOT open for the driver's own commute
+    await expect(
+      page.getByRole('dialog', { name: 'Book a ride' })
+    ).not.toBeVisible();
+
+    // The bookingStop search param should be cleared from the URL
+    await expect(page).not.toHaveURL(/bookingStop=/);
+  });
+});
 
 test.describe.serial('Booking flow', () => {
   test.use({ storageState: USER_FILE });
