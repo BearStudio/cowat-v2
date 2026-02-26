@@ -6,55 +6,41 @@ test.describe('Booking flow', () => {
 
   test('book, cancel, then book a different stop without conflict', async ({
     page,
+    dashboard,
+    bookingDrawer,
+    confirmDialog,
   }) => {
     await page.to('/app');
 
-    // Find an admin commute card and expand it
-    const adminCard = page
-      .locator('[data-slot="card-commute"]', { hasText: 'Admin' })
-      .first();
-    await adminCard.locator('[data-slot="card-commute-trigger"]').click();
-    const content = adminCard.locator('[data-slot="card-commute-content"]');
-    await expect(content).toBeVisible();
+    const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
+    await dashboard.expandCard(adminCard);
 
-    // If there is an existing booking (from seed data), cancel it first
-    const existingCancelBtn = content.getByRole('button', { name: 'Cancel' });
-    if ((await existingCancelBtn.count()) > 0) {
-      await existingCancelBtn.click();
-      await page.getByRole('button', { name: 'Delete' }).click();
+    // Cancel any existing booking from seed data before starting
+    const existingCancel = dashboard.cancelButton(adminCard);
+    if ((await existingCancel.count()) > 0) {
+      await existingCancel.click();
+      await confirmDialog.confirm();
       await expect(page.getByText('Booking cancelled').first()).toBeVisible();
     }
 
     // Step 1: Book the first available stop
-    const bookButtons = content.getByRole('button', { name: 'Book' });
-    await expect(bookButtons.first()).toBeVisible();
-    await bookButtons.first().click();
-
-    // Submit the booking form in the drawer
-    const drawer = page.getByRole('dialog');
-    await expect(
-      drawer.getByRole('heading', { name: 'Book a ride' })
-    ).toBeVisible();
-    await drawer.getByRole('button', { name: 'Book' }).click();
+    await expect(dashboard.bookButtons(adminCard).first()).toBeVisible();
+    await dashboard.bookButtons(adminCard).first().click();
+    await bookingDrawer.expectOpen();
+    await bookingDrawer.submit();
     await expect(page.getByText('Booking request sent').first()).toBeVisible();
 
     // Step 2: Cancel the booking we just made
-    await expect(content.getByRole('button', { name: 'Cancel' })).toBeVisible();
-    await content.getByRole('button', { name: 'Cancel' }).click();
-    await page.getByRole('button', { name: 'Delete' }).click();
+    await expect(dashboard.cancelButton(adminCard)).toBeVisible();
+    await dashboard.cancelButton(adminCard).click();
+    await confirmDialog.confirm();
     await expect(page.getByText('Booking cancelled').first()).toBeVisible();
 
-    // Step 3: Book a different stop (pick the second one)
-    const newBookButtons = content.getByRole('button', { name: 'Book' });
-    await expect(newBookButtons.first()).toBeVisible();
-    await newBookButtons.nth(1).click();
-
-    // Submit the booking form
-    const drawer2 = page.getByRole('dialog');
-    await expect(
-      drawer2.getByRole('heading', { name: 'Book a ride' })
-    ).toBeVisible();
-    await drawer2.getByRole('button', { name: 'Book' }).click();
+    // Step 3: Book a different stop (second one)
+    await expect(dashboard.bookButtons(adminCard).first()).toBeVisible();
+    await dashboard.bookButtons(adminCard).nth(1).click();
+    await bookingDrawer.expectOpen();
+    await bookingDrawer.submit();
     await expect(page.getByText('Booking request sent').first()).toBeVisible();
 
     // Verify no error toasts appeared during the flow
