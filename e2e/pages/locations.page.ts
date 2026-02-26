@@ -7,6 +7,7 @@ export class LocationsPage {
 
   async goto() {
     await this.page.goto(`/app/${ORG_SLUG}/account/locations`);
+    await this.page.getByTestId('layout-app').waitFor({ timeout: 15_000 });
   }
 
   get heading() {
