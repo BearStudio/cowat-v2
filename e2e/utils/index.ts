@@ -6,6 +6,7 @@ import {
   CommuteTemplatesPage,
   ConfirmDialog,
   DashboardPage,
+  InvitationPage,
   LoginPage,
   LocationsPage,
   ManagerUsersPage,
@@ -21,6 +22,7 @@ type PageFixtures = {
   confirmDialog: ConfirmDialog;
   commuteFormPage: CommuteFormPage;
   commuteTemplatesPage: CommuteTemplatesPage;
+  invitationPage: InvitationPage;
   locationsPage: LocationsPage;
   usersPage: ManagerUsersPage;
   requestsPage: RequestsPage;
@@ -51,6 +53,9 @@ const test = testWithPage.extend<PageFixtures>({
   },
   commuteTemplatesPage: async ({ page }, use) => {
     await use(new CommuteTemplatesPage(page));
+  },
+  invitationPage: async ({ page }, use) => {
+    await use(new InvitationPage(page));
   },
   locationsPage: async ({ page }, use) => {
     await use(new LocationsPage(page));
