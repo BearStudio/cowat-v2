@@ -20,7 +20,7 @@ export const PageAcceptInvitation = ({
 
   const hasMutatedRef = useRef(false);
 
-  const { mutate, isPending, isIdle, isError } = useMutation({
+  const { mutate, isPending, isIdle, isError, isSuccess } = useMutation({
     mutationFn: async () => {
       const result = await authClient.organization.acceptInvitation({
         invitationId,
@@ -57,13 +57,18 @@ export const PageAcceptInvitation = ({
     return null;
   }
 
-  if (isPending || isIdle || session.isPending) {
+  // Show success as soon as the mutation completes, regardless of any
+  // subsequent session re-fetch triggered by setActive().
+  if (isSuccess) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <Spinner className="opacity-60" />
-        <p className="text-sm text-neutral-500">
-          {t('organization:invitation.accepting')}
-        </p>
+        <CheckCircleIcon className="text-green-500 size-12" />
+        <h1 className="text-lg font-semibold">
+          {t('organization:invitation.accepted')}
+        </h1>
+        <Button onClick={() => navigate({ to: '/app' })}>
+          {t('organization:invitation.backToApp')}
+        </Button>
       </div>
     );
   }
@@ -85,15 +90,14 @@ export const PageAcceptInvitation = ({
     );
   }
 
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <CheckCircleIcon className="text-green-500 size-12" />
-      <h1 className="text-lg font-semibold">
-        {t('organization:invitation.accepted')}
-      </h1>
-      <Button onClick={() => navigate({ to: '/app' })}>
-        {t('organization:invitation.backToApp')}
-      </Button>
-    </div>
-  );
+  if (isPending || isIdle || session.isPending) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <Spinner className="opacity-60" />
+        <p className="text-sm text-neutral-500">
+          {t('organization:invitation.accepting')}
+        </p>
+      </div>
+    );
+  }
 };

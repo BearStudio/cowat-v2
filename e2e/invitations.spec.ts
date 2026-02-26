@@ -1,0 +1,96 @@
+import { type Browser } from '@playwright/test';
+
+import { expect, test } from 'e2e/utils';
+import { ADMIN_FILE, INVITED_EMAIL, INVITED_FILE } from 'e2e/utils/constants';
+
+type Invitation = { id: string; email: string; status: string };
+type Member = { user: { email: string } };
+
+/**
+ * Sets up a fresh pending invitation for INVITED_EMAIL in the default org.
+ *
+ * - Cancels any existing pending invitation for that email.
+ * - Removes the user from the org if they are already a member.
+ * - Creates a new invitation and returns its ID.
+ */
+async function ensureInvitation(browser: Browser): Promise<string> {
+  const adminContext = await browser.newContext({ storageState: ADMIN_FILE });
+
+  try {
+    // 1. Get current org state
+    const orgResp = await adminContext.request.get(
+      '/api/rest/organizations/active'
+    );
+    const org = await orgResp.json();
+
+    // 2. Cancel any existing invitation for INVITED_EMAIL
+    const existingInvitation = (
+      org.invitations as Invitation[] | undefined
+    )?.find((i) => i.email === INVITED_EMAIL);
+    if (existingInvitation) {
+      await adminContext.request.post(
+        '/api/rest/organizations/cancel-invitation',
+        { data: { invitationId: existingInvitation.id } }
+      );
+    }
+
+    // 3. Remove INVITED_EMAIL from org members if present
+    const existingMember = (org.members as Member[] | undefined)?.find(
+      (m) => m.user.email === INVITED_EMAIL
+    );
+    if (existingMember) {
+      await adminContext.request.post('/api/rest/organizations/remove-member', {
+        data: { memberIdOrEmail: INVITED_EMAIL },
+      });
+    }
+
+    // 4. Create a new invitation
+    await adminContext.request.post('/api/rest/organizations/invite', {
+      data: { email: INVITED_EMAIL, role: 'member' },
+    });
+
+    // 5. Get the new invitation ID
+    const orgResp2 = await adminContext.request.get(
+      '/api/rest/organizations/active'
+    );
+    const org2 = await orgResp2.json();
+    const invitation = (org2.invitations as Invitation[] | undefined)?.find(
+      (i) => i.email === INVITED_EMAIL
+    );
+
+    if (!invitation?.id) {
+      throw new Error(
+        `Failed to find invitation for ${INVITED_EMAIL} after creation`
+      );
+    }
+
+    return invitation.id;
+  } finally {
+    await adminContext.close();
+  }
+}
+
+test.describe('Invitation flow', () => {
+  // The invited user is already authenticated via INVITED_FILE storage state.
+  // Visiting /invitations/<id> while authenticated triggers the auto-accept
+  // directly, avoiding the redirect-after-login flow.
+  test.use({ storageState: INVITED_FILE });
+
+  test('Accept an organization invitation', async ({
+    browser,
+    page,
+    invitationPage,
+  }) => {
+    const invitationId = await ensureInvitation(browser);
+
+    await page.goto(`/invitations/${invitationId}`);
+
+    // The page auto-accepts once the session is available
+    await invitationPage.expectAccepted();
+
+    // Navigate to the app
+    await invitationPage.goToApp();
+    await page.waitForURL(/\/app\//);
+    await expect(page.getByTestId('layout-app')).toBeVisible();
+  });
+});

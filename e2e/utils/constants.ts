@@ -7,3 +7,6 @@ export const ADMIN_FILE = `${AUTH_FILE_BASE}/admin.json`;
 export const ADMIN_EMAIL = 'admin@admin.com';
 
 export const ORG_SLUG = 'default';
+
+export const INVITED_EMAIL = 'invited@user.com';
+export const INVITED_FILE = `${AUTH_FILE_BASE}/invited.json`;
