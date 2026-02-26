@@ -80,5 +80,8 @@ export const createOrganizationRepository = (db: AppDB) => ({
   findSlugById: (id: string) =>
     db.organization.findUnique({ where: { id }, select: { slug: true } }),
 
+  update: (id: string, data: { name: string }) =>
+    db.organization.update({ where: { id }, data }),
+
   delete: (id: string) => db.organization.delete({ where: { id } }),
 });

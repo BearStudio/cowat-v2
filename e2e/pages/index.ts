@@ -7,5 +7,6 @@ export { DashboardPage } from './dashboard.page';
 export { InvitationPage } from './invitation.page';
 export { LoginPage } from './login.page';
 export { LocationsPage } from './locations.page';
+export { ManagerOrgPage } from './manager-org.page';
 export { ManagerUsersPage } from './manager-users.page';
 export { RequestsPage } from './requests.page';
