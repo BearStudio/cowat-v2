@@ -31,7 +31,7 @@ export const createCommuteTemplateRepository = (db: AppDB) => ({
       db.commuteTemplate.findMany({
         take: opts.limit + 1,
         cursor: opts.cursor ? { id: opts.cursor } : undefined,
-        orderBy: { name: 'asc' },
+        orderBy: { updatedAt: 'desc' },
         where: { driverMemberId: memberId },
         include: templateWithLocationInclude,
       }),

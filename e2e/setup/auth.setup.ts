@@ -51,7 +51,9 @@ setup('authenticate as invited user', async ({ page }) => {
     // Already onboarded on a subsequent run — nothing to do.
   }
 
-  await expect(page.getByTestId('layout-app')).toBeVisible();
+  // After a fresh DB reset this user has no org membership, so layout-app
+  // won't render. We just need valid auth cookies for the invitation test.
+  await page.waitForLoadState('networkidle');
 
   await page.context().storageState({ path: INVITED_FILE });
 });

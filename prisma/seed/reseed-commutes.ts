@@ -12,9 +12,11 @@ import { getDefaultOrgId } from './organization';
 async function main() {
   console.log('🗑️  Deleting existing commutes, stops, and bookings…');
 
-  await db.passengersOnStops.deleteMany();
-  await db.stop.deleteMany();
-  await db.commute.deleteMany();
+  // Use raw SQL to hard-delete commutes (bypassing the soft-delete middleware
+  // that would otherwise only set isDeleted = true).
+  await db.$executeRaw`DELETE FROM "passengers_on_stops"`;
+  await db.$executeRaw`DELETE FROM "stop"`;
+  await db.$executeRaw`DELETE FROM "commute"`;
 
   console.log('✅ Cleared');
 

@@ -19,6 +19,29 @@ test.describe('User management as manager', () => {
     await usersPage.waitForUsersPage();
   });
 
+  test('View the user list', async ({ page, usersPage }) => {
+    await expect(page.getByTestId('layout-manager')).toBeVisible();
+    await expect(usersPage.newUserButton).toBeVisible();
+    await expect(usersPage.searchInput).toBeVisible();
+
+    // Expect a user row with name (link), email, and role badge
+    await expect(page.getByRole('link', { name: 'Admin' })).toBeVisible();
+    await usersPage.expectUserVisible('admin@admin.com');
+    await expect(
+      page.getByText('admin', { exact: true }).first()
+    ).toBeVisible();
+  });
+
+  test('Search for a user', async ({ page, usersPage }) => {
+    await usersPage.searchInput.fill('admin');
+    await usersPage.expectUserVisible('admin@admin.com');
+
+    await usersPage.searchInput.clear();
+    // Full list restored — admin is visible and "Load more" confirms many results
+    await usersPage.expectUserVisible('admin@admin.com');
+    await expect(page.getByRole('button', { name: 'Load more' })).toBeEnabled();
+  });
+
   test('Create a user', async ({ usersPage }) => {
     await usersPage.newUserButton.click();
     await usersPage.waitForNewUserPage();

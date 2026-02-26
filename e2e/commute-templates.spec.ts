@@ -55,6 +55,8 @@ test.describe('Commute template management', () => {
   });
 
   test('Edit a commute template', async ({ page, commuteTemplatesPage }) => {
+    // This test creates a template then edits it — double the form interactions.
+    test.setTimeout(60_000);
     const originalName = `Edit Me ${randomString(6)}`;
     const updatedName = `${originalName} - Updated`;
 
@@ -92,7 +94,11 @@ test.describe('Commute template management', () => {
 
     // Now edit the created template
     await commuteTemplatesPage.clickTemplateCard(originalName);
-    await expect(page.getByText('Next').first()).toBeVisible();
+    // Wait for the template query to populate the form before editing,
+    // otherwise the `values` prop overwrites user input when it resolves.
+    await expect(commuteTemplatesPage.nameInput).toHaveValue(originalName, {
+      timeout: 10_000,
+    });
 
     // Step 1 — Details: update name and seats
     await commuteTemplatesPage.nameInput.clear();
