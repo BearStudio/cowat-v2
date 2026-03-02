@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
-import { BookingCancelDescription } from '@/features/booking/booking-cancel-description';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
@@ -16,7 +15,7 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CommuteCancelDescription } from '@/features/commute/commute-cancel-description';
+import { CommuteSummary } from '@/features/commute/commute-summary';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import { CommuteEnriched } from '@/features/commute/schema';
 
@@ -107,12 +106,17 @@ export const DashboardCommuteCard = ({
                 return (
                   <ConfirmResponsiveDrawer
                     description={
-                      <BookingCancelDescription
-                        date={commute.date}
-                        type={commute.type}
-                        stop={stop}
-                        driver={commute.driver}
-                      />
+                      <div className="flex flex-col gap-3">
+                        <span>
+                          {t('dashboard:cancelBooking.confirmDescription')}
+                        </span>
+                        <CommuteSummary
+                          date={commute.date}
+                          type={commute.type}
+                          stops={[stop]}
+                          driver={commute.driver}
+                        />
+                      </div>
                     }
                     confirmText={t('common:actions.delete')}
                     confirmVariant="destructive"
@@ -144,13 +148,21 @@ export const DashboardCommuteCard = ({
             commuteId={commute.id}
             driverPhone={commute.driver.phone}
             cancelConfirmDescription={
-              <CommuteCancelDescription
-                date={commute.date}
-                type={commute.type}
-                stops={commute.stops}
-                hasPassengers={hasPassengers}
-                driver={commute.driver}
-              />
+              <div className="flex flex-col gap-3">
+                <span>
+                  {t(
+                    hasPassengers
+                      ? 'commute:list.cancelConfirmDescriptionWithPassengers'
+                      : 'commute:list.cancelConfirmDescription'
+                  )}
+                </span>
+                <CommuteSummary
+                  date={commute.date}
+                  type={commute.type}
+                  stops={commute.stops}
+                  driver={commute.driver}
+                />
+              </div>
             }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
           />

@@ -34,7 +34,7 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CommuteCancelDescription } from '@/features/commute/commute-cancel-description';
+import { CommuteSummary } from '@/features/commute/commute-summary';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import {
   OrgButtonLink,
@@ -224,13 +224,21 @@ export const PageCommutes = () => {
                           commuteId={item.id}
                           driverPhone={item.driver.phone}
                           cancelConfirmDescription={
-                            <CommuteCancelDescription
-                              date={item.date}
-                              type={item.type}
-                              stops={item.stops}
-                              hasPassengers={hasPassengers}
-                              driver={item.driver}
-                            />
+                            <div className="flex flex-col gap-3">
+                              <span>
+                                {t(
+                                  hasPassengers
+                                    ? 'commute:list.cancelConfirmDescriptionWithPassengers'
+                                    : 'commute:list.cancelConfirmDescription'
+                                )}
+                              </span>
+                              <CommuteSummary
+                                date={item.date}
+                                type={item.type}
+                                stops={item.stops}
+                                driver={item.driver}
+                              />
+                            </div>
                           }
                           onCancel={() =>
                             commuteCancel.mutateAsync({ id: item.id })

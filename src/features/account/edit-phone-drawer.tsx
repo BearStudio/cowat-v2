@@ -1,116 +1,51 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { PhoneIcon } from 'lucide-react';
-import { ReactElement, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
-import {
-  Form,
-  FormField,
-  FormFieldController,
-  FormFieldLabel,
-} from '@/components/form';
-import { Button } from '@/components/ui/button';
-import {
-  ResponsiveDrawer,
-  ResponsiveDrawerBody,
-  ResponsiveDrawerContent,
-  ResponsiveDrawerDescription,
-  ResponsiveDrawerFooter,
-  ResponsiveDrawerHeader,
-  ResponsiveDrawerTitle,
-  ResponsiveDrawerTrigger,
-} from '@/components/ui/responsive-drawer';
-
-import {
-  FormFieldsAccountUpdatePhone,
-  zFormFieldsAccountUpdatePhone,
-} from '@/features/account/schema';
+import { EditAccountFieldDrawer } from '@/features/account/edit-account-field-drawer';
+import { zFormFieldsAccountUpdatePhone } from '@/features/account/schema';
 import { authClient } from '@/features/auth/client';
 
 export const EditPhoneDrawer = (props: { children: ReactElement }) => {
   const { t } = useTranslation(['account']);
-  const [open, setOpen] = useState(false);
   const session = authClient.useSession();
-  const form = useForm<FormFieldsAccountUpdatePhone>({
-    resolver: zodResolver(zFormFieldsAccountUpdatePhone()),
-    values: {
-      phone: session.data?.user.phone ?? '',
-    },
-  });
 
   const updateUser = useMutation(
     orpc.account.updateInfo.mutationOptions({
       onSuccess: async () => {
         await session.refetch();
         toast.success(t('account:editPhoneDrawer.successMessage'));
-        form.reset();
-        setOpen(false);
       },
       onError: () => toast.error(t('account:editPhoneDrawer.errorMessage')),
     })
   );
 
   return (
-    <ResponsiveDrawer
-      open={open}
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        form.reset();
+    <EditAccountFieldDrawer
+      schema={zFormFieldsAccountUpdatePhone()}
+      values={{ phone: session.data?.user.phone ?? '' }}
+      onSubmit={({ phone }) =>
+        updateUser.mutate({
+          name: session.data?.user.name ?? '',
+          phone,
+        })
+      }
+      isPending={updateUser.isPending}
+      labels={{
+        title: t('account:editPhoneDrawer.title'),
+        description: t('account:editPhoneDrawer.description'),
+        field: t('account:editPhoneDrawer.label'),
+        submit: t('account:editPhoneDrawer.submitButton'),
       }}
+      fieldName="phone"
+      fieldType="tel"
+      startAddon={<PhoneIcon />}
     >
-      <ResponsiveDrawerTrigger render={props.children} />
-
-      <ResponsiveDrawerContent className="sm:max-w-xs">
-        <Form
-          {...form}
-          onSubmit={async ({ phone }) => {
-            updateUser.mutate({
-              name: session.data?.user.name ?? '',
-              phone,
-            });
-          }}
-          className="flex flex-col gap-4"
-        >
-          <ResponsiveDrawerHeader>
-            <ResponsiveDrawerTitle>
-              {t('account:editPhoneDrawer.title')}
-            </ResponsiveDrawerTitle>
-            <ResponsiveDrawerDescription className="sr-only">
-              {t('account:editPhoneDrawer.description')}
-            </ResponsiveDrawerDescription>
-          </ResponsiveDrawerHeader>
-          <ResponsiveDrawerBody>
-            <FormField>
-              <FormFieldLabel className="sr-only">
-                {t('account:editPhoneDrawer.label')}
-              </FormFieldLabel>
-              <FormFieldController
-                control={form.control}
-                type="tel"
-                name="phone"
-                size="lg"
-                startAddon={<PhoneIcon />}
-                autoFocus
-              />
-            </FormField>
-          </ResponsiveDrawerBody>
-          <ResponsiveDrawerFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-              loading={updateUser.isPending}
-            >
-              {t('account:editPhoneDrawer.submitButton')}
-            </Button>
-          </ResponsiveDrawerFooter>
-        </Form>
-      </ResponsiveDrawerContent>
-    </ResponsiveDrawer>
+      {props.children}
+    </EditAccountFieldDrawer>
   );
 };
