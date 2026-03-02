@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export const onSubmit = (values: ExplicitAny) => {
   toast('You submitted the following values', {

@@ -4,11 +4,11 @@ import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import {
   DataListErrorState,

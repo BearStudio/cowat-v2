@@ -11,10 +11,10 @@ import { Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { AlertCircleIcon, PencilLineIcon, Trash2Icon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { BackButton } from '@/components/back-button';
 import { PageError } from '@/components/errors/page-error';

@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { createServerFn } from '@tanstack/react-start';
 import { Result } from 'better-result';
-import { toast } from 'sonner';
+
+import { toast } from '@/lib/toast';
 
 import { Button } from '@/components/ui/button';
 import {

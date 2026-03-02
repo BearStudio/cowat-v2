@@ -3,10 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { BackButton } from '@/components/back-button';
 import { Form } from '@/components/form';

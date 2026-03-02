@@ -3,10 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { Form } from '@/components/form/form';
 import { FormField } from '@/components/form/form-field';

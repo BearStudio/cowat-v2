@@ -7,11 +7,11 @@ import { useState } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
-import { toast } from 'sonner';
 
 import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { BackButton } from '@/components/back-button';
 import {

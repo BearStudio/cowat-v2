@@ -2,7 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeftIcon } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+
+import { toast } from '@/lib/toast';
 
 import {
   Form,

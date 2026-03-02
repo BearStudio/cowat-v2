@@ -2,9 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import { ImageIcon } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { EditAccountFieldDrawer } from '@/features/account/edit-account-field-drawer';
 import { zFormFieldsAccountUpdateImage } from '@/features/account/schema';

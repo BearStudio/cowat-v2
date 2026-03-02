@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
+import { toast } from '@/lib/toast';
 
 import { EditAccountFieldDrawer } from '@/features/account/edit-account-field-drawer';
 import { zFormFieldsAccountUpdateName } from '@/features/account/schema';

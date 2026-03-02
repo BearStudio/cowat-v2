@@ -1,6 +1,7 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
 
+import { haptic } from '@/lib/haptic';
 import { cn } from '@/lib/tailwind/utils';
 
 import { Spinner } from '@/components/ui/spinner';
@@ -61,6 +62,7 @@ function Button({
   size,
   disabled,
   loading,
+  onClick,
   ...props
 }: ButtonProps) {
   return (
@@ -68,6 +70,10 @@ function Button({
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={loading || disabled}
+      onClick={(e) => {
+        if (variant !== 'link') haptic(10);
+        onClick?.(e);
+      }}
       {...props}
     >
       {!!loading && (

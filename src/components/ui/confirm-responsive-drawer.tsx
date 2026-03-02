@@ -8,6 +8,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
 
+import { hapticWarning } from '@/lib/haptic';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -54,6 +56,7 @@ export const ConfirmResponsiveDrawer = (props: {
   // eslint-disable-next-line @eslint-react/no-clone-element
   const childrenWithOnOpen = cloneElement(props.children, {
     onClick: () => {
+      hapticWarning();
       open();
     },
   });
