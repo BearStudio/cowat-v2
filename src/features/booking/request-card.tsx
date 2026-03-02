@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
-import { BookingRefuseDescription } from '@/features/booking/booking-refuse-description';
 import { BookingRequestSummary } from '@/features/booking/booking-request-summary';
 import { BookingForDriver } from '@/features/booking/schema';
 
@@ -75,7 +74,14 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           {t('booking:request.acceptButton')}
         </Button>
         <ConfirmResponsiveDrawer
-          description={<BookingRefuseDescription request={request} />}
+          description={
+            <div className="flex flex-col gap-3">
+              <span>{t('booking:request.refuseConfirmDescription')}</span>
+              <div className="rounded-md border bg-muted/40 p-3">
+                <BookingRequestSummary request={request} />
+              </div>
+            </div>
+          }
           confirmText={t('booking:request.refuseButton')}
           confirmVariant="destructive"
           onConfirm={() => refuse.mutateAsync({ id: request.id })}
