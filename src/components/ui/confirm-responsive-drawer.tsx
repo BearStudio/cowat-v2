@@ -7,8 +7,8 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
-import { useWebHaptics } from 'web-haptics/react';
 
+import { triggerHaptic } from '@/lib/haptics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -33,7 +33,6 @@ export const ConfirmResponsiveDrawer = (props: {
   requiredConfirmation?: string;
 }) => {
   const { t } = useTranslation(['common', 'components']);
-  const { trigger } = useWebHaptics();
   const [isPending, setIsPending] = useState(false);
   const [confirmationInput, setConfirmationInput] = useState('');
   const { close, open, isOpen } = useDisclosure();
@@ -56,7 +55,7 @@ export const ConfirmResponsiveDrawer = (props: {
   // eslint-disable-next-line @eslint-react/no-clone-element
   const childrenWithOnOpen = cloneElement(props.children, {
     onClick: () => {
-      trigger('warning');
+      triggerHaptic('warning');
       open();
     },
   });
