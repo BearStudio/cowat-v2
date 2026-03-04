@@ -2,7 +2,6 @@ import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import { cva } from 'class-variance-authority';
 import { CheckIcon, MinusIcon } from 'lucide-react';
 import React, { useId } from 'react';
-
 import { useWebHaptics } from 'web-haptics/react';
 
 import { cn } from '@/lib/tailwind/utils';

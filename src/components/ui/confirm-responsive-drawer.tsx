@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
-
 import { useWebHaptics } from 'web-haptics/react';
 
 import { Button } from '@/components/ui/button';

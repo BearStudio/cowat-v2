@@ -1,6 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
-
 import { useWebHaptics } from 'web-haptics/react';
 
 import { cn } from '@/lib/tailwind/utils';
