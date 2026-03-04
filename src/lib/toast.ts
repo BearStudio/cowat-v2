@@ -1,23 +1,20 @@
 import { toast as sonnerToast } from 'sonner';
-
-import { hapticError, hapticSuccess } from '@/lib/haptic';
+import { WebHaptics } from 'web-haptics';
 
 type Toast = typeof sonnerToast;
 
-/**
- * Haptic-enhanced toast wrapper.
- * Automatically triggers haptic feedback on success/error toasts.
- */
+const haptics = new WebHaptics();
+
 export const toast: Toast = Object.assign(
   (...args: Parameters<Toast>) => sonnerToast(...args),
   {
     ...sonnerToast,
     success: (...args: Parameters<Toast['success']>) => {
-      hapticSuccess();
+      haptics.trigger('success');
       return sonnerToast.success(...args);
     },
     error: (...args: Parameters<Toast['error']>) => {
-      hapticError();
+      haptics.trigger('error');
       return sonnerToast.error(...args);
     },
   }

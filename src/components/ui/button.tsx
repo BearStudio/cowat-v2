@@ -1,7 +1,8 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { haptic } from '@/lib/haptic';
+import { useWebHaptics } from 'web-haptics/react';
+
 import { cn } from '@/lib/tailwind/utils';
 
 import { Spinner } from '@/components/ui/spinner';
@@ -65,13 +66,15 @@ function Button({
   onClick,
   ...props
 }: ButtonProps) {
+  const { trigger } = useWebHaptics();
+
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={loading || disabled}
       onClick={(e) => {
-        if (variant !== 'link') haptic(10);
+        if (variant !== 'link') trigger();
         onClick?.(e);
       }}
       {...props}

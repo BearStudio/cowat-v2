@@ -3,7 +3,8 @@ import { cva } from 'class-variance-authority';
 import { CheckIcon, MinusIcon } from 'lucide-react';
 import React, { useId } from 'react';
 
-import { hapticSelection } from '@/lib/haptic';
+import { useWebHaptics } from 'web-haptics/react';
+
 import { cn } from '@/lib/tailwind/utils';
 
 const labelVariants = cva(
@@ -56,6 +57,7 @@ export function Checkbox({
   onCheckedChange,
   ...props
 }: CheckboxProps) {
+  const { trigger } = useWebHaptics();
   const Comp = noLabel ? React.Fragment : 'label';
 
   const _compId = useId();
@@ -73,7 +75,7 @@ export function Checkbox({
       <CheckboxPrimitive.Root
         className={cn(checkboxVariants({ size }), className)}
         onCheckedChange={(checked, event) => {
-          hapticSelection();
+          trigger('selection');
           onCheckedChange?.(checked, event);
         }}
         {...props}
