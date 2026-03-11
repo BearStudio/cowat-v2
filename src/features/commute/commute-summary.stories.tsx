@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react-vite';
 
-import { StopEnriched } from '@/features/commute/schema';
 import { CommuteSummary } from '@/features/commute/commute-summary';
+import { StopEnriched } from '@/features/commute/schema';
 
 export default {
   title: 'Feature/Commute/CommuteSummary',
