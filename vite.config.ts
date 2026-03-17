@@ -32,11 +32,13 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
+        // Force ws to be bundled by rollup instead of traced to _libs.
+        // This is required so the rollup stub plugin below can intercept
+        // its optional native imports (bufferutil, utf-8-validate) which
+        // are unavailable in Vercel serverless lambdas.
+        externals: { inline: ['ws'] },
         rollupConfig: {
           plugins: [
-            // bufferutil and utf-8-validate are optional native addons for ws.
-            // They are unavailable in serverless environments (e.g. Vercel lambdas),
-            // so we stub them with empty modules to prevent runtime import errors.
             {
               name: 'stub-ws-optional-native-deps',
               resolveId(source: string) {
