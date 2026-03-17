@@ -5,17 +5,10 @@ import { Logo } from '@/components/brand/logo';
 import { LocalSwitcher } from '@/components/ui/local-switcher';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
-import { useMascotState } from '@/features/auth/mascot';
-
-import image from './layout-login-image.jpg';
-import mascot from './mascot.png';
-import mascotError from './mascot-error.png';
-
 export const LayoutLogin = (props: {
   children?: ReactNode;
   footer?: ReactNode;
 }) => {
-  const mascotState = useMascotState();
   return (
     <div
       className="flex flex-1 bg-white pt-safe-top pb-safe-bottom dark:bg-neutral-950"
@@ -36,17 +29,18 @@ export const LayoutLogin = (props: {
         </div>
         {props.footer}
       </div>
-      <div className="relative hidden w-full flex-1 items-center justify-center bg-muted lg:flex">
-        <img
-          src={image}
-          alt=""
-          className="absolute inset-0 size-full object-cover"
-        />
-        <img
-          src={mascotState === 'error' ? mascotError : mascot}
-          alt=""
-          className="animate-float-in-space pointer-events-none absolute top-1/2 left-1/2 w-52 -translate-1/2"
-        />
+
+      {/* Right panel */}
+      <div className="relative hidden w-full flex-1 overflow-hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:gap-4">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-950 via-[oklch(0.22_0.07_242)] to-brand-950" />
+        <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-brand-600/20 blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl" />
+        <div className="relative z-10 flex flex-col items-center gap-3 text-center">
+          <Logo className="w-32 text-white" />
+          <p className="text-sm text-brand-300">
+            Covoiturez avec vos collègues
+          </p>
+        </div>
       </div>
     </div>
   );
