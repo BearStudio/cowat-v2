@@ -32,29 +32,14 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // React 19 intentionally exports jsxDEV=undefined in production builds.
-        // Some pre-compiled dependencies (e.g. TanStack packages) use jsxDEV,
-        // so we intercept react/jsx-dev-runtime and re-export jsx as jsxDEV
-        // from the production jsx-runtime (which has jsx as a real function).
-        // We also inline react/jsx-runtime via rollup so its CJS→ESM conversion
-        // is handled correctly (nft can break named exports like jsx/jsxs).
-        externals: { inline: ['react/jsx-runtime'] },
-        rollupConfig: {
-          plugins: [
-            {
-              name: 'stub-react-jsx-dev-runtime',
-              resolveId(id: string) {
-                if (id === 'react/jsx-dev-runtime') {
-                  return '\0react-jsx-dev-runtime-stub';
-                }
-              },
-              load(id: string) {
-                if (id === '\0react-jsx-dev-runtime-stub') {
-                  return `export { jsx as jsxDEV, jsxs, Fragment } from 'react/jsx-runtime';`;
-                }
-              },
-            },
-          ],
+        // React 19 exports jsxDEV=undefined in production, but pre-compiled
+        // dependencies (TanStack Router) call jsxDEV during SSR. Nitro's
+        // alias rewrites the import specifier BEFORE rollup plugin resolution,
+        // so this reliably redirects to our shim that re-exports jsx as jsxDEV.
+        alias: {
+          'react/jsx-dev-runtime': resolve(
+            './src/server/shims/jsx-dev-runtime.mjs'
+          ),
         },
       }),
       // react's vite plugin must come after start's vite plugin
