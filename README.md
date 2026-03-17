@@ -95,7 +95,7 @@ pnpm gen:icons
 
 E2E tests are setup with Playwright.
 
-[E2E Test Scenarios (Happy Path)](e2e/specs/happy-path.md) — A summary of all happy-path scenarios covered by E2E tests.
+[E2E Test Scenarios](e2e/specs/e2e.md) — A summary of all happy-path scenarios covered by E2E tests.
 
 ```sh
 pnpm e2e        # Run tests in headless mode, this is the command executed in CI
