@@ -32,27 +32,11 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // Some pre-compiled packages (e.g. TanStack devtools) use jsxDEV from
-        // react/jsx-dev-runtime. Nitro's CJS→ESM conversion of that module
-        // breaks its named exports, making jsxDEV undefined at runtime.
-        // We inline a shim that re-exports jsx as jsxDEV from jsx-runtime,
-        // which is identical to what React 19 production does internally.
-        rollupConfig: {
-          plugins: [
-            {
-              name: 'fix-jsx-dev-runtime-ssr',
-              resolveId(id: string) {
-                if (id === 'react/jsx-dev-runtime') {
-                  return '\0jsx-dev-runtime-shim';
-                }
-              },
-              load(id: string) {
-                if (id === '\0jsx-dev-runtime-shim') {
-                  return `export { jsx as jsxDEV, jsxs, Fragment } from 'react/jsx-runtime';`;
-                }
-              },
-            },
-          ],
+        // Nitro's CJS→ESM tracer (nft) breaks React's named exports (jsx,
+        // jsxDEV…). Force these packages through rollup's proper CommonJS
+        // plugin instead so their exports are correctly resolved at runtime.
+        externals: {
+          inline: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
         },
       }),
       // react's vite plugin must come after start's vite plugin
