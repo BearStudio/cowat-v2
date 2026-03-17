@@ -32,6 +32,26 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
+        rollupConfig: {
+          plugins: [
+            // bufferutil and utf-8-validate are optional native addons for ws.
+            // They are unavailable in serverless environments (e.g. Vercel lambdas),
+            // so we stub them with empty modules to prevent runtime import errors.
+            {
+              name: 'stub-ws-optional-native-deps',
+              resolveId(source: string) {
+                if (source === 'bufferutil' || source === 'utf-8-validate') {
+                  return `\0${source}`;
+                }
+              },
+              load(id: string) {
+                if (id === '\0bufferutil' || id === '\0utf-8-validate') {
+                  return 'export default null';
+                }
+              },
+            },
+          ],
+        },
       }),
       // react's vite plugin must come after start's vite plugin
       viteReact({
