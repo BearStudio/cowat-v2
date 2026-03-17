@@ -32,28 +32,6 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // Force ws to be bundled by rollup instead of traced to _libs.
-        // This is required so the rollup stub plugin below can intercept
-        // its optional native imports (bufferutil, utf-8-validate) which
-        // are unavailable in Vercel serverless lambdas.
-        externals: { inline: ['ws'] },
-        rollupConfig: {
-          plugins: [
-            {
-              name: 'stub-ws-optional-native-deps',
-              resolveId(source: string) {
-                if (source === 'bufferutil' || source === 'utf-8-validate') {
-                  return `\0${source}`;
-                }
-              },
-              load(id: string) {
-                if (id === '\0bufferutil' || id === '\0utf-8-validate') {
-                  return 'export default null';
-                }
-              },
-            },
-          ],
-        },
       }),
       // react's vite plugin must come after start's vite plugin
       viteReact({
