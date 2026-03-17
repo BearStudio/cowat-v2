@@ -32,11 +32,29 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // Nitro's CJS→ESM tracer (nft) breaks React's named exports (jsx,
-        // jsxDEV…). Force these packages through rollup's proper CommonJS
-        // plugin instead so their exports are correctly resolved at runtime.
-        externals: {
-          inline: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+        // React 19 intentionally exports jsxDEV=undefined in production builds.
+        // Some pre-compiled dependencies (e.g. TanStack packages) use jsxDEV,
+        // so we intercept react/jsx-dev-runtime and re-export jsx as jsxDEV
+        // from the production jsx-runtime (which has jsx as a real function).
+        // We also inline react/jsx-runtime via rollup so its CJS→ESM conversion
+        // is handled correctly (nft can break named exports like jsx/jsxs).
+        externals: { inline: ['react/jsx-runtime'] },
+        rollupConfig: {
+          plugins: [
+            {
+              name: 'stub-react-jsx-dev-runtime',
+              resolveId(id: string) {
+                if (id === 'react/jsx-dev-runtime') {
+                  return '\0react-jsx-dev-runtime-stub';
+                }
+              },
+              load(id: string) {
+                if (id === '\0react-jsx-dev-runtime-stub') {
+                  return `export { jsx as jsxDEV, jsxs, Fragment } from 'react/jsx-runtime';`;
+                }
+              },
+            },
+          ],
         },
       }),
       // react's vite plugin must come after start's vite plugin
