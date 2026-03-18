@@ -1,6 +1,6 @@
-# Happy Path Specs — Cowat
+# Cowat Specs
 
-These specs describe the expected happy path behavior for each major user flow.
+These specs describe the expected  for each major user flow.
 They are written to be directly translatable into Playwright tests.
 
 ---
