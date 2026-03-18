@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useNavigate, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -69,13 +69,13 @@ export const PageCommuteNew = ({
   search,
   orgSlug,
 }: {
-  search: { date?: Date };
+  search: { date?: Date; showForm?: boolean };
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const [showForm, setShowForm] = useState(false);
+  const showForm = search.showForm ?? false;
   const requestDrawer = useDisclosure();
   const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
   const [requestDestination, setRequestDestination] = useState('');
@@ -86,6 +86,14 @@ export const PageCommuteNew = ({
     resolver: zodResolver(zFormFieldsCommute()),
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
+
+  const navigateToOpenForm = useNavigate({
+    from: '/app/$orgSlug/commutes/new/',
+  });
+
+  const openForm = () => {
+    navigateToOpenForm({ search: (prev) => ({ ...prev, showForm: true }) });
+  };
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
@@ -146,11 +154,7 @@ export const PageCommuteNew = ({
           </PageLayoutTopBarTitle>
         </PageLayoutTopBar>
         <PageLayoutContent containerClassName="gap-4">
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={() => setShowForm(true)}
-          >
+          <Button variant="secondary" className="w-full" onClick={openForm}>
             <PenLineIcon />
             {t('commute:templatePicker.fromScratch')}
           </Button>
@@ -229,7 +233,7 @@ export const PageCommuteNew = ({
           <TemplatePicker
             onSelect={(data) => {
               form.reset({ ...DEFAULT_VALUES, date: search.date, ...data });
-              setShowForm(true);
+              openForm();
             }}
           />
         </PageLayoutContent>
