@@ -32,15 +32,6 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // React 19 exports jsxDEV=undefined in production, but pre-compiled
-        // dependencies (TanStack Router) call jsxDEV during SSR. Nitro's
-        // alias rewrites the import specifier BEFORE rollup plugin resolution,
-        // so this reliably redirects to our shim that re-exports jsx as jsxDEV.
-        alias: {
-          'react/jsx-dev-runtime': resolve(
-            './src/server/shims/jsx-dev-runtime.mjs'
-          ),
-        },
       }),
       // react's vite plugin must come after start's vite plugin
       viteReact({

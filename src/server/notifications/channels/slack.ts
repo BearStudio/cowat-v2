@@ -1,4 +1,4 @@
-import { WebClient } from '@slack/web-api';
+import { App } from '@slack/bolt';
 import { Result } from 'better-result';
 import JSXSlack from 'jsx-slack';
 
@@ -16,12 +16,12 @@ import { decrypt } from '@/server/encryption';
 import type { NotificationChannel, NotifyOrgContext } from '../types';
 
 async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
-  client: WebClient | null;
+  app: App | null;
   defaultChannel: string | undefined;
   locale: LanguageKey;
 }> {
   const disabled = {
-    client: null,
+    app: null,
     defaultChannel: undefined,
     locale: DEFAULT_LANGUAGE_KEY,
   } as const;
@@ -37,7 +37,7 @@ async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
   if (!token) return disabled;
 
   return {
-    client: new WebClient(token),
+    app: new App({ token, signingSecret: '' }),
     defaultChannel: orgChannel.broadcastChannel
       ? decrypt(orgChannel.broadcastChannel)
       : undefined,
@@ -51,20 +51,20 @@ export function createSlackChannel(): NotificationChannel {
 
     async canSend(_event, orgContext) {
       if (!orgContext) return false;
-      const { client } = await resolveSlackConfig(orgContext);
-      return client !== null;
+      const { app } = await resolveSlackConfig(orgContext);
+      return app !== null;
     },
 
     async send(event, logger, orgContext) {
       if (!orgContext) return;
-      const { client, defaultChannel, locale } =
+      const { app, defaultChannel, locale } =
         await resolveSlackConfig(orgContext);
 
-      if (!client) return;
+      if (!app) return;
 
       async function lookupUser(email: string) {
         const result = await Result.tryPromise(() =>
-          client!.users.lookupByEmail({ email })
+          app!.client.users.lookupByEmail({ email })
         );
         if (result.isErr()) {
           logger.warn(
@@ -80,7 +80,7 @@ export function createSlackChannel(): NotificationChannel {
         blocks: ReturnType<typeof JSXSlack>
       ) {
         const result = await Result.tryPromise(() =>
-          client!.chat.postMessage({
+          app!.client.chat.postMessage({
             channel,
             blocks,
             text: getFallbackText(blocks),
