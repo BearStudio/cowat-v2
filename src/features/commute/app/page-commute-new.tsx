@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { useCanGoBack, useNavigate, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
@@ -69,13 +69,13 @@ export const PageCommuteNew = ({
   search,
   orgSlug,
 }: {
-  search: { date?: Date };
+  search: { date?: Date; showForm?: boolean };
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const [showForm, setShowForm] = useState(false);
+  const showForm = search.showForm ?? false;
   const requestDrawer = useDisclosure();
   const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
   const [requestDestination, setRequestDestination] = useState('');
@@ -87,21 +87,10 @@ export const PageCommuteNew = ({
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
 
-  // Intercept browser back button when form is open
-  useEffect(() => {
-    if (!showForm) return;
-
-    const handlePopState = () => {
-      setShowForm(false);
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [showForm]);
+  const navigate = useNavigate({ from: '/app/$orgSlug/commutes/new/' });
 
   const openForm = () => {
-    router.history.push(router.state.location.href);
-    setShowForm(true);
+    navigate({ search: (prev) => ({ ...prev, showForm: true }) });
   };
 
   const commuteCreate = useMutation(
@@ -259,16 +248,7 @@ export const PageCommuteNew = ({
       <Form {...form} noHtmlForm>
         <MultiStepForm>
           <PageLayout>
-            <PageLayoutTopBar
-              startActions={
-                <BackButton
-                  onClick={(event) => {
-                    event.preventDefault();
-                    router.history.back();
-                  }}
-                />
-              }
-            >
+            <PageLayoutTopBar startActions={<BackButton />}>
               <PageLayoutTopBarTitle>
                 {t('commute:new.title')}
               </PageLayoutTopBarTitle>
