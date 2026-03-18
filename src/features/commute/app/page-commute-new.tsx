@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
@@ -87,6 +87,23 @@ export const PageCommuteNew = ({
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
 
+  // Intercept browser back button when form is open
+  useEffect(() => {
+    if (!showForm) return;
+
+    const handlePopState = () => {
+      setShowForm(false);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [showForm]);
+
+  const openForm = () => {
+    router.history.push(router.state.location.href);
+    setShowForm(true);
+  };
+
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
@@ -146,11 +163,7 @@ export const PageCommuteNew = ({
           </PageLayoutTopBarTitle>
         </PageLayoutTopBar>
         <PageLayoutContent containerClassName="gap-4">
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={() => setShowForm(true)}
-          >
+          <Button variant="secondary" className="w-full" onClick={openForm}>
             <PenLineIcon />
             {t('commute:templatePicker.fromScratch')}
           </Button>
@@ -229,7 +242,7 @@ export const PageCommuteNew = ({
           <TemplatePicker
             onSelect={(data) => {
               form.reset({ ...DEFAULT_VALUES, date: search.date, ...data });
-              setShowForm(true);
+              openForm();
             }}
           />
         </PageLayoutContent>
@@ -246,7 +259,16 @@ export const PageCommuteNew = ({
       <Form {...form} noHtmlForm>
         <MultiStepForm>
           <PageLayout>
-            <PageLayoutTopBar startActions={<BackButton />}>
+            <PageLayoutTopBar
+              startActions={
+                <BackButton
+                  onClick={(event) => {
+                    event.preventDefault();
+                    router.history.back();
+                  }}
+                />
+              }
+            >
               <PageLayoutTopBarTitle>
                 {t('commute:new.title')}
               </PageLayoutTopBarTitle>
