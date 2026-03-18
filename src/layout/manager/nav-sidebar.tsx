@@ -48,7 +48,7 @@ export const NavSidebar = (props: {
                 <SidebarMenuButton
                   className="h-auto"
                   render={
-                    <Link to="/manager/$orgSlug" params={{ orgSlug }}>
+                    <Link to="/app/$orgSlug" params={{ orgSlug }}>
                       <span>
                         <Logo className="w-24 group-data-[collapsible=icon]:w-18" />
                       </span>
