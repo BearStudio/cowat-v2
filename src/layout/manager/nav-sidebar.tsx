@@ -3,6 +3,7 @@ import {
   BarChart3Icon,
   BuildingIcon,
   MessageSquareIcon,
+  MonitorSmartphoneIcon,
   PanelLeftIcon,
   SettingsIcon,
   UsersIcon,
@@ -31,6 +32,7 @@ import {
 import { WithPermissions } from '@/features/auth/with-permission';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
+import { ButtonLink } from '@/components/ui/button-link';
 
 export const NavSidebar = (props: {
   children?: ReactNode;
@@ -48,7 +50,7 @@ export const NavSidebar = (props: {
                 <SidebarMenuButton
                   className="h-auto"
                   render={
-                    <Link to="/app/$orgSlug" params={{ orgSlug }}>
+                    <Link to="/manager/$orgSlug" params={{ orgSlug }}>
                       <span>
                         <Logo className="w-24 group-data-[collapsible=icon]:w-18" />
                       </span>
@@ -186,6 +188,19 @@ export const NavSidebar = (props: {
             </SidebarGroup>
           )}
         </SidebarContent>
+
+        <div className="px-2 py-1">
+          <ButtonLink
+            to="/app/$orgSlug"
+            size="sm"
+            variant="secondary"
+            className="w-full"
+          >
+            <MonitorSmartphoneIcon />
+            {t('layout:nav.openApp')}
+          </ButtonLink>
+        </div>
+
         <SidebarFooter>
           <NavUser orgSlug={orgSlug} />
         </SidebarFooter>
