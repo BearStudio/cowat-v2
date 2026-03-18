@@ -188,20 +188,18 @@ export const NavSidebar = (props: {
             </SidebarGroup>
           )}
         </SidebarContent>
-
-        <div className="px-2 py-1">
-          <ButtonLink
-            to="/app/$orgSlug"
-            size="sm"
-            variant="secondary"
-            className="w-full"
-          >
-            <MonitorSmartphoneIcon />
-            {t('layout:nav.openApp')}
-          </ButtonLink>
-        </div>
-
         <SidebarFooter>
+          <div className="px-2 py-1">
+            <ButtonLink
+              to="/app/$orgSlug"
+              size="sm"
+              variant="secondary"
+              className="w-full"
+            >
+              <MonitorSmartphoneIcon />
+              {t('layout:nav.openApp')}
+            </ButtonLink>
+          </div>
           <NavUser orgSlug={orgSlug} />
         </SidebarFooter>
       </Sidebar>
