@@ -87,10 +87,12 @@ export const PageCommuteNew = ({
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
 
-  const navigate = useNavigate({ from: '/app/$orgSlug/commutes/new/' });
+  const navigateToOpenForm = useNavigate({
+    from: '/app/$orgSlug/commutes/new/',
+  });
 
   const openForm = () => {
-    navigate({ search: (prev) => ({ ...prev, showForm: true }) });
+    navigateToOpenForm({ search: (prev) => ({ ...prev, showForm: true }) });
   };
 
   const commuteCreate = useMutation(
