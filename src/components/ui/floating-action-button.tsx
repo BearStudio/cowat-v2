@@ -20,9 +20,6 @@ export const fabVariants = cva('rounded-full shadow-lg', {
   },
 });
 
-export const fabContainerClasses =
-  'fixed z-30 flex flex-col items-center gap-3 bottom-[calc(64px+env(safe-area-inset-bottom)+1rem)] right-4';
-
 export type FabVariantProps = VariantProps<typeof fabVariants>;
 
 const getFabPortalRoot = () => document.getElementById('fab-portal-root');

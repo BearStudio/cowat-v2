@@ -209,6 +209,19 @@
   animation: none;
 }
 
+/* FAB portal root — always present in the DOM at body level */
+#fab-portal-root {
+  position: fixed;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  bottom: calc(64px + env(safe-area-inset-bottom) + 1rem);
+  right: 1rem;
+  view-transition-name: fab;
+}
+
 /* Keep FAB static and above page content during transitions */
 ::view-transition-group(fab) {
   animation: none;
