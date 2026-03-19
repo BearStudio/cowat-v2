@@ -84,6 +84,12 @@
       }
     },
     {
+      "files": ["src/features/slack/**/*"],
+      "rules": {
+        "react/jsx-key": "off"
+      }
+    },
+    {
       "files": ["**/*.stories.*"],
       "rules": {
         "storybook/await-interactions": "error",
