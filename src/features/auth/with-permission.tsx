@@ -22,7 +22,7 @@ export const WithPermissions = (props: {
       (permission) =>
         !authClient.admin.checkRolePermission({
           role: userRole as Role,
-          permission: permission,
+          permissions: permission,
         })
     )
   ) {

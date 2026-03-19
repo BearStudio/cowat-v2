@@ -1,8 +1,7 @@
 import { type Browser } from '@playwright/test';
-
+import { BookingDrawer, ConfirmDialog, DashboardPage } from 'e2e/pages';
 import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, ORG_SLUG, USER_FILE } from 'e2e/utils/constants';
-import { BookingDrawer, ConfirmDialog, DashboardPage } from 'e2e/pages';
 
 /**
  * Creates a REQUESTED booking as USER on ADMIN's commute,

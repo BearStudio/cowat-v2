@@ -24,6 +24,14 @@ import { getUserLanguage } from '@/server/utils';
 
 export type Auth = typeof auth;
 export const auth = betterAuth({
+  baseURL: {
+    allowedHosts: [
+      new URL(envClient.VITE_BASE_URL).host,
+      ...(envServer.AUTH_ALLOWED_HOSTS ?? []),
+      ...(envServer.VERCEL_URL ? [envServer.VERCEL_URL] : []),
+      ...(envServer.VERCEL_BRANCH_URL ? [envServer.VERCEL_BRANCH_URL] : []),
+    ],
+  },
   session: {
     expiresIn: envServer.AUTH_SESSION_EXPIRATION_IN_SECONDS,
     updateAge: envServer.AUTH_SESSION_UPDATE_AGE_IN_SECONDS,
@@ -71,7 +79,9 @@ export const auth = betterAuth({
     errorURL: '/login/error',
   },
   plugins: [
-    expo(), // Allows an Expo native app to use auth, can be delete if no needed
+    // Allows an Expo native app to use auth, can be delete if no needed
+    // disableOriginOverride: true is needed to prevent a crash, see https://github.com/better-auth/better-auth/issues/2398
+    expo({ disableOriginOverride: true }),
     openAPI({
       disableDefaultReference: true, // Use custom exposition in /routes/api/openapi folder
     }),
@@ -135,6 +145,11 @@ export const auth = betterAuth({
           .with('forget-password', async () => {
             throw new Error(
               'forget-password email not implemented, update the /app/server/auth.tsx file'
+            );
+          })
+          .with('change-email', async () => {
+            throw new Error(
+              'change-email email not implemented, update the /app/server/auth.tsx file'
             );
           })
           .exhaustive();

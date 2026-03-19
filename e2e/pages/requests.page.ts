@@ -1,5 +1,4 @@
 import { type Locator, type Page } from '@playwright/test';
-
 import { ORG_SLUG } from 'e2e/utils/constants';
 
 export class RequestsPage {

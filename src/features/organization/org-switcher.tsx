@@ -31,7 +31,7 @@ export const OrgSwitcher = () => {
     ? organizations?.filter((org) =>
         authClient.organization.checkRolePermission({
           role: org.role as 'owner' | 'admin' | 'member',
-          permission: { organization: ['delete'] },
+          permissions: { organization: ['delete'] },
         })
       )
     : organizations;

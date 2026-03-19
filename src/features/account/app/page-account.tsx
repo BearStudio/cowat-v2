@@ -35,12 +35,12 @@ export const PageAccount = () => {
     (userRole &&
       authClient.admin.checkRolePermission({
         role: userRole as Role,
-        permission: { apps: ['manager'] },
+        permissions: { apps: ['manager'] },
       })) ||
     (activeOrg &&
       authClient.organization.checkRolePermission({
         role: activeOrg.role as 'owner' | 'admin' | 'member',
-        permission: { organization: ['delete'] },
+        permissions: { organization: ['delete'] },
       }));
 
   return (

@@ -100,7 +100,6 @@ export function CommuteCreated({
         </>
       </SlackBody>
       {payload.stops.map((stop) => (
-        // eslint-disable-next-line @eslint-react/no-missing-key
         <Section>
           <Mrkdwn>
             <StopLabel stop={stop} />
