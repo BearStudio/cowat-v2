@@ -20,10 +20,9 @@ export const fabVariants = cva('rounded-full shadow-lg', {
   },
 });
 
-export const fabContainerClasses =
-  'fixed z-30 flex flex-col items-center gap-3 bottom-[calc(64px+env(safe-area-inset-bottom)+1rem)] right-4';
-
 export type FabVariantProps = VariantProps<typeof fabVariants>;
+
+const getFabPortalRoot = () => document.getElementById('fab-portal-root');
 
 export const FabPortal = ({
   children,
@@ -31,11 +30,11 @@ export const FabPortal = ({
 }: {
   children: ReactNode;
   className?: string;
-}) =>
-  createPortal(
-    <div className={cn(fabContainerClasses, className)}>{children}</div>,
-    document.body
-  );
+}) => {
+  const root = getFabPortalRoot();
+  if (!root) return null;
+  return createPortal(<div className={cn(className)}>{children}</div>, root);
+};
 
 export const ResponsiveFab = ({
   mobile,

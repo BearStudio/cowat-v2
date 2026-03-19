@@ -153,6 +153,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body className="flex min-h-dvh flex-col">
         {children}
+        <div id="fab-portal-root" />
         <EnvHint />
         <Scripts />
       </body>
