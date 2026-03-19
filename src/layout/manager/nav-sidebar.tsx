@@ -13,6 +13,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Logo } from '@/components/brand/logo';
+import { ButtonLink } from '@/components/ui/button-link';
 import {
   Sidebar,
   SidebarContent,
@@ -32,7 +33,6 @@ import {
 import { WithPermissions } from '@/features/auth/with-permission';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
-import { ButtonLink } from '@/components/ui/button-link';
 
 export const NavSidebar = (props: {
   children?: ReactNode;
