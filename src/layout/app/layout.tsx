@@ -12,7 +12,9 @@ export const Layout = (props: { children?: ReactNode }) => {
   return (
     <div className="flex flex-1 flex-col" data-testid="layout-app">
       {showMainNavDesktop && <MainNavDesktop />}
-      <div className="flex flex-1 flex-col">{props.children}</div>
+      <div className="flex flex-1 flex-col [view-transition-name:page-content]">
+        {props.children}
+      </div>
       {showMainNavMobile && <MainNavMobile />}
     </div>
   );
