@@ -16,7 +16,7 @@
     "stops_one": "{{count}} stop",
     "stops_other": "{{count}} stops",
     "availableSeats": "{{available}}/{{total}} seats available",
-    "seatCount": "{{available}}/{{total}} seats",
+    "seatCount": "{{taken}}/{{total}} seats",
     "editAction": "Edit",
     "cancelAction": "Cancel",
     "callDriver": "Call",

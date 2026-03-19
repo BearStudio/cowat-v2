@@ -36,6 +36,12 @@ export const ThemeSwitcher = (props: { iconOnly?: boolean }) => {
     return <div className="size-9" />;
   }
 
+  const currentTheme: (typeof themes)[number] = themes.includes(
+    theme as (typeof themes)[number]
+  )
+    ? (theme as (typeof themes)[number])
+    : 'system';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -46,13 +52,13 @@ export const ThemeSwitcher = (props: { iconOnly?: boolean }) => {
           />
         }
       >
-        {match(theme as (typeof themes)[number])
+        {match(currentTheme)
           .with('system', () => <SunMoonIcon className="opacity-50" />)
           .with('light', () => <SunIcon className="opacity-50" />)
           .with('dark', () => <MoonIcon className="opacity-50" />)
           .exhaustive()}
         <span className={cn(props.iconOnly && 'sr-only')}>
-          {match(theme as (typeof themes)[number])
+          {match(currentTheme)
             .with('system', () => t('common:themes.values.system'))
             .with('light', () => t('common:themes.values.light'))
             .with('dark', () => t('common:themes.values.dark'))
@@ -71,7 +77,7 @@ export const ThemeSwitcher = (props: { iconOnly?: boolean }) => {
             <CheckIcon
               className={cn(
                 'mt-0.5 size-4 self-start text-current',
-                theme === item ? 'opacity-100' : 'opacity-0'
+                currentTheme === item ? 'opacity-100' : 'opacity-0'
               )}
             />
             {t(`common:themes.values.${item}`)}
