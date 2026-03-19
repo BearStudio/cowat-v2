@@ -21,7 +21,7 @@ export const BookingRequestSummary = ({
 
   return (
     <div className="flex flex-col gap-2 text-sm">
-      <div className="flex items-center gap-2">
+      <div className="flex items-start gap-2">
         <Avatar size={avatarSize}>
           <AvatarImage src={request.passenger.image ?? undefined} />
           <AvatarFallback
@@ -33,7 +33,7 @@ export const BookingRequestSummary = ({
           <span className="font-medium capitalize">
             {dayjs(request.stop.commute.date).f('booking:requestDateFull')}
           </span>
-          <Badge variant="secondary" size="sm" className="w-fit">
+          <Badge variant="secondary" size="sm" className="w-fit self-start">
             {t(`booking:request.tripType.${request.tripType}`)}
           </Badge>
         </div>
