@@ -24,8 +24,8 @@ export const Default = () => {
           date={new Date('2026-02-14')}
           type="ROUND"
           totalSeats={4}
-          outwardAvailable={2}
-          inwardAvailable={3}
+          outwardTaken={2}
+          inwardTaken={3}
           outwardDeparture="08:00"
           inwardDeparture="17:30"
         />
@@ -49,8 +49,8 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
-            outwardAvailable={2}
-            inwardAvailable={3}
+            outwardTaken={2}
+            inwardTaken={3}
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
@@ -64,8 +64,8 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
-            outwardAvailable={3}
-            inwardAvailable={4}
+            outwardTaken={3}
+            inwardTaken={4}
             outwardDeparture="07:45"
             inwardDeparture="18:00"
             badge={<BookingStatusBadge status="DRIVER" />}
@@ -82,8 +82,8 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
-            outwardAvailable={3}
-            inwardAvailable={3}
+            outwardTaken={3}
+            inwardTaken={3}
             outwardDeparture="08:00"
             inwardDeparture="17:30"
             badge={<BookingStatusBadge status="REQUESTED" />}
@@ -100,7 +100,7 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-14')}
             type="ONEWAY"
             totalSeats={3}
-            outwardAvailable={1}
+            outwardTaken={1}
             outwardDeparture="08:15"
             badge={<BookingStatusBadge status="ACCEPTED" />}
           />
@@ -118,8 +118,8 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-15')}
             type="ROUND"
             totalSeats={4}
-            outwardAvailable={2}
-            inwardAvailable={3}
+            outwardTaken={2}
+            inwardTaken={3}
             badge={<BookingStatusBadge status="REFUSED" />}
           />
         </CardCommuteTrigger>
@@ -134,7 +134,7 @@ export const LeftBorderByStatus = () => {
             date={new Date('2026-02-15')}
             type="ONEWAY"
             totalSeats={2}
-            outwardAvailable={0}
+            outwardTaken={0}
             outwardDeparture="09:00"
             badge={<BookingStatusBadge status="CANCELED" />}
           />
@@ -167,8 +167,8 @@ export const WithManyPassengers = () => {
             date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={8}
-            outwardAvailable={1}
-            inwardAvailable={2}
+            outwardTaken={1}
+            inwardTaken={2}
             outwardDeparture="07:30"
             inwardDeparture="18:00"
             passengers={passengers}
@@ -188,7 +188,7 @@ export const WithManyPassengers = () => {
             date={new Date('2026-02-14')}
             type="ONEWAY"
             totalSeats={4}
-            outwardAvailable={1}
+            outwardTaken={1}
             outwardDeparture="08:15"
             passengers={passengers.slice(0, 3)}
             badge={<BookingStatusBadge status="ACCEPTED" />}
@@ -207,8 +207,8 @@ export const WithManyPassengers = () => {
             date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={2}
-            outwardAvailable={1}
-            inwardAvailable={1}
+            outwardTaken={1}
+            inwardTaken={1}
             outwardDeparture="08:00"
             inwardDeparture="17:30"
             passengers={passengers.slice(0, 1)}
@@ -232,8 +232,8 @@ export const WithActions = () => {
           date={new Date('2026-02-14')}
           type="ROUND"
           totalSeats={4}
-          outwardAvailable={2}
-          inwardAvailable={3}
+          outwardTaken={2}
+          inwardTaken={3}
           outwardDeparture="08:00"
           inwardDeparture="17:30"
           actions={
