@@ -34,8 +34,8 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
+import { CommuteSummary } from '@/features/commute/commute-summary';
 import {
   OrgButtonLink,
   OrgResponsiveIconButtonLink,
