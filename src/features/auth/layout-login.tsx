@@ -5,6 +5,8 @@ import { Logo } from '@/components/brand/logo';
 import { LocalSwitcher } from '@/components/ui/local-switcher';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
+import authImage from './auth-image.png';
+
 export const LayoutLogin = (props: {
   children?: ReactNode;
   footer?: ReactNode;
@@ -32,15 +34,30 @@ export const LayoutLogin = (props: {
 
       {/* Right panel */}
       <div className="relative hidden w-full flex-1 overflow-hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:gap-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-950 via-[oklch(0.22_0.07_242)] to-brand-950" />
+        {/* Blurred background layer */}
+        <img
+          src={authImage}
+          alt=""
+          className="absolute inset-0 size-full object-cover blur-[2px]"
+        />
+        {/* Sharp head layer with radial mask */}
+        <img
+          src={authImage}
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+          style={{
+            maskImage:
+              'radial-gradient(ellipse 35% 30% at 45% 35%, black 40%, transparent 100%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 35% 30% at 45% 35%, black 40%, transparent 100%)',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-950/80 via-brand-900/60 to-brand-950/80" />
         <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-brand-600/20 blur-3xl" />
         <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl" />
-        <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-          <Logo className="w-32 text-white" />
-          <p className="text-sm text-brand-300">
-            Covoiturez avec vos collègues
-          </p>
-        </div>
+        <p className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-xs text-white/70 italic">
+          Meuh-ci de covoiturer 🐄
+        </p>
       </div>
     </div>
   );
