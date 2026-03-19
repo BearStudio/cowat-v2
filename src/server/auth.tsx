@@ -30,6 +30,8 @@ export const auth = betterAuth({
       ...(envServer.AUTH_ALLOWED_HOSTS ?? []),
       ...(envServer.VERCEL_URL ? [envServer.VERCEL_URL] : []),
       ...(envServer.VERCEL_BRANCH_URL ? [envServer.VERCEL_BRANCH_URL] : []),
+      // In dev, allow local network access (e.g. testing from mobile devices)
+      ...(import.meta.env.DEV ? ['192.168.*:*', '10.*:*', '172.*:*'] : []),
     ],
   },
   session: {
