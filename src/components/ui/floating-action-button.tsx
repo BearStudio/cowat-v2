@@ -33,7 +33,12 @@ export const FabPortal = ({
   className?: string;
 }) =>
   createPortal(
-    <div className={cn(fabContainerClasses, className)}>{children}</div>,
+    <div
+      className={cn(fabContainerClasses, className)}
+      style={{ viewTransitionName: 'fab' }}
+    >
+      {children}
+    </div>,
     document.body
   );
 
