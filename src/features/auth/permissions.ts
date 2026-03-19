@@ -47,5 +47,5 @@ export type Permission = NonNullable<
 >;
 
 export type OrganizationPermission = NonNullable<
-  Parameters<typeof authClient.organization.hasPermission>['0']['permission']
+  Parameters<typeof authClient.organization.hasPermission>['0']['permissions']
 >;

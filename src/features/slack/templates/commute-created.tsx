@@ -1,5 +1,6 @@
 /** @jsxImportSource jsx-slack */
 import { Blocks, Button, Divider, Image, Mrkdwn, Section } from 'jsx-slack';
+import { Fragment } from 'react';
 
 import i18n from '@/lib/i18n';
 
@@ -100,21 +101,23 @@ export function CommuteCreated({
         </>
       </SlackBody>
       {payload.stops.map((stop) => (
-        <Section key={stop.stopId}>
-          <Mrkdwn>
-            <StopLabel stop={stop} />
-          </Mrkdwn>
-          <Button
-            url={stopBookingUrl(
-              baseUrl,
-              payload.orgSlug,
-              payload.commuteId,
-              stop.stopId
-            )}
-          >
-            {i18n.t('notifications:commute.bookStop')}
-          </Button>
-        </Section>
+        <Fragment key={stop.stopId}>
+          <Section>
+            <Mrkdwn>
+              <StopLabel stop={stop} />
+            </Mrkdwn>
+            <Button
+              url={stopBookingUrl(
+                baseUrl,
+                payload.orgSlug,
+                payload.commuteId,
+                stop.stopId
+              )}
+            >
+              {i18n.t('notifications:commute.bookStop')}
+            </Button>
+          </Section>
+        </Fragment>
       ))}
       <SlackFooter>
         {i18n.t(seatsKey, { seats: String(payload.seats) })}
