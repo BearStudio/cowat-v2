@@ -28,6 +28,7 @@ export const auth = betterAuth({
     allowedHosts: [
       new URL(envClient.VITE_BASE_URL).host,
       ...(envServer.AUTH_ALLOWED_HOSTS ?? []),
+      ...(envServer.VERCEL_URL ? [envServer.VERCEL_URL] : []),
     ],
   },
   session: {
