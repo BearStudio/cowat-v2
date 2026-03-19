@@ -5,7 +5,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { AUTH_EMAIL_OTP_MOCKED } from '@/features/auth/config';
 
-const LoginEmailButton = ({ email }: { email: string }) => {
+const LoginEmailButton = ({
+  email,
+  label,
+}: {
+  email: string;
+  label: string;
+}) => {
   const form = useFormContext();
   return (
     <button
@@ -17,7 +23,7 @@ const LoginEmailButton = ({ email }: { email: string }) => {
         })
       }
     >
-      {email}
+      {label}
     </button>
   );
 };
@@ -32,9 +38,12 @@ export const LoginEmailHint = () => {
       <TerminalIcon className="size-4" />
       <AlertTitle>Dev mode</AlertTitle>
       <AlertDescription className="flex flex-wrap gap-x-1 text-sm leading-4">
-        You can login with <LoginEmailButton email="admin@admin.com" />
+        You can login with{' '}
+        <LoginEmailButton email="admin@admin.com" label="admin" />
+        {', '}
+        <LoginEmailButton email="owner@owner.com" label="owner" />
         {' or '}
-        <LoginEmailButton email="user@user.com" />
+        <LoginEmailButton email="user@user.com" label="user" />
       </AlertDescription>
     </Alert>
   );
