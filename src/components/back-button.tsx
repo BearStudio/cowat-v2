@@ -18,6 +18,7 @@ export const BackButton = ({
     <ButtonLink
       variant="ghost"
       size="icon-sm"
+      className="hit-area-3"
       onClick={(e) => {
         if (canGoBack) {
           e.preventDefault();
