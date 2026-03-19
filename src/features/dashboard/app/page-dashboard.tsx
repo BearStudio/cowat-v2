@@ -2,7 +2,7 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -48,10 +48,11 @@ export const PageDashboard = () => {
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
 
-  const [
-    { bookingStop: bookingStopId, openCommutes: openCommuteIds },
-    setSearchParams,
-  ] = useDashboardSearchParams();
+  const [{ bookingStop: bookingStopId, openCommutes: initialOpenCommutes }] =
+    useDashboardSearchParams();
+  const [, setSearchParams] = useDashboardSearchParams();
+  const [openCommuteIds, setOpenCommuteIds] =
+    useState<string[]>(initialOpenCommutes);
 
   const today = dayjs().startOf('day');
   const rangeEnd = today.add(7, 'day');
@@ -212,13 +213,11 @@ export const PageDashboard = () => {
                             bookingCancel={bookingCancel}
                             open={openCommuteIds.includes(item.id)}
                             onOpenChange={(open) =>
-                              setSearchParams({
-                                openCommutes: open
-                                  ? [...openCommuteIds, item.id]
-                                  : openCommuteIds.filter(
-                                      (id) => id !== item.id
-                                    ),
-                              })
+                              setOpenCommuteIds((prev) =>
+                                open
+                                  ? [...prev, item.id]
+                                  : prev.filter((id) => id !== item.id)
+                              )
                             }
                             onBookStop={(stopId) =>
                               setSearchParams({ bookingStop: stopId })

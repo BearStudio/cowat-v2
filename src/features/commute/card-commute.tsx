@@ -115,8 +115,9 @@ function CardCommuteContent({
   return (
     <CollapsibleContent
       data-slot="card-commute-content"
+      keepMounted
       className={cn(
-        'overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0',
+        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-100 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
         className
       )}
       {...props}
