@@ -19,7 +19,6 @@ import {
   AUTH_EMAIL_OTP_EXPIRATION_IN_MINUTES,
   AUTH_SIGNUP_ENABLED,
 } from '@/features/auth/config';
-import { useMascot } from '@/features/auth/mascot';
 import {
   FormFieldsLoginVerify,
   zFormFieldsLoginVerify,
@@ -45,9 +44,6 @@ export default function PageLoginVerify({
       otp: '',
     },
   });
-  const { isValid, isSubmitted } = form.formState;
-  useMascot({ isError: !isValid && isSubmitted });
-
   const submitHandler: SubmitHandler<FormFieldsLoginVerify> = async ({
     otp,
   }) => {
