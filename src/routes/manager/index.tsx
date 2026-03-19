@@ -37,7 +37,7 @@ function RouteComponent() {
   const isAdmin = userRole
     ? authClient.admin.checkRolePermission({
         role: userRole as Role,
-        permission: { apps: ['manager'] },
+        permissions: { apps: ['manager'] },
       })
     : false;
 
@@ -49,7 +49,7 @@ function RouteComponent() {
   const manageableOrgs = orgs.filter((org) =>
     authClient.organization.checkRolePermission({
       role: org.role as 'owner' | 'admin' | 'member',
-      permission: { organization: ['delete'] },
+      permissions: { organization: ['delete'] },
     })
   );
 

@@ -115,7 +115,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['list'] },
+          permissions: { user: ['list'] },
         },
       });
     });
@@ -169,7 +169,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['list'] },
+          permissions: { user: ['list'] },
         },
       });
     });
@@ -246,7 +246,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['create'] },
+          permissions: { user: ['create'] },
         },
       });
     });
@@ -374,7 +374,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['set-role'] },
+          permissions: { user: ['set-role'] },
         },
       });
     });
@@ -438,7 +438,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['delete'] },
+          permissions: { user: ['delete'] },
         },
       });
     });
@@ -510,7 +510,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['list'] },
+          permissions: { session: ['list'] },
         },
       });
     });
@@ -574,7 +574,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['revoke'] },
+          permissions: { session: ['revoke'] },
         },
       });
     });
@@ -658,7 +658,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['revoke'] },
+          permissions: { session: ['revoke'] },
         },
       });
     });

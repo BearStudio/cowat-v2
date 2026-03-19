@@ -205,7 +205,7 @@ export const protectedProcedure = ({
     const userHasPermission = await auth.api.userHasPermission({
       body: {
         userId: user.id,
-        permission,
+        permissions: permission,
       },
     });
 
@@ -256,7 +256,7 @@ export const organizationProcedure = ({
       const hasPermission = await auth.api.hasPermission({
         headers: getRequestHeaders(),
         body: {
-          permission: permissions,
+          permissions: permissions,
         },
       });
 

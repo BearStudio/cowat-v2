@@ -1,5 +1,4 @@
 import { type Browser } from '@playwright/test';
-
 import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, INVITED_EMAIL, INVITED_FILE } from 'e2e/utils/constants';
 

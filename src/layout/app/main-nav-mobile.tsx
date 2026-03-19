@@ -42,8 +42,8 @@ const Item = ({
       className="flex flex-1 flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 [&.active]:text-primary"
     >
       <span className="relative">
-        <Icon className="size-6 opacity-60 [.active_&]:hidden" />
-        <IconActive className="hidden size-6 [.active_&]:block" />
+        <Icon className="size-6 opacity-60 in-[.active]:hidden" />
+        <IconActive className="hidden size-6 in-[.active]:block" />
         {Badge && <Badge />}
       </span>
       <span className="text-2xs font-medium">{children}</span>
