@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
 
+import { ConfirmSummary } from '@/components/confirm-summary';
 import {
   Form,
   FormField,
@@ -26,7 +27,6 @@ import {
 } from '@/components/ui/responsive-drawer';
 
 import { type TripType, zTripType } from '@/features/booking/schema';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import {
   type CommuteType,
   type StopEnriched,
@@ -112,7 +112,7 @@ export const BookingDrawer = (props: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
-  const { t } = useTranslation(['dashboard']);
+  const { t } = useTranslation(['dashboard', 'commute']);
   const { form, tripTypeOptions } = useBookingForm({
     commuteType: props.commuteType,
     isFirstStop: props.isFirstStop,
@@ -170,11 +170,11 @@ export const BookingDrawer = (props: {
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody className="flex flex-col gap-4">
             {props.stop && (
-              <CommuteSummary
+              <ConfirmSummary
+                user={props.driver ?? undefined}
                 date={props.commuteDate}
-                type={props.commuteType}
+                typeLabel={t(`commute:list.type.${props.commuteType}`)}
                 stops={[props.stop]}
-                driver={props.driver ?? undefined}
               />
             )}
             {tripTypeOptions.length > 1 && (

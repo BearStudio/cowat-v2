@@ -8,6 +8,8 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+import { CommentText } from '@/components/comment-text';
+import { ConfirmSummary } from '@/components/confirm-summary';
 import { Button } from '@/components/ui/button';
 import {
   DataListErrorState,
@@ -35,7 +37,6 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import {
   OrgButtonLink,
   OrgResponsiveIconButtonLink,
@@ -210,11 +211,9 @@ export const PageCommutes = () => {
                       />
                     </CardCommuteTrigger>
                     <CardCommuteContent>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-3">
                         {item.comment && (
-                          <p className="text-sm text-muted-foreground">
-                            {item.comment}
-                          </p>
+                          <CommentText>{item.comment}</CommentText>
                         )}
                         <CardCommuteStopsList stops={item.stops} />
                         <CardCommuteActions
@@ -230,11 +229,11 @@ export const PageCommutes = () => {
                                     : 'commute:list.cancelConfirmDescription'
                                 )}
                               </span>
-                              <CommuteSummary
+                              <ConfirmSummary
+                                user={item.driver}
                                 date={item.date}
-                                type={item.type}
+                                typeLabel={t(`commute:list.type.${item.type}`)}
                                 stops={item.stops}
-                                driver={item.driver}
                               />
                             </div>
                           }

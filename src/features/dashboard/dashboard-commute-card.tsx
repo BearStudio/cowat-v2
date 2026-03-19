@@ -2,6 +2,8 @@ import { UseMutationResult } from '@tanstack/react-query';
 import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { CommentText } from '@/components/comment-text';
+import { ConfirmSummary } from '@/components/confirm-summary';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
@@ -16,7 +18,6 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import { CommuteEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
@@ -80,15 +81,13 @@ export const DashboardCommuteCard = ({
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
-        <div className="flex flex-col gap-2">
-          {commute.comment && (
-            <p className="text-sm text-muted-foreground">{commute.comment}</p>
-          )}
+        <div className="flex flex-col gap-3">
+          {commute.comment && <CommentText>{commute.comment}</CommentText>}
           {isFull && !isDriver && (
-            <p className="flex items-center gap-1 text-sm text-warning-600 dark:text-warning-400">
-              <AlertTriangleIcon size="1em" className="flex-none" />
+            <div className="flex items-center gap-1.5 rounded-md bg-warning-100 px-3 py-2 text-sm text-warning-700 dark:bg-warning-500/15 dark:text-warning-400">
+              <AlertTriangleIcon className="size-4 shrink-0" />
               {t('dashboard:booking.fullWarning')}
-            </p>
+            </div>
           )}
           <CardCommuteStopsList
             stops={commute.stops}
@@ -108,15 +107,15 @@ export const DashboardCommuteCard = ({
                         <span>
                           {t('dashboard:cancelBooking.confirmDescription')}
                         </span>
-                        <CommuteSummary
+                        <ConfirmSummary
+                          user={commute.driver}
                           date={commute.date}
-                          type={commute.type}
+                          typeLabel={t(`commute:list.type.${commute.type}`)}
                           stops={[stop]}
-                          driver={commute.driver}
                         />
                       </div>
                     }
-                    confirmText={t('common:actions.delete')}
+                    confirmText={t('common:actions.confirm')}
                     confirmVariant="destructive"
                     onConfirm={() =>
                       bookingCancel.mutateAsync({ id: userBooking.id })
@@ -154,11 +153,11 @@ export const DashboardCommuteCard = ({
                       : 'commute:list.cancelConfirmDescription'
                   )}
                 </span>
-                <CommuteSummary
+                <ConfirmSummary
+                  user={commute.driver}
                   date={commute.date}
-                  type={commute.type}
+                  typeLabel={t(`commute:list.type.${commute.type}`)}
                   stops={commute.stops}
-                  driver={commute.driver}
                 />
               </div>
             }
