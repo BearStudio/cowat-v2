@@ -1,14 +1,20 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Control, useWatch } from 'react-hook-form';
+import { useMemo } from 'react';
+import { type Control, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { tripTypeIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { CommentText } from '@/components/comment-text';
 import { Badge } from '@/components/ui/badge';
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+import {
+  type StopForTimeline,
+  StopsTimelineItem,
+} from '@/features/commute/stops-timeline';
 
 type StepRecapProps = {
   control: Control<FormFieldsCommuteBase>;
@@ -29,10 +35,14 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
     })
   );
 
-  const locationsMap = new Map(
-    locationsQuery.data?.pages
-      .flatMap((p) => p.items)
-      .map((loc) => [loc.id, loc.name]) ?? []
+  const locationsMap = useMemo(
+    () =>
+      new Map(
+        locationsQuery.data?.pages
+          .flatMap((p) => p.items)
+          .map((loc) => [loc.id, loc.name]) ?? []
+      ),
+    [locationsQuery.data]
   );
 
   const { stops } = values;
@@ -40,6 +50,27 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
   const hasInwardTimes = stops?.some((s) => s.inwardTime);
   const OnewayIcon = tripTypeIcons.ONEWAY;
   const ReturnIcon = tripTypeIcons.RETURN;
+
+  const toTimelineStop = (
+    locationId: string,
+    time: string
+  ): StopForTimeline => ({
+    location: {
+      id: locationId,
+      name: locationsMap.get(locationId) ?? locationId,
+    },
+    outwardTime: time,
+    inwardTime: null,
+  });
+
+  const outwardStops = (stops ?? []).map((s) =>
+    toTimelineStop(s.locationId, s.outwardTime)
+  );
+
+  const inwardStops = [...(stops ?? [])]
+    .reverse()
+    .filter((s) => s.inwardTime)
+    .map((s) => toTimelineStop(s.locationId, s.inwardTime!));
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,29 +107,14 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
             </h3>
           )}
           <div className="flex flex-col">
-            {stops?.map((stop, index) => {
-              const isLast = index === (stops.length ?? 0) - 1;
-              return (
-                <div key={stop.locationId} className="flex items-start gap-3">
-                  <div className="flex flex-col items-center self-stretch">
-                    <div className="flex h-6 items-center">
-                      <div className="size-3 shrink-0 rounded-full bg-primary" />
-                    </div>
-                    {!isLast && <div className="w-px flex-1 bg-border" />}
-                  </div>
-                  <div
-                    className={`flex min-w-0 flex-1 flex-col gap-1 ${isLast ? '' : 'pb-4'}`}
-                  >
-                    <span className="truncate text-sm leading-6 font-medium">
-                      {locationsMap.get(stop.locationId) ?? stop.locationId}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {stop.outwardTime}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            {outwardStops.map((stop, index) => (
+              <StopsTimelineItem
+                key={stop.location.id}
+                stop={stop}
+                isFirst={index === 0}
+                isLast={index === outwardStops.length - 1}
+              />
+            ))}
           </div>
         </div>
 
@@ -110,44 +126,21 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
               {t(`${ns}:stepper.inboundTrip`)}
             </h3>
             <div className="flex flex-col">
-              {[...(stops ?? [])]
-                .reverse()
-                .filter((stop) => stop.inwardTime)
-                .map((stop, index, arr) => {
-                  const isLast = index === arr.length - 1;
-                  return (
-                    <div
-                      key={stop.locationId}
-                      className="flex items-start gap-3"
-                    >
-                      <div className="flex flex-col items-center self-stretch">
-                        <div className="flex h-6 items-center">
-                          <div className="size-3 shrink-0 rounded-full bg-primary" />
-                        </div>
-                        {!isLast && <div className="w-px flex-1 bg-border" />}
-                      </div>
-                      <div
-                        className={`flex min-w-0 flex-1 flex-col gap-1 ${isLast ? '' : 'pb-4'}`}
-                      >
-                        <span className="truncate text-sm leading-6 font-medium">
-                          {locationsMap.get(stop.locationId) ?? stop.locationId}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {stop.inwardTime}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+              {inwardStops.map((stop, index) => (
+                <StopsTimelineItem
+                  key={stop.location.id}
+                  stop={stop}
+                  isFirst={index === 0}
+                  isLast={index === inwardStops.length - 1}
+                />
+              ))}
             </div>
           </div>
         )}
       </div>
 
       {/* Comment */}
-      {values.comment && (
-        <p className="text-sm text-muted-foreground">{values.comment}</p>
-      )}
+      {values.comment && <CommentText>{values.comment}</CommentText>}
     </div>
   );
 };

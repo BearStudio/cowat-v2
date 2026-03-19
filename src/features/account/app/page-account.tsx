@@ -22,6 +22,26 @@ import {
   PageLayoutTopBar,
 } from '@/layout/app/page-layout';
 
+function AccountNavLink({
+  icon: Icon,
+  children,
+  ...linkProps
+}: Omit<React.ComponentProps<typeof OrgLink>, 'children' | 'className'> & {
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
+  return (
+    <OrgLink
+      {...linkProps}
+      className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors duration-150 ease-out hover:bg-accent"
+    >
+      <Icon className="size-5 text-muted-foreground" />
+      <span className="flex-1">{children}</span>
+      <ChevronRightIcon className="size-4 text-muted-foreground" />
+    </OrgLink>
+  );
+}
+
 export const PageAccount = () => {
   const { t } = useTranslation(['account']);
   const session = authClient.useSession();
@@ -71,33 +91,22 @@ export const PageAccount = () => {
             <MemberPreferences />
             <NotificationPreferences />
             {showManagerLink && (
-              <OrgLink
-                to="/manager/$orgSlug"
-                className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
-              >
-                <SettingsIcon className="size-5 text-muted-foreground" />
-                <span className="flex-1">{t('account:managerLink')}</span>
-                <ChevronRightIcon className="size-4 text-muted-foreground" />
-              </OrgLink>
+              <AccountNavLink to="/manager/$orgSlug" icon={SettingsIcon}>
+                {t('account:managerLink')}
+              </AccountNavLink>
             )}
-            <OrgLink
+            <AccountNavLink
               to="/app/$orgSlug/account/locations"
-              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+              icon={featureIcons.Locations}
             >
-              <featureIcons.Locations className="size-5 text-muted-foreground" />
-              <span className="flex-1">{t('account:locationsLink')}</span>
-              <ChevronRightIcon className="size-4 text-muted-foreground" />
-            </OrgLink>
-            <OrgLink
+              {t('account:locationsLink')}
+            </AccountNavLink>
+            <AccountNavLink
               to="/app/$orgSlug/account/commute-templates"
-              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+              icon={featureIcons.CommuteTemplates}
             >
-              <featureIcons.CommuteTemplates className="size-5 text-muted-foreground" />
-              <span className="flex-1">
-                {t('account:commuteTemplatesLink')}
-              </span>
-              <ChevronRightIcon className="size-4 text-muted-foreground" />
-            </OrgLink>
+              {t('account:commuteTemplatesLink')}
+            </AccountNavLink>
           </section>
 
           <BuildInfoDrawer>
