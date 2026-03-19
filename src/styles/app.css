@@ -203,10 +203,20 @@
 
 /* View Transitions */
 
-/* Keep nav bars and FAB static during transitions */
+/* Keep nav bars static during transitions */
 ::view-transition-group(main-nav),
-::view-transition-group(main-nav-mobile),
+::view-transition-group(main-nav-mobile) {
+  animation: none;
+}
+
+/* Keep FAB static and above page content during transitions */
 ::view-transition-group(fab) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(fab),
+::view-transition-new(fab) {
   animation: none;
 }
 

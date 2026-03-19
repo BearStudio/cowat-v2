@@ -25,22 +25,19 @@ export const fabContainerClasses =
 
 export type FabVariantProps = VariantProps<typeof fabVariants>;
 
+const getFabPortalRoot = () => document.getElementById('fab-portal-root');
+
 export const FabPortal = ({
   children,
   className,
 }: {
   children: ReactNode;
   className?: string;
-}) =>
-  createPortal(
-    <div
-      className={cn(fabContainerClasses, className)}
-      style={{ viewTransitionName: 'fab' }}
-    >
-      {children}
-    </div>,
-    document.body
-  );
+}) => {
+  const root = getFabPortalRoot();
+  if (!root) return null;
+  return createPortal(<div className={cn(className)}>{children}</div>, root);
+};
 
 export const ResponsiveFab = ({
   mobile,
