@@ -22,7 +22,7 @@
     "callDriver": "Appeler",
     "speedDial": {
       "myLocations": "Mes Lieux",
-      "myCommutes": "Mes Trajets",
+      "myCommutes": "Mes Modèles",
       "createCommute": "Nouveau Trajet"
     }
   },
