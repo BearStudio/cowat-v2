@@ -59,7 +59,7 @@ function DrawerContent({
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
           className={cn(
-            'group/drawer-content absolute flex h-auto flex-col bg-background',
+            'group/drawer-content absolute flex h-auto min-h-0 flex-col bg-background',
             'transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
             'data-swiping:duration-0 data-swiping:select-none',
@@ -89,7 +89,10 @@ function DrawerContent({
           {...props}
         >
           <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[swipe-direction=down]/drawer-content:block" />
-          <DrawerPrimitive.Content data-slot="drawer-inner-content pb-safe-bottom">
+          <DrawerPrimitive.Content
+            data-slot="drawer-inner-content"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden pb-safe-bottom"
+          >
             {children}
           </DrawerPrimitive.Content>
         </DrawerPrimitive.Popup>
@@ -115,7 +118,7 @@ function DrawerBody({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="drawer-body"
-      className={cn('flex flex-col px-4', className)}
+      className={cn('flex flex-1 flex-col overflow-y-auto px-4', className)}
       {...props}
     />
   );
