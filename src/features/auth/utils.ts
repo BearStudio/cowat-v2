@@ -39,7 +39,7 @@ export const useRedirectAfterLogin = () => {
       if (
         authClient.admin.checkRolePermission({
           role: userRole as Role,
-          permission: {
+          permissions: {
             apps: ['app'],
           },
         })

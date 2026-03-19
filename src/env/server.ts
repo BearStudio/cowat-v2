@@ -19,6 +19,10 @@ export const envServer = createEnv({
       .string()
       .optional()
       .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
+    AUTH_ALLOWED_HOSTS: z
+      .string()
+      .optional()
+      .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
 
     EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
     EMAIL_FROM: z.string(),
