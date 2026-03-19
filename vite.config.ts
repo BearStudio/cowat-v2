@@ -6,6 +6,7 @@ import { Nitro } from 'nitro/types';
 import { nitro } from 'nitro/vite';
 import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
+import { qrcode } from 'vite-plugin-qrcode';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
 const { nitroRetrieveServerDirHook, prismaCopyBinariesPlugin } =
@@ -20,6 +21,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
     },
     plugins: [
+      qrcode(),
       devtools(),
       tsConfigPaths(),
       tanstackStart(),

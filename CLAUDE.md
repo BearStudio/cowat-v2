@@ -1,5 +1,9 @@
 # Project Conventions
 
+## Pull Requests
+
+Always open PRs in **draft** mode. Never open a PR as ready to review directly.
+
 ## Soft-delete middleware
 
 Models listed in `SOFT_DELETE_MODELS` in `src/server/db/index.ts` (currently `Location`, `Commute`, `CommuteTemplate`) have a Prisma middleware that:
