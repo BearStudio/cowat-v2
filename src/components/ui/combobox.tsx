@@ -48,7 +48,7 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
       className={cn(className)}
       {...props}
       render={
-        <InputGroupButton variant="ghost" size="icon-xs">
+        <InputGroupButton variant="ghost" size="icon-xs" className="hit-area-3">
           <XIcon className="pointer-events-none" />
         </InputGroupButton>
       }
@@ -86,7 +86,7 @@ function ComboboxInput({
             variant="ghost"
             render={<ComboboxPrimitive.Trigger />}
             data-slot="input-group-button"
-            className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
+            className="hit-area-3 group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             disabled={disabled}
           >
             <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />

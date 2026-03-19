@@ -20,6 +20,7 @@ export function PasswordInput({ ...props }: PasswordInputProps) {
         <InputGroupButton
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? 'Hide' : 'Show'}
+          className="hit-area-3"
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
         </InputGroupButton>
