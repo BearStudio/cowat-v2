@@ -149,13 +149,13 @@ export const LeftBorderByStatus = () => {
 
 export const WithManyPassengers = () => {
   const passengers = [
-    { name: 'Bob Dupont', image: null },
-    { name: 'Claire Petit', image: null },
-    { name: 'Charlie Durand', image: null },
-    { name: 'Diana Moreau', image: null },
-    { name: 'Eve Lambert', image: null },
-    { name: 'François Leroy', image: null },
-    { name: 'Gérard Blanc', image: null },
+    { id: '1', name: 'Bob Dupont', image: null },
+    { id: '2', name: 'Claire Petit', image: null },
+    { id: '3', name: 'Charlie Durand', image: null },
+    { id: '4', name: 'Diana Moreau', image: null },
+    { id: '5', name: 'Eve Lambert', image: null },
+    { id: '6', name: 'François Leroy', image: null },
+    { id: '7', name: 'Gérard Blanc', image: null },
   ];
 
   return (

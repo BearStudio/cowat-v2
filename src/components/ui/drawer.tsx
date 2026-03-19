@@ -64,7 +64,7 @@ function DrawerContent({
             'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
             'data-swiping:duration-0 data-swiping:select-none',
             // Down
-            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-xl data-[swipe-direction=down]:border-t data-[swipe-direction=down]:pb-[calc(3*var(--spacing)+var(--spacing-safe-bottom))]',
+            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh]',
             'data-[swipe-direction=down]:transform-[translateY(calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y,0px)))]',
             'data-[swipe-direction=down]:data-starting-style:transform-[translateY(100%)]',
             'data-[swipe-direction=down]:data-ending-style:transform-[translateY(100%)]',
@@ -151,6 +151,7 @@ function DrawerDescription({
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
+      render={<div />}
       className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />

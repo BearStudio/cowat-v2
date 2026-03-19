@@ -89,8 +89,10 @@
   /* Tailwind --container-3xs: 16rem; (256px) */
 
   /* Speed Dial */
-  --animate-speed-dial-item-in: speed-dial-item-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-speed-dial-item-out: speed-dial-item-out 150ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  --animate-speed-dial-item-in: speed-dial-item-in 200ms
+    cubic-bezier(0.23, 1, 0.32, 1) both;
+  --animate-speed-dial-item-out: speed-dial-item-out 150ms
+    cubic-bezier(0.23, 1, 0.32, 1) both;
   --animate-speed-dial-backdrop-in: speed-dial-backdrop-in 200ms ease-out both;
   --animate-speed-dial-backdrop-out: speed-dial-backdrop-out 200ms ease-out both;
 }

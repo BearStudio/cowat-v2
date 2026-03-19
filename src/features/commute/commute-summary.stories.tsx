@@ -1,10 +1,11 @@
 import type { Meta } from '@storybook/react-vite';
 
-import { CommuteSummary } from '@/features/commute/commute-summary';
+import { ConfirmSummary } from '@/components/confirm-summary';
+
 import { StopEnriched } from '@/features/commute/schema';
 
 export default {
-  title: 'Feature/Commute/CommuteSummary',
+  title: 'Feature/Commute/ConfirmSummary',
 } satisfies Meta;
 
 const now = new Date();
@@ -36,49 +37,49 @@ const driver = {
 
 export const RoundTrip = () => {
   return (
-    <CommuteSummary
+    <ConfirmSummary
       date={new Date('2026-02-14')}
-      type="ROUND"
+      typeLabel="Aller-retour"
       stops={[
         makeStop('1', 'Gare de Lyon', '08:00', '18:00'),
         makeStop('2', 'La Défense', '08:30', '17:30'),
         makeStop('3', 'Versailles', '09:00', '17:00'),
       ]}
-      driver={driver}
+      user={driver}
     />
   );
 };
 
 export const OneWay = () => {
   return (
-    <CommuteSummary
+    <ConfirmSummary
       date={new Date('2026-02-14')}
-      type="ONEWAY"
+      typeLabel="Aller simple"
       stops={[
         makeStop('1', 'Gare de Lyon', '08:00'),
         makeStop('2', 'La Défense', '08:30'),
       ]}
-      driver={driver}
+      user={driver}
     />
   );
 };
 
 export const SingleStop = () => {
   return (
-    <CommuteSummary
+    <ConfirmSummary
       date={new Date('2026-02-14')}
-      type="ROUND"
+      typeLabel="Aller-retour"
       stops={[makeStop('1', 'Place de la République', '07:45', '18:15')]}
-      driver={driver}
+      user={driver}
     />
   );
 };
 
-export const WithoutDriver = () => {
+export const WithoutUser = () => {
   return (
-    <CommuteSummary
+    <ConfirmSummary
       date={new Date('2026-02-14')}
-      type="ROUND"
+      typeLabel="Aller-retour"
       stops={[
         makeStop('1', 'Gare de Lyon', '08:00', '18:00'),
         makeStop('2', 'La Défense', '08:30', '17:30'),

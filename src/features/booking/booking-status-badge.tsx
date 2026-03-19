@@ -8,8 +8,8 @@ import { UserBookingStatus } from '@/features/booking/status-colors';
 export const bookingStatusBadgeVariants = cva('', {
   variants: {
     status: {
-      DRIVER: 'secondary',
-      REQUESTED: 'default',
+      DRIVER: 'default',
+      REQUESTED: 'secondary',
       ACCEPTED: 'positive',
       REFUSED: 'negative',
       CANCELED: 'warning',

@@ -115,9 +115,9 @@ function InputGroupAddon({
           return;
         }
         e.currentTarget.parentElement
-          ?.querySelector<
-            HTMLInputElement | HTMLTextAreaElement
-          >('input, textarea')
+          ?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+            'input, textarea'
+          )
           ?.focus();
       }}
     />
