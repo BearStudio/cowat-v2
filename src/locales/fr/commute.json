@@ -89,7 +89,8 @@
       "inwardInPast": "L'heure retour doit être dans le futur",
       "outwardInPast": "L'heure aller doit être dans le futur",
       "outwardNotIncreasing": "Doit être après l'heure aller de l'arrêt précédent",
-      "inwardNotDecreasing": "Doit être avant l'heure retour de l'arrêt précédent"
+      "inwardNotDecreasing": "Doit être avant l'heure retour de l'arrêt précédent",
+      "datePast": "La date doit être aujourd'hui ou dans le futur"
     }
   }
 }
