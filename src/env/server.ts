@@ -24,6 +24,7 @@ export const envServer = createEnv({
       .optional()
       .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
     VERCEL_URL: z.string().optional(),
+    VERCEL_BRANCH_URL: z.string().optional(),
 
     EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
     EMAIL_FROM: z.string(),
