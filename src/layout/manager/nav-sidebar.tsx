@@ -3,6 +3,7 @@ import {
   BarChart3Icon,
   BuildingIcon,
   MessageSquareIcon,
+  MonitorSmartphoneIcon,
   PanelLeftIcon,
   SettingsIcon,
   UsersIcon,
@@ -31,6 +32,7 @@ import {
 import { WithPermissions } from '@/features/auth/with-permission';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
+import { ButtonLink } from '@/components/ui/button-link';
 
 export const NavSidebar = (props: {
   children?: ReactNode;
@@ -187,6 +189,17 @@ export const NavSidebar = (props: {
           )}
         </SidebarContent>
         <SidebarFooter>
+          <div className="px-2 py-1">
+            <ButtonLink
+              to="/app/$orgSlug"
+              size="sm"
+              variant="secondary"
+              className="w-full"
+            >
+              <MonitorSmartphoneIcon />
+              {t('layout:nav.openApp')}
+            </ButtonLink>
+          </div>
           <NavUser orgSlug={orgSlug} />
         </SidebarFooter>
       </Sidebar>

@@ -72,7 +72,7 @@ export const PageAccount = () => {
             <NotificationPreferences />
             {showManagerLink && (
               <OrgLink
-                to="/manager"
+                to="/manager/$orgSlug"
                 className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
               >
                 <SettingsIcon className="size-5 text-muted-foreground" />

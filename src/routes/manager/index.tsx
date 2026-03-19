@@ -42,7 +42,16 @@ function RouteComponent() {
     : false;
 
   if (isAdmin) {
-    return <Navigate to="/manager/users" replace />;
+    const activeOrg = orgs.find((org) => org.id === activeOrgId);
+    const targetOrg = activeOrg ?? orgs[0]!;
+
+    return (
+      <Navigate
+        to="/manager/$orgSlug"
+        replace
+        params={{ orgSlug: targetOrg.slug }}
+      />
+    );
   }
 
   // Non-admins: find orgs they own (can manage)
