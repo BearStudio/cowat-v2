@@ -93,7 +93,7 @@ export const SearchInput = ({
           onClick={handleClear}
           variant="ghost"
           size="icon-xs"
-          className="mr-0.5"
+          className="hit-area-3 mr-0.5"
         >
           <span className="sr-only">
             {clearLabel ?? t('components:searchInput.clear')}
