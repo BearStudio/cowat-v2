@@ -71,10 +71,8 @@ export const DashboardCommuteCard = ({
           date={commute.date}
           type={commute.type}
           totalSeats={commute.seats}
-          outwardAvailable={commute.seats - outwardCount}
-          inwardAvailable={
-            commute.type === 'ROUND' ? commute.seats - inwardCount : undefined
-          }
+          outwardTaken={outwardCount}
+          inwardTaken={commute.type === 'ROUND' ? inwardCount : undefined}
           outwardDeparture={commute.stops.at(0)?.outwardTime}
           inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
           passengers={[...acceptedPassengers.values()]}

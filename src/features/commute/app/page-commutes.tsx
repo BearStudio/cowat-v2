@@ -197,11 +197,9 @@ export const PageCommutes = () => {
                         date={item.date}
                         type={item.type}
                         totalSeats={item.seats}
-                        outwardAvailable={item.seats - outwardCount}
-                        inwardAvailable={
-                          item.type === 'ROUND'
-                            ? item.seats - inwardCount
-                            : undefined
+                        outwardTaken={outwardCount}
+                        inwardTaken={
+                          item.type === 'ROUND' ? inwardCount : undefined
                         }
                         outwardDeparture={item.stops.at(0)?.outwardTime}
                         inwardDeparture={

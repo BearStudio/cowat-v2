@@ -131,8 +131,8 @@ type CardCommuteHeaderProps = {
   date: Date;
   type: 'ROUND' | 'ONEWAY';
   totalSeats: number;
-  outwardAvailable: number;
-  inwardAvailable?: number;
+  outwardTaken: number;
+  inwardTaken?: number;
   outwardDeparture?: string;
   inwardDeparture?: string;
   passengers?: Array<{ name?: string | null; image?: string | null }>;
@@ -147,8 +147,8 @@ function CardCommuteHeader({
   date,
   type,
   totalSeats,
-  outwardAvailable,
-  inwardAvailable,
+  outwardTaken,
+  inwardTaken,
   outwardDeparture,
   inwardDeparture,
   passengers,
@@ -157,8 +157,8 @@ function CardCommuteHeader({
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
 
-  const seatLabel = (available: number) =>
-    t('commute:list.seatCount', { available, total: totalSeats });
+  const seatLabel = (taken: number) =>
+    t('commute:list.seatCount', { taken, total: totalSeats });
 
   return (
     <>
@@ -209,20 +209,20 @@ function CardCommuteHeader({
               <tripTypeIcons.ONEWAY className="size-3" />
               {outwardDeparture}
               <span className="text-muted-foreground/60">·</span>
-              {seatLabel(outwardAvailable)}
+              {seatLabel(outwardTaken)}
             </span>
             <span className="flex items-center gap-0.5">
               <tripTypeIcons.RETURN className="size-3" />
               {inwardDeparture}
               <span className="text-muted-foreground/60">·</span>
-              {seatLabel(inwardAvailable ?? outwardAvailable)}
+              {seatLabel(inwardTaken ?? outwardTaken)}
             </span>
           </>
         ) : (
           <span className="flex items-center gap-0.5">
             {outwardDeparture}
             <span className="text-muted-foreground/60">·</span>
-            {seatLabel(outwardAvailable)}
+            {seatLabel(outwardTaken)}
           </span>
         )}
       </div>

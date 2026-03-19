@@ -46,14 +46,16 @@ export default {
       }
 
       const orders = stop.commute.stops.map((s) => s.order);
+      const isFirstStop = stop.order === Math.min(...orders);
       const isLastStop = stop.order === Math.max(...orders);
       const allowOutward = !isLastStop;
-      const allowInward = stop.commute.type === 'ROUND';
+      const allowReturn = stop.commute.type === 'ROUND' && !isFirstStop;
+      const allowRound = stop.commute.type === 'ROUND' && !isLastStop;
 
       if (
         (input.tripType === 'ONEWAY' && !allowOutward) ||
-        (input.tripType === 'RETURN' && !allowInward) ||
-        (input.tripType === 'ROUND' && (!allowOutward || !allowInward))
+        (input.tripType === 'RETURN' && !allowReturn) ||
+        (input.tripType === 'ROUND' && !allowRound)
       ) {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Invalid trip type for this stop',

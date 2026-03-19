@@ -376,6 +376,99 @@ describe('booking router', () => {
         message: 'This commute is full',
       });
     });
+
+    describe('trip type validation', () => {
+      const mockRoundCommuteDriver = {
+        organizationId: mockOrganizationId,
+        autoAccept: false,
+        notificationPreferences: [],
+        user: { id: 'driver-user-1', name: 'Driver', email: 'driver@test.com' },
+      };
+
+      it('should allow ROUND booking from the first stop (non-regression)', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 0,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+        mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+        mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+        mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'ROUND' })
+        ).resolves.toBeDefined();
+      });
+
+      it('should reject RETURN booking from the first stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 0,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'RETURN' })
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message: 'Invalid trip type for this stop',
+        });
+      });
+
+      it('should reject ROUND booking from the last stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 1,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'ROUND' })
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message: 'Invalid trip type for this stop',
+        });
+      });
+
+      it('should allow RETURN booking from a non-first stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 1,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+        mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+        mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+        mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'RETURN' })
+        ).resolves.toBeDefined();
+      });
+    });
   });
 
   describe('accept', () => {
