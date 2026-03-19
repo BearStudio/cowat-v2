@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { authClient } from '@/features/auth/client';
 import { ConfirmSignOut } from '@/features/auth/confirm-signout';
 import { LayoutLogin } from '@/features/auth/layout-login';
-import { useMascot } from '@/features/auth/mascot';
 import { zFormFieldsOnboarding } from '@/features/auth/schema';
 
 export const PageOnboarding = () => {
@@ -47,9 +46,6 @@ export const PageOnboarding = () => {
       phone: session.data?.user.phone ?? '',
     },
   });
-
-  const { isValid, isSubmitted } = form.formState;
-  useMascot({ isError: !isValid && isSubmitted });
 
   return (
     <LayoutLogin
