@@ -171,6 +171,7 @@ export const PageLocations = () => {
                       description={t('location:list.deleteConfirmDescription')}
                       confirmText={t('common:actions.delete')}
                       confirmVariant="destructive"
+                      icon={<featureIcons.Locations />}
                       onConfirm={() =>
                         locationDelete.mutateAsync({ id: item.id })
                       }

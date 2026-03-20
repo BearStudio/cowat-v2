@@ -146,6 +146,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                             )}
                             confirmText={t('common:actions.delete')}
                             confirmVariant="destructive"
+                            icon={<featureIcons.CommuteTemplates />}
                             onConfirm={() =>
                               templateDelete.mutateAsync({ id: item.id })
                             }
