@@ -5,7 +5,10 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
-> Carpooling management platform for organizations connecting drivers and passengers within a shared workspace.
+<img src="src/features/auth/auth-image.png" alt="A cow driving a car" width="260" align="right" style="border-radius: 12px; margin-left: 24px;" />
+
+> [!NOTE]
+> Carpooling management platform for organizations — connecting drivers and passengers within a shared workspace.
 
 Cowat is a full-stack TypeScript web application that lets organizations coordinate daily commutes. Drivers post their routes and available seats; passengers request bookings. Admins manage users, monitor activity, and configure notification channels all within a multi-tenant, role-based workspace.
 
