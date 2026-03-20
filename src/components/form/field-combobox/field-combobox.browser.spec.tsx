@@ -56,7 +56,7 @@ test('default value', async () => {
   const user = setupUser();
   const mockedSubmit = vi.fn();
 
-  render(
+  await render(
     <FormMocked
       schema={z.object({ bear: z.string() })}
       useFormOptions={{ defaultValues: { bear: 'grizzlyrin' } }}

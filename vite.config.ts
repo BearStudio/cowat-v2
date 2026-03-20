@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
     },
     plugins: [
+      tailwindcss(),
       qrcode(),
       devtools(),
       tsConfigPaths(),
