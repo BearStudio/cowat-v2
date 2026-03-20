@@ -1,3 +1,4 @@
+import { TriangleAlert } from 'lucide-react';
 import {
   cloneElement,
   ComponentProps,
@@ -35,6 +36,8 @@ export const ConfirmResponsiveDrawer = (props: {
   const [isPending, setIsPending] = useState(false);
   const [confirmationInput, setConfirmationInput] = useState('');
   const { close, open, isOpen } = useDisclosure();
+
+  const isDestructive = props.confirmVariant === 'destructive';
 
   const displayHeading =
     !props.title && !props.description
@@ -100,7 +103,12 @@ export const ConfirmResponsiveDrawer = (props: {
             }
           }}
         >
-          <ResponsiveDrawerHeader>
+          <ResponsiveDrawerHeader className="items-center text-center">
+            {isDestructive && (
+              <div className="mb-1 flex size-11 items-center justify-center self-center rounded-full bg-destructive/10">
+                <TriangleAlert className="size-5 text-destructive" />
+              </div>
+            )}
             <ResponsiveDrawerTitle>{displayHeading}</ResponsiveDrawerTitle>
             <ResponsiveDrawerDescription>
               {props.description}

@@ -167,6 +167,7 @@ export const PageLocations = () => {
                   </DataListCell>
                   <DataListCell className="flex-none">
                     <ConfirmResponsiveDrawer
+                      title={item.name}
                       description={t('location:list.deleteConfirmDescription')}
                       confirmText={t('common:actions.delete')}
                       confirmVariant="destructive"

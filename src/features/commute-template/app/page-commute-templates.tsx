@@ -140,6 +140,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                       actions={
                         <div onClick={(e) => e.stopPropagation()}>
                           <ConfirmResponsiveDrawer
+                            title={item.name}
                             description={t(
                               'commuteTemplate:list.deleteConfirmDescription'
                             )}
