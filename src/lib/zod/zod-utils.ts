@@ -9,6 +9,13 @@ const emptyStringAsUndefined = (input: string) =>
   // Cast undefined value to string for React Hook Form inference
   input.trim() === '' ? (undefined as unknown as string) : input.trim();
 
+const isValidPhoneNumber = (val: string) => {
+  const digits = val.replace(/\D/g, '');
+  return (
+    /^[+\d][\d\s\-().]*$/.test(val) && digits.length >= 7 && digits.length <= 15
+  );
+};
+
 export const zu = {
   fieldText: {
     required: (
@@ -38,5 +45,25 @@ export const zu = {
         .transform(emptyStringAsUndefined)
         .optional()
         .pipe(z.string(params).optional()),
+  },
+  fieldPhone: {
+    nullish: (invalidMessage: string = t('common:errors.phoneInvalid')) =>
+      z
+        .string()
+        .transform(emptyStringAsNull)
+        .nullish()
+        .pipe(
+          z
+            .string()
+            .nullish()
+            .superRefine((val, ctx) => {
+              if (val != null && !isValidPhoneNumber(val)) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: invalidMessage,
+                });
+              }
+            })
+        ),
   },
 };

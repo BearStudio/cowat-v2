@@ -15,7 +15,7 @@ export type FormFieldsAccountUpdatePhone = z.infer<
 >;
 export const zFormFieldsAccountUpdatePhone = () =>
   z.object({
-    phone: zu.fieldText.nullish(),
+    phone: zu.fieldPhone.nullish(),
   });
 
 export type FormFieldsAccountUpdateImage = z.infer<
