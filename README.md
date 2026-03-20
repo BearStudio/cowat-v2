@@ -5,7 +5,9 @@
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
-<img src="src/features/auth/auth-image.png" alt="A cow driving a car" width="260" align="right" style="border-radius: 12px; margin-left: 24px;" />
+<p align="center">
+  <img src="src/features/auth/auth-image.png" alt="A cow driving a car" width="360" style="border-radius: 12px;" />
+</p>
 
 > [!NOTE]
 > Carpooling management platform for organizations — connecting drivers and passengers within a shared workspace.
