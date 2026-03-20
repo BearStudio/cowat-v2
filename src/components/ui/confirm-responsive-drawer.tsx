@@ -28,6 +28,7 @@ export const ConfirmResponsiveDrawer = (props: {
   onConfirm: () => unknown | Promise<unknown>;
   confirmText?: ReactNode;
   confirmVariant?: ComponentProps<typeof Button>['variant'];
+  icon?: ReactNode;
   cancelText?: ReactNode;
   requiredConfirmation?: string;
 }) => {
@@ -100,7 +101,12 @@ export const ConfirmResponsiveDrawer = (props: {
             }
           }}
         >
-          <ResponsiveDrawerHeader>
+          <ResponsiveDrawerHeader className="items-center text-center">
+            {props.icon && (
+              <div className="mb-1 flex size-11 items-center justify-center self-center rounded-full bg-destructive/10 [&>svg]:size-5 [&>svg]:text-destructive">
+                {props.icon}
+              </div>
+            )}
             <ResponsiveDrawerTitle>{displayHeading}</ResponsiveDrawerTitle>
             <ResponsiveDrawerDescription>
               {props.description}
