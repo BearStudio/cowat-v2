@@ -117,7 +117,7 @@ test('shows validation error when clicking Next with empty field', async () => {
 
 test('shows validation error for invalid email', async () => {
   const user = setupUser();
-  render(<Fixture />);
+  await render(<Fixture />);
 
   const nameInput = page
     .getByRole('textbox', { name: 'Name' })
@@ -143,7 +143,7 @@ test('shows validation error for invalid email', async () => {
 
 test('allows navigation when required field is filled', async () => {
   const user = setupUser();
-  render(<Fixture />);
+  await render(<Fixture />);
 
   const input = page
     .getByRole('textbox', { name: 'Name' })
@@ -158,7 +158,7 @@ test('allows navigation when required field is filled', async () => {
 
 test('allows navigation on step without a schema', async () => {
   const user = setupUser();
-  render(<Fixture />);
+  await render(<Fixture />);
 
   const nameInput = page
     .getByRole('textbox', { name: 'Name' })
@@ -209,7 +209,7 @@ test('validation error clears once the field is corrected', async () => {
 test('submit receives merged values from all steps', async () => {
   const user = setupUser();
   const mockedSubmit = vi.fn();
-  render(<Fixture onSubmit={mockedSubmit} />);
+  await render(<Fixture onSubmit={mockedSubmit} />);
 
   const nameInput = page
     .getByRole('textbox', { name: 'Name' })
