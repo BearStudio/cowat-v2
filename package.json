@@ -4,6 +4,7 @@
   "private": true,
   "description": "Cowat web application",
   "license": "EUPL-1.2",
+  "author": "Noé TATOUD <noe.tatoud@gmail.com> (Lesber Studio)",
   "type": "module",
   "scripts": {
     "postinstall": "run-p gen:prisma gen:build-info",
