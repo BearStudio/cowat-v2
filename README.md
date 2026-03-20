@@ -1,4 +1,4 @@
-# Cowat <sub><sup>prononcé /ko.wa/ — jeu de mot avec « covoit »</sup></sub>
+# Cowat <sub><sup>/ko.wat/ — a pun on the French « covoit » (short for covoiturage)</sup></sub>
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?style=flat-square&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D24-339933?style=flat-square&logo=node.js&logoColor=white)
