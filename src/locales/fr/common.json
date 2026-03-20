@@ -24,6 +24,7 @@
     "confirm": "Confirmer"
   },
   "errors": {
-    "required": "Requis"
+    "required": "Requis",
+    "phoneInvalid": "Numéro de téléphone invalide"
   }
 }
