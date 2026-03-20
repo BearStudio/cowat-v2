@@ -3,7 +3,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?style=flat-square&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D24-339933?style=flat-square&logo=node.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+![License](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)
 
 <p align="center">
   <img src="src/features/auth/auth-image.png" alt="A cow driving a car" width="360" style="border-radius: 12px;" />
