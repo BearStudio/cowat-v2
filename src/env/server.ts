@@ -6,6 +6,13 @@ const isProd = process.env.NODE_ENV
   ? process.env.NODE_ENV === 'production'
   : import.meta.env?.PROD;
 
+// Merge VITE_-prefixed vars (available via import.meta.env in Vite SSR) into
+// the runtime env so server-side code can reference public client env vars.
+const runtimeEnv: Record<string, string | undefined> = {
+  ...process.env,
+  ...import.meta.env,
+};
+
 export const envServer = createEnv({
   server: {
     DATABASE_URL: z.url(),
@@ -53,8 +60,10 @@ export const envServer = createEnv({
     FIREBASE_APP_ID: z.string().optional(),
     FIREBASE_VAPID_PUBLIC_KEY: z.string().optional(),
     FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
+    // Public client var — needed server-side for notification deep-links.
+    VITE_BASE_URL: z.url().optional(),
   },
-  runtimeEnv: process.env,
+  runtimeEnv,
   emptyStringAsUndefined: true,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

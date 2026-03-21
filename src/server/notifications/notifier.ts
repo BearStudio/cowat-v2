@@ -22,6 +22,8 @@ export class Notifier {
     const recipient = 'recipient' in event ? event.recipient : undefined;
 
     for (const channel of this.channels) {
+      // notificationPreferences contains ONLY disabled channels (queried with
+      // `where: { enabled: false }`), so any match means this channel is off.
       const isDisabledForRecipient =
         recipient?.notificationPreferences?.some(
           (p) => p.channel.toLowerCase() === channel.name

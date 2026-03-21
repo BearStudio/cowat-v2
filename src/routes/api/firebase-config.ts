@@ -5,6 +5,9 @@ import { envServer } from '@/env/server';
 export const Route = createFileRoute('/api/firebase-config')({
   server: {
     handlers: {
+      // Firebase client config is intentionally public — it is embedded in
+      // every web app's JS bundle and is safe to expose. The real secrets
+      // (FIREBASE_SERVICE_ACCOUNT) are server-only and never sent here.
       GET: () => {
         return Response.json({
           apiKey: envServer.FIREBASE_API_KEY,

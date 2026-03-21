@@ -13,11 +13,16 @@ type FirebaseClientConfig = {
 };
 
 let configCache: FirebaseClientConfig | null = null;
+// Module-level promise prevents duplicate in-flight requests when multiple
+// callers invoke getFirebaseConfig() concurrently before the first resolves.
+let configPromise: Promise<FirebaseClientConfig> | null = null;
 
 async function getFirebaseConfig(): Promise<FirebaseClientConfig> {
   if (configCache) return configCache;
-  const res = await fetch('/api/firebase-config');
-  configCache = await res.json();
+  if (!configPromise) {
+    configPromise = fetch('/api/firebase-config').then((res) => res.json());
+  }
+  configCache = await configPromise;
   return configCache!;
 }
 
@@ -30,7 +35,7 @@ function isConfigured(config: FirebaseClientConfig): boolean {
   );
 }
 
-function isPushSupported(): boolean {
+export function isPushSupported(): boolean {
   return (
     typeof window !== 'undefined' &&
     'Notification' in window &&
@@ -74,14 +79,16 @@ export async function getFcmToken(): Promise<string | null> {
   if (!messaging) return null;
 
   try {
-    const swRegistration = await navigator.serviceWorker.register(
-      '/firebase-messaging-sw',
-      { scope: '/' }
-    );
-    await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.register('/firebase-messaging-sw', {
+      scope: '/',
+    });
+    // Use the active registration resolved by the browser for this scope rather
+    // than the registration handle returned by register(), which may still be
+    // installing if this is a first-time install or an update.
+    const activeRegistration = await navigator.serviceWorker.ready;
     return await getToken(messaging, {
       vapidKey: config.vapidPublicKey,
-      serviceWorkerRegistration: swRegistration,
+      serviceWorkerRegistration: activeRegistration,
     });
   } catch (err) {
     console.debug('[FCM] Failed to get token:', err);

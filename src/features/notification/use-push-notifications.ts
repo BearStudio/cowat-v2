@@ -3,7 +3,12 @@ import { useEffect, useRef } from 'react';
 
 import { orpc } from '@/lib/orpc/client';
 
-import { getClientMessaging, getFcmToken, onMessage } from './firebase-client';
+import {
+  getClientMessaging,
+  getFcmToken,
+  isPushSupported,
+  onMessage,
+} from './firebase-client';
 
 /**
  * Requests push notification permission, registers the FCM token with the
@@ -13,6 +18,8 @@ import { getClientMessaging, getFcmToken, onMessage } from './firebase-client';
  * Call this hook once in an authenticated layout component.
  */
 export function usePushNotifications() {
+  const isSupported = isPushSupported();
+
   const registerToken = useMutation(
     orpc.account.registerFcmToken.mutationOptions()
   );
@@ -21,13 +28,7 @@ export function usePushNotifications() {
   const tokenRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      !('Notification' in window) ||
-      !('serviceWorker' in navigator)
-    ) {
-      return;
-    }
+    if (!isSupported) return;
 
     async function setup() {
       console.debug('[FCM] Requesting notification permission...');
@@ -57,7 +58,7 @@ export function usePushNotifications() {
     }
 
     setup().catch(console.error);
-  }, []);
+  }, [isSupported]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -75,4 +76,6 @@ export function usePushNotifications() {
 
     return () => unsubscribe?.();
   }, []);
+
+  return { isSupported };
 }

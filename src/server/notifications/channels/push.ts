@@ -1,6 +1,6 @@
 import type { MulticastMessage } from 'firebase-admin/messaging';
 
-import { envClient } from '@/env/client';
+import { envServer } from '@/env/server';
 import { getFirebaseMessaging } from '@/server/firebase';
 
 import type { NotificationChannel, NotificationEvent } from '../types';
@@ -11,6 +11,8 @@ type PushContent = {
   link?: string;
 };
 
+// Notification messages and formatting are intentionally in French — the app
+// currently targets a French-speaking audience exclusively.
 function formatDate(date: Date | string): string {
   return new Date(date).toLocaleDateString('fr-FR', {
     weekday: 'long',
@@ -25,37 +27,37 @@ function getContentForEvent(event: NotificationEvent): PushContent | null {
       return {
         title: 'Nouvelle demande de covoiturage',
         body: `${event.payload.passengerName} souhaite rejoindre votre trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     case 'booking.accepted':
       return {
         title: 'Réservation acceptée',
         body: `${event.payload.driverName} a accepté votre demande pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     case 'booking.refused':
       return {
         title: 'Réservation refusée',
         body: `${event.payload.driverName} a refusé votre demande pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     case 'booking.canceled':
       return {
         title: 'Réservation annulée',
         body: `${event.payload.passengerName} a annulé sa réservation pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     case 'commute.updated':
       return {
         title: 'Trajet modifié',
         body: `${event.payload.driverName} a modifié son trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     case 'commute.canceled':
       return {
         title: 'Trajet annulé',
         body: `${event.payload.driverName} a annulé son trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envClient.VITE_BASE_URL}/${event.payload.orgSlug}`,
+        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
       };
     // Broadcast events — no direct recipient, skip push
     case 'commute.created':
@@ -85,7 +87,11 @@ export const pushChannel: NotificationChannel = {
       logger.warn({ err }, 'Push: failed to get Firebase messaging instance');
       return;
     }
-    if (!messaging || !orgContext) return;
+    if (!messaging) return;
+    if (!orgContext) {
+      logger.warn('Push: send() called without orgContext, skipping');
+      return;
+    }
 
     const content = getContentForEvent(event);
     if (!content) return;
