@@ -79,7 +79,7 @@ export async function getFcmToken(): Promise<string | null> {
   if (!messaging) return null;
 
   try {
-    await navigator.serviceWorker.register('/firebase-messaging-sw', {
+    await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
       scope: '/',
     });
     // Use the active registration resolved by the browser for this scope rather
