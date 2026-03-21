@@ -36,13 +36,6 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        externals: {
-          external: [
-            'firebase-admin',
-            'firebase-admin/app',
-            'firebase-admin/messaging',
-          ],
-        },
       }),
       // react's vite plugin must come after start's vite plugin
       viteReact({

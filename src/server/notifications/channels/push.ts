@@ -69,11 +69,11 @@ function getContentForEvent(event: NotificationEvent): PushContent | null {
 export const pushChannel: NotificationChannel = {
   name: 'push',
 
-  canSend(event) {
+  async canSend(event) {
     // Broadcast events have no recipient
     if (!('recipient' in event)) return false;
     try {
-      return getFirebaseMessaging() !== null;
+      return (await getFirebaseMessaging()) !== null;
     } catch {
       return false;
     }
@@ -82,7 +82,7 @@ export const pushChannel: NotificationChannel = {
   async send(event, logger, orgContext) {
     let messaging;
     try {
-      messaging = getFirebaseMessaging();
+      messaging = await getFirebaseMessaging();
     } catch (err) {
       logger.warn({ err }, 'Push: failed to get Firebase messaging instance');
       return;
