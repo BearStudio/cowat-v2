@@ -36,7 +36,7 @@ export class Notifier {
         })
         .catch((error) => {
           logger.error(
-            { error, channel: channel.name, eventType: event.type },
+            { err: error, channel: channel.name, eventType: event.type },
             'Notification channel failed'
           );
         });

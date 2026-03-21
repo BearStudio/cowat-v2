@@ -1,10 +1,13 @@
 import { ReactNode, useLayoutEffect } from 'react';
 import { create } from 'zustand';
 
+import { usePushNotifications } from '@/features/notification/use-push-notifications';
 import { MainNavDesktop } from '@/layout/app/main-nav-desktop';
 import { MainNavMobile } from '@/layout/app/main-nav-mobile';
 
 export const Layout = (props: { children?: ReactNode }) => {
+  usePushNotifications();
+
   const showMainNavDesktop = useShouldShowNavStore(
     (s) => s.mode === 'all' || s.mode === 'desktop-only'
   );

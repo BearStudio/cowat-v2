@@ -10,12 +10,18 @@ import {
   type ProtectedProcedureArgs,
 } from '@/server/orpc';
 import { createAccountRepository } from '@/server/repositories/account.repository';
+import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
 
 const tags = ['account'];
 
 const authProcedure = (args: ProtectedProcedureArgs) =>
   protectedProcedure(args).use(({ context, next }) =>
-    next({ context: { account: createAccountRepository(context.db) } })
+    next({
+      context: {
+        account: createAccountRepository(context.db),
+        fcmTokens: createFcmTokenRepository(context.db),
+      },
+    })
   );
 
 const orgProcedure = (args: OrganizationProcedureArgs = {}) =>
@@ -100,5 +106,21 @@ export default {
         channel: input.channel,
         enabled: input.enabled,
       });
+    }),
+
+  registerFcmToken: authProcedure({ permission: null })
+    .route({ method: 'POST', path: '/account/fcm-token', tags })
+    .input(z.object({ token: z.string().min(1) }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      await context.fcmTokens.upsertToken(context.user.id, input.token);
+    }),
+
+  unregisterFcmToken: authProcedure({ permission: null })
+    .route({ method: 'DELETE', path: '/account/fcm-token', tags })
+    .input(z.object({ token: z.string().min(1) }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      await context.fcmTokens.deleteToken(input.token);
     }),
 };
