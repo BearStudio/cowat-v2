@@ -1,26 +1,41 @@
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
-
-// importScripts is synchronous in service workers — config is available immediately.
-importScripts('/api/firebase-config-sw');
-
-firebase.initializeApp(self.firebaseConfig);
-
-// firebase.messaging() registers push/pushsubscriptionchange event handlers
-// internally — this MUST happen at top-level during initial script evaluation.
-var messaging = firebase.messaging();
-
-messaging.onBackgroundMessage(function (_payload) {});
+// Minimal push notification service worker.
+// No Firebase SDK needed — the client-side SDK (getToken) handles the push
+// subscription via the standard Web Push API. This SW only needs to display
+// incoming notifications and handle clicks.
 
 self.addEventListener('install', function () { self.skipWaiting(); });
 self.addEventListener('activate', function (event) { event.waitUntil(clients.claim()); });
 
+self.addEventListener('push', function (event) {
+  if (!event.data) return;
+
+  var payload;
+  try {
+    payload = event.data.json();
+  } catch (_e) {
+    return;
+  }
+
+  var notification = payload.notification || {};
+  var data = payload.data || {};
+  var link =
+    (payload.fcmOptions && payload.fcmOptions.link) ||
+    data['gcm.notification.link'] ||
+    notification.click_action ||
+    '/';
+
+  event.waitUntil(
+    self.registration.showNotification(notification.title || 'Notification', {
+      body: notification.body || '',
+      icon: notification.icon || '/android-chrome-192x192.png',
+      data: { link: link },
+    })
+  );
+});
+
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  var link =
-    event.notification?.data?.['gcm.notification.link'] ??
-    event.notification?.data?.link ??
-    '/';
+  var link = (event.notification.data && event.notification.data.link) || '/';
   event.waitUntil(
     clients
       .matchAll({ type: 'window', includeUncontrolled: true })
@@ -29,6 +44,6 @@ self.addEventListener('notificationclick', function (event) {
           if (clientList[i].url === link && 'focus' in clientList[i]) return clientList[i].focus();
         }
         if (clients.openWindow) return clients.openWindow(link);
-      }),
+      })
   );
 });
