@@ -73,8 +73,13 @@ export const pushChannel: NotificationChannel = {
     // Broadcast events have no recipient
     if (!('recipient' in event)) return false;
     try {
-      return (await getFirebaseMessaging()) !== null;
-    } catch {
+      const messaging = await getFirebaseMessaging();
+      if (!messaging) {
+        console.warn('Push canSend: getFirebaseMessaging() returned null');
+      }
+      return messaging !== null;
+    } catch (err) {
+      console.error('Push canSend: getFirebaseMessaging() threw', err);
       return false;
     }
   },
