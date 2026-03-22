@@ -1,11 +1,16 @@
 import type { Messaging } from 'firebase-admin/messaging';
+import { createRequire } from 'node:module';
 
 import { envServer } from '@/env/server';
 import { logger } from '@/server/logger';
 
+// createRequire loads firebase-admin as CJS at runtime, bypassing Rollup/Nitro
+// bundling entirely. Bundling firebase-admin as ESM breaks SDK_VERSION init.
+const _require = createRequire(import.meta.url);
+
 let messagingInstance: Messaging | null = null;
 
-export async function getFirebaseMessaging(): Promise<Messaging | null> {
+export function getFirebaseMessaging(): Messaging | null {
   if (messagingInstance) return messagingInstance;
 
   logger.info(
@@ -16,13 +21,14 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
     'Firebase: initializing firebase-admin'
   );
 
-  // Dynamic imports so that Nitro does not bundle firebase-admin as ESM
-  // (bundling breaks SDK_VERSION initialisation at module load time).
-  const { applicationDefault, cert, getApps, initializeApp } =
-    await import('firebase-admin/app');
-  const { getMessaging } = await import('firebase-admin/messaging');
+  const { applicationDefault, cert, getApps, initializeApp } = _require(
+    'firebase-admin/app'
+  ) as typeof import('firebase-admin/app');
+  const { getMessaging } = _require(
+    'firebase-admin/messaging'
+  ) as typeof import('firebase-admin/messaging');
 
-  logger.info('Firebase: dynamic imports succeeded');
+  logger.info('Firebase: require() succeeded');
 
   const credential = envServer.FIREBASE_SERVICE_ACCOUNT
     ? cert(
