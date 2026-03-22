@@ -11,7 +11,7 @@ import {
 } from '@/server/firebase';
 import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
 
-import type { NotificationChannel } from '../types';
+import type { EventWithRecipient, NotificationChannel } from '../types';
 
 async function sendEach(
   accessToken: string,
@@ -76,8 +76,9 @@ export const pushChannel: NotificationChannel = {
     const content = getPushContent(event, locale, envClient.VITE_BASE_URL);
     if (!content) return;
 
-    const recipient = 'recipient' in event ? event.recipient : null;
-    if (!recipient) return;
+    // canSend() guarantees 'recipient' exists — narrow the type
+    if (!('recipient' in event)) return;
+    const { recipient } = event as EventWithRecipient;
 
     const fcmTokens = createFcmTokenRepository(orgContext.db);
     const tokens = await fcmTokens.getTokensForUser(recipient.userId);

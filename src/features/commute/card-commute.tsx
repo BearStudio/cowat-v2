@@ -117,7 +117,7 @@ function CardCommuteContent({
       data-slot="card-commute-content"
       keepMounted
       className={cn(
-        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
+        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-180 ease-[cubic-bezier(0.28,1.3,0.5,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
         className
       )}
       {...props}

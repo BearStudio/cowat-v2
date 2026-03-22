@@ -126,6 +126,11 @@ export type NotificationEvent =
   | CommuteCanceledEvent
   | CommuteRequestedEvent;
 
+export type EventWithRecipient = Extract<
+  NotificationEvent,
+  { recipient: Recipient }
+>;
+
 export type NotifyOrgContext = {
   db: AppDB;
   organizationId: string;
