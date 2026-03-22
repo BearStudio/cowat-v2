@@ -108,7 +108,7 @@ export const ConfirmResponsiveDrawer = (props: {
               </div>
             )}
             <ResponsiveDrawerTitle>{displayHeading}</ResponsiveDrawerTitle>
-            <ResponsiveDrawerDescription className="w-full text-left">
+            <ResponsiveDrawerDescription>
               {props.description}
             </ResponsiveDrawerDescription>
           </ResponsiveDrawerHeader>

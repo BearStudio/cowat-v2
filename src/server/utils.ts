@@ -25,7 +25,7 @@ export const getUserLanguage = (input?: string) => {
       ?.split('-')?.[0]; // Get the first part en-US -> en
 
   const language = AVAILABLE_LANGUAGES.some((l) => l.key === value)
-    ? value!
+    ? (value ?? DEFAULT_LANGUAGE_KEY)
     : DEFAULT_LANGUAGE_KEY;
 
   setCookie('i18next', language);
