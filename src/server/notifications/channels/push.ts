@@ -1,6 +1,7 @@
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
+import { envClient } from '@/env/client';
 import { getPushContent } from '@/features/push/templates';
 import {
   type FcmMessage,
@@ -72,7 +73,7 @@ export const pushChannel: NotificationChannel = {
     const locale =
       (orgChannel?.locale as LanguageKey | null) ?? DEFAULT_LANGUAGE_KEY;
 
-    const content = getPushContent(event, locale);
+    const content = getPushContent(event, locale, envClient.VITE_BASE_URL);
     if (!content) return;
 
     const recipient = 'recipient' in event ? event.recipient : null;
