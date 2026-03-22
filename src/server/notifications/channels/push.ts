@@ -1,8 +1,5 @@
-import type { MulticastMessage } from 'firebase-admin/messaging';
-
 import { envServer } from '@/env/server';
-import { getFirebaseMessaging } from '@/server/firebase';
-import { logger as rootLogger } from '@/server/logger';
+import { isFirebaseConfigured, sendFcmMessage } from '@/server/firebase';
 
 import type { NotificationChannel, NotificationEvent } from '../types';
 
@@ -71,29 +68,11 @@ export const pushChannel: NotificationChannel = {
   name: 'push',
 
   canSend(event) {
-    // Broadcast events have no recipient
     if (!('recipient' in event)) return false;
-    try {
-      const messaging = getFirebaseMessaging();
-      if (!messaging) {
-        rootLogger.warn('Push canSend: getFirebaseMessaging() returned null');
-      }
-      return messaging !== null;
-    } catch (err) {
-      rootLogger.error({ err }, 'Push canSend: getFirebaseMessaging() threw');
-      return false;
-    }
+    return isFirebaseConfigured();
   },
 
   async send(event, logger, orgContext) {
-    let messaging;
-    try {
-      messaging = getFirebaseMessaging();
-    } catch (err) {
-      logger.warn({ err }, 'Push: failed to get Firebase messaging instance');
-      return;
-    }
-    if (!messaging) return;
     if (!orgContext) {
       logger.warn('Push: send() called without orgContext, skipping');
       return;
@@ -112,33 +91,48 @@ export const pushChannel: NotificationChannel = {
 
     if (!tokens.length) return;
 
-    const message: MulticastMessage = {
-      tokens: tokens.map((t) => t.token),
-      notification: {
-        title: content.title,
-        body: content.body,
-      },
-      webpush: {
-        notification: {
-          icon: '/android-chrome-192x192.png',
-        },
-        fcmOptions: content.link ? { link: content.link } : undefined,
-      },
-    };
+    const results = await Promise.allSettled(
+      tokens.map(async (t) => {
+        const result = await sendFcmMessage({
+          token: t.token,
+          notification: {
+            title: content.title,
+            body: content.body,
+          },
+          webpush: {
+            notification: { icon: '/android-chrome-192x192.png' },
+            fcmOptions: content.link ? { link: content.link } : undefined,
+          },
+        });
+        return { result, tokenRecord: t };
+      })
+    );
 
-    const response = await messaging.sendEachForMulticast(message);
+    const invalidTokenIds: string[] = [];
+    let failedCount = 0;
+    const errors: Array<{ code: string; message: string; token: string }> = [];
 
-    // Clean up invalid tokens
-    const invalidTokenIds = response.responses
-      .map((r, i) => ({ result: r, token: tokens[i]! }))
-      .filter(
-        ({ result }) =>
-          !result.success &&
-          (result.error?.code ===
-            'messaging/registration-token-not-registered' ||
-            result.error?.code === 'messaging/invalid-registration-token')
-      )
-      .map(({ token }) => token.id);
+    for (const settled of results) {
+      if (settled.status === 'rejected') {
+        failedCount++;
+        continue;
+      }
+      const { result, tokenRecord } = settled.value;
+      if (!result.success && result.error) {
+        failedCount++;
+        errors.push({
+          code: result.error.code,
+          message: result.error.message,
+          token: tokenRecord.token.slice(0, 20),
+        });
+        if (
+          result.error.status === 'NOT_FOUND' ||
+          result.error.status === 'UNREGISTERED'
+        ) {
+          invalidTokenIds.push(tokenRecord.id);
+        }
+      }
+    }
 
     if (invalidTokenIds.length > 0) {
       await orgContext.db.fcmToken.deleteMany({
@@ -150,13 +144,9 @@ export const pushChannel: NotificationChannel = {
       );
     }
 
-    const failedCount = response.failureCount;
     if (failedCount > 0) {
-      const errors = response.responses
-        .map((r, i) => ({ ...r.error, token: tokens[i]?.token?.slice(0, 20) }))
-        .filter((_, i) => !response.responses[i]!.success);
       logger.warn(
-        { failedCount, successCount: response.successCount, errors },
+        { failedCount, successCount: tokens.length - failedCount, errors },
         'Push: some notifications failed to send'
       );
     }
