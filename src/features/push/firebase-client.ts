@@ -5,8 +5,6 @@ import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { orpcClient } from '@/lib/orpc/client';
 import type { Outputs } from '@/lib/orpc/types';
 
-import { SW_PUBLIC_PATH } from './service-worker/constants';
-
 type FirebaseClientConfig = Outputs['config']['firebaseConfig'];
 
 let configCache: FirebaseClientConfig | null = null;
@@ -60,7 +58,7 @@ export async function getFcmToken(): Promise<string | null> {
   if (!messaging) return null;
 
   try {
-    await navigator.serviceWorker.register(SW_PUBLIC_PATH, {
+    await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
       scope: '/',
     });
     // Use the active registration resolved by the browser for this scope rather
