@@ -83,7 +83,12 @@ export const PageLayoutContent = (props: {
     <div className="relative flex flex-1 flex-col">
       <div className="absolute inset-0">
         <ScrollArea className="h-full">
-          <div className={cn('flex flex-1 flex-col', props.className)}>
+          <div
+            className={cn(
+              'flex flex-1 flex-col pb-24 md:pb-0',
+              props.className
+            )}
+          >
             {props.noContainer ? (
               props.children
             ) : (
@@ -94,7 +99,6 @@ export const PageLayoutContent = (props: {
               </PageLayoutContainer>
             )}
           </div>
-          <div className="h-safe-bottom w-full" />
         </ScrollArea>
       </div>
     </div>
