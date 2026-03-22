@@ -73,37 +73,46 @@ export const StopsTimelineItem = ({
     <div className="flex items-start gap-3">
       <TimelineMarker isFirst={isFirst} isLast={isLast} />
       <div
-        className={cn('flex min-w-0 flex-1 flex-col gap-1', !isLast && 'pb-3')}
-      >
-        <span className="truncate text-sm leading-5 font-medium">
-          {stop.location.name}
-        </span>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <TripTime type="ONEWAY" time={stop.outwardTime} />
-          {stop.inwardTime && <TripTime type="RETURN" time={stop.inwardTime} />}
-        </div>
-        {activePassengers.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {activePassengers.map((p) => {
-              const TripIcon = tripTypeIcons[p.tripType];
-              return (
-                <Badge
-                  key={p.id}
-                  variant={
-                    bookingStatusBadgeVariants({
-                      status: p.status,
-                    }) as React.ComponentProps<typeof Badge>['variant']
-                  }
-                  size="sm"
-                >
-                  <TripIcon />
-                  {p.passenger.name}
-                </Badge>
-              );
-            })}
-          </div>
+        className={cn(
+          'flex min-w-0 flex-1 flex-col gap-1',
+          !isLast && actions ? 'pb-5' : !isLast ? 'pb-3' : ''
         )}
-        {actions}
+      >
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-sm leading-5 font-medium">
+            {stop.location.name}
+          </span>
+          {activePassengers.length > 0 && (
+            <div className="flex shrink-0 flex-wrap gap-1">
+              {activePassengers.map((p) => {
+                const TripIcon = tripTypeIcons[p.tripType];
+                return (
+                  <Badge
+                    key={p.id}
+                    variant={
+                      bookingStatusBadgeVariants({
+                        status: p.status,
+                      }) as React.ComponentProps<typeof Badge>['variant']
+                    }
+                    size="sm"
+                  >
+                    <TripIcon />
+                    {p.passenger.name}
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+            <TripTime type="ONEWAY" time={stop.outwardTime} />
+            {stop.inwardTime && (
+              <TripTime type="RETURN" time={stop.inwardTime} />
+            )}
+          </div>
+          {actions && <div className="min-w-0 flex-1">{actions}</div>}
+        </div>
       </div>
     </div>
   );
