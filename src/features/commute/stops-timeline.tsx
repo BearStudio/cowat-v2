@@ -120,7 +120,10 @@ export const StopsTimelineItem = ({
 
 type StopsTimelineProps = {
   stops: Array<StopEnriched>;
-  renderActions?: (stop: StopEnriched) => ReactNode;
+  renderActions?: (
+    stop: StopEnriched,
+    info: { isFirst: boolean; isLast: boolean }
+  ) => ReactNode;
   className?: string;
 };
 
@@ -136,7 +139,10 @@ export const StopsTimeline = ({
         stop={stop}
         isFirst={index === 0}
         isLast={index === stops.length - 1}
-        actions={renderActions?.(stop)}
+        actions={renderActions?.(stop, {
+          isFirst: index === 0,
+          isLast: index === stops.length - 1,
+        })}
       />
     ))}
   </div>

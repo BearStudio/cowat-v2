@@ -60,7 +60,8 @@ export const StepInwardStops = ({
   return (
     <div className="flex flex-col gap-3 py-4">
       {reversedIndices.map((index, displayPos) => {
-        const stop = stops![index]!;
+        const stop = stops?.[index];
+        if (!stop) return null;
         // In the return trip, the last outward stop is the departure and the first is the arrival
         const isInboundDeparture = displayPos === 0;
         const isInboundArrival = displayPos === reversedIndices.length - 1;

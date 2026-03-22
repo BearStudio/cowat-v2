@@ -91,7 +91,7 @@ export const DashboardCommuteCard = ({
           )}
           <CardCommuteStopsList
             stops={commute.stops}
-            renderActions={(stop) => {
+            renderActions={(stop, { isLast }) => {
               if (isDriver) return null;
 
               const userBooking = stop.passengers?.find(
@@ -133,6 +133,8 @@ export const DashboardCommuteCard = ({
               }
               if (hasBookingOnCommute) return null;
               if (isFull) return null;
+              // Last stop of a one-way commute has no valid trip type
+              if (commute.type === 'ONEWAY' && isLast) return null;
               return (
                 <Button
                   variant="secondary"

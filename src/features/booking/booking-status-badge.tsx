@@ -9,10 +9,10 @@ export const bookingStatusBadgeVariants = cva('', {
   variants: {
     status: {
       DRIVER: 'default',
-      REQUESTED: 'secondary',
+      REQUESTED: 'warning',
       ACCEPTED: 'positive',
       REFUSED: 'negative',
-      CANCELED: 'warning',
+      CANCELED: 'negative',
     } satisfies Record<
       NonNullable<Exclude<UserBookingStatus, 'OUTSIDER'>>,
       string

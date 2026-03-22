@@ -61,10 +61,11 @@ export function createSlackChannel(): NotificationChannel {
         await resolveSlackConfig(orgContext);
 
       if (!app) return;
+      const slackApp = app;
 
       async function lookupUser(email: string) {
         const result = await Result.tryPromise(() =>
-          app!.client.users.lookupByEmail({ email })
+          slackApp.client.users.lookupByEmail({ email })
         );
         if (result.isErr()) {
           logger.warn(
@@ -80,7 +81,7 @@ export function createSlackChannel(): NotificationChannel {
         blocks: ReturnType<typeof JSXSlack>
       ) {
         const result = await Result.tryPromise(() =>
-          app!.client.chat.postMessage({
+          slackApp.client.chat.postMessage({
             channel,
             blocks,
             text: getFallbackText(blocks),

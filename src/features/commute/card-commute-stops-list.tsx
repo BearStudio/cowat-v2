@@ -5,7 +5,10 @@ import { StopsTimeline } from '@/features/commute/stops-timeline';
 
 type CardCommuteStopsListProps = {
   stops: Array<StopEnriched>;
-  renderActions?: (stop: StopEnriched) => ReactNode;
+  renderActions?: (
+    stop: StopEnriched,
+    info: { isFirst: boolean; isLast: boolean }
+  ) => ReactNode;
 };
 
 export const CardCommuteStopsList = ({

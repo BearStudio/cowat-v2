@@ -70,7 +70,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
   const inwardStops = [...(stops ?? [])]
     .reverse()
     .filter((s) => s.inwardTime)
-    .map((s) => toTimelineStop(s.locationId, s.inwardTime!));
+    .map((s) => toTimelineStop(s.locationId, s.inwardTime ?? ''));
 
   return (
     <div className="flex flex-col gap-4">
