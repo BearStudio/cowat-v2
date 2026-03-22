@@ -1,67 +1,48 @@
-import { envServer } from '@/env/server';
-import { isFirebaseConfigured, sendFcmMessage } from '@/server/firebase';
+import type { LanguageKey } from '@/lib/i18n/constants';
+import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
-import type { NotificationChannel, NotificationEvent } from '../types';
+import { getPushContent } from '@/features/push/templates';
+import {
+  type FcmMessage,
+  getAccessToken,
+  isConfigured,
+  postMessage,
+} from '@/server/firebase';
 
-type PushContent = {
-  title: string;
-  body: string;
-  link?: string;
-};
+import type { NotificationChannel } from '../types';
 
-// Notification messages and formatting are intentionally in French — the app
-// currently targets a French-speaking audience exclusively.
-function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
-}
+async function sendEach(
+  accessToken: string,
+  messages: FcmMessage[]
+): Promise<{
+  failedTokens: string[];
+  invalidTokens: string[];
+}> {
+  const settled = await Promise.allSettled(
+    messages.map(async (message) => {
+      const result = await postMessage(accessToken, message);
+      return { token: message.token, result };
+    })
+  );
 
-function getContentForEvent(event: NotificationEvent): PushContent | null {
-  switch (event.type) {
-    case 'booking.requested':
-      return {
-        title: 'Nouvelle demande de covoiturage',
-        body: `${event.payload.passengerName} souhaite rejoindre votre trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    case 'booking.accepted':
-      return {
-        title: 'Réservation acceptée',
-        body: `${event.payload.driverName} a accepté votre demande pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    case 'booking.refused':
-      return {
-        title: 'Réservation refusée',
-        body: `${event.payload.driverName} a refusé votre demande pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    case 'booking.canceled':
-      return {
-        title: 'Réservation annulée',
-        body: `${event.payload.passengerName} a annulé sa réservation pour le ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    case 'commute.updated':
-      return {
-        title: 'Trajet modifié',
-        body: `${event.payload.driverName} a modifié son trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    case 'commute.canceled':
-      return {
-        title: 'Trajet annulé',
-        body: `${event.payload.driverName} a annulé son trajet du ${formatDate(event.payload.commuteDate)}`,
-        link: `${envServer.VITE_BASE_URL}/${event.payload.orgSlug}`,
-      };
-    // Broadcast events — no direct recipient, skip push
-    case 'commute.created':
-    case 'commute.requested':
-      return null;
+  const failedTokens: string[] = [];
+  const invalidTokens: string[] = [];
+
+  for (const entry of settled) {
+    if (entry.status === 'rejected') continue;
+
+    const { token, result } = entry.value;
+    if (result.isOk()) continue;
+
+    const { status } = result.error;
+    if (status === 'NOT_FOUND' || status === 'UNREGISTERED') {
+      invalidTokens.push(token);
+    } else {
+      failedTokens.push(token);
+    }
   }
+
+  return { failedTokens, invalidTokens };
 }
 
 export const pushChannel: NotificationChannel = {
@@ -69,7 +50,7 @@ export const pushChannel: NotificationChannel = {
 
   canSend(event) {
     if (!('recipient' in event)) return false;
-    return isFirebaseConfigured();
+    return isConfigured();
   },
 
   async send(event, logger, orgContext) {
@@ -78,7 +59,16 @@ export const pushChannel: NotificationChannel = {
       return;
     }
 
-    const content = getContentForEvent(event);
+    const orgChannel = await orgContext.db.orgNotificationChannel.findUnique({
+      where: {
+        orgId_type: { orgId: orgContext.organizationId, type: 'PUSH' },
+      },
+      select: { locale: true },
+    });
+    const locale =
+      (orgChannel?.locale as LanguageKey | null) ?? DEFAULT_LANGUAGE_KEY;
+
+    const content = getPushContent(event, locale);
     if (!content) return;
 
     const recipient = 'recipient' in event ? event.recipient : null;
@@ -91,62 +81,52 @@ export const pushChannel: NotificationChannel = {
 
     if (!tokens.length) return;
 
-    const results = await Promise.allSettled(
-      tokens.map(async (t) => {
-        const result = await sendFcmMessage({
-          token: t.token,
-          notification: {
-            title: content.title,
-            body: content.body,
-          },
-          webpush: {
-            notification: { icon: '/android-chrome-192x192.png' },
-            fcmOptions: content.link ? { link: content.link } : undefined,
-          },
-        });
-        return { result, tokenRecord: t };
-      })
+    const accessTokenResult = await getAccessToken();
+    if (accessTokenResult.isErr()) {
+      logger.error(
+        { err: accessTokenResult.error },
+        'Push: failed to get access token'
+      );
+      return;
+    }
+
+    const messages: FcmMessage[] = tokens.map((t) => ({
+      token: t.token,
+      notification: { title: content.title, body: content.body },
+      webpush: {
+        notification: { icon: '/android-chrome-192x192.png' },
+        fcmOptions: content.link ? { link: content.link } : undefined,
+      },
+    }));
+
+    const { failedTokens, invalidTokens } = await sendEach(
+      accessTokenResult.value,
+      messages
     );
 
-    const invalidTokenIds: string[] = [];
-    let failedCount = 0;
-    const errors: Array<{ code: string; message: string; token: string }> = [];
+    // Clean up expired registrations
+    if (invalidTokens.length > 0) {
+      const invalidTokenIds = tokens
+        .filter((t) => invalidTokens.includes(t.token))
+        .map((t) => t.id);
 
-    for (const settled of results) {
-      if (settled.status === 'rejected') {
-        failedCount++;
-        continue;
-      }
-      const { result, tokenRecord } = settled.value;
-      if (!result.success && result.error) {
-        failedCount++;
-        errors.push({
-          code: result.error.code,
-          message: result.error.message,
-          token: tokenRecord.token.slice(0, 20),
+      if (invalidTokenIds.length > 0) {
+        await orgContext.db.fcmToken.deleteMany({
+          where: { id: { in: invalidTokenIds } },
         });
-        if (
-          result.error.status === 'NOT_FOUND' ||
-          result.error.status === 'UNREGISTERED'
-        ) {
-          invalidTokenIds.push(tokenRecord.id);
-        }
+        logger.info(
+          { count: invalidTokenIds.length },
+          'Push: removed invalid FCM tokens'
+        );
       }
     }
 
-    if (invalidTokenIds.length > 0) {
-      await orgContext.db.fcmToken.deleteMany({
-        where: { id: { in: invalidTokenIds } },
-      });
-      logger.info(
-        { count: invalidTokenIds.length },
-        'Push: removed invalid FCM tokens'
-      );
-    }
-
-    if (failedCount > 0) {
+    if (failedTokens.length > 0) {
       logger.warn(
-        { failedCount, successCount: tokens.length - failedCount, errors },
+        {
+          failedCount: failedTokens.length,
+          successCount: messages.length - failedTokens.length,
+        },
         'Push: some notifications failed to send'
       );
     }

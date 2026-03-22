@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LogoutRouteImport } from './routes/logout'
-import { Route as FirebaseMessagingSwRouteImport } from './routes/firebase-messaging-sw'
 import { Route as ManagerRouteRouteImport } from './routes/manager/route'
 import { Route as LoginRouteRouteImport } from './routes/login/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
@@ -20,7 +19,6 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as InvitationsIdRouteImport } from './routes/invitations/$id'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
-import { Route as ApiFirebaseConfigRouteImport } from './routes/api/firebase-config'
 import { Route as ManagerUsersRouteRouteImport } from './routes/manager/users/route'
 import { Route as ManagerOrganizationsRouteRouteImport } from './routes/manager/organizations/route'
 import { Route as ManagerOrgSlugRouteRouteImport } from './routes/manager/$orgSlug/route'
@@ -63,11 +61,6 @@ import { Route as AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRouteImport } fr
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
   path: '/logout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FirebaseMessagingSwRoute = FirebaseMessagingSwRouteImport.update({
-  id: '/firebase-messaging-sw',
-  path: '/firebase-messaging-sw',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerRouteRoute = ManagerRouteRouteImport.update({
@@ -113,11 +106,6 @@ const InvitationsIdRoute = InvitationsIdRouteImport.update({
 const ApiUploadRoute = ApiUploadRouteImport.update({
   id: '/api/upload',
   path: '/api/upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiFirebaseConfigRoute = ApiFirebaseConfigRouteImport.update({
-  id: '/api/firebase-config',
-  path: '/api/firebase-config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerUsersRouteRoute = ManagerUsersRouteRouteImport.update({
@@ -332,13 +320,11 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
-  '/firebase-messaging-sw': typeof FirebaseMessagingSwRoute
   '/logout': typeof LogoutRoute
   '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
   '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
   '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/manager/users': typeof ManagerUsersRouteRouteWithChildren
-  '/api/firebase-config': typeof ApiFirebaseConfigRoute
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -381,9 +367,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/firebase-messaging-sw': typeof FirebaseMessagingSwRoute
   '/logout': typeof LogoutRoute
-  '/api/firebase-config': typeof ApiFirebaseConfigRoute
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app': typeof AppIndexRoute
@@ -430,13 +414,11 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRouteRouteWithChildren
   '/manager': typeof ManagerRouteRouteWithChildren
-  '/firebase-messaging-sw': typeof FirebaseMessagingSwRoute
   '/logout': typeof LogoutRoute
   '/app/$orgSlug': typeof AppOrgSlugRouteRouteWithChildren
   '/manager/$orgSlug': typeof ManagerOrgSlugRouteRouteWithChildren
   '/manager/organizations': typeof ManagerOrganizationsRouteRouteWithChildren
   '/manager/users': typeof ManagerUsersRouteRouteWithChildren
-  '/api/firebase-config': typeof ApiFirebaseConfigRoute
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
@@ -484,13 +466,11 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/manager'
-    | '/firebase-messaging-sw'
     | '/logout'
     | '/app/$orgSlug'
     | '/manager/$orgSlug'
     | '/manager/organizations'
     | '/manager/users'
-    | '/api/firebase-config'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -533,9 +513,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/firebase-messaging-sw'
     | '/logout'
-    | '/api/firebase-config'
     | '/api/upload'
     | '/invitations/$id'
     | '/app'
@@ -581,13 +559,11 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/manager'
-    | '/firebase-messaging-sw'
     | '/logout'
     | '/app/$orgSlug'
     | '/manager/$orgSlug'
     | '/manager/organizations'
     | '/manager/users'
-    | '/api/firebase-config'
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
@@ -634,9 +610,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   LoginRouteRoute: typeof LoginRouteRouteWithChildren
   ManagerRouteRoute: typeof ManagerRouteRouteWithChildren
-  FirebaseMessagingSwRoute: typeof FirebaseMessagingSwRoute
   LogoutRoute: typeof LogoutRoute
-  ApiFirebaseConfigRoute: typeof ApiFirebaseConfigRoute
   ApiUploadRoute: typeof ApiUploadRoute
   InvitationsIdRoute: typeof InvitationsIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -655,13 +629,6 @@ declare module '@tanstack/react-router' {
       path: '/logout'
       fullPath: '/logout'
       preLoaderRoute: typeof LogoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/firebase-messaging-sw': {
-      id: '/firebase-messaging-sw'
-      path: '/firebase-messaging-sw'
-      fullPath: '/firebase-messaging-sw'
-      preLoaderRoute: typeof FirebaseMessagingSwRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manager': {
@@ -725,13 +692,6 @@ declare module '@tanstack/react-router' {
       path: '/api/upload'
       fullPath: '/api/upload'
       preLoaderRoute: typeof ApiUploadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/firebase-config': {
-      id: '/api/firebase-config'
-      path: '/api/firebase-config'
-      fullPath: '/api/firebase-config'
-      preLoaderRoute: typeof ApiFirebaseConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manager/users': {
@@ -1169,9 +1129,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   LoginRouteRoute: LoginRouteRouteWithChildren,
   ManagerRouteRoute: ManagerRouteRouteWithChildren,
-  FirebaseMessagingSwRoute: FirebaseMessagingSwRoute,
   LogoutRoute: LogoutRoute,
-  ApiFirebaseConfigRoute: ApiFirebaseConfigRoute,
   ApiUploadRoute: ApiUploadRoute,
   InvitationsIdRoute: InvitationsIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

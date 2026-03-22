@@ -6,13 +6,6 @@ const isProd = process.env.NODE_ENV
   ? process.env.NODE_ENV === 'production'
   : import.meta.env?.PROD;
 
-// Merge VITE_-prefixed vars (available via import.meta.env in Vite SSR) into
-// the runtime env so server-side code can reference public client env vars.
-const runtimeEnv: Record<string, string | undefined> = {
-  ...process.env,
-  ...import.meta.env,
-};
-
 export const envServer = createEnv({
   server: {
     DATABASE_URL: z.url(),
@@ -52,18 +45,16 @@ export const envServer = createEnv({
     S3_SECURE: z.stringbool().default(true),
     S3_FORCE_PATH_STYLE: z.stringbool().default(false),
 
-    FIREBASE_API_KEY: z.string().optional(),
-    FIREBASE_AUTH_DOMAIN: z.string().optional(),
-    FIREBASE_PROJECT_ID: z.string().optional(),
-    FIREBASE_STORAGE_BUCKET: z.string().optional(),
-    FIREBASE_MESSAGING_SENDER_ID: z.string().optional(),
-    FIREBASE_APP_ID: z.string().optional(),
-    FIREBASE_VAPID_PUBLIC_KEY: z.string().optional(),
-    FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
-    // Public client var — needed server-side for notification deep-links.
-    VITE_BASE_URL: z.url().optional(),
+    FIREBASE_API_KEY: z.string(),
+    FIREBASE_AUTH_DOMAIN: z.string(),
+    FIREBASE_PROJECT_ID: z.string(),
+    FIREBASE_STORAGE_BUCKET: z.string(),
+    FIREBASE_MESSAGING_SENDER_ID: z.string(),
+    FIREBASE_APP_ID: z.string(),
+    FIREBASE_VAPID_PUBLIC_KEY: z.string(),
+    FIREBASE_SERVICE_ACCOUNT: z.string(),
   },
-  runtimeEnv,
+  runtimeEnv: process.env,
   emptyStringAsUndefined: true,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

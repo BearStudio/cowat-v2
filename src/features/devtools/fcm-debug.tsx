@@ -6,16 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { getFcmToken } from './firebase-client';
-
-function getWindowFcmToken(): string | null {
-  const val = (window as unknown as Record<string, unknown>).fcmToken;
-  return typeof val === 'string' ? val : null;
-}
-
-function setWindowFcmToken(token: string | null) {
-  (window as unknown as Record<string, unknown>).fcmToken = token;
-}
+import { getFcmToken } from '@/features/push/firebase-client';
 
 export function FcmDebug() {
   const [token, setToken] = useState<string | null>(null);
@@ -26,7 +17,6 @@ export function FcmDebug() {
 
   useEffect(() => {
     if ('Notification' in window) setPermission(Notification.permission);
-    setToken(getWindowFcmToken());
   }, []);
 
   async function handleRequestToken() {
@@ -37,7 +27,6 @@ export function FcmDebug() {
       if (perm !== 'granted') return;
       const t = await getFcmToken();
       setToken(t);
-      setWindowFcmToken(t);
     } catch (err) {
       toast.error('Failed to get FCM token');
       console.error(err);

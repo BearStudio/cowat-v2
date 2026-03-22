@@ -2,12 +2,12 @@ import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
-import cpy from 'cpy';
-import { Nitro } from 'nitro/types';
 import { nitro } from 'nitro/vite';
-import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import { qrcode } from 'vite-plugin-qrcode';
+
+import { createPrismaCopyBinariesPlugin } from './src/lib/vite-plugins/prisma-copy-binaries';
+import { serviceWorkerPlugin } from './src/lib/vite-plugins/service-worker';
 
 const { nitroRetrieveServerDirHook, prismaCopyBinariesPlugin } =
   createPrismaCopyBinariesPlugin();
@@ -43,26 +43,9 @@ export default defineConfig(({ mode }) => {
           plugins: ['babel-plugin-react-compiler'],
         },
       }),
+      serviceWorkerPlugin(),
       // Copy prisma binaries at the end
       prismaCopyBinariesPlugin(),
     ],
   };
 });
-
-function createPrismaCopyBinariesPlugin() {
-  let serverDir = '';
-  return {
-    nitroRetrieveServerDirHook: (nitro: Nitro) => {
-      serverDir = nitro.options.output.serverDir.replace(resolve('.'), '.');
-    },
-    prismaCopyBinariesPlugin: () => ({
-      name: 'prisma-copy-binaries',
-      writeBundle: async (outputOptions: { dir?: string }) => {
-        const outputDir = outputOptions.dir?.replace(resolve('.'), '.');
-        if (outputDir === serverDir) {
-          await cpy('./src/server/db/generated/**/*.node', resolve(serverDir));
-        }
-      },
-    }),
-  };
-}

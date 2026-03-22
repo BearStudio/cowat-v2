@@ -79,7 +79,7 @@
     "colorette": "2.0.20",
     "dayjs": "1.11.20",
     "firebase": "12.11.0",
-    "firebase-admin": "13.7.0",
+    "google-auth-library": "10.6.2",
     "i18next": "25.8.20",
     "i18next-browser-languagedetector": "8.2.1",
     "input-otp": "1.4.2",

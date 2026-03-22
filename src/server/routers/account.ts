@@ -108,19 +108,15 @@ export default {
       });
     }),
 
-  registerFcmToken: authProcedure({ permission: null })
+  toggleFcmToken: authProcedure({ permission: null })
     .route({ method: 'POST', path: '/account/fcm-token', tags })
-    .input(z.object({ token: z.string().min(1) }))
+    .input(z.object({ token: z.string().min(1), registered: z.boolean() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      await context.fcmTokens.upsertToken(context.user.id, input.token);
-    }),
-
-  unregisterFcmToken: authProcedure({ permission: null })
-    .route({ method: 'DELETE', path: '/account/fcm-token', tags })
-    .input(z.object({ token: z.string().min(1) }))
-    .output(z.void())
-    .handler(async ({ context, input }) => {
-      await context.fcmTokens.deleteToken(input.token);
+      if (input.registered) {
+        await context.fcmTokens.upsertToken(context.user.id, input.token);
+      } else {
+        await context.fcmTokens.deleteToken(input.token);
+      }
     }),
 };

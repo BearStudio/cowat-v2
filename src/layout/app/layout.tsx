@@ -1,7 +1,7 @@
 import { ReactNode, useLayoutEffect } from 'react';
 import { create } from 'zustand';
 
-import { usePushNotifications } from '@/features/notification/use-push-notifications';
+import { usePushNotifications } from '@/features/push/use-push-notifications';
 import { MainNavDesktop } from '@/layout/app/main-nav-desktop';
 import { MainNavMobile } from '@/layout/app/main-nav-mobile';
 

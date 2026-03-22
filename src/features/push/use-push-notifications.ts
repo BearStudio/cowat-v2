@@ -1,7 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 
-import { orpc } from '@/lib/orpc/client';
+import { orpcClient } from '@/lib/orpc/client';
 
 import {
   getClientMessaging,
@@ -19,42 +18,29 @@ import {
  */
 export function usePushNotifications() {
   const isSupported = isPushSupported();
-
-  const registerToken = useMutation(
-    orpc.account.registerFcmToken.mutationOptions()
-  );
-  const registerTokenRef = useRef(registerToken);
-  registerTokenRef.current = registerToken;
   const tokenRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isSupported) return;
 
     async function setup() {
-      console.debug('[FCM] Requesting notification permission...');
+      if (import.meta.env.DEV)
+        console.debug('[FCM] Requesting notification permission...');
       const permission = await Notification.requestPermission();
-      console.debug('[FCM] Permission:', permission);
+      if (import.meta.env.DEV) console.debug('[FCM] Permission:', permission);
       if (permission !== 'granted') return;
 
       const token = await getFcmToken().catch((err) => {
-        console.error('[FCM] Failed to get token:', err);
+        if (import.meta.env.DEV)
+          console.error('[FCM] Failed to get token:', err);
         return null;
       });
       if (!token || token === tokenRef.current) return;
 
-      if (import.meta.env.DEV) {
-        console.info(
-          '%c[FCM] Token (click to copy) %c' + token,
-          'color: #666',
-          'color: #0a84ff; cursor: pointer; user-select: all'
-        );
-        (window as unknown as Record<string, unknown>).fcmToken = token;
-        console.info('[FCM] Also available as window.fcmToken');
-      }
-
       tokenRef.current = token;
-      await registerTokenRef.current.mutateAsync({ token });
-      console.debug('[FCM] Token registered successfully');
+      await orpcClient.account.toggleFcmToken({ token, registered: true });
+      if (import.meta.env.DEV)
+        console.debug('[FCM] Token registered successfully');
     }
 
     setup().catch(console.error);
@@ -67,7 +53,8 @@ export function usePushNotifications() {
       .then((messaging) => {
         if (!messaging) return;
         unsubscribe = onMessage(messaging, (payload) => {
-          console.info('[FCM] Foreground message', payload);
+          if (import.meta.env.DEV)
+            console.info('[FCM] Foreground message', payload);
         });
       })
       .catch(() => {

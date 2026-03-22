@@ -57,6 +57,36 @@
     "viewCommutes": "Voir les trajets →",
     "findCommute": "Trouver un trajet →"
   },
+  "push": {
+    "booking": {
+      "requested": {
+        "title": "Nouvelle demande de covoiturage",
+        "body": "{{passengerName}} souhaite rejoindre votre trajet du {{date}}"
+      },
+      "accepted": {
+        "title": "Réservation acceptée",
+        "body": "{{driverName}} a accepté votre demande pour le {{date}}"
+      },
+      "refused": {
+        "title": "Réservation refusée",
+        "body": "{{driverName}} a refusé votre demande pour le {{date}}"
+      },
+      "canceled": {
+        "title": "Réservation annulée",
+        "body": "{{passengerName}} a annulé sa réservation pour le {{date}}"
+      }
+    },
+    "commute": {
+      "updated": {
+        "title": "Trajet modifié",
+        "body": "{{driverName}} a modifié son trajet du {{date}}"
+      },
+      "canceled": {
+        "title": "Trajet annulé",
+        "body": "{{driverName}} a annulé son trajet du {{date}}"
+      }
+    }
+  },
   "common": {
     "viewDashboard": "Voir le tableau de bord →"
   },

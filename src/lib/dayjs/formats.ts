@@ -34,6 +34,7 @@ const dateFormats = {
   buildInfo: {
     fallbackDisplay: ISO_DATE,
   },
+  notification: 'dddd D MMMM',
 } as const satisfies FormatConfig;
 
 // ─── Types ───────────────────────────────────────────────────────────
