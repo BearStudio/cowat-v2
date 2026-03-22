@@ -1,12 +1,14 @@
+import {
+  applicationDefault,
+  cert,
+  getApps,
+  initializeApp,
+} from 'firebase-admin/app';
 import type { Messaging } from 'firebase-admin/messaging';
-import { createRequire } from 'node:module';
+import { getMessaging } from 'firebase-admin/messaging';
 
 import { envServer } from '@/env/server';
 import { logger } from '@/server/logger';
-
-// createRequire loads firebase-admin as CJS at runtime, bypassing Rollup/Nitro
-// bundling entirely. Bundling firebase-admin as ESM breaks SDK_VERSION init.
-const _require = createRequire(import.meta.url);
 
 let messagingInstance: Messaging | null = null;
 
@@ -20,15 +22,6 @@ export function getFirebaseMessaging(): Messaging | null {
     },
     'Firebase: initializing firebase-admin'
   );
-
-  const { applicationDefault, cert, getApps, initializeApp } = _require(
-    'firebase-admin/app'
-  ) as typeof import('firebase-admin/app');
-  const { getMessaging } = _require(
-    'firebase-admin/messaging'
-  ) as typeof import('firebase-admin/messaging');
-
-  logger.info('Firebase: require() succeeded');
 
   const credential = envServer.FIREBASE_SERVICE_ACCOUNT
     ? cert(

@@ -36,8 +36,12 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
-        // Externalize firebase-admin so Nitro traces it into node_modules
-        // instead of bundling it as ESM (which breaks SDK_VERSION init).
+        // Externalize firebase-admin: Rollup keeps imports as-is (no ESM
+        // re-bundling that breaks SDK_VERSION), and traceDeps copies the
+        // package into the deployment's node_modules.
+        rollupConfig: {
+          external: [/^firebase-admin/],
+        },
         traceDeps: ['firebase-admin'],
       }),
       // react's vite plugin must come after start's vite plugin
