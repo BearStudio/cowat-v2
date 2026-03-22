@@ -62,10 +62,7 @@ export const OrgInvitations = (props: {
           </DataListEmptyState>
         ) : (
           props.invitations.map((invitation) => (
-            <DataListRow
-              key={invitation.id}
-              className="max-md:flex-col max-md:py-2 max-md:[&>div]:py-1"
-            >
+            <DataListRow key={invitation.id} className="">
               <DataListCell className="flex-none">
                 <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <MailIcon className="size-4 text-neutral-500" />
