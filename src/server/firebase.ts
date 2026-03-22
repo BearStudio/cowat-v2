@@ -1,20 +1,19 @@
 import type { Messaging } from 'firebase-admin/messaging';
 
 import { envServer } from '@/env/server';
+import { logger } from '@/server/logger';
 
 let messagingInstance: Messaging | null = null;
 
 export async function getFirebaseMessaging(): Promise<Messaging | null> {
   if (messagingInstance) return messagingInstance;
 
-  console.warn('[Firebase] Initializing firebase-admin...');
-  console.warn(
-    '[Firebase] FIREBASE_SERVICE_ACCOUNT set:',
-    !!envServer.FIREBASE_SERVICE_ACCOUNT
-  );
-  console.warn(
-    '[Firebase] FIREBASE_PROJECT_ID:',
-    envServer.FIREBASE_PROJECT_ID
+  logger.info(
+    {
+      hasServiceAccount: !!envServer.FIREBASE_SERVICE_ACCOUNT,
+      projectId: envServer.FIREBASE_PROJECT_ID,
+    },
+    'Firebase: initializing firebase-admin'
   );
 
   // Dynamic imports so that Nitro does not bundle firebase-admin as ESM
@@ -23,7 +22,7 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
     await import('firebase-admin/app');
   const { getMessaging } = await import('firebase-admin/messaging');
 
-  console.warn('[Firebase] Dynamic imports succeeded');
+  logger.info('Firebase: dynamic imports succeeded');
 
   const credential = envServer.FIREBASE_SERVICE_ACCOUNT
     ? cert(
@@ -43,6 +42,6 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
     });
 
   messagingInstance = getMessaging(app);
-  console.warn('[Firebase] Messaging instance created successfully');
+  logger.info('Firebase: messaging instance created successfully');
   return messagingInstance;
 }

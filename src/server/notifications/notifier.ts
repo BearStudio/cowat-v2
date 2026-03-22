@@ -29,10 +29,20 @@ export class Notifier {
           (p) => p.channel.toLowerCase() === channel.name
         ) ?? false;
 
-      if (isDisabledForRecipient) continue;
+      if (isDisabledForRecipient) {
+        logger.info(
+          { channel: channel.name, eventType: event.type },
+          '[NOTIFY] channel disabled for recipient, skipping'
+        );
+        continue;
+      }
 
       Promise.resolve(channel.canSend(event, orgContext))
         .then((canSend) => {
+          logger.info(
+            { channel: channel.name, eventType: event.type, canSend },
+            '[NOTIFY] canSend result'
+          );
           if (!canSend) return;
           return channel.send(event, logger, orgContext);
         })

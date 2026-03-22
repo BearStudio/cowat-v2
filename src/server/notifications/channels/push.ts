@@ -2,6 +2,7 @@ import type { MulticastMessage } from 'firebase-admin/messaging';
 
 import { envServer } from '@/env/server';
 import { getFirebaseMessaging } from '@/server/firebase';
+import { logger as rootLogger } from '@/server/logger';
 
 import type { NotificationChannel, NotificationEvent } from '../types';
 
@@ -75,11 +76,11 @@ export const pushChannel: NotificationChannel = {
     try {
       const messaging = await getFirebaseMessaging();
       if (!messaging) {
-        console.warn('Push canSend: getFirebaseMessaging() returned null');
+        rootLogger.warn('Push canSend: getFirebaseMessaging() returned null');
       }
       return messaging !== null;
     } catch (err) {
-      console.error('Push canSend: getFirebaseMessaging() threw', err);
+      rootLogger.error({ err }, 'Push canSend: getFirebaseMessaging() threw');
       return false;
     }
   },
