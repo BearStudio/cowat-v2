@@ -9,6 +9,8 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitAny": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
