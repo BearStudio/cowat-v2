@@ -53,7 +53,7 @@ const Item = ({
           return fromIndex < navIndex ? ['slide-left'] : ['slide-right'];
         },
       }}
-      className="flex flex-1 flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 [&.active]:text-primary"
+      className="flex flex-1 flex-col items-center justify-center text-neutral-500 transition-[transform,color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] active:scale-95 dark:text-neutral-400 [&.active]:scale-105 [&.active]:text-primary"
     >
       <span className="relative">
         <Icon className="size-6 opacity-60 in-[.active]:hidden" />

@@ -274,9 +274,19 @@
 
 /* View Transitions */
 
-/* Keep nav bars static during transitions */
+/* Keep nav bars and devtools static during transitions */
 ::view-transition-group(main-nav),
-::view-transition-group(main-nav-mobile) {
+::view-transition-group(main-nav-mobile),
+::view-transition-group(env-hint) {
+  animation: none;
+}
+
+::view-transition-old(env-hint) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(env-hint) {
   animation: none;
 }
 
