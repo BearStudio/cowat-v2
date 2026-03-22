@@ -57,6 +57,36 @@
     "viewCommutes": "View commutes →",
     "findCommute": "Find a commute →"
   },
+  "push": {
+    "booking": {
+      "requested": {
+        "title": "New carpool request",
+        "body": "{{passengerName}} wants to join your commute on {{date}}"
+      },
+      "accepted": {
+        "title": "Booking accepted",
+        "body": "{{driverName}} accepted your request for {{date}}"
+      },
+      "refused": {
+        "title": "Booking declined",
+        "body": "{{driverName}} declined your request for {{date}}"
+      },
+      "canceled": {
+        "title": "Booking canceled",
+        "body": "{{passengerName}} canceled their booking for {{date}}"
+      }
+    },
+    "commute": {
+      "updated": {
+        "title": "Commute updated",
+        "body": "{{driverName}} updated their commute on {{date}}"
+      },
+      "canceled": {
+        "title": "Commute canceled",
+        "body": "{{driverName}} canceled their commute on {{date}}"
+      }
+    }
+  },
   "common": {
     "viewDashboard": "Go to dashboard →"
   },

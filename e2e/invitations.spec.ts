@@ -93,7 +93,7 @@ test.describe('Invitation flow', () => {
     await invitationPage.goToApp();
 
     // Wait for the page to settle after the client-side navigation.
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Happy path: user is onboarded and has an org → OrgRedirect fires → layout-app.
     // Onboarding path: user was re-created without onboardedAt → "Welcome" heading.

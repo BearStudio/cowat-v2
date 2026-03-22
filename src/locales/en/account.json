@@ -70,6 +70,11 @@
     "slack": {
       "label": "Slack",
       "description": "Receive notifications via Slack DM"
+    },
+    "push": {
+      "label": "Push notifications",
+      "description": "Receive push notifications on this device",
+      "descriptionDenied": "Notifications are blocked in your browser settings"
     }
   }
 }
