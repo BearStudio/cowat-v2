@@ -8,7 +8,6 @@ import { nitro } from 'nitro/vite';
 import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import { qrcode } from 'vite-plugin-qrcode';
-import tsConfigPaths from 'vite-tsconfig-paths';
 
 const { nitroRetrieveServerDirHook, prismaCopyBinariesPlugin } =
   createPrismaCopyBinariesPlugin();
@@ -21,11 +20,13 @@ export default defineConfig(({ mode }) => {
       port: env.VITE_PORT ? Number(env.VITE_PORT) : 3000,
       strictPort: true,
     },
+    resolve: {
+      tsconfigPaths: true,
+    },
     plugins: [
       tailwindcss(),
       qrcode(),
       devtools(),
-      tsConfigPaths(),
       tanstackStart(),
       nitro({
         modules: [

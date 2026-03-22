@@ -10,6 +10,7 @@ on:
 jobs:
   linter:
     name: 🧹 Linter
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install deps
@@ -34,6 +35,7 @@ jobs:
 
   typescriptChecker:
     name: 🟦 TypeScript Checker
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -58,6 +60,7 @@ jobs:
 
   tests:
     name: 🔬 Tests
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
