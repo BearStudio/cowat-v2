@@ -36,6 +36,9 @@ export default defineConfig(({ mode }) => {
           },
         ],
         routeRules: { '/storybook': { redirect: '/storybook/' } },
+        // Externalize firebase-admin so Nitro traces it into node_modules
+        // instead of bundling it as ESM (which breaks SDK_VERSION init).
+        traceDeps: ['firebase-admin'],
       }),
       // react's vite plugin must come after start's vite plugin
       viteReact({
