@@ -10,9 +10,12 @@ import {
 } from './firebase-client';
 
 /**
- * Requests push notification permission, registers the FCM token with the
- * server, and listens for foreground messages (which are not shown
+ * Registers the FCM token with the server if notification permission is
+ * already granted, and listens for foreground messages (which are not shown
  * automatically by the browser — you can handle them here if needed).
+ *
+ * This hook does NOT request permission — that must happen from a user
+ * interaction (e.g. push-notification-toggle.tsx).
  *
  * Call this hook once in an authenticated layout component.
  */
@@ -25,8 +28,8 @@ export function usePushNotifications() {
 
     async function setup() {
       if (import.meta.env.DEV)
-        console.debug('[FCM] Requesting notification permission...');
-      const permission = await Notification.requestPermission();
+        console.debug('[FCM] Checking notification permission...');
+      const permission = Notification.permission;
       if (import.meta.env.DEV) console.debug('[FCM] Permission:', permission);
       if (permission !== 'granted') return;
 

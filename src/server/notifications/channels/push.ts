@@ -8,6 +8,7 @@ import {
   isConfigured,
   postMessage,
 } from '@/server/firebase';
+import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
 
 import type { NotificationChannel } from '../types';
 
@@ -28,8 +29,11 @@ async function sendEach(
   const failedTokens: string[] = [];
   const invalidTokens: string[] = [];
 
-  for (const entry of settled) {
-    if (entry.status === 'rejected') continue;
+  for (const [index, entry] of settled.entries()) {
+    if (entry.status === 'rejected') {
+      failedTokens.push(messages[index]!.token);
+      continue;
+    }
 
     const { token, result } = entry.value;
     if (result.isOk()) continue;
@@ -74,10 +78,8 @@ export const pushChannel: NotificationChannel = {
     const recipient = 'recipient' in event ? event.recipient : null;
     if (!recipient) return;
 
-    const tokens = await orgContext.db.fcmToken.findMany({
-      where: { userId: recipient.userId },
-      select: { id: true, token: true },
-    });
+    const fcmTokens = createFcmTokenRepository(orgContext.db);
+    const tokens = await fcmTokens.getTokensForUser(recipient.userId);
 
     if (!tokens.length) return;
 
@@ -106,14 +108,13 @@ export const pushChannel: NotificationChannel = {
 
     // Clean up expired registrations
     if (invalidTokens.length > 0) {
-      const invalidTokenIds = tokens
-        .filter((t) => invalidTokens.includes(t.token))
-        .map((t) => t.id);
+      const tokenToId = new Map(tokens.map((t) => [t.token, t.id]));
+      const invalidTokenIds = invalidTokens
+        .map((t) => tokenToId.get(t))
+        .filter((id): id is string => id !== undefined);
 
       if (invalidTokenIds.length > 0) {
-        await orgContext.db.fcmToken.deleteMany({
-          where: { id: { in: invalidTokenIds } },
-        });
+        await fcmTokens.deleteByIds(invalidTokenIds);
         logger.info(
           { count: invalidTokenIds.length },
           'Push: removed invalid FCM tokens'

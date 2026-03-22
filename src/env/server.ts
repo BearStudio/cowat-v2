@@ -45,19 +45,23 @@ export const envServer = createEnv({
     S3_SECURE: z.stringbool().default(true),
     S3_FORCE_PATH_STYLE: z.stringbool().default(false),
 
-    FIREBASE_API_KEY: z.string(),
-    FIREBASE_AUTH_DOMAIN: z.string(),
-    FIREBASE_PROJECT_ID: z.string(),
-    FIREBASE_STORAGE_BUCKET: z.string(),
-    FIREBASE_MESSAGING_SENDER_ID: z.string(),
-    FIREBASE_APP_ID: z.string(),
-    FIREBASE_VAPID_PUBLIC_KEY: z.string(),
-    FIREBASE_SERVICE_ACCOUNT: z.string(),
+    FIREBASE_API_KEY: zRequiredInProd(),
+    FIREBASE_AUTH_DOMAIN: zRequiredInProd(),
+    FIREBASE_PROJECT_ID: zRequiredInProd(),
+    FIREBASE_STORAGE_BUCKET: zRequiredInProd(),
+    FIREBASE_MESSAGING_SENDER_ID: zRequiredInProd(),
+    FIREBASE_APP_ID: zRequiredInProd(),
+    FIREBASE_VAPID_PUBLIC_KEY: zRequiredInProd(),
+    FIREBASE_SERVICE_ACCOUNT: zRequiredInProd(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
+
+function zRequiredInProd() {
+  return isProd ? z.string() : z.string().optional();
+}
 
 function zOptionalWithReplaceMe() {
   return z

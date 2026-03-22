@@ -14,12 +14,14 @@ export class Notifier {
     return this;
   }
 
-  notify(
+  async notify(
     event: NotificationEvent,
     logger: Logger,
     orgContext?: NotifyOrgContext
-  ): void {
+  ): Promise<void> {
     const recipient = 'recipient' in event ? event.recipient : undefined;
+
+    const promises: Promise<void>[] = [];
 
     for (const channel of this.channels) {
       const isDisabledForRecipient =
@@ -35,7 +37,7 @@ export class Notifier {
         continue;
       }
 
-      Promise.resolve(channel.canSend(event, orgContext))
+      const promise = Promise.resolve(channel.canSend(event, orgContext))
         .then((canSend) => {
           logger.debug(
             { channel: channel.name, eventType: event.type, canSend },
@@ -44,12 +46,17 @@ export class Notifier {
           if (!canSend) return;
           return channel.send(event, logger, orgContext);
         })
+        .then(() => undefined)
         .catch((error) => {
           logger.error(
             { err: error, channel: channel.name, eventType: event.type },
             'Notification channel failed'
           );
         });
+
+      promises.push(promise);
     }
+
+    await Promise.allSettled(promises);
   }
 }

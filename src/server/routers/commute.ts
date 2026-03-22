@@ -14,7 +14,6 @@ import {
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
-import { createOrganizationRepository } from '@/server/repositories/organization.repository';
 import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commutes'];
@@ -25,7 +24,6 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
       context: {
         commutes: createCommuteRepository(context.db),
         bookings: createBookingRepository(context.db),
-        organizations: createOrganizationRepository(context.db),
       },
     })
   );
@@ -51,12 +49,7 @@ export default {
         stops: { create: stops },
       });
 
-      const organization = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-
-      context.notify(
+      await context.notify(
         {
           type: 'commute.created',
           payload: {
@@ -73,7 +66,7 @@ export default {
               outwardTime: stop.outwardTime,
               inwardTime: stop.inwardTime,
             })),
-            orgSlug: organization?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -172,13 +165,9 @@ export default {
       const affectedPassengers =
         await context.bookings.findAffectedPassengers(id);
 
-      const updatedOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
-        context.notify(
+        await context.notify(
           {
             type: 'commute.updated',
             recipient: {
@@ -192,7 +181,7 @@ export default {
               driverName: context.user.name,
               commuteDate: existing.date,
               commuteType: existing.type,
-              orgSlug: updatedOrg?.slug ?? '',
+              orgSlug: context.orgSlug,
               newCommuteDate: commute.date,
               newCommuteType: commute.type,
               previousSeats: existing.seats,
@@ -224,13 +213,9 @@ export default {
 
       await context.commutes.delete(input.id);
 
-      const canceledOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
       for (const booking of affectedPassengers) {
         const passengerUser = booking.passenger.user;
-        context.notify(
+        await context.notify(
           {
             type: 'commute.canceled',
             recipient: {
@@ -244,7 +229,7 @@ export default {
               driverName: context.user.name,
               commuteDate: existing.date,
               commuteType: existing.type,
-              orgSlug: canceledOrg?.slug ?? '',
+              orgSlug: context.orgSlug,
             },
           },
           { db: context.db, organizationId: context.organizationId }
@@ -257,22 +242,14 @@ export default {
     .input(z.object({ date: z.date(), destination: z.string().optional() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const organization = await context.organizations.findSlugById(
-        context.organizationId
-      );
-
-      if (!organization?.slug) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      context.notify(
+      await context.notify(
         {
           type: 'commute.requested',
           payload: {
             requesterName: context.user.name,
             requesterEmail: context.user.email,
             commuteDate: input.date,
-            orgSlug: organization.slug,
+            orgSlug: context.orgSlug,
             locationName: input.destination || undefined,
           },
         },

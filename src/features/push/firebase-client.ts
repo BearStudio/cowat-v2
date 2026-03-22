@@ -5,7 +5,7 @@ import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { orpcClient } from '@/lib/orpc/client';
 import type { Outputs } from '@/lib/orpc/types';
 
-const SW_PUBLIC_PATH = '/firebase-messaging-sw.js';
+import { SW_PUBLIC_PATH } from './service-worker/constants';
 
 type FirebaseClientConfig = Outputs['config']['firebaseConfig'];
 
@@ -19,8 +19,13 @@ async function getFirebaseConfig(): Promise<FirebaseClientConfig> {
   if (!configPromise) {
     configPromise = orpcClient.config.firebaseConfig({});
   }
-  configCache = await configPromise;
-  return configCache;
+  try {
+    configCache = await configPromise;
+    return configCache;
+  } catch (err) {
+    configPromise = null;
+    throw err;
+  }
 }
 
 export function isPushSupported(): boolean {

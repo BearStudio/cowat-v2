@@ -15,12 +15,12 @@ export const createFcmTokenRepository = (db: AppDB) => ({
     }),
 
   deleteToken: (token: string) =>
-    db.fcmToken.delete({ where: { token } }).catch(() => {
-      // Ignore if token doesn't exist
+    db.fcmToken.delete({ where: { token } }).catch((error: unknown) => {
+      if (error instanceof Object && 'code' in error && error.code === 'P2025')
+        return;
+      throw error;
     }),
 
-  deleteTokenById: (id: string) =>
-    db.fcmToken.delete({ where: { id } }).catch(() => {
-      // Ignore if token doesn't exist
-    }),
+  deleteByIds: (ids: string[]) =>
+    db.fcmToken.deleteMany({ where: { id: { in: ids } } }),
 });

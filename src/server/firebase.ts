@@ -42,16 +42,32 @@ const FCM_SEND_URL = (projectId: string) =>
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
-const auth = new GoogleAuth({
-  credentials: JSON.parse(
-    Buffer.from(envServer.FIREBASE_SERVICE_ACCOUNT, 'base64').toString('utf-8')
-  ),
-  scopes: [FCM_AUTH_SCOPE],
-});
+let _auth: GoogleAuth | null = null;
+
+function getAuth(): GoogleAuth | null {
+  if (_auth) return _auth;
+  const config = getServerConfig();
+  if (!config) return null;
+  _auth = new GoogleAuth({
+    credentials: JSON.parse(
+      Buffer.from(config.serviceAccount, 'base64').toString('utf-8')
+    ),
+    scopes: [FCM_AUTH_SCOPE],
+  });
+  return _auth;
+}
 
 export async function getAccessToken(): Promise<
   Result<string, FcmErrorResponse>
 > {
+  const auth = getAuth();
+  if (!auth) {
+    return Result.err({
+      code: 'auth/not-configured',
+      message: 'Firebase is not configured',
+    });
+  }
+
   const tokenResult = await Result.tryPromise(async () => {
     const client = await auth.getClient();
     const { token } = await client.getAccessToken();
@@ -85,7 +101,15 @@ export async function postMessage(
   accessToken: string,
   message: FcmMessage
 ): Promise<Result<FcmSuccessResponse, FcmErrorResponse>> {
-  const response = await fetch(FCM_SEND_URL(envServer.FIREBASE_PROJECT_ID), {
+  const config = getServerConfig();
+  if (!config) {
+    return Result.err({
+      code: 'messaging/not-configured',
+      message: 'Firebase is not configured',
+    });
+  }
+
+  const response = await fetch(FCM_SEND_URL(config.projectId), {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -110,11 +134,66 @@ export async function postMessage(
   });
 }
 
+// ── Config ───────────────────────────────────────────────────────────────────
+
+export type FirebaseClientConfig = {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  vapidPublicKey: string;
+};
+
+export type FirebaseServerConfig = FirebaseClientConfig & {
+  serviceAccount: string;
+};
+
+export function getClientConfig(): FirebaseClientConfig | null {
+  const {
+    FIREBASE_API_KEY: apiKey,
+    FIREBASE_AUTH_DOMAIN: authDomain,
+    FIREBASE_PROJECT_ID: projectId,
+    FIREBASE_STORAGE_BUCKET: storageBucket,
+    FIREBASE_MESSAGING_SENDER_ID: messagingSenderId,
+    FIREBASE_APP_ID: appId,
+    FIREBASE_VAPID_PUBLIC_KEY: vapidPublicKey,
+  } = envServer;
+
+  if (
+    !apiKey ||
+    !authDomain ||
+    !projectId ||
+    !storageBucket ||
+    !messagingSenderId ||
+    !appId ||
+    !vapidPublicKey
+  ) {
+    return null;
+  }
+
+  return {
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+    vapidPublicKey,
+  };
+}
+
+export function getServerConfig(): FirebaseServerConfig | null {
+  const clientConfig = getClientConfig();
+  const serviceAccount = envServer.FIREBASE_SERVICE_ACCOUNT;
+  if (!clientConfig || !serviceAccount) return null;
+  return { ...clientConfig, serviceAccount };
+}
+
 /**
  * Whether the server has the required configuration to send push notifications.
  */
 export function isConfigured(): boolean {
-  return (
-    !!envServer.FIREBASE_SERVICE_ACCOUNT && !!envServer.FIREBASE_PROJECT_ID
-  );
+  return getServerConfig() !== null;
 }
