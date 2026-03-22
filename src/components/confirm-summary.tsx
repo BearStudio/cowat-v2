@@ -27,7 +27,7 @@ export const ConfirmSummary = ({
   stops,
 }: ConfirmSummaryProps) => {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-sm">
+    <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
       <div className="flex items-center gap-3">
         {user && (
           <Avatar size="xl" className="rounded-sm">
