@@ -13,6 +13,7 @@ import { authClient } from '@/features/auth/client';
 import { Role } from '@/features/auth/permissions';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
+import { FcmDebug } from '@/features/devtools/fcm-debug';
 import { OrgLink } from '@/features/organization/org-link';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { useOrganizations } from '@/features/organization/use-organizations';
@@ -108,6 +109,8 @@ export const PageAccount = () => {
               {t('account:commuteTemplatesLink')}
             </AccountNavLink>
           </section>
+
+          {import.meta.env.DEV && <FcmDebug />}
 
           <BuildInfoDrawer>
             <Button variant="ghost" size="xs" className="opacity-60">

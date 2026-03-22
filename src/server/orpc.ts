@@ -88,7 +88,7 @@ const base = os
     return await next({
       context: {
         notify: (event: NotificationEvent, orgContext?: NotifyOrgContext) => {
-          notifier.notify(event, context.logger, orgContext);
+          return notifier.notify(event, context.logger, orgContext);
         },
       },
     });
@@ -269,10 +269,16 @@ export const organizationProcedure = ({
       }
     }
 
+    const organization = await context.db.organization.findUnique({
+      where: { id: organizationId },
+      select: { slug: true },
+    });
+
     return await next({
       context: {
         organizationId,
         memberId: member.id,
+        orgSlug: organization?.slug ?? '',
       },
     });
   });

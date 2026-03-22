@@ -55,6 +55,7 @@ enum TripType {
 
 enum NotificationChannelType {
   SLACK
+  PUSH
 }
 
 model User {
@@ -67,6 +68,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  fcmTokens     FcmToken[]
 
   phone         String?
 
@@ -121,6 +123,18 @@ model Account {
 
   @@map("account")
   @@index([userId])
+}
+
+model FcmToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("fcm_token")
 }
 
 model Verification {

@@ -100,12 +100,7 @@ export default {
         status,
       });
 
-      const organization = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-
-      context.notify(
+      await context.notify(
         {
           type: 'booking.requested',
           recipient: {
@@ -119,7 +114,7 @@ export default {
             commuteDate: stop.commute.date,
             tripType: input.tripType,
             status,
-            orgSlug: organization?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -165,11 +160,7 @@ export default {
       await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
       const passengerUser = booking.passenger.user;
-      const acceptOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.accepted',
           recipient: {
@@ -182,7 +173,7 @@ export default {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: acceptOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -209,11 +200,7 @@ export default {
       await context.bookings.updateStatus(input.id, 'REFUSED');
 
       const passengerUser = booking.passenger.user;
-      const refuseOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.refused',
           recipient: {
@@ -226,7 +213,7 @@ export default {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: refuseOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -254,11 +241,7 @@ export default {
 
       const driverMember = booking.stop.commute.driver;
       const driverUser = driverMember.user;
-      const cancelOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.canceled',
           recipient: {
@@ -271,7 +254,7 @@ export default {
             passengerName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: cancelOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
