@@ -6,7 +6,7 @@ export class AccountPage {
 
   async goto() {
     await this.page.goto(`/app/${ORG_SLUG}/account`);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('load');
   }
 
   get heading() {
