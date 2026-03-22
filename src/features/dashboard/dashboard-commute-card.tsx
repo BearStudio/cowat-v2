@@ -121,7 +121,11 @@ export const DashboardCommuteCard = ({
                       bookingCancel.mutateAsync({ id: userBooking.id })
                     }
                   >
-                    <Button variant="destructive-secondary" className="w-2/3">
+                    <Button
+                      variant="destructive-secondary"
+                      size="sm"
+                      className="w-full font-normal tracking-[0.15em] uppercase"
+                    >
                       {t('common:actions.cancel')}
                     </Button>
                   </ConfirmResponsiveDrawer>
@@ -132,7 +136,8 @@ export const DashboardCommuteCard = ({
               return (
                 <Button
                   variant="secondary"
-                  className="w-2/3"
+                  size="sm"
+                  className="w-full font-normal tracking-[0.15em] uppercase"
                   onClick={() => onBookStop(stop.id)}
                 >
                   {t('dashboard:booking.submitButton')}
