@@ -2,6 +2,7 @@
 import { Blocks, Button, Divider, Image, Mrkdwn, Section } from 'jsx-slack';
 
 import i18n from '@/lib/i18n';
+import { routeUrl } from '@/lib/route-url';
 
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackFooter } from '@/features/slack/components/footer';
@@ -26,11 +27,10 @@ function stopBookingUrl(
   commuteId: string,
   stopId: string
 ): string {
-  const params = new URLSearchParams({
-    openCommutes: commuteId,
-    bookingStop: stopId,
+  return routeUrl(baseUrl, '/app/$orgSlug', {
+    params: { orgSlug },
+    search: { openCommutes: commuteId, bookingStop: stopId },
   });
-  return `${baseUrl}/app/${orgSlug}/?${params.toString()}`;
 }
 
 function mapsUrl(address: string): string {

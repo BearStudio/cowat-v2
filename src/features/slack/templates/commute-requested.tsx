@@ -2,6 +2,7 @@
 import { Blocks, Button } from 'jsx-slack';
 
 import i18n from '@/lib/i18n';
+import { routeUrl } from '@/lib/route-url';
 
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackFooter } from '@/features/slack/components/footer';
@@ -22,7 +23,10 @@ export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
       ? event.payload.commuteDate.toISOString()
       : String(event.payload.commuteDate);
 
-  const link = `${baseUrl}/app/${event.payload.orgSlug}/commutes/new?date=${encodeURIComponent(dateParam)}`;
+  const link = routeUrl(baseUrl, '/app/$orgSlug/commutes/new', {
+    params: { orgSlug: event.payload.orgSlug },
+    search: { date: dateParam },
+  });
 
   const { locationName } = event.payload;
   const formattedDate = formatDate(event.payload.commuteDate);
