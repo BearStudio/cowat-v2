@@ -17,8 +17,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-const MOBILE_BREAKPOINT = 640;
-
 type DatePickerProps = ComponentProps<typeof DateInput> & {
   noCalendar?: boolean;
   calendarProps?: Omit<
@@ -32,7 +30,7 @@ export const DatePicker = ({
   noCalendar = false,
   ...props
 }: DatePickerProps) => {
-  const isMobile = useIsMobile(MOBILE_BREAKPOINT);
+  const isMobile = useIsMobile();
   const datePicker = useDisclosure();
 
   const handleSelect = (date: Date | undefined) => {
