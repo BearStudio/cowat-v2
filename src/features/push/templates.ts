@@ -6,8 +6,8 @@ import 'dayjs/locale/fr.js';
 import { getDateFormat } from '@/lib/dayjs/formats';
 import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
+import { routeUrl } from '@/lib/route-url';
 
-import { envClient } from '@/env/client';
 import type { NotificationEvent } from '@/server/notifications/types';
 
 export type PushContent = {
@@ -18,7 +18,8 @@ export type PushContent = {
 
 export function getPushContent(
   event: NotificationEvent,
-  locale: LanguageKey
+  locale: LanguageKey,
+  baseUrl: string
 ): PushContent | null {
   const formatDate = (date: Date) =>
     dayjsBase(date).locale(locale).format(getDateFormat('notification'));
@@ -34,7 +35,9 @@ export function getPushContent(
         passengerName: e.payload.passengerName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'booking.accepted' }, (e) => ({
       title: t('notifications:push.booking.accepted.title'),
@@ -42,7 +45,9 @@ export function getPushContent(
         driverName: e.payload.driverName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'booking.refused' }, (e) => ({
       title: t('notifications:push.booking.refused.title'),
@@ -50,7 +55,9 @@ export function getPushContent(
         driverName: e.payload.driverName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'booking.canceled' }, (e) => ({
       title: t('notifications:push.booking.canceled.title'),
@@ -58,7 +65,9 @@ export function getPushContent(
         passengerName: e.payload.passengerName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'commute.updated' }, (e) => ({
       title: t('notifications:push.commute.updated.title'),
@@ -66,7 +75,9 @@ export function getPushContent(
         driverName: e.payload.driverName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'commute.canceled' }, (e) => ({
       title: t('notifications:push.commute.canceled.title'),
@@ -74,7 +85,9 @@ export function getPushContent(
         driverName: e.payload.driverName,
         date: formatDate(e.payload.commuteDate),
       }),
-      link: `${envClient.VITE_BASE_URL}/${e.payload.orgSlug}`,
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
     }))
     .with({ type: 'commute.created' }, () => null)
     .with({ type: 'commute.requested' }, () => null)

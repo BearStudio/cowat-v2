@@ -91,10 +91,10 @@ export function FcmDebug() {
             disabled={loading || permission === 'denied'}
           >
             {permission === 'denied'
-              ? 'Permission bloquée'
+              ? 'Permission blocked'
               : loading
-                ? 'Chargement...'
-                : 'Obtenir le token FCM'}
+                ? 'Loading...'
+                : 'Get FCM token'}
           </Button>
         )}
       </div>
