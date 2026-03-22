@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { envClient } from '@/env/client';
 import { getClientConfig } from '@/server/firebase';
-import { publicProcedure } from '@/server/orpc';
+import { protectedProcedure, publicProcedure } from '@/server/orpc';
 
 const tags = ['config'];
 
@@ -27,14 +27,14 @@ export default {
       };
     }),
 
-  firebaseConfig: publicProcedure()
+  firebaseConfig: protectedProcedure({ permission: null })
     .route({
       method: 'GET',
       path: '/config/firebase',
       tags,
       summary: 'Get Firebase client config',
       description:
-        'Returns the Firebase client configuration. This is intentionally public — it is embedded in every web app JS bundle and is safe to expose. The real secrets (FIREBASE_SERVICE_ACCOUNT) are server-only and never sent here.',
+        'Returns the Firebase client configuration. Only authenticated users need this — push notification registration requires a session.',
     })
     .output(
       z.object({

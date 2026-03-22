@@ -14,6 +14,19 @@ export const createFcmTokenRepository = (db: AppDB) => ({
       select: { id: true, token: true },
     }),
 
+  deleteOldestTokensForUser: async (userId: string, keep: number) => {
+    const tokens = await db.fcmToken.findMany({
+      where: { userId },
+      orderBy: { updatedAt: 'desc' },
+      select: { id: true },
+      skip: keep,
+    });
+    if (tokens.length === 0) return;
+    await db.fcmToken.deleteMany({
+      where: { id: { in: tokens.map((t) => t.id) } },
+    });
+  },
+
   deleteToken: (token: string) =>
     db.fcmToken.delete({ where: { token } }).catch((error: unknown) => {
       if (error instanceof Object && 'code' in error && error.code === 'P2025')

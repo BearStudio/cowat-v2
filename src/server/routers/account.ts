@@ -113,8 +113,14 @@ export default {
     .input(z.object({ token: z.string().min(1), registered: z.boolean() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
+      const MAX_TOKENS_PER_USER = 10;
+
       if (input.registered) {
         await context.fcmTokens.upsertToken(context.user.id, input.token);
+        await context.fcmTokens.deleteOldestTokensForUser(
+          context.user.id,
+          MAX_TOKENS_PER_USER
+        );
       } else {
         await context.fcmTokens.deleteToken(input.token);
       }
