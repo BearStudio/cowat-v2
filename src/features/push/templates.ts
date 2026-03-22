@@ -2,8 +2,8 @@ import dayjsBase from 'dayjs';
 import { match } from 'ts-pattern';
 import 'dayjs/locale/en.js';
 import 'dayjs/locale/fr.js';
-import '@/lib/dayjs/config';
 
+import { getDateFormat } from '@/lib/dayjs/formats';
 import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
 
@@ -21,7 +21,7 @@ export function getPushContent(
   locale: LanguageKey
 ): PushContent | null {
   const formatDate = (date: Date) =>
-    dayjsBase(date).locale(locale).f('notification');
+    dayjsBase(date).locale(locale).format(getDateFormat('notification'));
 
   const t = (key: string, options?: Record<string, string>): string =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
