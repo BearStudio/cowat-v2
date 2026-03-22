@@ -36,10 +36,10 @@ const cardCommuteVariants = cva('border-l-4', {
     bookingStatus: {
       OUTSIDER: 'border-l-neutral-400',
       DRIVER: 'border-l-secondary',
-      REQUESTED: 'border-l-primary',
+      REQUESTED: 'border-l-warning-500',
       ACCEPTED: 'border-l-positive-500',
       REFUSED: 'border-l-negative-500',
-      CANCELED: 'border-l-warning-500',
+      CANCELED: 'border-l-negative-500',
     } satisfies Record<NonNullable<UserBookingStatus>, string>,
   },
   defaultVariants: {
@@ -54,10 +54,10 @@ const cardCommuteGlowVariants = cva(
       bookingStatus: {
         OUTSIDER: 'bg-neutral-400',
         DRIVER: 'bg-secondary',
-        REQUESTED: 'bg-primary',
+        REQUESTED: 'bg-warning-500',
         ACCEPTED: 'bg-positive-500',
         REFUSED: 'bg-negative-500',
-        CANCELED: 'bg-warning-500',
+        CANCELED: 'bg-negative-500',
       } satisfies Record<NonNullable<UserBookingStatus>, string>,
     },
     defaultVariants: {

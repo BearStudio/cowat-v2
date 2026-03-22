@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { XIcon } from 'lucide-react';
+import { UsersIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -104,11 +104,13 @@ export const OrgMembers = (props: {
             {member.user.id !== currentUserId && (
               <DataListCell className="flex-none">
                 <ConfirmResponsiveDrawer
+                  title={member.user.name}
                   description={t(
                     'organization:manager.detail.removeMemberConfirm'
                   )}
                   confirmText={t('organization:members.remove')}
                   confirmVariant="destructive"
+                  icon={<UsersIcon />}
                   onConfirm={() => removeMember.mutateAsync(member.user.id)}
                 >
                   <Button

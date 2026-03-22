@@ -93,7 +93,7 @@
       "deleteOrganizationSuccess": "Organization deleted",
       "deleteOrganizationError": "Failed to delete organization",
       "removeMember": "Remove member",
-      "removeMemberConfirm": "Are you sure you want to remove this member from the organization?",
+      "removeMemberConfirm": "You are about to remove this member from the organization.",
       "removeMemberSuccess": "Member removed",
       "removeMemberError": "Failed to remove member"
     }

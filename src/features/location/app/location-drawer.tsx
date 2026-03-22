@@ -38,7 +38,7 @@ export const LocationDrawer = ({
 
   const locationQuery = useQuery(
     orpc.location.getById.queryOptions({
-      input: { id: locationId! },
+      input: { id: locationId ?? '' },
       enabled: open && !!locationId,
     })
   );
@@ -79,7 +79,7 @@ export const LocationDrawer = ({
         await Promise.all([
           context.client.invalidateQueries({
             queryKey: orpc.location.getById.key({
-              input: { id: locationId! },
+              input: { id: locationId ?? '' },
             }),
           }),
           context.client.invalidateQueries({
