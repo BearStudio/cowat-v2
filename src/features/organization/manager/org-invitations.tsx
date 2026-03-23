@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -29,21 +29,20 @@ export const OrgInvitations = (props: {
   }>;
 }) => {
   const { t } = useTranslation(['organization']);
-  const queryClient = useQueryClient();
 
-  const cancelInvitation = useMutation({
-    mutationFn: (invitationId: string) =>
-      orpc.organization.cancelInvitation.call({ invitationId }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getActiveOrganization.key(),
-      });
-      toast.success(t('organization:manager.detail.invitationCancelled'));
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.cancelInvitationError'));
-    },
-  });
+  const cancelInvitation = useMutation(
+    orpc.organization.cancelInvitation.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.invitationCancelled'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.cancelInvitationError'));
+      },
+    })
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -93,7 +92,9 @@ export const OrgInvitations = (props: {
                   size="xs"
                   variant="ghost"
                   loading={cancelInvitation.isPending}
-                  onClick={() => cancelInvitation.mutate(invitation.id)}
+                  onClick={() =>
+                    cancelInvitation.mutate({ invitationId: invitation.id })
+                  }
                 >
                   <XIcon className="size-3" />
                   {t('organization:invitations.cancel')}

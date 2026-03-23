@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -18,27 +18,26 @@ import { zInviteForm } from '@/features/organization/schema';
 
 export const FormInvite = () => {
   const { t } = useTranslation(['organization']);
-  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof zInviteForm>>({
     resolver: zodResolver(zInviteForm),
     defaultValues: { email: '', role: 'member' },
   });
 
-  const invite = useMutation({
-    mutationFn: (data: z.infer<typeof zInviteForm>) =>
-      orpc.organization.inviteMember.call(data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getActiveOrganization.key(),
-      });
-      toast.success(t('organization:manager.detail.invitationSent'));
-      form.reset();
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.invitationError'));
-    },
-  });
+  const invite = useMutation(
+    orpc.organization.inviteMember.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.invitationSent'));
+        form.reset();
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.invitationError'));
+      },
+    })
+  );
 
   return (
     <Form
