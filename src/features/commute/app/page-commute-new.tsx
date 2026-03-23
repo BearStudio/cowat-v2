@@ -249,7 +249,16 @@ export const PageCommuteNew = ({
               <MultiStepFormContent />
               <MultiStepFormStep
                 name={t('commute:stepper.details')}
-                onNext={() => form.trigger(['date', 'seats', 'type'])}
+                onNext={async () => {
+                  const date = form.getValues('date');
+                  if (dayjs(date).isBefore(dayjs(), 'day')) {
+                    form.setError('date', {
+                      message: t('commute:form.errors.datePast'),
+                    });
+                    return false;
+                  }
+                  return await form.trigger(['seats', 'type']);
+                }}
               >
                 <StepDetailsCommute />
               </MultiStepFormStep>
