@@ -56,7 +56,7 @@ export const OrgMembers = (props: {
       newRole,
     }: {
       memberId: string;
-      newRole: string;
+      newRole: 'owner' | 'member';
     }) => orpc.organization.updateMemberRole.call({ memberId, role: newRole }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
