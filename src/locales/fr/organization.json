@@ -95,7 +95,9 @@
       "removeMember": "Retirer le membre",
       "removeMemberConfirm": "Vous êtes sur le point de retirer ce membre de l'organisation.",
       "removeMemberSuccess": "Membre retiré",
-      "removeMemberError": "Impossible de retirer le membre"
+      "removeMemberError": "Impossible de retirer le membre",
+      "updateMemberRoleSuccess": "Role mis à jour avec succès",
+      "updateMemberRoleError": "Erreur lors de la mise à jour du rôle"
     }
   }
 }

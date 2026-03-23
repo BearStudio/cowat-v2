@@ -296,6 +296,30 @@ export default {
       });
     }),
 
+  updateMemberRole: orgProcedure({ permissions: { member: ['update'] } })
+    .route({ method: 'POST', path: '/organizations/update-member-role', tags })
+    .input(
+      z.object({
+        memberId: z.string(),
+        role: z.enum(['owner', 'member']),
+      })
+    )
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      const membership = await context.organizations.findOwnerMembership(
+        context.user.id,
+        context.organizationId
+      );
+
+      if (!membership) {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Only org owners and admins can update member roles',
+        });
+      }
+
+      await context.organizations.updateMemberRole(input.memberId, input.role);
+    }),
+
   cancelInvitation: orgProcedure()
     .route({ method: 'POST', path: '/organizations/cancel-invitation', tags })
     .input(z.object({ invitationId: z.string() }))

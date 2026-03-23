@@ -50,6 +50,25 @@ export const OrgMembers = (props: {
     })
   );
 
+  const updateMemberRole = useMutation({
+    mutationFn: ({
+      memberId,
+      newRole,
+    }: {
+      memberId: string;
+      newRole: string;
+    }) => orpc.organization.updateMemberRole.call({ memberId, role: newRole }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: orpc.organization.getActiveOrganization.key(),
+      });
+      toast.success(t('organization:manager.detail.updateMemberRoleSuccess'));
+    },
+    onError: () => {
+      toast.error(t('organization:manager.detail.updateMemberRoleError'));
+    },
+  });
+
   return (
     <DataList>
       <DataListRow>
@@ -87,18 +106,39 @@ export const OrgMembers = (props: {
               </DataListText>
             </DataListCell>
             <DataListCell className="flex-none">
-              <Badge
-                variant={
-                  member.role === 'owner' || member.role === 'admin'
-                    ? 'default'
-                    : 'secondary'
-                }
-              >
-                {t(
-                  // @ts-expect-error -- dynamic i18n key
-                  `organization:members.roles.${member.role}`
-                )}
-              </Badge>
+              {member.user.id !== currentUserId && member.role !== 'admin' ? (
+                <select
+                  value={member.role}
+                  onChange={(e) =>
+                    updateMemberRole.mutateAsync({
+                      memberId: member.id,
+                      newRole: e.target.value as 'member' | 'owner',
+                    })
+                  }
+                  disabled={updateMemberRole.isPending}
+                  className="rounded border px-2 py-1 text-sm"
+                >
+                  <option value="member">
+                    {t('organization:members.roles.member')}
+                  </option>
+                  <option value="owner">
+                    {t('organization:members.roles.owner')}
+                  </option>
+                </select>
+              ) : (
+                <Badge
+                  variant={
+                    member.role === 'owner' || member.role === 'admin'
+                      ? 'default'
+                      : 'secondary'
+                  }
+                >
+                  {t(
+                    // @ts-expect-error -- dynamic i18n key
+                    `organization:members.roles.${member.role}`
+                  )}
+                </Badge>
+              )}
             </DataListCell>
             {member.user.id !== currentUserId && (
               <DataListCell className="flex-none">
