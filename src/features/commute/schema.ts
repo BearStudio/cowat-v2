@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
@@ -120,14 +119,6 @@ export const zFormFieldsCommute = () =>
       }),
     })
     .superRefine((data, ctx) => {
-      if (dayjs(data.date).isBefore(dayjs(), 'day')) {
-        ctx.addIssue({
-          code: 'custom',
-          message: t('commute:form.errors.datePast'),
-          path: ['date'],
-        });
-      }
-
       const rules = createCommuteRules(data);
 
       data.stops.forEach((stop, index) => {
