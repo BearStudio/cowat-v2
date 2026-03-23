@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCanGoBack, useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import {
@@ -73,10 +74,9 @@ export const PageCommuteNew = ({
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
   const showForm = search.showForm ?? false;
   const requestDrawer = useDisclosure();
+  const { navigateBack } = useNavigateBack();
   const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
   const [requestDestination, setRequestDestination] = useState('');
 
@@ -103,16 +103,11 @@ export const PageCommuteNew = ({
           type: 'all',
         });
 
-        if (canGoBack) {
-          router.history.back({ ignoreBlocker: true });
-        } else {
-          router.navigate({
-            to: '/app/$orgSlug/commutes',
-            params: { orgSlug },
-            replace: true,
-            ignoreBlocker: true,
-          });
-        }
+        navigateBack({
+          ignoreBlocker: true,
+          to: '/app/$orgSlug/commutes',
+          params: { orgSlug },
+        });
       },
     })
   );
@@ -123,15 +118,10 @@ export const PageCommuteNew = ({
         toast.success(t('commute:new.requestDrawer.success'));
         requestDrawer.close();
 
-        if (canGoBack) {
-          router.history.back();
-        } else {
-          router.navigate({
-            to: '/app/$orgSlug/commutes',
-            params: { orgSlug },
-            replace: true,
-          });
-        }
+        navigateBack({
+          to: '/app/$orgSlug/commutes',
+          params: { orgSlug },
+        });
       },
     })
   );
