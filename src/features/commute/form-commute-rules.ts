@@ -59,6 +59,7 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
 
 export const createCommuteRules = (data: FormFieldsCommute) => {
   const isToday = dayjs(data.date).isToday();
+  const isInPast = dayjs(data.date).isBefore(dayjs(), 'day');
   const stopOrderRules = createStopOrderRules(data);
 
   return {
@@ -66,14 +67,16 @@ export const createCommuteRules = (data: FormFieldsCommute) => {
     ...stopOrderRules,
 
     isOutwardInFuture: (stop: FormFieldsStopInput) =>
-      !isToday ||
-      !stop.outwardTime ||
-      isTimeInFuture(data.date, stop.outwardTime),
+      !isInPast &&
+      (!isToday ||
+        !stop.outwardTime ||
+        isTimeInFuture(data.date, stop.outwardTime)),
 
     isInwardInFuture: (stop: FormFieldsStopInput) =>
-      !isToday ||
-      !stopOrderRules.isRound ||
-      !stop.inwardTime ||
-      isTimeInFuture(data.date, stop.inwardTime),
+      !isInPast &&
+      (!isToday ||
+        !stopOrderRules.isRound ||
+        !stop.inwardTime ||
+        isTimeInFuture(data.date, stop.inwardTime)),
   };
 };
