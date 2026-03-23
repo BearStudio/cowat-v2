@@ -1,12 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
+import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import { Form } from '@/components/form';
@@ -32,9 +32,8 @@ export type FormFieldsOrg = z.infer<typeof zFormFieldsOrg>;
 
 export const PageOrganizationNew = () => {
   const { t } = useTranslation(['organization']);
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
   const queryClient = useQueryClient();
+  const { navigateBack } = useNavigateBack();
 
   const form = useForm<FormFieldsOrg>({
     resolver: zodResolver(zFormFieldsOrg),
@@ -53,11 +52,7 @@ export const PageOrganizationNew = () => {
           type: 'all',
         });
 
-        if (canGoBack) {
-          router.history.back({ ignoreBlocker: true });
-        } else {
-          router.navigate({ to: '..', replace: true, ignoreBlocker: true });
-        }
+        navigateBack({ ignoreBlocker: true });
       },
       onError: () => {
         toast.error(t('organization:manager.new.createError'));
