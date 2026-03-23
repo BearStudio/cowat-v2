@@ -115,13 +115,19 @@ export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
   zFormFieldsCommuteShared()
     .extend({
-      date: z
-        .date({ error: t('common:errors.required') })
-        .refine((date) => !dayjs(date).isBefore(dayjs(), 'day'), {
-          message: t('commute:form.errors.datePast'),
-        }),
+      date: z.date({
+        error: t('common:errors.required'),
+      }),
     })
     .superRefine((data, ctx) => {
+      if (dayjs(data.date).isBefore(dayjs(), 'day')) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.datePast'),
+          path: ['date'],
+        });
+      }
+
       const rules = createCommuteRules(data);
 
       data.stops.forEach((stop, index) => {
