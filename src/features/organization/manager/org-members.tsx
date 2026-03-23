@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { UsersIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -33,23 +33,22 @@ export const OrgMembers = (props: {
   }>;
 }) => {
   const { t } = useTranslation(['organization']);
-  const queryClient = useQueryClient();
   const session = authClient.useSession();
   const currentUserId = session.data?.user?.id;
 
-  const removeMember = useMutation({
-    mutationFn: (memberIdOrEmail: string) =>
-      orpc.organization.removeMember.call({ memberIdOrEmail }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getActiveOrganization.key(),
-      });
-      toast.success(t('organization:manager.detail.removeMemberSuccess'));
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.removeMemberError'));
-    },
-  });
+  const removeMember = useMutation(
+    orpc.organization.removeMember.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.removeMemberSuccess'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.removeMemberError'));
+      },
+    })
+  );
 
   return (
     <DataList>
@@ -111,7 +110,11 @@ export const OrgMembers = (props: {
                   confirmText={t('organization:members.remove')}
                   confirmVariant="destructive"
                   icon={<UsersIcon />}
-                  onConfirm={() => removeMember.mutateAsync(member.user.id)}
+                  onConfirm={() =>
+                    removeMember.mutateAsync({
+                      memberIdOrEmail: member.user.id,
+                    })
+                  }
                 >
                   <Button
                     size="xs"

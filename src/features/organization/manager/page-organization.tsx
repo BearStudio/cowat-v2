@@ -1,5 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { AlertCircleIcon, BuildingIcon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -33,26 +33,27 @@ import {
 export const PageOrganization = () => {
   const { t } = useTranslation(['organization', 'common']);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const orgQuery = useQuery(
     orpc.organization.getActiveOrganization.queryOptions()
   );
 
-  const deleteOrganization = useMutation({
-    mutationFn: (organizationId: string) =>
-      orpc.organization.delete.call({ organizationId }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getAll.key(),
-      });
-      toast.success(t('organization:manager.detail.deleteOrganizationSuccess'));
-      navigate({ to: '/manager/organizations' });
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.deleteOrganizationError'));
-    },
-  });
+  const deleteOrganization = useMutation(
+    orpc.organization.delete.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getAll.key(),
+        });
+        toast.success(
+          t('organization:manager.detail.deleteOrganizationSuccess')
+        );
+        navigate({ to: '/manager/organizations' });
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.deleteOrganizationError'));
+      },
+    })
+  );
 
   const ui = getUiState((set) => {
     if (orgQuery.status === 'pending') return set('pending');
@@ -117,7 +118,9 @@ export const PageOrganization = () => {
                     'organization:manager.detail.deleteOrganizationConfirm'
                   )}
                   confirmText={t('common:actions.confirm')}
-                  onConfirm={() => deleteOrganization.mutateAsync(org.id)}
+                  onConfirm={() =>
+                    deleteOrganization.mutateAsync({ organizationId: org.id })
+                  }
                   isPending={deleteOrganization.isPending}
                   requiredConfirmation={org.slug}
                 />
