@@ -113,7 +113,11 @@ const zFormFieldsCommuteShared = () =>
 export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
   zFormFieldsCommuteShared()
-    .extend({ date: z.date({ error: t('common:errors.required') }) })
+    .extend({
+      date: z.date({
+        error: t('common:errors.required'),
+      }),
+    })
     .superRefine((data, ctx) => {
       const rules = createCommuteRules(data);
 
