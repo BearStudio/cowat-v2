@@ -3,16 +3,12 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 
 import type { TripType } from '@/features/booking/schema';
 import type { CommuteType } from '@/features/commute/schema';
-import type { NotificationEvent } from '@/server/notifications/types';
-
 export type SlackBlock = {
   type: string;
   [key: string]: unknown;
 };
 
-export function formatDate(
-  commuteDate: NotificationEvent['payload']['commuteDate']
-): string {
+export function formatDate(commuteDate: Date): string {
   const date =
     commuteDate instanceof Date ? commuteDate : new Date(String(commuteDate));
 

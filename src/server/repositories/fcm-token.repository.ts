@@ -14,6 +14,12 @@ export const createFcmTokenRepository = (db: AppDB) => ({
       select: { id: true, token: true },
     }),
 
+  getTokensForUsers: (userIds: string[]) =>
+    db.fcmToken.findMany({
+      where: { userId: { in: userIds } },
+      select: { id: true, token: true, userId: true },
+    }),
+
   deleteOldestTokensForUser: async (userId: string, keep: number) => {
     const tokens = await db.fcmToken.findMany({
       where: { userId },

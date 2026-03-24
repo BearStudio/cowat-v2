@@ -89,6 +89,15 @@ export function getPushContent(
         params: { orgSlug: e.payload.orgSlug },
       }),
     }))
+    .with({ type: 'commute.reminder' }, (e) => ({
+      title: t('notifications:push.commute.reminder.title'),
+      body: t('notifications:push.commute.reminder.body', {
+        count: String(e.payload.commutes.length),
+      }),
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
+    }))
     .with({ type: 'commute.created' }, () => null)
     .with({ type: 'commute.requested' }, () => null)
     .exhaustive();

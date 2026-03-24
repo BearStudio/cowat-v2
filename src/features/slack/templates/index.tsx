@@ -13,6 +13,7 @@ import type {
   BookingRequestedEvent,
   CommuteCanceledEvent,
   CommuteCreatedEvent,
+  CommuteReminderEvent,
   CommuteRequestedEvent,
   CommuteUpdatedEvent,
 } from '@/server/notifications/types';
@@ -23,6 +24,7 @@ import { BookingRefused } from './booking-refused';
 import { BookingRequested } from './booking-requested';
 import { CommuteCanceled } from './commute-canceled';
 import { CommuteCreated } from './commute-created';
+import { CommuteReminder } from './commute-reminder';
 import { CommuteRequested } from './commute-requested';
 import { CommuteUpdated } from './commute-updated';
 import type { SlackBlock } from '../utils';
@@ -38,7 +40,8 @@ export type PrivateEvent =
   | BookingRefusedEvent
   | BookingCanceledEvent
   | CommuteUpdatedEvent
-  | CommuteCanceledEvent;
+  | CommuteCanceledEvent
+  | CommuteReminderEvent;
 
 export type BroadcastOpts = {
   driverSlackId?: string;
@@ -75,7 +78,7 @@ export function getBroadcastBlocks(
 
 export function getPrivateBlocks(
   event: PrivateEvent,
-  opts?: { locale?: LanguageKey; baseUrl?: string }
+  opts?: { locale?: LanguageKey; baseUrl?: string; recipientUserId?: string }
 ): JSXSlack.JSX.Element {
   i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
@@ -97,6 +100,13 @@ export function getPrivateBlocks(
     ))
     .with({ type: 'commute.canceled' }, (e) => (
       <CommuteCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
+    ))
+    .with({ type: 'commute.reminder' }, (e) => (
+      <CommuteReminder
+        event={e}
+        baseUrl={opts?.baseUrl ?? ''}
+        recipientUserId={opts?.recipientUserId ?? ''}
+      />
     ))
     .exhaustive();
 }

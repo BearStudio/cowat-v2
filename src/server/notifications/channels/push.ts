@@ -11,7 +11,8 @@ import {
 } from '@/server/firebase';
 import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
 
-import type { EventWithRecipient, NotificationChannel } from '../types';
+import type { NotificationChannel, Recipient } from '../types';
+import { getEventRecipients } from '../utils';
 
 async function sendEach(
   accessToken: string,
@@ -51,10 +52,10 @@ async function sendEach(
 }
 
 export const pushChannel: NotificationChannel = {
-  name: 'push',
+  name: 'PUSH',
 
   canSend(event) {
-    if (!('recipient' in event)) return false;
+    if (!('recipient' in event) && !('recipients' in event)) return false;
     return isConfigured();
   },
 
@@ -73,65 +74,76 @@ export const pushChannel: NotificationChannel = {
     const locale =
       (orgChannel?.locale as LanguageKey | null) ?? DEFAULT_LANGUAGE_KEY;
 
-    const content = getPushContent(event, locale, envClient.VITE_BASE_URL);
-    if (!content) return;
-
-    // canSend() guarantees 'recipient' exists — narrow the type
-    if (!('recipient' in event)) return;
-    const { recipient } = event as EventWithRecipient;
-
     const fcmTokens = createFcmTokenRepository(orgContext.db);
-    const tokens = await fcmTokens.getTokensForUser(recipient.userId);
 
-    if (!tokens.length) return;
+    const recipients = getEventRecipients(event);
+    if (recipients.length === 0) return;
 
-    const accessTokenResult = await getAccessToken();
-    if (accessTokenResult.isErr()) {
-      logger.error(
-        { err: accessTokenResult.error },
-        'Push: failed to get access token'
-      );
-      return;
-    }
-
-    const messages: FcmMessage[] = tokens.map((t) => ({
-      token: t.token,
-      notification: { title: content.title, body: content.body },
-      webpush: {
-        notification: { icon: '/android-chrome-192x192.png' },
-        fcmOptions: content.link ? { link: content.link } : undefined,
-      },
-    }));
-
-    const { failedTokens, invalidTokens } = await sendEach(
-      accessTokenResult.value,
-      messages
-    );
-
-    // Clean up expired registrations
-    if (invalidTokens.length > 0) {
-      const tokenToId = new Map(tokens.map((t) => [t.token, t.id]));
-      const invalidTokenIds = invalidTokens
-        .map((t) => tokenToId.get(t))
-        .filter((id): id is string => id !== undefined);
-
-      if (invalidTokenIds.length > 0) {
-        await fcmTokens.deleteByIds(invalidTokenIds);
-        logger.info(
-          { count: invalidTokenIds.length },
-          'Push: removed invalid FCM tokens'
-        );
-      }
-    }
-
-    if (failedTokens.length > 0) {
-      logger.warn(
-        {
-          failedCount: failedTokens.length,
-          successCount: messages.length - failedTokens.length,
-        },
-        'Push: some notifications failed to send'
-      );
-    }
+    await sendToRecipients(recipients, event, locale, fcmTokens, logger);
   },
 };
+
+async function sendToRecipients(
+  recipients: Recipient[],
+  event: Parameters<NotificationChannel['send']>[0],
+  locale: LanguageKey,
+  fcmTokens: ReturnType<typeof createFcmTokenRepository>,
+  logger: Parameters<NotificationChannel['send']>[1]
+) {
+  // Fetch tokens for all recipients at once
+  const userIds = recipients.map((r) => r.userId);
+  const allTokens = await fcmTokens.getTokensForUsers(userIds);
+  if (allTokens.length === 0) return;
+
+  const accessTokenResult = await getAccessToken();
+  if (accessTokenResult.isErr()) {
+    logger.error(
+      { err: accessTokenResult.error },
+      'Push: failed to get access token'
+    );
+    return;
+  }
+
+  const content = getPushContent(event, locale, envClient.VITE_BASE_URL);
+  if (!content) return;
+
+  const messages: FcmMessage[] = allTokens.map((t) => ({
+    token: t.token,
+    notification: { title: content.title, body: content.body },
+    webpush: {
+      notification: { icon: '/android-chrome-192x192.png' },
+      fcmOptions: content.link ? { link: content.link } : undefined,
+    },
+  }));
+
+  const { failedTokens, invalidTokens } = await sendEach(
+    accessTokenResult.value,
+    messages
+  );
+
+  // Clean up expired registrations
+  if (invalidTokens.length > 0) {
+    const tokenToId = new Map(allTokens.map((t) => [t.token, t.id]));
+    const invalidTokenIds = invalidTokens
+      .map((t) => tokenToId.get(t))
+      .filter((id): id is string => id !== undefined);
+
+    if (invalidTokenIds.length > 0) {
+      await fcmTokens.deleteByIds(invalidTokenIds);
+      logger.info(
+        { count: invalidTokenIds.length },
+        'Push: removed invalid FCM tokens'
+      );
+    }
+  }
+
+  if (failedTokens.length > 0) {
+    logger.warn(
+      {
+        failedCount: failedTokens.length,
+        successCount: messages.length - failedTokens.length,
+      },
+      'Push: some notifications failed to send'
+    );
+  }
+}
