@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
+import { queryClient } from '@/lib/tanstack-query/query-client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
