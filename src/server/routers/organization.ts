@@ -296,6 +296,19 @@ export default {
       });
     }),
 
+  updateMemberRole: orgProcedure({ permissions: { member: ['update'] } })
+    .route({ method: 'POST', path: '/organizations/update-member-role', tags })
+    .input(
+      z.object({
+        memberId: z.string(),
+        role: z.enum(['owner', 'member']),
+      })
+    )
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      await context.organizations.updateMemberRole(input.memberId, input.role);
+    }),
+
   cancelInvitation: orgProcedure()
     .route({ method: 'POST', path: '/organizations/cancel-invitation', tags })
     .input(z.object({ invitationId: z.string() }))

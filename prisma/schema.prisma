@@ -198,7 +198,7 @@ model Stop {
   commuteId    String
   commute      Commute             @relation(fields: [commuteId], references: [id], onDelete: Cascade)
   locationId   String
-  location     Location            @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  location     Location            @relation(fields: [locationId], references: [id], onDelete: Cascade)
   passengers   PassengersOnStops[]
 
   @@index([commuteId])
@@ -253,7 +253,7 @@ model TemplateStop {
   templateId  String
   template    CommuteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
   locationId  String
-  location    Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  location    Location        @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([templateId])
   @@map("template_stop")

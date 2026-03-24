@@ -95,7 +95,9 @@
       "removeMember": "Remove member",
       "removeMemberConfirm": "You are about to remove this member from the organization.",
       "removeMemberSuccess": "Member removed",
-      "removeMemberError": "Failed to remove member"
+      "removeMemberError": "Failed to remove member",
+      "updateMemberRoleSuccess": "Role successfully updated",
+      "updateMemberRoleError": "Error updating the role"
     }
   }
 }
