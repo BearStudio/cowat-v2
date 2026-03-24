@@ -92,7 +92,10 @@ export const PageCommuteNew = ({
   });
 
   const openForm = () => {
-    navigateToOpenForm({ search: (prev) => ({ ...prev, showForm: true }) });
+    navigateToOpenForm({
+      search: (prev) => ({ ...prev, showForm: true }),
+      replace: true,
+    });
   };
 
   const commuteCreate = useMutation(
