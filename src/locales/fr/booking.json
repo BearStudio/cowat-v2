@@ -27,6 +27,7 @@
     },
     "loadMore": "Charger plus",
     "emptyState": "Aucune demande de réservation en attente",
+    "emptyDescription": "Quand quelqu'un demandera à rejoindre un de vos trajets, la demande apparaîtra ici.",
     "speedDial": {
       "label": "Actions",
       "createCommute": "Nouveau trajet",

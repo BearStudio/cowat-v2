@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { CalendarIcon, MapPinIcon } from 'lucide-react';
+import { CalendarIcon, CheckCircleIcon, MapPinIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -53,9 +53,11 @@ export const CommuteRequestCard = ({
     })
   );
 
+  const relativeDate = dayjs(request.date).fromNow();
+
   return (
     <Card className="border-l-warning relative overflow-hidden border-l-4">
-      <div className="bg-warning pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full opacity-30 blur-2xl" />
+      <div className="bg-warning pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full opacity-20 blur-2xl" />
 
       <CardHeader>
         <div className="flex items-center gap-3">
@@ -71,7 +73,8 @@ export const CommuteRequestCard = ({
           </Avatar>
           <div className="flex min-w-0 flex-col gap-0.5">
             <CardTitle className="truncate">{request.requester.name}</CardTitle>
-            <CardDescription className="capitalize">
+            <CardDescription className="flex items-center gap-1 capitalize">
+              <CalendarIcon className="size-3 shrink-0" />
               {dayjs(request.date).f('booking:requestDateFull')}
             </CardDescription>
           </div>
@@ -83,14 +86,15 @@ export const CommuteRequestCard = ({
         </CardAction>
       </CardHeader>
 
-      {request.destination && (
-        <CardContent>
+      <CardContent className="flex flex-wrap items-center gap-2">
+        {request.destination && (
           <Badge variant="secondary" size="sm">
             <MapPinIcon className="size-3" />
             {request.destination}
           </Badge>
-        </CardContent>
-      )}
+        )}
+        <span className="text-2xs text-muted-foreground">{relativeDate}</span>
+      </CardContent>
 
       <CardFooter className="justify-between gap-2 border-t pt-3">
         {!isOwner ? (
@@ -104,12 +108,14 @@ export const CommuteRequestCard = ({
         ) : (
           <Button
             size="sm"
+            variant="secondary"
             loading={updateStatus.isPending}
             disabled={updateStatus.isPending}
             onClick={() =>
               updateStatus.mutate({ id: request.id, status: 'FULFILLED' })
             }
           >
+            <CheckCircleIcon className="size-3.5" />
             {t('commuteRequest:actions.fulfillButton')}
           </Button>
         )}

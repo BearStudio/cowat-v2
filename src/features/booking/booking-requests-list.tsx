@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -53,6 +54,9 @@ export const BookingRequestsList = () => {
             <featureIcons.Bookings />
           </EmptyMedia>
           <EmptyTitle>{t('booking:requests.emptyState')}</EmptyTitle>
+          <EmptyDescription>
+            {t('booking:requests.emptyDescription')}
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     ))

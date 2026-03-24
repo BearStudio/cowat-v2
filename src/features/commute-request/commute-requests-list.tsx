@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
+  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -19,6 +21,7 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { CommuteRequestCard } from '@/features/commute-request/commute-request-card';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
 
 export const CommuteRequestsList = () => {
   const { t } = useTranslation(['commuteRequest']);
@@ -55,7 +58,19 @@ export const CommuteRequestsList = () => {
             <featureIcons.CommuteRequest />
           </EmptyMedia>
           <EmptyTitle>{t('commuteRequest:list.emptyState')}</EmptyTitle>
+          <EmptyDescription>
+            {t('commuteRequest:list.emptyDescription')}
+          </EmptyDescription>
         </EmptyHeader>
+        <EmptyContent>
+          <OrgButtonLink
+            variant="secondary"
+            size="sm"
+            to="/app/$orgSlug/commutes/request"
+          >
+            {t('commuteRequest:list.createAction')}
+          </OrgButtonLink>
+        </EmptyContent>
       </Empty>
     ))
     .match('default', ({ items }) => (

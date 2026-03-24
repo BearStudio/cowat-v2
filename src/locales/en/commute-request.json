@@ -1,6 +1,7 @@
 {
   "list": {
     "emptyState": "No trip requests",
+    "emptyDescription": "Ride requests from your organization will appear here.",
     "loadMore": "Load more",
     "createAction": "Request a ride"
   },

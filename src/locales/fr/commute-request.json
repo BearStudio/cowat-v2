@@ -1,6 +1,7 @@
 {
   "list": {
     "emptyState": "Aucune demande de trajet",
+    "emptyDescription": "Les demandes de covoiturage de votre organisation apparaîtront ici.",
     "loadMore": "Charger plus",
     "createAction": "Demander un trajet"
   },
