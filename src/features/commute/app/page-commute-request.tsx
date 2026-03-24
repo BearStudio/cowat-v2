@@ -40,12 +40,8 @@ export const PageCommuteRequest = ({
 
   const commuteRequest = useMutation(
     orpc.commuteRequest.create.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+      onSuccess: () => {
         toast.success(t('commute:new.requestDrawer.success'));
-        await context.client.invalidateQueries({
-          queryKey: orpc.commuteRequest.getAll.key(),
-          type: 'all',
-        });
         navigateBack({
           to: '/app/$orgSlug/commutes',
           params: { orgSlug },

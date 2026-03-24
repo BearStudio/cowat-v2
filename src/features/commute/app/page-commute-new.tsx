@@ -81,18 +81,7 @@ export const PageCommuteNew = ({
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await Promise.all([
-          context.client.invalidateQueries({
-            queryKey: orpc.commute.getMyCommutes.key(),
-            type: 'all',
-          }),
-          context.client.invalidateQueries({
-            queryKey: orpc.commuteRequest.getAll.key(),
-            type: 'all',
-          }),
-        ]);
-
+      onSuccess: () => {
         navigateBack({
           ignoreBlocker: true,
           to: '/app/$orgSlug/commutes',
