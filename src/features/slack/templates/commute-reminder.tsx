@@ -6,9 +6,10 @@ import { routeUrl } from '@/lib/route-url';
 
 import { SlackFooter } from '@/features/slack/components/footer';
 import { SlackHeader } from '@/features/slack/components/header';
-import type {
-  CommuteReminderEvent,
-  ReminderCommute,
+import {
+  type CommuteReminderEvent,
+  getCommutesForRecipient,
+  type ReminderCommute,
 } from '@/server/notifications/types';
 
 import { formatDate } from '../utils';
@@ -29,13 +30,13 @@ function formatCommuteLineForRecipient(
 
   if (isDriver) {
     return passengerNames.length > 0
-        ? i18n.t('notifications:commute.reminder.lineDriverWithPassengers', {
-            date,
-            passengers: passengerNames,
-          })
-        : i18n.t('notifications:commute.reminder.lineDriverNoPassengers', {
-            date,
-          });
+      ? i18n.t('notifications:commute.reminder.lineDriverWithPassengers', {
+          date,
+          passengers: passengerNames,
+        })
+      : i18n.t('notifications:commute.reminder.lineDriverNoPassengers', {
+          date,
+        });
   }
 
   return i18n.t('notifications:commute.reminder.linePassenger', {
@@ -47,10 +48,9 @@ function formatCommuteLineForRecipient(
 export function CommuteReminder({ event, baseUrl, recipientUserId }: Props) {
   const { payload } = event;
 
-  const recipientCommutes = payload.commutes.filter(
-    (c) =>
-      c.driverUserId === recipientUserId ||
-      c.passengers.some((p) => p.userId === recipientUserId)
+  const recipientCommutes = getCommutesForRecipient(
+    payload.commutes,
+    recipientUserId
   );
 
   const link = routeUrl(baseUrl, '/app/$orgSlug', {

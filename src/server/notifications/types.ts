@@ -126,6 +126,17 @@ export type ReminderCommute = {
   passengers: Array<{ name: string; userId: User['id'] }>;
 };
 
+export function getCommutesForRecipient(
+  commutes: ReminderCommute[],
+  recipientUserId: string
+): ReminderCommute[] {
+  return commutes.filter(
+    (c) =>
+      c.driverUserId === recipientUserId ||
+      c.passengers.some((p) => p.userId === recipientUserId)
+  );
+}
+
 export type CommuteReminderEvent = {
   type: 'commute.reminder';
   recipients: Recipient[];

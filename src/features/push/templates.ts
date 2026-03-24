@@ -8,7 +8,10 @@ import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { routeUrl } from '@/lib/route-url';
 
-import type { NotificationEvent } from '@/server/notifications/types';
+import {
+  getCommutesForRecipient,
+  type NotificationEvent,
+} from '@/server/notifications/types';
 
 export type PushContent = {
   title: string;
@@ -92,11 +95,7 @@ export function getPushContent(
     }))
     .with({ type: 'commute.reminder' }, (e) => {
       const commutes = recipientUserId
-        ? e.payload.commutes.filter(
-            (c) =>
-              c.driverUserId === recipientUserId ||
-              c.passengers.some((p) => p.userId === recipientUserId)
-          )
+        ? getCommutesForRecipient(e.payload.commutes, recipientUserId)
         : e.payload.commutes;
       return {
         title: t('notifications:push.commute.reminder.title'),
