@@ -1,0 +1,20 @@
+{
+  "list": {
+    "emptyState": "No trip requests",
+    "loadMore": "Load more",
+    "createAction": "Request a ride"
+  },
+  "status": {
+    "OPEN": "Open",
+    "FULFILLED": "Fulfilled",
+    "CANCELED": "Canceled"
+  },
+  "actions": {
+    "offerRide": "Offer a ride",
+    "fulfillButton": "Mark as fulfilled",
+    "fulfillSuccess": "Request marked as fulfilled",
+    "cancelButton": "Cancel",
+    "cancelConfirmDescription": "You are about to cancel this trip request.",
+    "cancelSuccess": "Request canceled"
+  }
+}

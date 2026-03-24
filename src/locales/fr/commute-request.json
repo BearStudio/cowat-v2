@@ -1,0 +1,20 @@
+{
+  "list": {
+    "emptyState": "Aucune demande de trajet",
+    "loadMore": "Charger plus",
+    "createAction": "Demander un trajet"
+  },
+  "status": {
+    "OPEN": "Ouverte",
+    "FULFILLED": "Satisfaite",
+    "CANCELED": "Annulée"
+  },
+  "actions": {
+    "offerRide": "Proposer un trajet",
+    "fulfillButton": "Marquer comme satisfaite",
+    "fulfillSuccess": "Demande marquée comme satisfaite",
+    "cancelButton": "Annuler",
+    "cancelConfirmDescription": "Vous êtes sur le point d'annuler cette demande de trajet.",
+    "cancelSuccess": "Demande annulée"
+  }
+}

@@ -53,6 +53,12 @@ enum TripType {
   RETURN
 }
 
+enum CommuteRequestStatus {
+  OPEN
+  FULFILLED
+  CANCELED
+}
+
 enum NotificationChannelType {
   SLACK
   PUSH
@@ -179,8 +185,9 @@ model Commute {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   driverMemberId String
-  driver         Member        @relation("CommuteDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
+  driver         Member           @relation("CommuteDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
   stops          Stop[]
+  commuteRequests CommuteRequest[]
 
   @@index([driverMemberId, date])
   @@map("commute")
@@ -224,6 +231,22 @@ model PassengersOnStops {
   @@index([passengerMemberId])
   @@index([stopId])
   @@map("passengers_on_stops")
+}
+
+model CommuteRequest {
+  id               String               @id @default(cuid())
+  date             DateTime             @db.Date
+  destination      String?
+  status           CommuteRequestStatus @default(OPEN)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  requesterMemberId String
+  requester        Member               @relation("CommuteRequester", fields: [requesterMemberId], references: [id], onDelete: Cascade)
+  commuteId        String?
+  commute          Commute?             @relation(fields: [commuteId], references: [id], onDelete: SetNull)
+
+  @@index([requesterMemberId])
+  @@map("commute_request")
 }
 
 model CommuteTemplate {
@@ -320,6 +343,7 @@ model Member {
   drivenCommutes      Commute[]           @relation("CommuteDriver")
   drivenTemplates     CommuteTemplate[]   @relation("TemplateDriver")
   passengerBookings   PassengersOnStops[] @relation("BookingPassenger")
+  commuteRequests     CommuteRequest[]    @relation("CommuteRequester")
 
   @@index([organizationId])
   @@index([userId])

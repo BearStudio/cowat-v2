@@ -39,9 +39,13 @@ export const PageCommuteRequest = ({
   const today = dayjs().startOf('day').toDate();
 
   const commuteRequest = useMutation(
-    orpc.commute.requestCommute.mutationOptions({
-      onSuccess: () => {
+    orpc.commuteRequest.create.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
         toast.success(t('commute:new.requestDrawer.success'));
+        await context.client.invalidateQueries({
+          queryKey: orpc.commuteRequest.getAll.key(),
+          type: 'all',
+        });
         navigateBack({
           to: '/app/$orgSlug/commutes',
           params: { orgSlug },

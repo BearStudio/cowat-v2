@@ -25,7 +25,10 @@ export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
 
   const link = routeUrl(baseUrl, '/app/$orgSlug/commutes/new', {
     params: { orgSlug: event.payload.orgSlug },
-    search: { date: dateParam },
+    search: {
+      date: dateParam,
+      commuteRequestId: event.payload.commuteRequestId,
+    },
   });
 
   const { locationName } = event.payload;

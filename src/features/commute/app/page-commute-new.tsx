@@ -52,7 +52,7 @@ export const PageCommuteNew = ({
   search,
   orgSlug,
 }: {
-  search: { date?: Date; showForm?: boolean };
+  search: { date?: Date; showForm?: boolean; commuteRequestId?: string };
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
@@ -80,10 +80,16 @@ export const PageCommuteNew = ({
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries({
-          queryKey: orpc.commute.getMyCommutes.key(),
-          type: 'all',
-        });
+        await Promise.all([
+          context.client.invalidateQueries({
+            queryKey: orpc.commute.getMyCommutes.key(),
+            type: 'all',
+          }),
+          context.client.invalidateQueries({
+            queryKey: orpc.commuteRequest.getAll.key(),
+            type: 'all',
+          }),
+        ]);
 
         navigateBack({
           ignoreBlocker: true,
@@ -98,6 +104,7 @@ export const PageCommuteNew = ({
     commuteCreate.mutate({
       ...values,
       stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
+      commuteRequestId: search.commuteRequestId,
     });
   });
 
