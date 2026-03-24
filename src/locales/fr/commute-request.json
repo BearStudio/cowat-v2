@@ -5,7 +5,8 @@
     "loadMore": "Charger plus",
     "createAction": "Demander un trajet",
     "myRequests": "Mes demandes",
-    "otherRequests": "Autres demandes"
+    "otherRequests": "Autres demandes",
+    "emptyMyRequests": "Vous n'avez aucune demande en cours."
   },
   "status": {
     "OPEN": "Ouverte",

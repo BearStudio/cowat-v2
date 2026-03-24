@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 import { orpc } from '@/lib/orpc/client';
-import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,6 @@ export const PageCommuteRequest = ({
   search: { date?: Date };
 }) => {
   const { t } = useTranslation(['commute', 'common']);
-  const { navigateBack } = useNavigateBack();
   const navigate = useNavigate();
 
   const requestDate = search.date;
@@ -44,9 +42,10 @@ export const PageCommuteRequest = ({
     orpc.commuteRequest.create.mutationOptions({
       onSuccess: () => {
         toast.success(t('commute:new.requestDrawer.success'));
-        navigateBack({
-          to: '/app/$orgSlug/commutes',
+        navigate({
+          to: '/app/$orgSlug/requests',
           params: { orgSlug },
+          search: { tab: 'commuteRequests' },
         });
       },
     })

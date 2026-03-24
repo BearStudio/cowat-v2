@@ -20,7 +20,7 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageRequests = () => {
+export const PageRequests = ({ tab }: { tab?: string }) => {
   const { t } = useTranslation(['booking', 'commuteRequest']);
 
   const { data: bookingCount } = useQuery(
@@ -48,7 +48,7 @@ export const PageRequests = () => {
         </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent className="pb-40 md:pb-0">
-        <Tabs defaultValue="bookings" className="flex-col gap-4">
+        <Tabs defaultValue={tab ?? 'bookings'} className="flex-col gap-4">
           <TabsList className="w-full">
             <TabsTrigger value="bookings">
               {t('booking:requests.tabs.bookings')}

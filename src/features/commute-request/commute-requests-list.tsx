@@ -96,9 +96,6 @@ export const CommuteRequestsList = () => {
       <div className="flex flex-col gap-6">
         {otherRequests.length > 0 && (
           <section className="flex flex-col gap-3">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {t('commuteRequest:list.otherRequests')}
-            </h3>
             {otherRequests.map((item) => (
               <CommuteRequestCard
                 key={item.id}
@@ -109,16 +106,40 @@ export const CommuteRequestsList = () => {
           </section>
         )}
 
-        {myRequests.length > 0 && (
-          <section className="flex flex-col gap-3">
-            <h3 className="text-sm font-medium text-muted-foreground">
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <hr className="flex-1" />
+            <h3 className="shrink-0 text-sm font-medium text-muted-foreground">
               {t('commuteRequest:list.myRequests')}
             </h3>
-            {myRequests.map((item) => (
+            <hr className="flex-1" />
+          </div>
+          {myRequests.length > 0 ? (
+            myRequests.map((item) => (
               <CommuteRequestCard key={item.id} request={item} isOwner />
-            ))}
-          </section>
-        )}
+            ))
+          ) : (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <featureIcons.CommuteRequest />
+                </EmptyMedia>
+                <EmptyDescription>
+                  {t('commuteRequest:list.emptyMyRequests')}
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <OrgButtonLink
+                  variant="secondary"
+                  size="sm"
+                  to="/app/$orgSlug/commutes/request"
+                >
+                  {t('commuteRequest:list.createAction')}
+                </OrgButtonLink>
+              </EmptyContent>
+            </Empty>
+          )}
+        </section>
 
         {requestsQuery.hasNextPage && (
           <div className="flex justify-center">

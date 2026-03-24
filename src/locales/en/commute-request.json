@@ -5,7 +5,8 @@
     "loadMore": "Load more",
     "createAction": "Request a ride",
     "myRequests": "My requests",
-    "otherRequests": "Other requests"
+    "otherRequests": "Other requests",
+    "emptyMyRequests": "You have no pending requests."
   },
   "status": {
     "OPEN": "Open",
