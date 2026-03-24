@@ -102,9 +102,7 @@ export const OrgMembers = (props: {
                 {member.user.email}
               </DataListText>
             </DataListCell>
-            <WithOrgPermissions
-              permissions={[{ organization: ['updateRole'] }]}
-            >
+            <WithOrgPermissions permissions={[{ member: ['update'] }]}>
               <DataListCell className="flex-none">
                 {member.user.id !== currentUserId ? (
                   <select
@@ -140,9 +138,7 @@ export const OrgMembers = (props: {
                 )}
               </DataListCell>
             </WithOrgPermissions>
-            <WithOrgPermissions
-              permissions={[{ organization: ['deleteMember'] }]}
-            >
+            <WithOrgPermissions permissions={[{ member: ['delete'] }]}>
               <DataListCell className="flex-none">
                 <ConfirmResponsiveDrawer
                   title={member.user.name}
