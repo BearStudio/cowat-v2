@@ -23,6 +23,7 @@
     "speedDial": {
       "myLocations": "Mes Lieux",
       "myCommutes": "Mes Modèles",
+      "requestCommute": "Demander un trajet",
       "createCommute": "Nouveau Trajet"
     }
   },

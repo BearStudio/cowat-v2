@@ -3,14 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
-import { useState } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useDisclosure } from 'react-use-disclosure';
-import { toast } from 'sonner';
 
-import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
-import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 import { useNavigateBack } from '@/hooks/use-navigate-back';
 
@@ -24,19 +19,6 @@ import {
 } from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  ResponsiveDrawer,
-  ResponsiveDrawerBody,
-  ResponsiveDrawerClose,
-  ResponsiveDrawerContent,
-  ResponsiveDrawerDescription,
-  ResponsiveDrawerFooter,
-  ResponsiveDrawerHeader,
-  ResponsiveDrawerTitle,
-} from '@/components/ui/responsive-drawer';
 
 import { TemplatePicker } from '@/features/commute/app/template-picker';
 import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
@@ -75,10 +57,7 @@ export const PageCommuteNew = ({
 }) => {
   const { t } = useTranslation(['commute', 'common']);
   const showForm = search.showForm ?? false;
-  const requestDrawer = useDisclosure();
   const { navigateBack } = useNavigateBack();
-  const [requestDate, setRequestDate] = useState<Date | undefined>(search.date);
-  const [requestDestination, setRequestDestination] = useState('');
 
   useShouldShowNav(showForm ? 'desktop-only' : 'all');
 
@@ -115,22 +94,6 @@ export const PageCommuteNew = ({
     })
   );
 
-  const commuteRequest = useMutation(
-    orpc.commute.requestCommute.mutationOptions({
-      onSuccess: () => {
-        toast.success(t('commute:new.requestDrawer.success'));
-        requestDrawer.close();
-
-        navigateBack({
-          to: '/app/$orgSlug/commutes',
-          params: { orgSlug },
-        });
-      },
-    })
-  );
-
-  const today = dayjs().startOf('day').toDate();
-
   const handleSubmit = form.handleSubmit((values) => {
     commuteCreate.mutate({
       ...values,
@@ -151,78 +114,6 @@ export const PageCommuteNew = ({
             <PenLineIcon />
             {t('commute:templatePicker.fromScratch')}
           </Button>
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={requestDrawer.open}
-          >
-            <featureIcons.CommuteRequest />
-            {t('commute:new.requestButton')}
-          </Button>
-          <ResponsiveDrawer
-            open={requestDrawer.isOpen}
-            onOpenChange={(open) => {
-              if (!open) requestDrawer.close();
-            }}
-          >
-            <ResponsiveDrawerContent>
-              <ResponsiveDrawerHeader className="text-center">
-                <ResponsiveDrawerTitle>
-                  {t('commute:new.requestDrawer.title')}
-                </ResponsiveDrawerTitle>
-                <ResponsiveDrawerDescription>
-                  {t('commute:new.requestDrawer.description')}
-                </ResponsiveDrawerDescription>
-              </ResponsiveDrawerHeader>
-              <ResponsiveDrawerBody className="flex flex-col gap-4">
-                <Calendar
-                  className="mx-auto"
-                  mode="single"
-                  selected={requestDate}
-                  onSelect={(date) => {
-                    if (date) setRequestDate(toNoonUTC(date));
-                  }}
-                  defaultMonth={requestDate}
-                  disabled={(date) => date < today}
-                  startMonth={today}
-                />
-                <div className="flex flex-col gap-1.5 px-1">
-                  <Label>{t('commute:new.requestDrawer.destination')}</Label>
-                  <Input
-                    placeholder={t(
-                      'commute:new.requestDrawer.destinationPlaceholder'
-                    )}
-                    value={requestDestination}
-                    onChange={(e) => setRequestDestination(e.target.value)}
-                  />
-                </div>
-              </ResponsiveDrawerBody>
-              <ResponsiveDrawerFooter>
-                <ResponsiveDrawerClose
-                  render={
-                    <Button variant="secondary" className="max-sm:w-full" />
-                  }
-                >
-                  {t('common:actions.cancel')}
-                </ResponsiveDrawerClose>
-                <Button
-                  className="max-sm:w-full"
-                  disabled={!requestDate}
-                  loading={commuteRequest.isPending}
-                  onClick={() => {
-                    if (requestDate) {
-                      commuteRequest.mutate({
-                        date: requestDate,
-                        destination: requestDestination || undefined,
-                      });
-                    }
-                  }}
-                >
-                  {t('commute:new.requestDrawer.submit')}
-                </Button>
-              </ResponsiveDrawerFooter>
-            </ResponsiveDrawerContent>
-          </ResponsiveDrawer>
           <TemplatePicker
             onSelect={(data) => {
               form.reset({ ...DEFAULT_VALUES, date: search.date, ...data });

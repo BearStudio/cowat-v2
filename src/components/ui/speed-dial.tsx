@@ -64,7 +64,7 @@ export const SpeedDial = ({
                   <div
                     key={index}
                     className={cn(
-                      'col-span-2 grid grid-cols-subgrid items-center motion-reduce:animate-none',
+                      'col-span-2 grid grid-cols-subgrid items-center justify-items-end motion-reduce:animate-none',
                       stagger[index]?.animationClass
                     )}
                     style={{

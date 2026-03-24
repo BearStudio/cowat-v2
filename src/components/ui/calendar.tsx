@@ -41,6 +41,8 @@ const ChevronWrapper = ({ orientation }: ChevronProps) => {
  */
 export function Calendar({
   className,
+  classNames: classNamesProp,
+  style: styleProp,
   showOutsideDays = true, // by default, we want outside days
   ...props
 }: DayPickerProps) {
@@ -48,20 +50,20 @@ export function Calendar({
 
   const locale = REACT_DAY_PICKER_LOCALE_MAP[i18n?.language] ?? enUS;
 
-  const _monthsClassName = cn('relative flex', props.classNames?.months);
+  const _monthsClassName = cn('relative flex', classNamesProp?.months);
   const _monthCaptionClassName = cn(
     'relative mx-10 flex h-7 items-center justify-center',
-    props.classNames?.month_caption
+    classNamesProp?.month_caption
   );
-  const _weekdaysClassName = cn('flex flex-row', props.classNames?.weekdays);
+  const _weekdaysClassName = cn('flex flex-row', classNamesProp?.weekdays);
   const _weekdayClassName = cn(
     'w-8 text-sm font-normal text-muted-foreground',
-    props.classNames?.weekday
+    classNamesProp?.weekday
   );
-  const _monthClassName = cn('w-full', props.classNames?.month);
+  const _monthClassName = cn('w-full', classNamesProp?.month);
   const _captionLabelClassName = cn(
     'flex items-center justify-center gap-1 truncate text-sm font-medium',
-    props.classNames?.caption_label
+    classNamesProp?.caption_label
   );
   const buttonNavClassName = buttonVariants({
     variant: 'secondary',
@@ -71,61 +73,61 @@ export function Calendar({
   const _buttonNextClassName = cn(
     buttonNavClassName,
     'right-0',
-    props.classNames?.button_next
+    classNamesProp?.button_next
   );
   const _buttonPreviousClassName = cn(
     buttonNavClassName,
     'left-0',
-    props.classNames?.button_previous
+    classNamesProp?.button_previous
   );
-  const _navClassName = cn('flex items-start', props.classNames?.nav);
-  const _monthGridClassName = cn('mx-auto mt-4', props.classNames?.month_grid);
+  const _navClassName = cn('flex items-start', classNamesProp?.nav);
+  const _monthGridClassName = cn('mx-auto mt-4', classNamesProp?.month_grid);
   const _weekClassName = cn(
     'mt-2 flex w-max items-start',
-    props.classNames?.week
+    classNamesProp?.week
   );
   const _dayClassName = cn(
     'flex size-8 flex-1 items-center justify-center p-0 text-sm',
-    props.classNames?.day
+    classNamesProp?.day
   );
   const _dayButtonClassName = cn(
     buttonVariants({ variant: 'ghost' }),
     'size-8 rounded-md p-0 font-normal transition-none aria-selected:opacity-100',
-    props.classNames?.day_button
+    classNamesProp?.day_button
   );
   const buttonRangeClassName =
     'bg-accent [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground';
   const _rangeStartClassName = cn(
     buttonRangeClassName,
     'day-range-start rounded-s-md',
-    props.classNames?.range_start
+    classNamesProp?.range_start
   );
   const _rangeEndClassName = cn(
     buttonRangeClassName,
     'day-range-end rounded-e-md',
-    props.classNames?.range_end
+    classNamesProp?.range_end
   );
   const _rangeMiddleClassName = cn(
     'bg-accent text-foreground! [&>button]:bg-transparent [&>button]:text-foreground! [&>button]:hover:bg-transparent [&>button]:hover:text-foreground!',
-    props.classNames?.range_middle
+    classNamesProp?.range_middle
   );
   const _selectedClassName = cn(
     '[&>button]:bg-primary [&>button]:font-medium [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground',
-    props.classNames?.selected
+    classNamesProp?.selected
   );
   const _todayClassName = cn(
     '[&>button]:bg-accent [&>button]:text-accent-foreground',
-    props.classNames?.today
+    classNamesProp?.today
   );
   const _outsideClassName = cn(
     'day-outside text-muted-foreground opacity-80 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
-    props.classNames?.outside
+    classNamesProp?.outside
   );
   const _disabledClassName = cn(
     'text-muted-foreground opacity-60',
-    props.classNames?.disabled
+    classNamesProp?.disabled
   );
-  const _hiddenClassName = cn('invisible flex-1', props.classNames?.hidden);
+  const _hiddenClassName = cn('invisible flex-1', classNamesProp?.hidden);
 
   return (
     <DayPicker
@@ -134,6 +136,7 @@ export function Calendar({
       className={cn('p-3', className)}
       style={{
         width: 248.8 * (props.numberOfMonths ?? 1) + 'px',
+        ...styleProp,
       }}
       classNames={{
         months: _monthsClassName,
@@ -160,13 +163,13 @@ export function Calendar({
 
         dropdowns: cn(
           'flex flex-1 justify-between [&>span]:flex',
-          props.classNames?.dropdowns
+          classNamesProp?.dropdowns
         ),
         dropdown: cn(
           'cursor-inherit leading-inherit absolute inset-0 m-0 w-full appearance-none border-none p-0 opacity-0',
-          props.classNames?.dropdown
+          classNamesProp?.dropdown
         ),
-        dropdown_root: cn('relative', props.classNames?.dropdown_root),
+        dropdown_root: cn('relative', classNamesProp?.dropdown_root),
       }}
       components={{
         Chevron: ChevronWrapper,

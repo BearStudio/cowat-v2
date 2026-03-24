@@ -1,6 +1,7 @@
 {
   "title": "Dashboard",
   "newCommuteAction": "New Commute",
+  "requestCommuteAction": "Request a Commute",
   "today": "Today",
   "noCommutesForDay": "No commutes for this day",
   "noCommutesForWeek": "No commutes this week",
