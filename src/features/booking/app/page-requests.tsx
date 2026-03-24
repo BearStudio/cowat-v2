@@ -1,5 +1,5 @@
-import { PlusIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
