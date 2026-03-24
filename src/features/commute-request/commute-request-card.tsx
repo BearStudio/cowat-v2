@@ -153,7 +153,7 @@ export const CommuteRequestCard = ({
                 </div>
               </div>
             }
-            confirmText={t('commuteRequest:actions.cancelButton')}
+            confirmText={t('commuteRequest:actions.cancelConfirmButton')}
             confirmVariant="destructive"
             onConfirm={() =>
               updateStatus.mutateAsync({

@@ -14,6 +14,7 @@
     "fulfillButton": "Trajet trouvé",
     "fulfillSuccess": "Demande satisfaite",
     "cancelButton": "Annuler",
+    "cancelConfirmButton": "Confirmer l'annulation",
     "cancelConfirmDescription": "Vous êtes sur le point d'annuler cette demande de trajet.",
     "cancelSuccess": "Demande annulée"
   }

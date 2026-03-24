@@ -14,6 +14,7 @@
     "fulfillButton": "Ride found",
     "fulfillSuccess": "Request fulfilled",
     "cancelButton": "Cancel",
+    "cancelConfirmButton": "Confirm cancellation",
     "cancelConfirmDescription": "You are about to cancel this trip request.",
     "cancelSuccess": "Request canceled"
   }
