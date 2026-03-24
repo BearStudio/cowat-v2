@@ -8,6 +8,7 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
   create: (data: {
     date: Date;
     destination?: string | null;
+    comment?: string | null;
     requesterMemberId: string;
   }) => db.commuteRequest.create({ data }),
 
@@ -58,6 +59,12 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
   fulfill: (id: string, commuteId: string) =>
     db.commuteRequest.update({
       where: { id },
+      data: { status: 'FULFILLED', commuteId },
+    }),
+
+  fulfillMany: (ids: string[], commuteId: string) =>
+    db.commuteRequest.updateMany({
+      where: { id: { in: ids }, status: 'OPEN' },
       data: { status: 'FULFILLED', commuteId },
     }),
 });

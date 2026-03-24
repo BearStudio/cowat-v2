@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 import {
   PageLayout,
@@ -35,6 +36,7 @@ export const PageCommuteRequest = ({
 
   const requestDate = search.date;
   const [requestDestination, setRequestDestination] = useState('');
+  const [requestComment, setRequestComment] = useState('');
 
   const today = dayjs().startOf('day').toDate();
 
@@ -94,6 +96,15 @@ export const PageCommuteRequest = ({
             onChange={(e) => setRequestDestination(e.target.value)}
           />
         </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>{t('commute:new.requestDrawer.comment')}</Label>
+          <Textarea
+            placeholder={t('commute:new.requestDrawer.commentPlaceholder')}
+            value={requestComment}
+            onChange={(e) => setRequestComment(e.target.value)}
+            rows={3}
+          />
+        </div>
         <Button
           className="w-full"
           disabled={!requestDate}
@@ -103,6 +114,7 @@ export const PageCommuteRequest = ({
               commuteRequest.mutate({
                 date: requestDate,
                 destination: requestDestination || undefined,
+                comment: requestComment || undefined,
               });
             }
           }}

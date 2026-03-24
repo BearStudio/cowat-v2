@@ -3,7 +3,9 @@
     "emptyState": "Aucune demande de trajet",
     "emptyDescription": "Les demandes de covoiturage de votre organisation apparaîtront ici.",
     "loadMore": "Charger plus",
-    "createAction": "Demander un trajet"
+    "createAction": "Demander un trajet",
+    "myRequests": "Mes demandes",
+    "otherRequests": "Autres demandes"
   },
   "status": {
     "OPEN": "Ouverte",

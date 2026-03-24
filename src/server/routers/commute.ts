@@ -40,24 +40,23 @@ export default {
         type: zCommuteType(),
         comment: z.string().nullish(),
         stops: z.array(zStopInput()).min(1),
-        commuteRequestId: z.string().nullish(),
+        commuteRequestIds: z.array(z.string()).nullish(),
       })
     )
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const { stops, commuteRequestId, ...commuteData } = input;
+      const { stops, commuteRequestIds, ...commuteData } = input;
       const commute = await context.commutes.create({
         ...commuteData,
         driverMemberId: context.memberId,
         stops: { create: stops },
       });
 
-      if (commuteRequestId) {
-        const request =
-          await context.commuteRequests.findById(commuteRequestId);
-        if (request?.status === 'OPEN') {
-          await context.commuteRequests.fulfill(commuteRequestId, commute.id);
-        }
+      if (commuteRequestIds?.length) {
+        await context.commuteRequests.fulfillMany(
+          commuteRequestIds,
+          commute.id
+        );
       }
 
       await context.notify(

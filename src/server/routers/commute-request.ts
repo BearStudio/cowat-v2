@@ -28,12 +28,19 @@ const VALID_TRANSITIONS: Record<string, TargetStatus[]> = {
 export default {
   create: procedure()
     .route({ method: 'POST', path: '/commute-requests', tags })
-    .input(z.object({ date: z.date(), destination: z.string().optional() }))
+    .input(
+      z.object({
+        date: z.date(),
+        destination: z.string().optional(),
+        comment: z.string().optional(),
+      })
+    )
     .output(z.void())
     .handler(async ({ context, input }) => {
       const commuteRequest = await context.commuteRequests.create({
         date: input.date,
         destination: input.destination || null,
+        comment: input.comment || null,
         requesterMemberId: context.memberId,
       });
 

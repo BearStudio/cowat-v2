@@ -3,7 +3,9 @@
     "emptyState": "No trip requests",
     "emptyDescription": "Ride requests from your organization will appear here.",
     "loadMore": "Load more",
-    "createAction": "Request a ride"
+    "createAction": "Request a ride",
+    "myRequests": "My requests",
+    "otherRequests": "Other requests"
   },
   "status": {
     "OPEN": "Open",

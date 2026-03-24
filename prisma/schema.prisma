@@ -237,6 +237,7 @@ model CommuteRequest {
   id               String               @id @default(cuid())
   date             DateTime             @db.Date
   destination      String?
+  comment          String?
   status           CommuteRequestStatus @default(OPEN)
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt

@@ -1,5 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
@@ -38,12 +39,30 @@ export const CommuteRequestsList = () => {
     })
   );
 
+  const allItems = useMemo(
+    () => requestsQuery.data?.pages.flatMap((p) => p.items) ?? [],
+    [requestsQuery.data]
+  );
+
+  const { myRequests, otherRequests } = useMemo(() => {
+    const userId = session.data?.user.id;
+    const mine: typeof allItems = [];
+    const others: typeof allItems = [];
+    for (const item of allItems) {
+      if (item.requester.id === userId) {
+        mine.push(item);
+      } else {
+        others.push(item);
+      }
+    }
+    return { myRequests: mine, otherRequests: others };
+  }, [allItems, session.data?.user.id]);
+
   const ui = getUiState((set) => {
     if (requestsQuery.status === 'pending') return set('pending');
     if (requestsQuery.status === 'error') return set('error');
-    const items = requestsQuery.data?.pages.flatMap((p) => p.items) ?? [];
-    if (!items.length) return set('empty');
-    return set('default', { items });
+    if (!allItems.length) return set('empty');
+    return set('default');
   });
 
   return ui
@@ -73,15 +92,34 @@ export const CommuteRequestsList = () => {
         </EmptyContent>
       </Empty>
     ))
-    .match('default', ({ items }) => (
-      <div className="flex flex-col gap-3">
-        {items.map((item) => (
-          <CommuteRequestCard
-            key={item.id}
-            request={item}
-            isOwner={item.requester.id === session.data?.user.id}
-          />
-        ))}
+    .match('default', () => (
+      <div className="flex flex-col gap-6">
+        {otherRequests.length > 0 && (
+          <section className="flex flex-col gap-3">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('commuteRequest:list.otherRequests')}
+            </h3>
+            {otherRequests.map((item) => (
+              <CommuteRequestCard
+                key={item.id}
+                request={item}
+                isOwner={false}
+              />
+            ))}
+          </section>
+        )}
+
+        {myRequests.length > 0 && (
+          <section className="flex flex-col gap-3">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('commuteRequest:list.myRequests')}
+            </h3>
+            {myRequests.map((item) => (
+              <CommuteRequestCard key={item.id} request={item} isOwner />
+            ))}
+          </section>
+        )}
+
         {requestsQuery.hasNextPage && (
           <div className="flex justify-center">
             <Button

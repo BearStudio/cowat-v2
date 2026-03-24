@@ -1,6 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { CalendarIcon, CheckCircleIcon, MapPinIcon } from 'lucide-react';
+import {
+  CalendarIcon,
+  CheckCircleIcon,
+  MapPinIcon,
+  MessageSquareIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -86,14 +91,22 @@ export const CommuteRequestCard = ({
         </CardAction>
       </CardHeader>
 
-      <CardContent className="flex flex-wrap items-center gap-2">
-        {request.destination && (
-          <Badge variant="secondary" size="sm">
-            <MapPinIcon className="size-3" />
-            {request.destination}
-          </Badge>
+      <CardContent className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {request.destination && (
+            <Badge variant="secondary" size="sm">
+              <MapPinIcon className="size-3" />
+              {request.destination}
+            </Badge>
+          )}
+          <span className="text-2xs text-muted-foreground">{relativeDate}</span>
+        </div>
+        {request.comment && (
+          <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+            <MessageSquareIcon className="mt-0.5 size-3 shrink-0" />
+            {request.comment}
+          </p>
         )}
-        <span className="text-2xs text-muted-foreground">{relativeDate}</span>
       </CardContent>
 
       <CardFooter className="justify-between gap-2 border-t pt-3">
@@ -101,7 +114,7 @@ export const CommuteRequestCard = ({
           <OrgButtonLink
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            search={{ date: request.date, commuteRequestId: request.id }}
+            search={{ date: request.date, commuteRequestIds: [request.id] }}
           >
             {t('commuteRequest:actions.offerRide')}
           </OrgButtonLink>
@@ -148,12 +161,20 @@ export const CommuteRequestCard = ({
                       </span>
                     </div>
                   </div>
-                  {request.destination && (
-                    <div className="border-t pt-2">
-                      <Badge variant="secondary" size="sm">
-                        <MapPinIcon className="size-3" />
-                        {request.destination}
-                      </Badge>
+                  {(request.destination || request.comment) && (
+                    <div className="flex flex-col gap-2 border-t pt-2">
+                      {request.destination && (
+                        <Badge variant="secondary" size="sm">
+                          <MapPinIcon className="size-3" />
+                          {request.destination}
+                        </Badge>
+                      )}
+                      {request.comment && (
+                        <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                          <MessageSquareIcon className="mt-0.5 size-3 shrink-0" />
+                          {request.comment}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

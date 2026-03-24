@@ -52,7 +52,7 @@ export const PageCommuteNew = ({
   search,
   orgSlug,
 }: {
-  search: { date?: Date; showForm?: boolean; commuteRequestId?: string };
+  search: { date?: Date; showForm?: boolean; commuteRequestIds?: string[] };
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
@@ -95,7 +95,7 @@ export const PageCommuteNew = ({
     commuteCreate.mutate({
       ...values,
       stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
-      commuteRequestId: search.commuteRequestId,
+      commuteRequestIds: search.commuteRequestIds,
     });
   });
 
