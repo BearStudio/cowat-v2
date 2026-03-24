@@ -70,10 +70,11 @@ export const PageCommuteNew = ({
     from: '/app/$orgSlug/commutes/new/',
   });
 
+  type SearchParams = typeof search;
+
   const openForm = () => {
     navigateToOpenForm({
-      // @ts-expect-error TanStack Router search callback type inference
-      search: (prev) => ({ ...prev, showForm: true }),
+      search: (prev: SearchParams) => ({ ...prev, showForm: true }),
       replace: true,
     });
   };

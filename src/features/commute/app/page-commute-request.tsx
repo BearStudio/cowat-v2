@@ -73,8 +73,10 @@ export const PageCommuteRequest = ({
             if (date) {
               navigate({
                 to: '.',
-                // @ts-expect-error TanStack Router search callback type inference
-                search: (prev) => ({ ...prev, date: toNoonUTC(date) }),
+                search: (prev: typeof search) => ({
+                  ...prev,
+                  date: toNoonUTC(date),
+                }),
               });
             }
           }}
