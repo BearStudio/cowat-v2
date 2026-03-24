@@ -35,6 +35,7 @@ import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-
 import {
   OrgButtonLink,
   OrgFloatingActionButtonLink,
+  OrgResponsiveIconButtonLink,
 } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -197,7 +198,7 @@ export const PageDashboard = () => {
                           </EmptyTitle>
                         </EmptyHeader>
                         <EmptyContent>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-4">
                             <OrgButtonLink
                               className="hit-area-y-5"
                               variant="default"
@@ -208,16 +209,15 @@ export const PageDashboard = () => {
                               <PlusIcon />
                               {t('dashboard:newCommuteAction')}
                             </OrgButtonLink>
-                            <OrgButtonLink
-                              className="hit-area-y-5"
+                            <OrgResponsiveIconButtonLink
+                              className="hit-area-6"
                               variant="secondary"
-                              size="sm"
                               to="/app/$orgSlug/commutes/request"
                               search={{ date: day.toDate() }}
+                              label={t('dashboard:requestCommuteAction')}
                             >
                               <featureIcons.CommuteRequest />
-                              {t('dashboard:requestCommuteAction')}
-                            </OrgButtonLink>
+                            </OrgResponsiveIconButtonLink>
                           </div>
                         </EmptyContent>
                       </Empty>

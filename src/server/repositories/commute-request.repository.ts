@@ -62,9 +62,13 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
       data: { status: 'FULFILLED', commuteId },
     }),
 
-  fulfillMany: (ids: string[], commuteId: string) =>
+  fulfillMany: (ids: string[], commuteId: string, organizationId: string) =>
     db.commuteRequest.updateMany({
-      where: { id: { in: ids }, status: 'OPEN' },
+      where: {
+        id: { in: ids },
+        status: 'OPEN',
+        requester: { organizationId },
+      },
       data: { status: 'FULFILLED', commuteId },
     }),
 });

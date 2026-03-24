@@ -27,7 +27,7 @@ export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
     params: { orgSlug: event.payload.orgSlug },
     search: {
       date: dateParam,
-      commuteRequestId: event.payload.commuteRequestId,
+      commuteRequestIds: [event.payload.commuteRequestId],
     },
   });
 

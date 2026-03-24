@@ -55,7 +55,8 @@ export default {
       if (commuteRequestIds?.length) {
         await context.commuteRequests.fulfillMany(
           commuteRequestIds,
-          commute.id
+          commute.id,
+          context.organizationId
         );
       }
 

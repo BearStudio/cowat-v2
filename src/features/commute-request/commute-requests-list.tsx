@@ -119,25 +119,18 @@ export const CommuteRequestsList = () => {
               <CommuteRequestCard key={item.id} request={item} isOwner />
             ))
           ) : (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <featureIcons.CommuteRequest />
-                </EmptyMedia>
-                <EmptyDescription>
-                  {t('commuteRequest:list.emptyMyRequests')}
-                </EmptyDescription>
-              </EmptyHeader>
-              <EmptyContent>
-                <OrgButtonLink
-                  variant="secondary"
-                  size="sm"
-                  to="/app/$orgSlug/commutes/request"
-                >
-                  {t('commuteRequest:list.createAction')}
-                </OrgButtonLink>
-              </EmptyContent>
-            </Empty>
+            <div className="flex flex-col items-center gap-2 py-4">
+              <p className="text-sm text-muted-foreground">
+                {t('commuteRequest:list.emptyMyRequests')}
+              </p>
+              <OrgButtonLink
+                variant="secondary"
+                size="sm"
+                to="/app/$orgSlug/commutes/request"
+              >
+                {t('commuteRequest:list.createAction')}
+              </OrgButtonLink>
+            </div>
           )}
         </section>
 
