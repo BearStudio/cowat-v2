@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import dayjs from 'dayjs';
 import { PenLineIcon } from 'lucide-react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -143,15 +142,8 @@ export const PageCommuteNew = ({
               <MultiStepFormContent />
               <MultiStepFormStep
                 name={t('commute:stepper.details')}
-                onNext={async () => {
-                  const date = form.getValues('date');
-                  if (dayjs(date).isBefore(dayjs(), 'day')) {
-                    form.setError('date', {
-                      message: t('commute:form.errors.datePast'),
-                    });
-                    return false;
-                  }
-                  return await form.trigger(['seats', 'type']);
+                onNext={() => {
+                  return form.trigger(['date', 'seats', 'type']);
                 }}
               >
                 <StepDetailsCommute />

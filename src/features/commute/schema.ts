@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
@@ -114,9 +115,13 @@ export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
   zFormFieldsCommuteShared()
     .extend({
-      date: z.date({
-        error: t('common:errors.required'),
-      }),
+      date: z
+        .date({
+          error: t('common:errors.required'),
+        })
+        .refine((date) => !dayjs(date).isBefore(dayjs(), 'day'), {
+          message: t('commute:form.errors.datePast'),
+        }),
     })
     .superRefine((data, ctx) => {
       const rules = createCommuteRules(data);
