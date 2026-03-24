@@ -3,6 +3,7 @@ import { InferRouterInputs, InferRouterOutputs } from '@orpc/server';
 import accountRouter from './routers/account';
 import bookingRouter from './routers/booking';
 import commuteRouter from './routers/commute';
+import commuteRequestRouter from './routers/commute-request';
 import commuteTemplateRouter from './routers/commute-template';
 import configRouter from './routers/config';
 import locationRouter from './routers/location';
@@ -18,6 +19,7 @@ export const router = {
   account: accountRouter,
   booking: bookingRouter,
   commute: commuteRouter,
+  commuteRequest: commuteRequestRouter,
   commuteTemplate: commuteTemplateRouter,
   location: locationRouter,
   orgNotificationChannel: orgNotificationChannelRouter,

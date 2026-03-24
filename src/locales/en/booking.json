@@ -20,8 +20,18 @@
     "refuseSuccess": "Request refused"
   },
   "requests": {
-    "title": "Booking Requests",
+    "title": "Requests",
+    "tabs": {
+      "bookings": "Bookings",
+      "commuteRequests": "Trip requests"
+    },
     "loadMore": "Load more",
-    "emptyState": "No pending booking requests"
+    "emptyState": "No pending booking requests",
+    "emptyDescription": "When someone requests to join one of your rides, it will appear here.",
+    "speedDial": {
+      "label": "Actions",
+      "createCommute": "New commute",
+      "requestRide": "Request a ride"
+    }
   }
 }

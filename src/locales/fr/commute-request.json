@@ -1,0 +1,25 @@
+{
+  "list": {
+    "emptyState": "Aucune demande de trajet",
+    "emptyDescription": "Les demandes de covoiturage de votre organisation apparaîtront ici.",
+    "loadMore": "Charger plus",
+    "createAction": "Demander un trajet",
+    "myRequests": "Mes demandes",
+    "otherRequests": "Autres demandes",
+    "emptyMyRequests": "Vous n'avez aucune demande en cours."
+  },
+  "status": {
+    "OPEN": "Ouverte",
+    "FULFILLED": "Satisfaite",
+    "CANCELED": "Annulée"
+  },
+  "actions": {
+    "offerRide": "Proposer un trajet",
+    "fulfillButton": "Trajet trouvé",
+    "fulfillSuccess": "Demande satisfaite",
+    "cancelButton": "Annuler",
+    "cancelConfirmButton": "Confirmer l'annulation",
+    "cancelConfirmDescription": "Vous êtes sur le point d'annuler cette demande de trajet.",
+    "cancelSuccess": "Demande annulée"
+  }
+}

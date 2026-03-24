@@ -116,6 +116,7 @@ export type CommuteRequestedEvent = {
     commuteDate: Commute['date'];
     orgSlug: string;
     locationName?: string;
+    commuteRequestId: string;
   };
 };
 

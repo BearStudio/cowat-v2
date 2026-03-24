@@ -18,10 +18,10 @@ type ExtractParams<T extends string> =
  * to a string value. If it has none, `params` is omitted.
  */
 type RouteUrlOptions<T extends RoutePath> = [ExtractParams<T>] extends [never]
-  ? { search?: Record<string, string> }
+  ? { search?: Record<string, string | string[]> }
   : {
       params: Record<ExtractParams<T>, string>;
-      search?: Record<string, string>;
+      search?: Record<string, string | string[]>;
     };
 
 /**
@@ -43,11 +43,14 @@ export function routeUrl<T extends RoutePath>(
   baseUrl: string,
   path: T,
   ...args: [ExtractParams<T>] extends [never]
-    ? [options?: { search?: Record<string, string> }]
+    ? [options?: { search?: Record<string, string | string[]> }]
     : [options: RouteUrlOptions<T>]
 ): string {
   const options = args[0] as
-    | { params?: Record<string, string>; search?: Record<string, string> }
+    | {
+        params?: Record<string, string>;
+        search?: Record<string, string | string[]>;
+      }
     | undefined;
 
   let resolved: string = path;
@@ -60,7 +63,14 @@ export function routeUrl<T extends RoutePath>(
   const url = `${baseUrl}${resolved}`;
 
   if (options?.search && Object.keys(options.search).length > 0) {
-    const searchParams = new URLSearchParams(options.search);
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(options.search)) {
+      if (Array.isArray(value)) {
+        for (const v of value) searchParams.append(key, v);
+      } else {
+        searchParams.set(key, value);
+      }
+    }
     return `${url}?${searchParams.toString()}`;
   }
 
