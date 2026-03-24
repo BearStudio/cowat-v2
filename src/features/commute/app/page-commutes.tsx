@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
@@ -22,8 +21,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { fabVariants } from '@/components/ui/floating-action-button';
-import { SpeedDial, SpeedDialItem } from '@/components/ui/speed-dial';
+import {
+  COMMUTE_ACTIONS,
+  ResponsiveActions,
+} from '@/components/ui/responsive-actions';
 
 import { authClient } from '@/features/auth/client';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
@@ -37,10 +38,7 @@ import {
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import {
-  OrgButtonLink,
-  OrgResponsiveIconButtonLink,
-} from '@/features/organization/org-button-link';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -55,7 +53,6 @@ export const PageCommutes = () => {
     'location',
     'commuteTemplate',
   ]);
-  const isMobile = useIsMobile();
   const session = authClient.useSession();
   const commutesQuery = useInfiniteQuery(
     orpc.commute.getMyCommutes.infiniteOptions({
@@ -92,64 +89,12 @@ export const PageCommutes = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          isMobile ? (
-            <SpeedDial icon={<PlusIcon />} label={t('commute:list.newAction')}>
-              <SpeedDialItem label={t('commute:list.speedDial.myLocations')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/account/locations"
-                >
-                  <featureIcons.Locations />
-                </OrgButtonLink>
-              </SpeedDialItem>
-              <SpeedDialItem label={t('commute:list.speedDial.myCommutes')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/account/commute-templates"
-                >
-                  <featureIcons.CommuteTemplates />
-                </OrgButtonLink>
-              </SpeedDialItem>
-              <SpeedDialItem label={t('commute:list.speedDial.createCommute')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/commutes/new"
-                >
-                  <PlusIcon />
-                </OrgButtonLink>
-              </SpeedDialItem>
-            </SpeedDial>
-          ) : (
-            <>
-              <OrgResponsiveIconButtonLink
-                label={t('location:list.title')}
-                variant="ghost"
-                size="sm"
-                to="/app/$orgSlug/account/locations"
-              >
-                <featureIcons.Locations />
-              </OrgResponsiveIconButtonLink>
-              <OrgResponsiveIconButtonLink
-                label={t('commuteTemplate:list.title')}
-                variant="ghost"
-                size="sm"
-                to="/app/$orgSlug/account/commute-templates"
-              >
-                <featureIcons.CommuteTemplates />
-              </OrgResponsiveIconButtonLink>
-              <OrgResponsiveIconButtonLink
-                label={t('commute:list.newAction')}
-                variant="secondary"
-                size="sm"
-                to="/app/$orgSlug/commutes/new"
-              >
-                <PlusIcon />
-              </OrgResponsiveIconButtonLink>
-            </>
-          )
+          <ResponsiveActions
+            icon={<PlusIcon />}
+            label="commute:list.newAction"
+            actions={COMMUTE_ACTIONS}
+            ns={['commute']}
+          />
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
