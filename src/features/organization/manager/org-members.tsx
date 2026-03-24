@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/datalist';
 
 import { authClient } from '@/features/auth/client';
+import { WithOrgPermissions } from '@/features/auth/with-org-permissions';
 
 export const OrgMembers = (props: {
   orgId: string;
@@ -100,41 +101,47 @@ export const OrgMembers = (props: {
                 {member.user.email}
               </DataListText>
             </DataListCell>
-            <DataListCell className="flex-none">
-              {member.user.id !== currentUserId && member.role !== 'admin' ? (
-                <select
-                  value={member.role}
-                  onChange={(e) =>
-                    updateMemberRole.mutateAsync({
-                      memberId: member.id,
-                      newRole: e.target.value as 'member' | 'owner',
-                    })
-                  }
-                  disabled={updateMemberRole.isPending}
-                  className="rounded border px-2 py-1 text-sm"
-                >
-                  <option value="member">
-                    {t('organization:members.roles.member')}
-                  </option>
-                  <option value="owner">
-                    {t('organization:members.roles.owner')}
-                  </option>
-                </select>
-              ) : (
-                <Badge
-                  variant={
-                    member.role === 'owner' || member.role === 'admin'
-                      ? 'default'
-                      : 'secondary'
-                  }
-                >
-                  {t(`organization:members.roles.${member.role}`, {
-                    defaultValue: member.role,
-                  })}
-                </Badge>
-              )}
-            </DataListCell>
-            {member.user.id !== currentUserId && (
+            <WithOrgPermissions
+              permissions={[{ organization: ['updateRole'] }]}
+            >
+              <DataListCell className="flex-none">
+                {member.user.id !== currentUserId ? (
+                  <select
+                    value={member.role}
+                    onChange={(e) =>
+                      updateMemberRole.mutateAsync({
+                        memberId: member.id,
+                        role: e.target.value as 'member' | 'owner',
+                      })
+                    }
+                    disabled={updateMemberRole.isPending}
+                    className="rounded border px-2 py-1 text-sm"
+                  >
+                    <option value="member">
+                      {t('organization:members.roles.member')}
+                    </option>
+                    <option value="owner">
+                      {t('organization:members.roles.owner')}
+                    </option>
+                  </select>
+                ) : (
+                  <Badge
+                    variant={
+                      member.role === 'owner' || member.role === 'admin'
+                        ? 'default'
+                        : 'secondary'
+                    }
+                  >
+                    {t(`organization:members.roles.${member.role}`, {
+                      defaultValue: member.role,
+                    })}
+                  </Badge>
+                )}
+              </DataListCell>
+            </WithOrgPermissions>
+            <WithOrgPermissions
+              permissions={[{ organization: ['deleteMember'] }]}
+            >
               <DataListCell className="flex-none">
                 <ConfirmResponsiveDrawer
                   title={member.user.name}
@@ -160,7 +167,7 @@ export const OrgMembers = (props: {
                   </Button>
                 </ConfirmResponsiveDrawer>
               </DataListCell>
-            )}
+            </WithOrgPermissions>
           </DataListRow>
         ))
       )}

@@ -24,6 +24,7 @@ const organizationStatements = {
   ...defaultStatements,
   ...customStatements,
   ...ownerOnlyStatements,
+  organization: ['updateRole', 'deleteMember'],
 };
 
 const ac = createAccessControl(organizationStatements);
