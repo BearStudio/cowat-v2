@@ -73,7 +73,10 @@ export const PageCommuteRequest = ({
             if (date) {
               navigate({
                 to: '.',
-                search: (prev) => ({ ...prev, date: toNoonUTC(date) }),
+                search: (prev: Record<string, unknown>) => ({
+                  ...prev,
+                  date: toNoonUTC(date),
+                }),
               });
             }
           }}

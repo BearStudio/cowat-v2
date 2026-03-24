@@ -72,7 +72,7 @@ export const PageCommuteNew = ({
 
   const openForm = () => {
     navigateToOpenForm({
-      search: (prev) => ({ ...prev, showForm: true }),
+      search: (prev: Record<string, unknown>) => ({ ...prev, showForm: true }),
       replace: true,
     });
   };
