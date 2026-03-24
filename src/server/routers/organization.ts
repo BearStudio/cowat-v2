@@ -306,17 +306,6 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const membership = await context.organizations.findOwnerMembership(
-        context.user.id,
-        context.organizationId
-      );
-
-      if (!membership) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners and admins can update member roles',
-        });
-      }
-
       await context.organizations.updateMemberRole(input.memberId, input.role);
     }),
 

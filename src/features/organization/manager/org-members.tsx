@@ -50,24 +50,19 @@ export const OrgMembers = (props: {
     })
   );
 
-  const updateMemberRole = useMutation({
-    mutationFn: ({
-      memberId,
-      newRole,
-    }: {
-      memberId: string;
-      newRole: 'owner' | 'member';
-    }) => orpc.organization.updateMemberRole.call({ memberId, role: newRole }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getActiveOrganization.key(),
-      });
-      toast.success(t('organization:manager.detail.updateMemberRoleSuccess'));
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.updateMemberRoleError'));
-    },
-  });
+  const updateMemberRole = useMutation(
+    orpc.organization.updateMemberRole.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.updateMemberRoleSuccess'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.updateMemberRoleError'));
+      },
+    })
+  );
 
   return (
     <DataList>
@@ -133,10 +128,9 @@ export const OrgMembers = (props: {
                       : 'secondary'
                   }
                 >
-                  {t(
-                    // @ts-expect-error -- dynamic i18n key
-                    `organization:members.roles.${member.role}`
-                  )}
+                  {t(`organization:members.roles.${member.role}`, {
+                    defaultValue: member.role,
+                  })}
                 </Badge>
               )}
             </DataListCell>
