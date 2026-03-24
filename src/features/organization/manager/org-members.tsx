@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
+import { queryClient } from '@/lib/tanstack-query/query-client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/datalist';
 
 import { authClient } from '@/features/auth/client';
+import { WithOrgPermissions } from '@/features/auth/with-org-permissions';
 
 export const OrgMembers = (props: {
   orgId: string;
@@ -46,6 +48,20 @@ export const OrgMembers = (props: {
       },
       onError: () => {
         toast.error(t('organization:manager.detail.removeMemberError'));
+      },
+    })
+  );
+
+  const updateMemberRole = useMutation(
+    orpc.organization.updateMemberRole.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.updateMemberRoleSuccess'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.updateMemberRoleError'));
       },
     })
   );
@@ -86,21 +102,43 @@ export const OrgMembers = (props: {
                 {member.user.email}
               </DataListText>
             </DataListCell>
-            <DataListCell className="flex-none">
-              <Badge
-                variant={
-                  member.role === 'owner' || member.role === 'admin'
-                    ? 'default'
-                    : 'secondary'
-                }
-              >
-                {t(
-                  // @ts-expect-error -- dynamic i18n key
-                  `organization:members.roles.${member.role}`
+            <WithOrgPermissions permissions={[{ member: ['update'] }]}>
+              <DataListCell className="flex-none">
+                {member.user.id !== currentUserId ? (
+                  <select
+                    value={member.role}
+                    onChange={(e) =>
+                      updateMemberRole.mutateAsync({
+                        memberId: member.id,
+                        role: e.target.value as 'member' | 'owner',
+                      })
+                    }
+                    disabled={updateMemberRole.isPending}
+                    className="rounded border px-2 py-1 text-sm"
+                  >
+                    <option value="member">
+                      {t('organization:members.roles.member')}
+                    </option>
+                    <option value="owner">
+                      {t('organization:members.roles.owner')}
+                    </option>
+                  </select>
+                ) : (
+                  <Badge
+                    variant={
+                      member.role === 'owner' || member.role === 'admin'
+                        ? 'default'
+                        : 'secondary'
+                    }
+                  >
+                    {t(`organization:members.roles.${member.role}`, {
+                      defaultValue: member.role,
+                    })}
+                  </Badge>
                 )}
-              </Badge>
-            </DataListCell>
-            {member.user.id !== currentUserId && (
+              </DataListCell>
+            </WithOrgPermissions>
+            <WithOrgPermissions permissions={[{ member: ['delete'] }]}>
               <DataListCell className="flex-none">
                 <ConfirmResponsiveDrawer
                   title={member.user.name}
@@ -112,7 +150,7 @@ export const OrgMembers = (props: {
                   icon={<UsersIcon />}
                   onConfirm={() =>
                     removeMember.mutateAsync({
-                      memberIdOrEmail: member.user.id,
+                      memberIdOrEmail: member.id,
                     })
                   }
                 >
@@ -126,7 +164,7 @@ export const OrgMembers = (props: {
                   </Button>
                 </ConfirmResponsiveDrawer>
               </DataListCell>
-            )}
+            </WithOrgPermissions>
           </DataListRow>
         ))
       )}

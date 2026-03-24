@@ -36,6 +36,12 @@ export const createOrganizationRepository = (db: AppDB) => ({
     ]);
   },
 
+  updateMemberRole: (memberId: string, role: 'owner' | 'member') =>
+    db.member.update({
+      where: { id: memberId },
+      data: { role },
+    }),
+
   findByIdWithDetails: (id: string) =>
     db.organization.findUnique({
       where: { id },
