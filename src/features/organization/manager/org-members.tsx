@@ -153,7 +153,7 @@ export const OrgMembers = (props: {
                   icon={<UsersIcon />}
                   onConfirm={() =>
                     removeMember.mutateAsync({
-                      memberIdOrEmail: member.user.id,
+                      memberIdOrEmail: member.id,
                     })
                   }
                 >
