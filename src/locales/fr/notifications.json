@@ -51,6 +51,14 @@
     },
     "requestedContext": "📅 {{date}}",
     "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
+    "reminder": {
+      "headline": "🔔 *Rappel covoiturage !*",
+      "body": "Voici vos trajets pour aujourd'hui :",
+      "lineDriverWithPassengers": "🚗 *{{date}}* — Vous conduisez (passagers : {{passengers}})",
+      "lineDriverNoPassengers": "🚗 *{{date}}* — Vous conduisez (pas encore de passagers)",
+      "linePassenger": "💺 *{{date}}* — Passager avec *{{driverName}}*"
+    },
+    "reminderContext": "🚗 {{count}} trajet(s) aujourd'hui",
     "bookStop": "Réserver →",
     "offerRide": "Proposer un trajet →",
     "seeAllCommutes": "Voir tous les trajets →",
@@ -84,6 +92,10 @@
       "canceled": {
         "title": "Trajet annulé",
         "body": "{{driverName}} a annulé son trajet du {{date}}"
+      },
+      "reminder": {
+        "title": "Rappel covoiturage",
+        "body": "Vous avez {{count}} trajet(s) prévu(s) aujourd'hui."
       }
     }
   },

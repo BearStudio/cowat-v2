@@ -53,6 +53,8 @@ export const envServer = createEnv({
     FIREBASE_APP_ID: zRequiredInProd(),
     FIREBASE_VAPID_PUBLIC_KEY: zRequiredInProd(),
     FIREBASE_SERVICE_ACCOUNT: zRequiredInProd(),
+
+    CRON_SECRET: zRequiredInProd(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

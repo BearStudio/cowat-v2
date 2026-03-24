@@ -5,6 +5,7 @@ import type {
   NotificationEvent,
   NotifyOrgContext,
 } from './types';
+import { filterEventForChannel } from './utils';
 
 export class Notifier {
   private channels: NotificationChannel[] = [];
@@ -19,32 +20,27 @@ export class Notifier {
     logger: Logger,
     orgContext?: NotifyOrgContext
   ): Promise<void> {
-    const recipient = 'recipient' in event ? event.recipient : undefined;
-
     const promises: Promise<void>[] = [];
 
     for (const channel of this.channels) {
-      const isDisabledForRecipient =
-        recipient?.notificationPreferences?.some(
-          (p) => p.channel.toLowerCase() === channel.name
-        ) ?? false;
+      const channelEvent = filterEventForChannel(event, channel.name);
 
-      if (isDisabledForRecipient) {
+      if (!channelEvent) {
         logger.debug(
           { channel: channel.name, eventType: event.type },
-          '[NOTIFY] channel disabled for recipient, skipping'
+          '[NOTIFY] no eligible recipients for channel, skipping'
         );
         continue;
       }
 
-      const promise = Promise.resolve(channel.canSend(event, orgContext))
+      const promise = Promise.resolve(channel.canSend(channelEvent, orgContext))
         .then((canSend) => {
           logger.debug(
             { channel: channel.name, eventType: event.type, canSend },
             '[NOTIFY] canSend result'
           );
           if (!canSend) return;
-          return channel.send(event, logger, orgContext);
+          return channel.send(channelEvent, logger, orgContext);
         })
         .then(() => undefined)
         .catch((error) => {

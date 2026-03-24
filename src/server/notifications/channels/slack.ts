@@ -47,7 +47,7 @@ async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
 
 export function createSlackChannel(): NotificationChannel {
   return {
-    name: 'slack',
+    name: 'SLACK',
 
     async canSend(_event, orgContext) {
       if (!orgContext) return false;
@@ -115,6 +115,33 @@ export function createSlackChannel(): NotificationChannel {
               locale,
             })
           )
+        );
+        return;
+      }
+
+      // commute.reminder — DM each recipient with personalized commute list (already filtered by notifier)
+      if (event.type === 'commute.reminder') {
+        await Promise.allSettled(
+          event.recipients.map(async (recipient) => {
+            const slackUser = await lookupUser(recipient.email);
+            if (!slackUser?.id) {
+              logger.warn(
+                { email: recipient.email },
+                'Slack: no Slack user found for email, skipping DM'
+              );
+              return;
+            }
+            await post(
+              slackUser.id,
+              JSXSlack(
+                getPrivateBlocks(event, {
+                  locale,
+                  baseUrl: envClient.VITE_BASE_URL,
+                  recipientUserId: recipient.userId,
+                })
+              )
+            );
+          })
         );
         return;
       }

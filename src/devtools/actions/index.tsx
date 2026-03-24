@@ -1,6 +1,7 @@
 import { ClearDbAction } from './clear-db-action';
 import { DbSeedAction } from './db-actions';
 import { SwitchUserAction } from './switch-user-action';
+import { TriggerDailyReminderAction } from './trigger-daily-reminder-action';
 
 export function ActionsDevtoolPanel() {
   return (
@@ -9,6 +10,7 @@ export function ActionsDevtoolPanel() {
         <DbSeedAction />
         <ClearDbAction />
         <SwitchUserAction />
+        <TriggerDailyReminderAction />
       </div>
     </div>
   );

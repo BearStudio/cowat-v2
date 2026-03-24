@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BuildingIcon,
-  MessageSquareIcon,
   MonitorSmartphoneIcon,
   PanelLeftIcon,
   SettingsIcon,
@@ -30,6 +29,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
+import { DevtoolsSidebarGroup } from '@/devtools/devtools-sidebar-group';
 import { WithPermissions } from '@/features/auth/with-permission';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { NavUser } from '@/layout/manager/nav-user';
@@ -168,25 +168,7 @@ export const NavSidebar = (props: {
               </SidebarGroupContent>
             </SidebarGroup>
           </WithPermissions>
-          {import.meta.env.DEV && (
-            <SidebarGroup>
-              <SidebarGroupLabel>Devtools</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      render={
-                        <a href="/api/dev/slack/booking-requested">
-                          <MessageSquareIcon />
-                          <span>Slack templates</span>
-                        </a>
-                      }
-                    />
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
+          {import.meta.env.DEV && <DevtoolsSidebarGroup />}
         </SidebarContent>
         <SidebarFooter>
           <div className="px-2 py-1">
