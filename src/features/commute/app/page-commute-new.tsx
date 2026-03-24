@@ -51,7 +51,7 @@ export const PageCommuteNew = ({
   search,
   orgSlug,
 }: {
-  search: { date?: Date; showForm?: boolean };
+  search: { date?: Date; showForm?: boolean; commuteRequestIds?: string[] };
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commute', 'common']);
@@ -69,21 +69,18 @@ export const PageCommuteNew = ({
     from: '/app/$orgSlug/commutes/new/',
   });
 
+  type SearchParams = typeof search;
+
   const openForm = () => {
     navigateToOpenForm({
-      search: (prev) => ({ ...prev, showForm: true }),
+      search: (prev: SearchParams) => ({ ...prev, showForm: true }),
       replace: true,
     });
   };
 
   const commuteCreate = useMutation(
     orpc.commute.create.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        await context.client.invalidateQueries({
-          queryKey: orpc.commute.getMyCommutes.key(),
-          type: 'all',
-        });
-
+      onSuccess: () => {
         navigateBack({
           ignoreBlocker: true,
           to: '/app/$orgSlug/commutes',
@@ -97,6 +94,7 @@ export const PageCommuteNew = ({
     commuteCreate.mutate({
       ...values,
       stops: values.stops.map((stop, index) => ({ ...stop, order: index })),
+      commuteRequestIds: search.commuteRequestIds,
     });
   });
 

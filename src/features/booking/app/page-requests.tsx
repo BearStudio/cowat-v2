@@ -1,23 +1,18 @@
-import { getUiState } from '@bearstudio/ui-state';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
-import { Button } from '@/components/ui/button';
+import { CountBadge } from '@/components/count-badge';
 import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
+  COMMUTE_ACTIONS,
+  ResponsiveActions,
+} from '@/components/ui/responsive-actions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { RequestCard } from '@/features/booking/request-card';
+import { BookingRequestsList } from '@/features/booking/booking-requests-list';
+import { CommuteRequestsList } from '@/features/commute-request/commute-requests-list';
 import {
   PageLayout,
   PageLayoutContent,
@@ -25,71 +20,52 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
-export const PageRequests = () => {
-  const { t } = useTranslation(['booking']);
+export const PageRequests = ({ tab }: { tab?: string }) => {
+  const { t } = useTranslation(['booking', 'commuteRequest']);
 
-  const requestsQuery = useInfiniteQuery(
-    orpc.booking.getRequestsForDriver.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
+  const { data: bookingCount } = useQuery(
+    orpc.booking.pendingRequestCount.queryOptions()
   );
 
-  const ui = getUiState((set) => {
-    if (requestsQuery.status === 'pending') return set('pending');
-    if (requestsQuery.status === 'error') return set('error');
-    const items = requestsQuery.data?.pages.flatMap((p) => p.items) ?? [];
-    if (!items.length) return set('empty');
-    return set('default', { items });
-  });
+  const { data: commuteRequestsPage } = useQuery(
+    orpc.commuteRequest.getAll.queryOptions({ input: { limit: 1 } })
+  );
 
   return (
     <PageLayout>
-      <PageLayoutTopBar>
+      <PageLayoutTopBar
+        endActions={
+          <ResponsiveActions
+            icon={<PlusIcon />}
+            label="commute:list.newAction"
+            actions={COMMUTE_ACTIONS}
+            ns={['commute']}
+          />
+        }
+      >
         <PageLayoutTopBarTitle>
           {t('booking:requests.title')}
         </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
-      <PageLayoutContent>
-        {ui
-          .match('pending', () => <DataListLoadingState />)
-          .match('error', () => (
-            <DataListErrorState retry={() => requestsQuery.refetch()} />
-          ))
-          .match('empty', () => (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <featureIcons.Bookings />
-                </EmptyMedia>
-                <EmptyTitle>{t('booking:requests.emptyState')}</EmptyTitle>
-              </EmptyHeader>
-            </Empty>
-          ))
-          .match('default', ({ items }) => (
-            <div className="flex flex-col gap-3">
-              {items.map((item) => (
-                <RequestCard key={item.id} request={item} />
-              ))}
-              {requestsQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => requestsQuery.fetchNextPage()}
-                    loading={requestsQuery.isFetchingNextPage}
-                  >
-                    {t('booking:requests.loadMore')}
-                  </Button>
-                </div>
-              )}
-            </div>
-          ))
-          .exhaustive()}
+      <PageLayoutContent className="pb-40 md:pb-0">
+        <Tabs defaultValue={tab ?? 'bookings'} className="flex-col gap-4">
+          <TabsList className="w-full">
+            <TabsTrigger value="bookings">
+              {t('booking:requests.tabs.bookings')}
+              <CountBadge count={bookingCount?.count} />
+            </TabsTrigger>
+            <TabsTrigger value="commuteRequests">
+              {t('booking:requests.tabs.commuteRequests')}
+              <CountBadge count={commuteRequestsPage?.total} />
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="bookings" className="flex-initial">
+            <BookingRequestsList />
+          </TabsContent>
+          <TabsContent value="commuteRequests" className="flex-initial">
+            <CommuteRequestsList />
+          </TabsContent>
+        </Tabs>
       </PageLayoutContent>
     </PageLayout>
   );

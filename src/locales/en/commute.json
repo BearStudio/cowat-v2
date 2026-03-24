@@ -37,6 +37,8 @@
       "pickDate": "Date",
       "destination": "Destination",
       "destinationPlaceholder": "Optional destination...",
+      "comment": "Comment",
+      "commentPlaceholder": "Details about your request...",
       "submit": "Send request",
       "success": "Request sent!"
     }

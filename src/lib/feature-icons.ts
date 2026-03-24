@@ -1,9 +1,9 @@
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  HandIcon,
   InboxIcon,
   MapPinIcon,
-  MegaphoneIcon,
   Repeat,
   RouteIcon,
 } from 'lucide-react';
@@ -13,7 +13,7 @@ export const featureIcons = {
   Locations: MapPinIcon,
   CommuteTemplates: RouteIcon,
   Commutes: IconCarDuotone,
-  CommuteRequest: MegaphoneIcon,
+  CommuteRequest: HandIcon,
   Bookings: InboxIcon,
 } as const;
 

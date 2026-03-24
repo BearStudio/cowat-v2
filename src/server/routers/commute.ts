@@ -14,6 +14,7 @@ import {
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
+import { createCommuteRequestRepository } from '@/server/repositories/commute-request.repository';
 import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
 
 const tags = ['commutes'];
@@ -24,6 +25,7 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
       context: {
         commutes: createCommuteRepository(context.db),
         bookings: createBookingRepository(context.db),
+        commuteRequests: createCommuteRequestRepository(context.db),
       },
     })
   );
@@ -38,16 +40,25 @@ export default {
         type: zCommuteType(),
         comment: z.string().nullish(),
         stops: z.array(zStopInput()).min(1),
+        commuteRequestIds: z.array(z.string()).nullish(),
       })
     )
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const { stops, ...commuteData } = input;
+      const { stops, commuteRequestIds, ...commuteData } = input;
       const commute = await context.commutes.create({
         ...commuteData,
         driverMemberId: context.memberId,
         stops: { create: stops },
       });
+
+      if (commuteRequestIds?.length) {
+        await context.commuteRequests.fulfillMany(
+          commuteRequestIds,
+          commute.id,
+          context.organizationId
+        );
+      }
 
       await context.notify(
         {
@@ -235,25 +246,5 @@ export default {
           { db: context.db, organizationId: context.organizationId }
         );
       }
-    }),
-
-  requestCommute: procedure()
-    .route({ method: 'POST', path: '/commutes/request', tags })
-    .input(z.object({ date: z.date(), destination: z.string().optional() }))
-    .output(z.void())
-    .handler(async ({ context, input }) => {
-      await context.notify(
-        {
-          type: 'commute.requested',
-          payload: {
-            requesterName: context.user.name,
-            requesterEmail: context.user.email,
-            commuteDate: input.date,
-            orgSlug: context.orgSlug,
-            locationName: input.destination || undefined,
-          },
-        },
-        { db: context.db, organizationId: context.organizationId }
-      );
     }),
 };

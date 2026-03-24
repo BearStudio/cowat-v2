@@ -1,0 +1,25 @@
+{
+  "list": {
+    "emptyState": "No trip requests",
+    "emptyDescription": "Ride requests from your organization will appear here.",
+    "loadMore": "Load more",
+    "createAction": "Request a ride",
+    "myRequests": "My requests",
+    "otherRequests": "Other requests",
+    "emptyMyRequests": "You have no pending requests."
+  },
+  "status": {
+    "OPEN": "Open",
+    "FULFILLED": "Fulfilled",
+    "CANCELED": "Canceled"
+  },
+  "actions": {
+    "offerRide": "Offer a ride",
+    "fulfillButton": "Ride found",
+    "fulfillSuccess": "Request fulfilled",
+    "cancelButton": "Cancel",
+    "cancelConfirmButton": "Confirm cancellation",
+    "cancelConfirmDescription": "You are about to cancel this trip request.",
+    "cancelSuccess": "Request canceled"
+  }
+}

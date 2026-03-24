@@ -210,6 +210,7 @@ const FIXTURES: Record<string, TemplateFixture> = {
         requesterEmail: 'alice@example.com',
         orgSlug: 'acme',
         locationName: 'Paris Office',
+        commuteRequestId: 'preview-request-id',
       },
     },
     opts: {
