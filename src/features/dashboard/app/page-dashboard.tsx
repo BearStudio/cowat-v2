@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/datalist';
 import {
   Empty,
+  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -35,7 +36,6 @@ import {
   OrgButtonLink,
   OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
-import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -187,21 +187,40 @@ export const PageDashboard = () => {
                     </div>
 
                     {dayCommutes.length === 0 ? (
-                      <OrgLink
-                        to="/app/$orgSlug/commutes/new"
-                        search={{ date: day.toDate() }}
-                      >
-                        <Empty className="border p-4 transition-colors hover:bg-accent">
-                          <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                              <featureIcons.Commutes />
-                            </EmptyMedia>
-                            <EmptyTitle className="text-sm">
-                              {t('dashboard:noCommutesForDay')}
-                            </EmptyTitle>
-                          </EmptyHeader>
-                        </Empty>
-                      </OrgLink>
+                      <Empty className="border p-4">
+                        <EmptyHeader>
+                          <EmptyMedia variant="icon">
+                            <featureIcons.Commutes />
+                          </EmptyMedia>
+                          <EmptyTitle className="text-sm">
+                            {t('dashboard:noCommutesForDay')}
+                          </EmptyTitle>
+                        </EmptyHeader>
+                        <EmptyContent>
+                          <div className="flex gap-2">
+                            <OrgButtonLink
+                              className="hit-area-y-5"
+                              variant="default"
+                              size="sm"
+                              to="/app/$orgSlug/commutes/new"
+                              search={{ date: day.toDate() }}
+                            >
+                              <PlusIcon />
+                              {t('dashboard:newCommuteAction')}
+                            </OrgButtonLink>
+                            <OrgButtonLink
+                              className="hit-area-y-5"
+                              variant="secondary"
+                              size="sm"
+                              to="/app/$orgSlug/commutes/request"
+                              search={{ date: day.toDate() }}
+                            >
+                              <featureIcons.CommuteRequest />
+                              {t('dashboard:requestCommuteAction')}
+                            </OrgButtonLink>
+                          </div>
+                        </EmptyContent>
+                      </Empty>
                     ) : (
                       <div className="flex flex-col gap-3">
                         {dayCommutes.map((item) => (

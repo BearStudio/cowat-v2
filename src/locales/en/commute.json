@@ -23,6 +23,7 @@
     "speedDial": {
       "myLocations": "My Locations",
       "myCommutes": "My Templates",
+      "requestCommute": "Request a Ride",
       "createCommute": "New Commute"
     }
   },

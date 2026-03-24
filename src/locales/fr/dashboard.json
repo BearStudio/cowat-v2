@@ -1,6 +1,7 @@
 {
   "title": "Tableau de bord",
   "newCommuteAction": "Nouveau trajet",
+  "requestCommuteAction": "Demander un trajet",
   "today": "Aujourd'hui",
   "noCommutesForDay": "Aucun trajet pour ce jour",
   "noCommutesForWeek": "Aucun trajet cette semaine",
