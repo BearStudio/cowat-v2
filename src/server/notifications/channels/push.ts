@@ -104,17 +104,34 @@ async function sendToRecipients(
     return;
   }
 
-  const content = getPushContent(event, locale, envClient.VITE_BASE_URL);
-  if (!content) return;
+  // Build per-recipient messages so personalized content (e.g. commute count) is correct
+  const tokensByUser = new Map<string, typeof allTokens>();
+  for (const t of allTokens) {
+    const arr = tokensByUser.get(t.userId) ?? [];
+    arr.push(t);
+    tokensByUser.set(t.userId, arr);
+  }
+  const messages: FcmMessage[] = recipients.flatMap((recipient) => {
+    const tokens = tokensByUser.get(recipient.userId) ?? [];
+    if (tokens.length === 0) return [];
 
-  const messages: FcmMessage[] = allTokens.map((t) => ({
-    token: t.token,
-    notification: { title: content.title, body: content.body },
-    webpush: {
-      notification: { icon: '/android-chrome-192x192.png' },
-      fcmOptions: content.link ? { link: content.link } : undefined,
-    },
-  }));
+    const content = getPushContent(
+      event,
+      locale,
+      envClient.VITE_BASE_URL,
+      recipient.userId
+    );
+    if (!content) return [];
+
+    return tokens.map((t) => ({
+      token: t.token,
+      notification: { title: content.title, body: content.body },
+      webpush: {
+        notification: { icon: '/android-chrome-192x192.png' },
+        fcmOptions: content.link ? { link: content.link } : undefined,
+      },
+    }));
+  });
 
   const { failedTokens, invalidTokens } = await sendEach(
     accessTokenResult.value,

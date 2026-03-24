@@ -19,7 +19,8 @@ export type PushContent = {
 export function getPushContent(
   event: NotificationEvent,
   locale: LanguageKey,
-  baseUrl: string
+  baseUrl: string,
+  recipientUserId?: string
 ): PushContent | null {
   const formatDate = (date: Date) =>
     dayjsBase(date).locale(locale).format(getDateFormat('notification'));
@@ -89,15 +90,24 @@ export function getPushContent(
         params: { orgSlug: e.payload.orgSlug },
       }),
     }))
-    .with({ type: 'commute.reminder' }, (e) => ({
-      title: t('notifications:push.commute.reminder.title'),
-      body: t('notifications:push.commute.reminder.body', {
-        count: String(e.payload.commutes.length),
-      }),
-      link: routeUrl(baseUrl, '/app/$orgSlug', {
-        params: { orgSlug: e.payload.orgSlug },
-      }),
-    }))
+    .with({ type: 'commute.reminder' }, (e) => {
+      const commutes = recipientUserId
+        ? e.payload.commutes.filter(
+            (c) =>
+              c.driverUserId === recipientUserId ||
+              c.passengers.some((p) => p.userId === recipientUserId)
+          )
+        : e.payload.commutes;
+      return {
+        title: t('notifications:push.commute.reminder.title'),
+        body: t('notifications:push.commute.reminder.body', {
+          count: String(commutes.length),
+        }),
+        link: routeUrl(baseUrl, '/app/$orgSlug', {
+          params: { orgSlug: e.payload.orgSlug },
+        }),
+      };
+    })
     .with({ type: 'commute.created' }, () => null)
     .with({ type: 'commute.requested' }, () => null)
     .exhaustive();
