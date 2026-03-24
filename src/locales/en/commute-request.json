@@ -11,8 +11,8 @@
   },
   "actions": {
     "offerRide": "Offer a ride",
-    "fulfillButton": "Mark as fulfilled",
-    "fulfillSuccess": "Request marked as fulfilled",
+    "fulfillButton": "Ride found",
+    "fulfillSuccess": "Request fulfilled",
     "cancelButton": "Cancel",
     "cancelConfirmDescription": "You are about to cancel this trip request.",
     "cancelSuccess": "Request canceled"

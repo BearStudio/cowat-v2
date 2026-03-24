@@ -11,8 +11,8 @@
   },
   "actions": {
     "offerRide": "Proposer un trajet",
-    "fulfillButton": "Marquer comme satisfaite",
-    "fulfillSuccess": "Demande marquée comme satisfaite",
+    "fulfillButton": "Trajet trouvé",
+    "fulfillSuccess": "Demande satisfaite",
     "cancelButton": "Annuler",
     "cancelConfirmDescription": "Vous êtes sur le point d'annuler cette demande de trajet.",
     "cancelSuccess": "Demande annulée"
