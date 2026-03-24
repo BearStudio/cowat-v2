@@ -151,4 +151,48 @@ export const createCommuteRepository = (db: AppDB) => ({
   ) => db.commute.update({ where: { id }, data, include: { stops: true } }),
 
   delete: (id: string) => db.commute.delete({ where: { id } }),
+
+  /**
+   * Returns all commutes in [from, to[ across every organization.
+   * For each commute, includes:
+   * - The driver (userId, name, email, org info)
+   * - Only ACCEPTED passengers on each stop (same fields as the driver)
+   * When `includePreferences` is true, notification preferences are pre-filtered
+   * to `{ enabled: true }` (enabled channels only).
+   */
+  findAllForRange: (
+    from: Date,
+    to: Date,
+    options?: { includePreferences?: boolean }
+  ) => {
+    const memberSelect = {
+      userId: true,
+      user: { select: { name: true, email: true } },
+      organizationId: true,
+      organization: { select: { slug: true } },
+      ...(options?.includePreferences && {
+        notificationPreferences: {
+          where: { enabled: true },
+          select: { channel: true },
+        },
+      }),
+    } satisfies Prisma.MemberSelect;
+
+    return db.commute.findMany({
+      where: { date: { gte: from, lt: to } },
+      select: {
+        id: true,
+        date: true,
+        driver: { select: memberSelect },
+        stops: {
+          select: {
+            passengers: {
+              where: { status: 'ACCEPTED' as RequestStatus },
+              select: { passenger: { select: memberSelect } },
+            },
+          },
+        },
+      },
+    });
+  },
 });

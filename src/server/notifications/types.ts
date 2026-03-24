@@ -4,13 +4,16 @@ import type { RequestStatus, TripType } from '@/features/booking/schema';
 import type { Commute, CommuteType } from '@/features/commute/schema';
 import type { User } from '@/features/user/schema';
 import type { AppDB } from '@/server/db';
+import type { NotificationChannelType } from '@/server/db/generated/client';
 
 export type Recipient = {
   userId: User['id'];
   name: string;
   email: string;
   phone?: string | null;
-  notificationPreferences?: ReadonlyArray<{ channel: string }>;
+  notificationPreferences?: ReadonlyArray<{
+    channel: NotificationChannelType;
+  }>;
 };
 
 // Used by commute events (driver's commute type: ROUND | ONEWAY)
@@ -116,6 +119,33 @@ export type CommuteRequestedEvent = {
   };
 };
 
+export type ReminderCommute = {
+  date: Commute['date'];
+  driverName: string;
+  driverUserId: User['id'];
+  passengers: Array<{ name: string; userId: User['id'] }>;
+};
+
+export function getCommutesForRecipient(
+  commutes: ReminderCommute[],
+  recipientUserId: string
+): ReminderCommute[] {
+  return commutes.filter(
+    (c) =>
+      c.driverUserId === recipientUserId ||
+      c.passengers.some((p) => p.userId === recipientUserId)
+  );
+}
+
+export type CommuteReminderEvent = {
+  type: 'commute.reminder';
+  recipients: Recipient[];
+  payload: {
+    commutes: ReminderCommute[];
+    orgSlug: string;
+  };
+};
+
 export type NotificationEvent =
   | BookingRequestedEvent
   | BookingAcceptedEvent
@@ -124,7 +154,8 @@ export type NotificationEvent =
   | CommuteCreatedEvent
   | CommuteUpdatedEvent
   | CommuteCanceledEvent
-  | CommuteRequestedEvent;
+  | CommuteRequestedEvent
+  | CommuteReminderEvent;
 
 export type EventWithRecipient = Extract<
   NotificationEvent,
@@ -136,8 +167,10 @@ export type NotifyOrgContext = {
   organizationId: string;
 };
 
+export type AllowedNotificationChannels = NotificationChannelType | 'TERMINAL';
+
 export interface NotificationChannel {
-  name: string;
+  name: AllowedNotificationChannels;
   canSend(
     event: NotificationEvent,
     orgContext?: NotifyOrgContext

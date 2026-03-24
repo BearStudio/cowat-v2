@@ -33,6 +33,7 @@ import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiRestSplatRouteImport } from './routes/api/rest.$'
 import { Route as ApiOpenapiAuthRouteImport } from './routes/api/openapi/auth'
 import { Route as ApiOpenapiAppRouteImport } from './routes/api/openapi/app'
+import { Route as ApiCronDailyReminderRouteImport } from './routes/api/cron/daily-reminder'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerUsersNewIndexRouteImport } from './routes/manager/users/new.index'
 import { Route as ManagerUsersIdIndexRouteImport } from './routes/manager/users/$id.index'
@@ -178,6 +179,11 @@ const ApiOpenapiAuthRoute = ApiOpenapiAuthRouteImport.update({
 const ApiOpenapiAppRoute = ApiOpenapiAppRouteImport.update({
   id: '/api/openapi/app',
   path: '/api/openapi/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronDailyReminderRoute = ApiCronDailyReminderRouteImport.update({
+  id: '/api/cron/daily-reminder',
+  path: '/api/cron/daily-reminder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/daily-reminder': typeof ApiCronDailyReminderRoute
   '/api/openapi/app': typeof ApiOpenapiAppRouteWithChildren
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
@@ -374,6 +381,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/daily-reminder': typeof ApiCronDailyReminderRoute
   '/api/openapi/app': typeof ApiOpenapiAppRouteWithChildren
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
@@ -425,6 +433,7 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/daily-reminder': typeof ApiCronDailyReminderRoute
   '/api/openapi/app': typeof ApiOpenapiAppRouteWithChildren
   '/api/openapi/auth': typeof ApiOpenapiAuthRouteWithChildren
   '/api/rest/$': typeof ApiRestSplatRoute
@@ -477,6 +486,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/manager/'
     | '/api/auth/$'
+    | '/api/cron/daily-reminder'
     | '/api/openapi/app'
     | '/api/openapi/auth'
     | '/api/rest/$'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/manager'
     | '/api/auth/$'
+    | '/api/cron/daily-reminder'
     | '/api/openapi/app'
     | '/api/openapi/auth'
     | '/api/rest/$'
@@ -570,6 +581,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/manager/'
     | '/api/auth/$'
+    | '/api/cron/daily-reminder'
     | '/api/openapi/app'
     | '/api/openapi/auth'
     | '/api/rest/$'
@@ -614,6 +626,7 @@ export interface RootRouteChildren {
   ApiUploadRoute: typeof ApiUploadRoute
   InvitationsIdRoute: typeof InvitationsIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronDailyReminderRoute: typeof ApiCronDailyReminderRoute
   ApiOpenapiAppRoute: typeof ApiOpenapiAppRouteWithChildren
   ApiOpenapiAuthRoute: typeof ApiOpenapiAuthRouteWithChildren
   ApiRestSplatRoute: typeof ApiRestSplatRoute
@@ -790,6 +803,13 @@ declare module '@tanstack/react-router' {
       path: '/api/openapi/app'
       fullPath: '/api/openapi/app'
       preLoaderRoute: typeof ApiOpenapiAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/daily-reminder': {
+      id: '/api/cron/daily-reminder'
+      path: '/api/cron/daily-reminder'
+      fullPath: '/api/cron/daily-reminder'
+      preLoaderRoute: typeof ApiCronDailyReminderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -1133,6 +1153,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUploadRoute: ApiUploadRoute,
   InvitationsIdRoute: InvitationsIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronDailyReminderRoute: ApiCronDailyReminderRoute,
   ApiOpenapiAppRoute: ApiOpenapiAppRouteWithChildren,
   ApiOpenapiAuthRoute: ApiOpenapiAuthRouteWithChildren,
   ApiRestSplatRoute: ApiRestSplatRoute,
