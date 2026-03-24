@@ -72,7 +72,8 @@ export const PageCommuteNew = ({
 
   const openForm = () => {
     navigateToOpenForm({
-      search: (prev: Record<string, unknown>) => ({ ...prev, showForm: true }),
+      // @ts-expect-error TanStack Router search callback type inference
+      search: (prev) => ({ ...prev, showForm: true }),
       replace: true,
     });
   };

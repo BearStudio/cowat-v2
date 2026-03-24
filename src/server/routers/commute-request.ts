@@ -19,11 +19,11 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
     })
   );
 
-const VALID_TRANSITIONS = {
+type TargetStatus = 'FULFILLED' | 'CANCELED';
+
+const VALID_TRANSITIONS: Record<string, TargetStatus[]> = {
   OPEN: ['FULFILLED', 'CANCELED'],
-} as const satisfies Partial<
-  Record<string, readonly ('FULFILLED' | 'CANCELED')[]>
->;
+};
 
 export default {
   create: procedure()
@@ -114,12 +114,7 @@ export default {
         throw new ORPCError('FORBIDDEN');
       }
 
-      const allowed =
-        VALID_TRANSITIONS[
-          request.status as keyof typeof VALID_TRANSITIONS
-        ] as readonly string[] | undefined;
-
-      if (!allowed?.includes(input.status)) {
+      if (!VALID_TRANSITIONS[request.status]?.includes(input.status)) {
         throw new ORPCError('BAD_REQUEST', {
           message: `Cannot transition from ${request.status} to ${input.status}`,
         });
