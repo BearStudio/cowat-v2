@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { Textarea } from '@/components/ui/textarea';
 
 export default {
-  title: 'Textarea',
+  title: 'UI/Textarea',
 } satisfies Meta<typeof Textarea>;
 
 export const Default = () => {

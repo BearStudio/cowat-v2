@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SpeedDial, SpeedDialItem } from '@/components/ui/speed-dial';
 
 export default {
-  title: 'SpeedDial',
+  title: 'UI/SpeedDial',
 } satisfies Meta;
 
 export const Default = () => {

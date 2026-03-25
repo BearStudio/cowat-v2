@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { LocalSwitcher } from '@/components/ui/local-switcher';
 
 export default {
-  title: 'Local Switcher',
+  title: 'UI/Local Switcher',
 } satisfies Meta<typeof LocalSwitcher>;
 
 export const Default = () => {

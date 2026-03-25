@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 
 export default {
-  title: 'DatePicker',
+  title: 'UI/DatePicker',
 };
 
 export const Default = () => {

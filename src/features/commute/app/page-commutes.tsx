@@ -9,11 +9,9 @@ import { orpc } from '@/lib/orpc/client';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
+import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
 import { Button } from '@/components/ui/button';
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -101,7 +99,7 @@ export const PageCommutes = () => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <CardListSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => commutesQuery.refetch()} />
           ))

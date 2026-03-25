@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default {
-  title: 'Breadcrumb',
+  title: 'UI/Breadcrumb',
 } satisfies Meta<typeof Breadcrumb>;
 
 export function Default() {

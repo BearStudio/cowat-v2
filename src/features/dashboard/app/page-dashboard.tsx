@@ -10,10 +10,8 @@ import '@/lib/dayjs/config';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DashboardSkeleton } from '@/components/loading/dashboard-skeleton';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -155,7 +153,7 @@ export const PageDashboard = () => {
       </PageLayoutTopBar>
       <PageLayoutContent containerClassName="max-w-4xl">
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <DashboardSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => commutesQuery.refetch()} />
           ))
