@@ -93,7 +93,7 @@ export const ConfirmResponsiveDrawer = (props: {
       >
         <ResponsiveDrawerContent
           hideCloseButton
-          className="sm:max-w-sm"
+          className="sm:max-w-max"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !isConfirmDisabled) {
               e.preventDefault();
