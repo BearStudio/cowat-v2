@@ -18,9 +18,20 @@ export function getUserBookingStatus(
 ): UserBookingStatus {
   if (currentUserId === commute.driver.id) return 'DRIVER';
 
-  const userBooking = commute.stops
+  const userBookings = commute.stops
     .flatMap((s) => s.passengers)
-    .find((p) => p.passenger.id === currentUserId);
+    .filter((p) => p.passenger.id === currentUserId);
 
-  return userBooking?.status ?? 'OUTSIDER';
+  if (userBookings.length === 0) return 'OUTSIDER';
+
+  const priority: Record<RequestStatus, number> = {
+    ACCEPTED: 0,
+    REQUESTED: 1,
+    CANCELED: 2,
+    REFUSED: 3,
+  };
+
+  return userBookings.reduce((best, current) =>
+    priority[current.status] < priority[best.status] ? current : best
+  ).status;
 }
