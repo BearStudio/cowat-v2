@@ -234,15 +234,48 @@ export default {
       });
     }),
 
-  inviteMember: orgProcedure({ permissions: { invitation: ['create'] } })
-    .route({ method: 'POST', path: '/organizations/invite', tags })
+  searchUsersToInvite: orgProcedure({
+    permissions: { invitation: ['create'] },
+  })
+    .route({ method: 'GET', path: '/organizations/search-users', tags })
     .input(
       z.object({
-        email: z.string().email(),
+        email: z.string().trim().min(2),
+        limit: z.coerce.number().int().min(1).max(20).prefault(5),
+      })
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+          image: z.string().nullable(),
+        })
+      )
+    )
+    .handler(async ({ context, input }) => {
+      return context.organizations.searchUsersByEmail({
+        email: input.email,
+        organizationId: context.organizationId,
+        limit: input.limit,
+      });
+    }),
+
+  inviteMembers: orgProcedure({ permissions: { invitation: ['create'] } })
+    .route({ method: 'POST', path: '/organizations/invite-bulk', tags })
+    .input(
+      z.object({
+        emails: z.array(z.string().email()).min(1),
         role: z.enum(['owner', 'member']).prefault('member'),
       })
     )
-    .output(z.void())
+    .output(
+      z.object({
+        succeeded: z.array(z.string()),
+        failed: z.array(z.object({ email: z.string(), error: z.string() })),
+      })
+    )
     .handler(async ({ context, input }) => {
       const membership = await context.organizations.findOwnerMembership(
         context.user.id,
@@ -255,14 +288,30 @@ export default {
         });
       }
 
-      await auth.api.createInvitation({
-        headers: getRequestHeaders(),
-        body: {
-          email: input.email,
-          role: input.role,
-          organizationId: context.organizationId,
-        },
-      });
+      const headers = getRequestHeaders();
+      const succeeded: string[] = [];
+      const failed: { email: string; error: string }[] = [];
+
+      for (const email of input.emails) {
+        try {
+          await auth.api.createInvitation({
+            headers,
+            body: {
+              email,
+              role: input.role,
+              organizationId: context.organizationId,
+            },
+          });
+          succeeded.push(email);
+        } catch (e) {
+          failed.push({
+            email,
+            error: e instanceof Error ? e.message : 'Unknown error',
+          });
+        }
+      }
+
+      return { succeeded, failed };
     }),
 
   removeMember: orgProcedure({ permissions: { member: ['delete'] } })

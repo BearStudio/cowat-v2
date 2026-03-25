@@ -8,6 +8,7 @@ import { FieldOtp } from './field-otp';
 import { FieldPassword } from './field-password';
 import { FieldRadioGroup } from './field-radio-group';
 import { FieldSelect } from './field-select';
+import { FieldSelectEmails } from './field-select-emails';
 import { FieldText } from './field-text';
 import { FieldTextarea } from './field-textarea';
 
@@ -21,6 +22,7 @@ export const fieldComponents = {
   select: FieldSelect,
   combobox: FieldCombobox,
   'combobox-multiple': FieldComboboxMultiple,
+  'select-emails': FieldSelectEmails,
   number: FieldNumber,
   otp: FieldOtp,
   date: FieldDate,
