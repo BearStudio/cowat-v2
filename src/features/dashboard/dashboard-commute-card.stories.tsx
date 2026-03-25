@@ -22,7 +22,7 @@ const mockStop = (
   commuteId: 'commute-1',
   createdAt: now,
   updatedAt: now,
-  location: { id: `loc-${id}`, name: `Stop ${order + 1}` },
+  location: { id: `loc-${id}`, name: `Stop ${order + 1}`, address: '' },
   passengers,
 });
 

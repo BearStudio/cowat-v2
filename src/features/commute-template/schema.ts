@@ -98,5 +98,6 @@ export const zTemplateStopWithLocation = () =>
     location: z.object({
       id: z.string(),
       name: z.string(),
+      address: z.string(),
     }),
   });

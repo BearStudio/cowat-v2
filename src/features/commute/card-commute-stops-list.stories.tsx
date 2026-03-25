@@ -18,7 +18,7 @@ const makeStop = (
   commuteId: 'commute-1',
   createdAt: new Date(),
   updatedAt: new Date(),
-  location: { id: overrides.id, name: overrides.locationName },
+  location: { id: overrides.id, name: overrides.locationName, address: '' },
   passengers: [],
   inwardTime: null,
   ...overrides,
