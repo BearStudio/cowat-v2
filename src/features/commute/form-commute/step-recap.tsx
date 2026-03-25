@@ -40,7 +40,8 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
       new Map(
         locationsQuery.data?.pages
           .flatMap((p) => p.items)
-          .map((loc) => [loc.id, loc.name]) ?? []
+          .map((loc) => [loc.id, { name: loc.name, address: loc.address }]) ??
+          []
       ),
     [locationsQuery.data]
   );
@@ -54,14 +55,18 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
   const toTimelineStop = (
     locationId: string,
     time: string
-  ): StopForTimeline => ({
-    location: {
-      id: locationId,
-      name: locationsMap.get(locationId) ?? locationId,
-    },
-    outwardTime: time,
-    inwardTime: null,
-  });
+  ): StopForTimeline => {
+    const loc = locationsMap.get(locationId);
+    return {
+      location: {
+        id: locationId,
+        name: loc?.name ?? locationId,
+        address: loc?.address ?? '',
+      },
+      outwardTime: time,
+      inwardTime: null,
+    };
+  };
 
   const outwardStops = (stops ?? []).map((s) =>
     toTimelineStop(s.locationId, s.outwardTime)

@@ -24,7 +24,7 @@ const makeStop = (
   commuteId: 'commute-1',
   createdAt: now,
   updatedAt: now,
-  location: { id, name: locationName },
+  location: { id, name: locationName, address: '' },
   passengers: [],
 });
 
