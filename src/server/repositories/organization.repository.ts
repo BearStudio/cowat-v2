@@ -81,6 +81,21 @@ export const createOrganizationRepository = (db: AppDB) => ({
       where: { userId, organizationId, role: { in: ['owner', 'admin'] } },
     }),
 
+  searchUsersByEmail: (opts: {
+    email: string;
+    organizationId: string;
+    limit: number;
+  }) =>
+    db.user.findMany({
+      where: {
+        email: { contains: opts.email, mode: 'insensitive' },
+        members: { none: { organizationId: opts.organizationId } },
+      },
+      select: { id: true, name: true, email: true, image: true },
+      take: opts.limit,
+      orderBy: { email: 'asc' },
+    }),
+
   findById: (id: string) => db.organization.findUnique({ where: { id } }),
 
   findSlugById: (id: string) =>
