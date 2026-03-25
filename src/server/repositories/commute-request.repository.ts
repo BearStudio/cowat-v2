@@ -1,3 +1,5 @@
+import { getToday } from '@/lib/date';
+
 import type { AppDB } from '@/server/db';
 import type {
   CommuteRequestStatus,
@@ -24,11 +26,8 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
     organizationId: string,
     opts: { cursor?: string; limit: number }
   ) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     const where = {
-      date: { gte: today },
+      date: { gte: getToday() },
       status: 'OPEN' as CommuteRequestStatus,
       requester: { organizationId },
     } satisfies Prisma.CommuteRequestWhereInput;
@@ -72,16 +71,12 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
       data: { status: 'FULFILLED', commuteId },
     }),
 
-  countOpen: (organizationId: string) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return db.commuteRequest.count({
+  countOpen: (organizationId: string) =>
+    db.commuteRequest.count({
       where: {
-        date: { gte: today },
+        date: { gte: getToday() },
         status: 'OPEN',
         requester: { organizationId },
       },
-    });
-  },
+    }),
 });
