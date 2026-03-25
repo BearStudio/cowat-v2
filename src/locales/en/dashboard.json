@@ -2,8 +2,9 @@
   "title": "Dashboard",
   "newCommuteAction": "New Commute",
   "requestCommuteAction": "Request a Commute",
+  "noMatchingRide": "No ride suits you?",
   "today": "Today",
-  "noCommutesForDay": "Nothing planned yet — add a ride!",
+  "noCommutesForDay": "No commutes for this day",
   "noCommutesForWeek": "No commutes this week",
   "booking": {
     "title": "Book a ride",

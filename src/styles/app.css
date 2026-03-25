@@ -98,139 +98,76 @@
 }
 
 :root {
-  --background:
-    oklch(1 0 0);
-  --foreground:
-    oklch(0.141 0.008 223);
-  --card:
-    oklch(1 0 0);
-  --card-foreground:
-    oklch(0.141 0.008 223);
-  --popover:
-    oklch(1 0 0);
-  --popover-foreground:
-    oklch(0.141 0.008 223);
-  --primary:
-    oklch(0.52 0.105 223.128);
-  --primary-foreground:
-    oklch(0.984 0.019 200.873);
-  --secondary:
-    oklch(0.967 0.008 223);
-  --secondary-foreground:
-    oklch(0.21 0.008 223);
-  --muted:
-    oklch(0.967 0.008 223);
-  --muted-foreground:
-    oklch(0.552 0.016 223);
-  --accent:
-    oklch(0.967 0.008 223);
-  --accent-foreground:
-    oklch(0.21 0.008 223);
-  --destructive:
-    oklch(0.577 0.245 27.325);
+  --background: var(--color-white);
+  --foreground: var(--color-neutral-950);
+  --card: var(--color-white);
+  --card-foreground: var(--color-neutral-950);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-neutral-950);
+  --primary: var(--color-brand-600);
+  --primary-foreground: var(--color-brand-50);
+  --secondary: var(--color-brand-100);
+  --secondary-foreground: var(--color-brand-900);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-500);
+  --accent: var(--color-brand-100);
+  --accent-foreground: var(--color-brand-900);
+  --destructive: var(--color-negative-600);
   --destructive-foreground: var(--color-negative-50);
-  --border:
-    oklch(0.92 0.008 223);
-  --input:
-    oklch(0.92 0.008 223);
-  --ring:
-    oklch(0.705 0.015 223);
-  --chart-1:
-    oklch(0.871 0.008 223);
-  --chart-2:
-    oklch(0.552 0.016 223);
-  --chart-3:
-    oklch(0.442 0.017 223);
-  --chart-4:
-    oklch(0.37 0.013 223);
-  --chart-5:
-    oklch(0.274 0.008 223);
-  --radius:
-    0.75rem;
-  --sidebar:
-    oklch(0.985 0 0);
-  --sidebar-foreground:
-    oklch(0.141 0.008 223);
-  --sidebar-primary:
-    oklch(0.609 0.126 221.723);
-  --sidebar-primary-foreground:
-    oklch(0.984 0.019 200.873);
-  --sidebar-accent:
-    oklch(0.967 0.008 223);
-  --sidebar-accent-foreground:
-    oklch(0.21 0.008 223);
-  --sidebar-border:
-    oklch(0.92 0.008 223);
-  --sidebar-ring:
-    oklch(0.705 0.015 223);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-brand-500);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.725rem;
+  --sidebar: var(--color-white);
+  --sidebar-foreground: var(--color-neutral-600);
+  --sidebar-primary: var(--color-brand-600);
+  --sidebar-primary-foreground: var(--color-brand-50);
+  --sidebar-accent: var(--color-neutral-100);
+  --sidebar-accent-foreground: var(--color-neutral-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-brand-500);
 }
 
 .dark {
   color-scheme: dark;
 
-  --background:
-    oklch(0.141 0.008 223);
-  --foreground:
-    oklch(0.985 0 0);
-  --card:
-    oklch(0.21 0.008 223);
-  --card-foreground:
-    oklch(0.985 0 0);
-  --popover:
-    oklch(0.21 0.008 223);
-  --popover-foreground:
-    oklch(0.985 0 0);
-  --primary:
-    oklch(0.65 0.12 224.283);
-  --primary-foreground:
-    oklch(0.984 0.019 200.873);
-  --secondary:
-    oklch(0.274 0.008 223);
-  --secondary-foreground:
-    oklch(0.985 0 0);
-  --muted:
-    oklch(0.274 0.008 223);
-  --muted-foreground:
-    oklch(0.705 0.015 223);
-  --accent:
-    oklch(0.274 0.008 223);
-  --accent-foreground:
-    oklch(0.985 0 0);
-  --destructive:
-    oklch(0.704 0.191 22.216);
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-neutral-50);
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-neutral-50);
+  --popover: var(--color-neutral-950);
+  --popover-foreground: var(--color-neutral-50);
+  --primary: var(--color-brand-500);
+  --primary-foreground: var(--color-brand-950);
+  --secondary: var(--color-brand-950);
+  --secondary-foreground: var(--color-brand-100);
+  --muted: var(--color-neutral-900);
+  --muted-foreground: var(--color-neutral-400);
+  --accent: var(--color-brand-950);
+  --accent-foreground: var(--color-brand-100);
+  --destructive: var(--color-negative-700);
   --destructive-foreground: var(--color-white);
-  --border:
-    oklch(1 0 0 / 10%);
-  --input:
-    oklch(1 0 0 / 15%);
-  --ring:
-    oklch(0.552 0.016 223);
-  --chart-1:
-    oklch(0.871 0.008 223);
-  --chart-2:
-    oklch(0.552 0.016 223);
-  --chart-3:
-    oklch(0.442 0.017 223);
-  --chart-4:
-    oklch(0.37 0.013 223);
-  --chart-5:
-    oklch(0.274 0.008 223);
-  --sidebar:
-    oklch(0.21 0.008 223);
-  --sidebar-foreground:
-    oklch(0.985 0 0);
-  --sidebar-primary:
-    oklch(0.715 0.143 215.221);
-  --sidebar-primary-foreground:
-    oklch(0.302 0.056 229.695);
-  --sidebar-accent:
-    oklch(0.274 0.008 223);
-  --sidebar-accent-foreground:
-    oklch(0.985 0 0);
-  --sidebar-border:
-    oklch(1 0 0 / 10%);
-  --sidebar-ring:
-    oklch(0.552 0.016 223);
+  --border: var(--color-neutral-800);
+  --input: var(--color-neutral-800);
+  --ring: var(--color-brand-700);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: var(--color-neutral-900);
+  --sidebar-foreground: var(--color-neutral-300);
+  --sidebar-primary: var(--color-brand-400);
+  --sidebar-primary-foreground: var(--color-brand-950);
+  --sidebar-accent: var(--color-neutral-800);
+  --sidebar-accent-foreground: var(--color-neutral-50);
+  --sidebar-border: var(--color-neutral-800);
+  --sidebar-ring: var(--color-brand-700);
 }
 
 @theme inline {
@@ -399,7 +336,7 @@ html:active-view-transition-type(slide-right) {
     interpolate-size: allow-keywords;
   }
   body {
-    @apply bg-[oklch(0.98_0.006_223)] text-[1.0625rem] text-foreground dark:bg-[oklch(0.12_0.006_223)];
+    @apply bg-neutral-50 text-[1.0625rem] text-foreground dark:bg-neutral-950;
 
     @media all and (display-mode: standalone) {
       height: 100lvh; /* Force full height on iOS standalone */

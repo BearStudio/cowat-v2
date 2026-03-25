@@ -5,7 +5,7 @@
     "cancelConfirmDescription": "You are about to cancel this commute.",
     "cancelConfirmDescriptionWithPassengers": "This commute has passengers. Are you sure you want to cancel it?",
     "cancelSuccessMessage": "Commute cancelled",
-    "emptyState": "No rides yet — create your first!",
+    "emptyState": "No commutes yet",
     "loadMore": "Load more",
     "seats_one": "{{count}} seat",
     "seats_other": "{{count}} seats",

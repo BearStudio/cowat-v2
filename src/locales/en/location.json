@@ -5,7 +5,7 @@
     "mapsAction": "Maps",
     "deleteConfirmDescription": "You are about to delete this location.",
     "deleteSuccessMessage": "Location deleted",
-    "emptyState": "No locations yet — add your first stop!",
+    "emptyState": "No locations yet",
     "loadMore": "Load more"
   },
   "new": {

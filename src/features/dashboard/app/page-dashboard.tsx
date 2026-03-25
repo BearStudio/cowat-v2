@@ -34,8 +34,8 @@ import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-
 import {
   OrgButtonLink,
   OrgFloatingActionButtonLink,
-  OrgResponsiveIconButtonLink,
 } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -183,16 +183,18 @@ export const PageDashboard = () => {
                           ? t('dashboard:today')
                           : dayjs(day).f('dashboard:dayHeader')}
                       </h2>
-                      <OrgButtonLink
-                        variant="ghost"
-                        size="sm"
-                        className="ml-auto"
-                        to="/app/$orgSlug/commutes/new"
-                        search={{ date: day.toDate() }}
-                      >
-                        <PlusIcon />
-                        {t('dashboard:newCommuteAction')}
-                      </OrgButtonLink>
+                      {dayCommutes.length > 0 && (
+                        <OrgButtonLink
+                          variant="ghost"
+                          size="sm"
+                          className="ml-auto"
+                          to="/app/$orgSlug/commutes/new"
+                          search={{ date: day.toDate() }}
+                        >
+                          <PlusIcon />
+                          {t('dashboard:newCommuteAction')}
+                        </OrgButtonLink>
+                      )}
                     </div>
 
                     {dayCommutes.length === 0 ? (
@@ -217,15 +219,16 @@ export const PageDashboard = () => {
                               <PlusIcon />
                               {t('dashboard:newCommuteAction')}
                             </OrgButtonLink>
-                            <OrgResponsiveIconButtonLink
-                              className="hit-area-6"
+                            <OrgButtonLink
+                              className="hit-area-y-5"
                               variant="secondary"
+                              size="sm"
                               to="/app/$orgSlug/commutes/request"
                               search={{ date: day.toDate() }}
-                              label={t('dashboard:requestCommuteAction')}
                             >
                               <featureIcons.CommuteRequest />
-                            </OrgResponsiveIconButtonLink>
+                              {t('dashboard:requestCommuteAction')}
+                            </OrgButtonLink>
                           </div>
                         </EmptyContent>
                       </Empty>
@@ -251,6 +254,16 @@ export const PageDashboard = () => {
                             }
                           />
                         ))}
+                        <p className="text-right text-xs text-muted-foreground">
+                          {t('dashboard:noMatchingRide')}{' '}
+                          <OrgLink
+                            className="text-primary underline-offset-2 hover:underline"
+                            to="/app/$orgSlug/commutes/request"
+                            search={{ date: day.toDate() }}
+                          >
+                            {t('dashboard:requestCommuteAction')}
+                          </OrgLink>
+                        </p>
                       </div>
                     )}
                   </div>
