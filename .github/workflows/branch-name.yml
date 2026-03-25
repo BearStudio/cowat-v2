@@ -13,17 +13,17 @@ jobs:
       - name: Check branch name
         run: |
           BRANCH="${{ github.head_ref }}"
-          PATTERN="^(feat|fix|chore|test|docs)(\(.+\))?!?:.+$"
+          PATTERN="^(feat|fix|chore|test|docs)(\(.+\))?:.+$"
 
           if [[ ! "$BRANCH" =~ $PATTERN ]]; then
             echo "❌ Branch name '$BRANCH' does not match the required pattern."
             echo ""
-            echo "Expected: (feat|fix|chore|test|docs)(<scope>)?!?:<description>"
+            echo "Expected: (feat|fix|chore|test|docs)(<scope>)?:<description>"
             echo ""
             echo "Examples:"
             echo "  feat:add-login"
             echo "  fix(auth):token-expiry"
-            echo "  chore!:drop-legacy-api"
+            echo "  chore:drop-legacy-api"
             echo "  docs(readme):update-install"
             exit 1
           fi
