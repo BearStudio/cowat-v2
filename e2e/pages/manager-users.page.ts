@@ -4,7 +4,7 @@ export class ManagerUsersPage {
   constructor(private readonly page: Page) {}
 
   async goto() {
-    await this.page.goto('/manager');
+    await this.page.goto('/manager/users');
   }
 
   get newUserButton() {
@@ -32,12 +32,11 @@ export class ManagerUsersPage {
   }
 
   async waitForUsersPage() {
-    await this.page.waitForURL('**/manager/**/users');
+    await this.page.waitForURL('**/manager/users');
   }
 
   async waitForNewUserPage() {
-    // Matches both /manager/users/new and /manager/$orgSlug/users/new
-    await this.page.waitForURL('**/manager/**/users/new');
+    await this.page.waitForURL('**/manager/users/new');
   }
 
   async clickUser(identifier: string, options?: { exact?: boolean }) {
@@ -60,7 +59,7 @@ export class ManagerUsersPage {
   }
 
   async expectNoAccess() {
-    await expect(this.page.getByText('No organization')).toBeVisible();
+    await expect(this.page.getByText('Unauthorized')).toBeVisible();
   }
 
   async expectUserDeleted() {
