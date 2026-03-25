@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
 export default {
-  title: 'ConfirmResponsiveDrawer',
+  title: 'UI/ConfirmResponsiveDrawer',
 } satisfies Meta<typeof ConfirmResponsiveDrawer>;
 
 export function Default() {

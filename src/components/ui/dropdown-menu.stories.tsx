@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default {
-  title: 'DropdownMenu',
+  title: 'UI/DropdownMenu',
 } satisfies Meta<typeof DropdownMenu>;
 
 export const Default = () => {

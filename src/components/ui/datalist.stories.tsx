@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default {
-  title: 'DataList',
+  title: 'UI/DataList',
 };
 
 const data = [

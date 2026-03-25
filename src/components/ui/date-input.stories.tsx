@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/popover';
 
 export default {
-  title: 'DateInput',
+  title: 'UI/DateInput',
   parameters: {
     docs: {
       description: {

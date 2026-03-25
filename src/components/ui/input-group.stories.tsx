@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/tooltip';
 
 export default {
-  title: 'InputGroup',
+  title: 'UI/InputGroup',
 } satisfies Meta<typeof InputGroup>;
 
 export function Default() {

@@ -4,7 +4,7 @@ import { AlertCircleIcon, TerminalIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default {
-  title: 'Alert',
+  title: 'UI/Alert',
 } satisfies Meta<typeof Alert>;
 
 export const Default = () => {

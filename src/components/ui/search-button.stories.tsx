@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SearchButton } from '@/components/ui/search-button';
 
 export default {
-  title: 'SearchButton',
+  title: 'UI/SearchButton',
 } satisfies Meta<typeof SearchButton>;
 
 export function Default() {

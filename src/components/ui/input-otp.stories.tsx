@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/input-otp';
 
 export default {
-  title: 'InputOTP',
+  title: 'UI/InputOTP',
 } satisfies Meta<typeof InputOTP>;
 
 export const Default = () => {

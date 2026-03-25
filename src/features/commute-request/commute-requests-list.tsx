@@ -6,11 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
 import { Button } from '@/components/ui/button';
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -66,7 +64,7 @@ export const CommuteRequestsList = () => {
   });
 
   return ui
-    .match('pending', () => <DataListLoadingState />)
+    .match('pending', () => <CardListSkeleton />)
     .match('error', () => (
       <DataListErrorState retry={() => requestsQuery.refetch()} />
     ))

@@ -4,7 +4,7 @@ import { MailIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default {
-  title: 'Badge',
+  title: 'UI/Badge',
 } satisfies Meta<typeof Badge>;
 
 export const Default = () => {
