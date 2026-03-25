@@ -112,8 +112,8 @@ jobs:
           mc mb --ignore-existing minio/$S3_BUCKET_NAME
           mc anonymous set download minio/$S3_BUCKET_NAME
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install chromium
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
 
       - name: Migrate database
         run: pnpm db:push
