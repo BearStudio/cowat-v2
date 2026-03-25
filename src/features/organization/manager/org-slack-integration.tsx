@@ -46,8 +46,8 @@ export const OrgSlackIntegration = () => {
     resolver: zodResolver(zFormFields),
     values: {
       enabled: configQuery.data?.enabled ?? false,
-      token: configQuery.data?.token ?? null,
-      broadcastChannelId: configQuery.data?.broadcastChannel ?? null,
+      token: configQuery.data?.token ?? '',
+      broadcastChannelId: configQuery.data?.broadcastChannel ?? '',
       locale: (configQuery.data?.locale ?? '') as 'en' | 'fr' | '',
     },
   });
