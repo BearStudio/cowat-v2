@@ -1,5 +1,13 @@
 # Project Conventions
 
+## Branch Naming
+
+Branch names **must** match: `(feat|fix|chore|test|docs)(<scope>)?!?:<description>`
+
+Examples: `feat:add-login`, `fix(auth):token-expiry`, `chore!:drop-legacy-api`
+
+This is enforced by CI (`.github/workflows/branch-name.yml`).
+
 ## Pull Requests
 
 Always open PRs in **draft** mode. Never open a PR as ready to review directly.
