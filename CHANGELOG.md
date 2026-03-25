@@ -1,0 +1,98 @@
+## [1.0.2](https://github.com/BearStudio/cowat-v2/compare/v1.0.1...v1.0.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* replace raw Slack mrkdwn syntax with jsx-slack components ([#116](https://github.com/BearStudio/cowat-v2/issues/116)) ([50794ed](https://github.com/BearStudio/cowat-v2/commit/50794ed1b503012d081e3453cb5288537d60b805))
+
+## [1.0.1](https://github.com/BearStudio/cowat-v2/compare/v1.0.0...v1.0.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* pass baseUrl to commute.created Slack broadcast blocks ([d384da6](https://github.com/BearStudio/cowat-v2/commit/d384da6183bb2f5c9f276453ea5985189be821bb))
+
+# 1.0.0 (2026-02-25)
+
+
+### Bug Fixes
+
+* address low-complexity issues [#95](https://github.com/BearStudio/cowat-v2/issues/95), [#99](https://github.com/BearStudio/cowat-v2/issues/99), [#104](https://github.com/BearStudio/cowat-v2/issues/104), [#105](https://github.com/BearStudio/cowat-v2/issues/105) ([#107](https://github.com/BearStudio/cowat-v2/issues/107)) ([f41c935](https://github.com/BearStudio/cowat-v2/commit/f41c935d5b2669d134859fe367784b5d290a1212))
+* filter past-date requests and invalidate count on accept/refuse ([#33](https://github.com/BearStudio/cowat-v2/issues/33)) ([c26752d](https://github.com/BearStudio/cowat-v2/commit/c26752d70b3f6e4bf949478a58343e4009a15671))
+* low-complexity UI improvements (batch 1) ([#106](https://github.com/BearStudio/cowat-v2/issues/106)) ([f55a2c9](https://github.com/BearStudio/cowat-v2/commit/f55a2c9fa41277a553293996a29a0a88f00453c7))
+* normalize dates to noon UTC to prevent off-by-one ([#34](https://github.com/BearStudio/cowat-v2/issues/34)) ([b45bdd6](https://github.com/BearStudio/cowat-v2/commit/b45bdd6b009a95074f2127aad01e3e1bd0ed82ef))
+* pin checkbox border radius to fixed 5px ([e9d6461](https://github.com/BearStudio/cowat-v2/commit/e9d6461317beffab1d4d2f73fde81e3d433fd5af))
+* redirect admin to app root instead of /manager on login ([#85](https://github.com/BearStudio/cowat-v2/issues/85)) ([694ac40](https://github.com/BearStudio/cowat-v2/commit/694ac409b4666260a93f7723a9f5c2119feff66d)), closes [#80](https://github.com/BearStudio/cowat-v2/issues/80)
+* replace TODO types with type-safe bridge pattern ([#76](https://github.com/BearStudio/cowat-v2/issues/76)) ([0fc779d](https://github.com/BearStudio/cowat-v2/commit/0fc779deb6a34a60e7d62b6b80936bad59c331c8))
+* router unit tests ([#37](https://github.com/BearStudio/cowat-v2/issues/37)) ([b98ff1a](https://github.com/BearStudio/cowat-v2/commit/b98ff1a4746117ed1089e090452ffb02ce7c42c3))
+* Swagger UI document could not be loaded ([#102](https://github.com/BearStudio/cowat-v2/issues/102)) ([#109](https://github.com/BearStudio/cowat-v2/issues/109)) ([f3fc13a](https://github.com/BearStudio/cowat-v2/commit/f3fc13a0c728b3761d0b132cc81df46df4eb1ed7))
+* update nitro to latest nightly build ([#71](https://github.com/BearStudio/cowat-v2/issues/71)) ([fe358d5](https://github.com/BearStudio/cowat-v2/commit/fe358d5239a19f6f8a5bbdd37e9e44f1e7c0e8a3))
+
+
+### Features
+
+* account page with phone and auto-accept ([#18](https://github.com/BearStudio/cowat-v2/issues/18)) ([4dd622f](https://github.com/BearStudio/cowat-v2/commit/4dd622f0cb284bfdffc3662ecf7944db07e80aee))
+* add carpooling domain models, location & commute features ([#3](https://github.com/BearStudio/cowat-v2/issues/3)) ([bd70dd6](https://github.com/BearStudio/cowat-v2/commit/bd70dd6e0b34459723514f9eb9634c0012fc45d5))
+* add claude skills ([1292f16](https://github.com/BearStudio/cowat-v2/commit/1292f16ff9f742aca3cc4d5da23d7320238cdcff))
+* add commute summary with driver info to booking and stop cancel drawers ([#110](https://github.com/BearStudio/cowat-v2/issues/110)) ([2eec2e8](https://github.com/BearStudio/cowat-v2/commit/2eec2e8a7260a902a19906143d5639955bd49081))
+* add date range filters to stats dashboard ([#90](https://github.com/BearStudio/cowat-v2/issues/90)) ([4c185ee](https://github.com/BearStudio/cowat-v2/commit/4c185ee478d5fc90cee06b529eb8886248cdec8c)), closes [#79](https://github.com/BearStudio/cowat-v2/issues/79)
+* add Dev Actions devtools panel ([#5](https://github.com/BearStudio/cowat-v2/issues/5)) ([cd4269d](https://github.com/BearStudio/cowat-v2/commit/cd4269d62781f9972e55e0b5ccbda0b0387e6948))
+* add favicon ([#66](https://github.com/BearStudio/cowat-v2/issues/66)) ([ac2d74a](https://github.com/BearStudio/cowat-v2/commit/ac2d74a8b67a04e497bda396893a3ac280ebd943))
+* add multi-tenant organization support ([#35](https://github.com/BearStudio/cowat-v2/issues/35)) ([86db364](https://github.com/BearStudio/cowat-v2/commit/86db3647e35766fa8a43eb1835b8b3787c1ebf9b))
+* add organization slug to app and manager URLs ([#38](https://github.com/BearStudio/cowat-v2/issues/38)) ([0a9366e](https://github.com/BearStudio/cowat-v2/commit/0a9366ed7d22b77d969a6cf245a01eac2e34030d))
+* add Prisma satisfies annotations to router variables ([#32](https://github.com/BearStudio/cowat-v2/issues/32)) ([b92377d](https://github.com/BearStudio/cowat-v2/commit/b92377d909a9cb83673b11c2f0a54b87e6e2bddf))
+* add required field indicators ([#48](https://github.com/BearStudio/cowat-v2/issues/48)) ([a99ea57](https://github.com/BearStudio/cowat-v2/commit/a99ea57988bc7aeacf7908eee68b8b1ca881c360))
+* add reusable MultiStepForm component ([#73](https://github.com/BearStudio/cowat-v2/issues/73)) ([6257f5e](https://github.com/BearStudio/cowat-v2/commit/6257f5e92f9b6191073008a89842534728946fed))
+* add ride request card component ([#15](https://github.com/BearStudio/cowat-v2/issues/15)) ([f6addff](https://github.com/BearStudio/cowat-v2/commit/f6addff3d6fda32ee86a5d012bdd5f5e2a5108f1)), closes [#10](https://github.com/BearStudio/cowat-v2/issues/10)
+* add semantic release workflow and user seed script ([#112](https://github.com/BearStudio/cowat-v2/issues/112)) ([bb1258b](https://github.com/BearStudio/cowat-v2/commit/bb1258be5b1cd8c67a54a2746d0a3f24d7fa8459))
+* admin stats page with user rankings ([#29](https://github.com/BearStudio/cowat-v2/issues/29)) ([2eb96ed](https://github.com/BearStudio/cowat-v2/commit/2eb96ed2510df362eaaa858fa6e6a98f78af24fb))
+* auto-accept booking for autoAccept drivers ([#16](https://github.com/BearStudio/cowat-v2/issues/16)) ([8ec3b15](https://github.com/BearStudio/cowat-v2/commit/8ec3b15094e8187b0bbae308024411f82377edb2)), closes [#7](https://github.com/BearStudio/cowat-v2/issues/7)
+* auto-compute inward times & commute form improvements ([#58](https://github.com/BearStudio/cowat-v2/issues/58)) ([d853bf2](https://github.com/BearStudio/cowat-v2/commit/d853bf2600e2a4c2563a213b6eb09b9fb9ea4531))
+* auto-fill org slug from name ([#45](https://github.com/BearStudio/cowat-v2/issues/45)) ([0439606](https://github.com/BearStudio/cowat-v2/commit/0439606407bdd12059ea2517239cb393c2d7fffb))
+* blue brand theme with reduced border radius ([#50](https://github.com/BearStudio/cowat-v2/issues/50)) ([28a8735](https://github.com/BearStudio/cowat-v2/commit/28a8735ac2ebea1704e4cf0e65931491477d3978))
+* booking router, dashboard, location & commute CRUD ([#4](https://github.com/BearStudio/cowat-v2/issues/4)) ([94f7080](https://github.com/BearStudio/cowat-v2/commit/94f7080e23221f086c126326153d73d0b40c9e1a))
+* booking status colors, commute card redesign & shared actions ([#52](https://github.com/BearStudio/cowat-v2/issues/52)) ([a59b88b](https://github.com/BearStudio/cowat-v2/commit/a59b88b81f35692756712a35e331072b21bfb420))
+* carpooling domain models, user extensions, and location CRUD ([#1](https://github.com/BearStudio/cowat-v2/issues/1)) ([60b3a44](https://github.com/BearStudio/cowat-v2/commit/60b3a44ae6af88b3ae52d58cb96d20a80d613456))
+* centralize date formats with typed feature-scoped keys ([#53](https://github.com/BearStudio/cowat-v2/issues/53)) ([4187e53](https://github.com/BearStudio/cowat-v2/commit/4187e53ab324baab8f75621f948d176d3107417d))
+* centralize feature icons config ([#54](https://github.com/BearStudio/cowat-v2/issues/54)) ([223a0c4](https://github.com/BearStudio/cowat-v2/commit/223a0c4ef8ba5cd899b272c58022a9f160ee463e))
+* clean boilerplate code ([a7db9fd](https://github.com/BearStudio/cowat-v2/commit/a7db9fd897a5fe53369d28675960e81b79a16ca8))
+* clickable empty commute & active commute view ([#68](https://github.com/BearStudio/cowat-v2/issues/68)) ([bdbfef2](https://github.com/BearStudio/cowat-v2/commit/bdbfef24d48095e9627609f26df04bdd698aeaf8))
+* commute card badges row & departure times ([#63](https://github.com/BearStudio/cowat-v2/issues/63)) ([09771d7](https://github.com/BearStudio/cowat-v2/commit/09771d77ec36f05274bed63993713e4ab0f19df4))
+* commute date validation and future-only filtering ([#30](https://github.com/BearStudio/cowat-v2/issues/30)) ([c074414](https://github.com/BearStudio/cowat-v2/commit/c074414a9c7ac177549275a65c84d7ac28765a66))
+* Commute MultiStepform ([#70](https://github.com/BearStudio/cowat-v2/issues/70)) ([e0b4c7a](https://github.com/BearStudio/cowat-v2/commit/e0b4c7a84f2cc30b984fc3f7e2957e5d5bdd0f55))
+* CommuteTemplate CRUD with shared form fields ([#26](https://github.com/BearStudio/cowat-v2/issues/26)) ([dc5de85](https://github.com/BearStudio/cowat-v2/commit/dc5de85d445719aed1fd20e67f9e5ad625a821b7))
+* configure Slack integration at org level ([#92](https://github.com/BearStudio/cowat-v2/issues/92)) ([30da359](https://github.com/BearStudio/cowat-v2/commit/30da35973682779d10b4fa9bf134c4834778a716))
+* date search param for commute creation ([#28](https://github.com/BearStudio/cowat-v2/issues/28)) ([a4b60ec](https://github.com/BearStudio/cowat-v2/commit/a4b60ecca9fdcf6fcce38181d3ef7602f9245da7))
+* dayjs.f() plugin for feature-scoped date formatting ([#72](https://github.com/BearStudio/cowat-v2/issues/72)) ([4a11009](https://github.com/BearStudio/cowat-v2/commit/4a11009f57c6e76ffa10a4c8d0d3f2c54bfd949c))
+* delete organization & remove member ([#56](https://github.com/BearStudio/cowat-v2/issues/56)) ([4ea6988](https://github.com/BearStudio/cowat-v2/commit/4ea698883b242afcc2c2a8329085ce50474209aa))
+* disable booking when commute is full ([#62](https://github.com/BearStudio/cowat-v2/issues/62)) ([8e19234](https://github.com/BearStudio/cowat-v2/commit/8e192340b59742a37bea6d672fb721aa2fc40d6f))
+* enforce booking status state machine ([#13](https://github.com/BearStudio/cowat-v2/issues/13)) ([85e3885](https://github.com/BearStudio/cowat-v2/commit/85e3885f6fc344e2858a93dcdbcb0114711f5673))
+* filter booking trip type by commute type and stop position ([#60](https://github.com/BearStudio/cowat-v2/issues/60)) ([44e9e11](https://github.com/BearStudio/cowat-v2/commit/44e9e11985b0978a9ad2368c2dc8248b3ff8fa7e))
+* implement edit commute ([#111](https://github.com/BearStudio/cowat-v2/issues/111)) ([01d3d70](https://github.com/BearStudio/cowat-v2/commit/01d3d707986922370a39abcab0d1c3dbe43fb87a))
+* improve commute stops UI layout ([#51](https://github.com/BearStudio/cowat-v2/issues/51)) ([81d12a7](https://github.com/BearStudio/cowat-v2/commit/81d12a76b36ad32cebdfe6d3e1dd138ed646924f))
+* improve empty states ([#65](https://github.com/BearStudio/cowat-v2/issues/65)) ([72300fb](https://github.com/BearStudio/cowat-v2/commit/72300fbc4066c7c284894b6e17e6d36396837375))
+* improve Slack message templates ([#91](https://github.com/BearStudio/cowat-v2/issues/91)) ([4640dfa](https://github.com/BearStudio/cowat-v2/commit/4640dfa6b1f40a0f364f5a51edf10c41f9960990))
+* improve Slack notifications and extract slack client ([#77](https://github.com/BearStudio/cowat-v2/issues/77)) ([4649464](https://github.com/BearStudio/cowat-v2/commit/4649464320474629f41a334ced33b62855ae1124))
+* increase touch targets and border radius for mobile UX ([552b02f](https://github.com/BearStudio/cowat-v2/commit/552b02f05aafd4585b0b03ab1d60548e63dd37e3))
+* initial commit ([66f19cb](https://github.com/BearStudio/cowat-v2/commit/66f19cbc4c91c2daf123324a9a9d367d2edb3603))
+* location create/update in drawer ([#43](https://github.com/BearStudio/cowat-v2/issues/43)) ([ec4e0d0](https://github.com/BearStudio/cowat-v2/commit/ec4e0d063b0b67155b40fdbca1a0e1244185a9eb))
+* Logo ([#64](https://github.com/BearStudio/cowat-v2/issues/64)) ([3986aa3](https://github.com/BearStudio/cowat-v2/commit/3986aa32460018341f3f0b4d888cfcfcfc4fa39e))
+* migrate Slack templates to jsx-slack with devtools preview ([#108](https://github.com/BearStudio/cowat-v2/issues/108)) ([29bedfb](https://github.com/BearStudio/cowat-v2/commit/29bedfbf90671310dcd517f9faabb30d1a55d0c5))
+* org-role-based access control for manager routes ([#40](https://github.com/BearStudio/cowat-v2/issues/40)) ([4dbc661](https://github.com/BearStudio/cowat-v2/commit/4dbc661b1a45a913348c016ddcf4bd1385e6d0f8))
+* overhaul Slack notification templates ([#113](https://github.com/BearStudio/cowat-v2/issues/113)) ([16e3d4d](https://github.com/BearStudio/cowat-v2/commit/16e3d4da6c27326c9b63e0a608c4c5e95e5fd764))
+* pluggable notification system ([#25](https://github.com/BearStudio/cowat-v2/issues/25)) ([78abb8e](https://github.com/BearStudio/cowat-v2/commit/78abb8efe19bda7a97ac95133c214be20188321b))
+* redesign commute stops as timeline with passenger badges ([#59](https://github.com/BearStudio/cowat-v2/issues/59)) ([2bfd2f9](https://github.com/BearStudio/cowat-v2/commit/2bfd2f9b6e7f75d6a6cca3c581260c06a6da9f59))
+* remove active commute view ([#93](https://github.com/BearStudio/cowat-v2/issues/93)) ([a9f2955](https://github.com/BearStudio/cowat-v2/commit/a9f295560b2d65a4504194f4c7b795ad562057fb))
+* rename inward/outward to inbound/outbound ([#57](https://github.com/BearStudio/cowat-v2/issues/57)) ([ba6337a](https://github.com/BearStudio/cowat-v2/commit/ba6337a3572420fc8a54713db835b6b96c2000a5))
+* replace Inter with Public Sans font ([#55](https://github.com/BearStudio/cowat-v2/issues/55)) ([15db16d](https://github.com/BearStudio/cowat-v2/commit/15db16dc70472141f5b11c9eaa3a89433b88d5e1))
+* requests page with paginated ride request list ([#17](https://github.com/BearStudio/cowat-v2/issues/17)) ([1d6486b](https://github.com/BearStudio/cowat-v2/commit/1d6486b936536bc86e2adab290644433fcd14d58)), closes [#15](https://github.com/BearStudio/cowat-v2/issues/15) [#9](https://github.com/BearStudio/cowat-v2/issues/9)
+* require org name confirmation when deleting organization ([#87](https://github.com/BearStudio/cowat-v2/issues/87)) ([460facc](https://github.com/BearStudio/cowat-v2/commit/460facc602a5bee4e49e173512e3f049b544476e)), closes [#78](https://github.com/BearStudio/cowat-v2/issues/78)
+* responsive floating action buttons & speed dial ([#67](https://github.com/BearStudio/cowat-v2/issues/67)) ([10dc43d](https://github.com/BearStudio/cowat-v2/commit/10dc43d4e23c2daad6fc7db4cbc96a61526c29ea))
+* ride request navigation and pending count badge ([#14](https://github.com/BearStudio/cowat-v2/issues/14)) ([46b0ec9](https://github.com/BearStudio/cowat-v2/commit/46b0ec942cafdaf3d2a06a363f738cf3cf60ece4))
+* separate user and org scoped settings on account pages ([#41](https://github.com/BearStudio/cowat-v2/issues/41)) ([605e376](https://github.com/BearStudio/cowat-v2/commit/605e376cab71efa36be84e1e348770baefcf7935))
+* shadcn Empty component for empty states ([#24](https://github.com/BearStudio/cowat-v2/issues/24)) ([45c90e9](https://github.com/BearStudio/cowat-v2/commit/45c90e93eb5f6d7e4d25d6e45e3a8e34bbbcc6fa))
+* Slack notification channel ([#31](https://github.com/BearStudio/cowat-v2/issues/31)) ([1b2e997](https://github.com/BearStudio/cowat-v2/commit/1b2e9976f6f98c5a8af0471234e951b582c907ed))
+* surface Locations & Templates from My Commutes ([#49](https://github.com/BearStudio/cowat-v2/issues/49)) ([9af52d5](https://github.com/BearStudio/cowat-v2/commit/9af52d5e606239b6d33638d4cf4eec2dc306bc92))
+* template picker in commute creation flow ([#27](https://github.com/BearStudio/cowat-v2/issues/27)) ([cc21a25](https://github.com/BearStudio/cowat-v2/commit/cc21a251fbed88f89a7d0d93ec9ab10a51c79f7a))
+* use Resend SMTP for emails in production ([#69](https://github.com/BearStudio/cowat-v2/issues/69)) ([ed714d2](https://github.com/BearStudio/cowat-v2/commit/ed714d23b89392c57bed9dd8b7d63c0e7e27cfc9))
+* use rich template card in create commute picker ([#61](https://github.com/BearStudio/cowat-v2/issues/61)) ([568abff](https://github.com/BearStudio/cowat-v2/commit/568abff399ec65a0f2a763a3cbc8ccf37342fccb))
