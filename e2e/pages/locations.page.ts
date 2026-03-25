@@ -60,6 +60,8 @@ export class LocationsPage {
   }
 
   async expectLocationNotVisible(name: string) {
-    await expect(this.page.getByText(name)).not.toBeVisible();
+    await expect(
+      this.page.getByTestId('layout-app').getByText(name)
+    ).not.toBeVisible();
   }
 }

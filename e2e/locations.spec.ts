@@ -59,7 +59,7 @@ test.describe('Location management', () => {
     await expect(
       page.getByText('You are about to delete this location.').first()
     ).toBeVisible();
-    await confirmDialog.confirm();
+    await confirmDialog.confirm('Delete');
 
     await expect(page.getByText('Location deleted').first()).toBeVisible();
     await locationsPage.expectLocationNotVisible(name);

@@ -165,7 +165,7 @@ test.describe('Commute template management', () => {
     await expect(
       page.getByText('You are about to delete this template.').first()
     ).toBeVisible();
-    await confirmDialog.confirm();
+    await confirmDialog.confirm('Delete');
 
     await expect(page.getByText('Template deleted').first()).toBeVisible({
       timeout: 10_000,
