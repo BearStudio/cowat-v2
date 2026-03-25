@@ -21,27 +21,6 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
   return {
     isRound,
 
-    shouldInwardBeAfterOutward: (
-      stop: Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>
-    ) =>
-      !isRound ||
-      !stop.inwardTime ||
-      !stop.outwardTime ||
-      stop.inwardTime > stop.outwardTime,
-
-    shouldOutwardBeIncreasing: (
-      stop: Pick<FormFieldsStopInput, 'outwardTime'>,
-      index: number
-    ) => {
-      if (index === 0) return true;
-      const prevStop = data.stops[index - 1];
-      return (
-        !stop.outwardTime ||
-        !prevStop?.outwardTime ||
-        stop.outwardTime > prevStop.outwardTime
-      );
-    },
-
     shouldInwardBeDecreasing: (
       stop: Pick<FormFieldsStopInput, 'inwardTime'>,
       index: number

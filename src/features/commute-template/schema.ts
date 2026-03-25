@@ -41,22 +41,6 @@ export const zFormFieldsCommuteTemplate = () =>
       const rules = createStopOrderRules(data);
 
       data.stops.forEach((stop, index) => {
-        if (!rules.shouldInwardBeAfterOutward(stop)) {
-          ctx.addIssue({
-            code: 'custom',
-            message: t('commuteTemplate:form.errors.inwardBeforeOutward'),
-            path: ['stops', index, 'inwardTime'],
-          });
-        }
-
-        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
-          ctx.addIssue({
-            code: 'custom',
-            message: t('commuteTemplate:form.errors.outwardNotIncreasing'),
-            path: ['stops', index, 'outwardTime'],
-          });
-        }
-
         if (!rules.shouldInwardBeDecreasing(stop, index)) {
           ctx.addIssue({
             code: 'custom',
