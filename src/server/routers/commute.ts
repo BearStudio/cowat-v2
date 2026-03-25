@@ -1,7 +1,7 @@
 import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
-import { getToday } from '@/lib/date';
+import { getTodayMidnight } from '@/lib/date';
 
 import {
   zCommute,
@@ -138,7 +138,7 @@ export default {
       const { total, items } = await context.commutes.findMyPaginated({
         memberId: context.memberId,
         organizationId: context.organizationId,
-        fromDate: getToday(),
+        fromDate: getTodayMidnight(),
         cursor: input.cursor,
         limit: input.limit,
       });
