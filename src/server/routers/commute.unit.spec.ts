@@ -26,7 +26,7 @@ const mockStop = {
 
 const mockStopEnriched = {
   ...mockStop,
-  location: { id: 'location-1', name: 'Office' },
+  location: { id: 'location-1', name: 'Office', address: '1 Rue de la Paix' },
   passengers: [],
 };
 
