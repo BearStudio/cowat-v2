@@ -4,7 +4,7 @@ import { MailIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default {
-  title: 'Button',
+  title: 'UI/Button',
 } satisfies Meta<typeof Button>;
 
 export const Default = () => {

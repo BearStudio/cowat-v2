@@ -6,7 +6,7 @@ import '@/lib/dayjs/config';
 import { Calendar } from '@/components/ui/calendar';
 
 export default {
-  title: 'Calendar',
+  title: 'UI/Calendar',
   parameters: {
     docs: {
       description: {

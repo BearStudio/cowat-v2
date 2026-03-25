@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/responsive-drawer';
 
 export default {
-  title: 'ResponsiveDrawer',
+  title: 'UI/ResponsiveDrawer',
 } satisfies Meta<typeof ResponsiveDrawer>;
 
 export const Default = () => {

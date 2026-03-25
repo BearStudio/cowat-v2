@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 
 export default {
-  title: 'Sidebar',
+  title: 'UI/Sidebar',
   parameters: {
     layout: 'fullscreen',
   },

@@ -26,7 +26,7 @@ const RouterWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export default {
-  title: 'ResponsiveIconButtonLink',
+  title: 'UI/ResponsiveIconButtonLink',
   decorators: [(Story) => <RouterWrapper>{Story()}</RouterWrapper>],
 } satisfies Meta<typeof ResponsiveIconButtonLink>;
 

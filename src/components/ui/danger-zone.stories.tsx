@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { DangerZone, DangerZoneCardItem } from '@/components/ui/danger-zone';
 
 export default {
-  title: 'DangerZone',
+  title: 'UI/DangerZone',
 } satisfies Meta<typeof DangerZone>;
 
 export function Default() {

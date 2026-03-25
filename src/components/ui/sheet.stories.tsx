@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sheet';
 
 export default {
-  title: 'Sheet',
+  title: 'UI/Sheet',
 } satisfies Meta<typeof Sheet>;
 
 export function SheetDemo() {

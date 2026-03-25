@@ -26,7 +26,7 @@ const RouterWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export default {
-  title: 'FloatingActionButtonLink',
+  title: 'UI/FloatingActionButtonLink',
   decorators: [(Story) => <RouterWrapper>{Story()}</RouterWrapper>],
 } satisfies Meta;
 

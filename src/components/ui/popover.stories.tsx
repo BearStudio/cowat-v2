@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/popover';
 
 export default {
-  title: 'Popover',
+  title: 'UI/Popover',
 } satisfies Meta<typeof Popover>;
 
 export const Default = () => {

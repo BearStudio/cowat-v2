@@ -11,7 +11,7 @@ import {
 } from './select';
 
 export default {
-  title: 'Select',
+  title: 'UI/Select',
 } satisfies Meta<typeof Select>;
 
 const items = [

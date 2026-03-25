@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Sonner } from '@/components/ui/sonner';
 
 export default {
-  title: 'Sonner',
+  title: 'UI/Sonner',
   parameters: {
     docs: {
       description: {

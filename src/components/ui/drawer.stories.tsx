@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/drawer';
 
 export default {
-  title: 'Drawer',
+  title: 'UI/Drawer',
 } satisfies Meta<typeof Drawer>;
 
 export const Default = () => (

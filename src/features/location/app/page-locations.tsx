@@ -105,7 +105,11 @@ export const PageLocations = () => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => (
+            <DataList>
+              <DataListLoadingState />
+            </DataList>
+          ))
           .match('error', () => (
             <DataListErrorState retry={() => locationsQuery.refetch()} />
           ))

@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { Separator } from '@/components/ui/separator';
 
 export default {
-  title: 'Separator',
+  title: 'UI/Separator',
 } satisfies Meta<typeof Separator>;
 
 export function Default() {
