@@ -148,7 +148,7 @@ export const BookingDrawer = (props: {
         if (!isOpen) form.reset();
       }}
     >
-      <ResponsiveDrawerContent className="sm:max-w-xs">
+      <ResponsiveDrawerContent>
         <Form
           {...form}
           onSubmit={async ({ tripType, comment }) => {
