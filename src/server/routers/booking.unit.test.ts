@@ -75,7 +75,11 @@ const mockBookingForDriverRaw = {
     order: 0,
     outwardTime: '08:00',
     inwardTime: '18:00',
-    location: { id: 'location-1', name: 'Downtown Office' },
+    location: {
+      id: 'location-1',
+      name: 'Downtown Office',
+      address: '123 Main St',
+    },
     commute: {
       id: 'commute-1',
       date: now,
@@ -93,7 +97,11 @@ const mockBookingForDriverExpected = {
     order: 0,
     outwardTime: '08:00',
     inwardTime: '18:00',
-    location: { id: 'location-1', name: 'Downtown Office' },
+    location: {
+      id: 'location-1',
+      name: 'Downtown Office',
+      address: '123 Main St',
+    },
     commute: {
       id: 'commute-1',
       date: now,

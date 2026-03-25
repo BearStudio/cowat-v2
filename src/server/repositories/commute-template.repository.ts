@@ -7,7 +7,7 @@ const templateWithLocationInclude = {
   stops: {
     orderBy: { order: 'asc' as const },
     include: {
-      location: { select: { id: true, name: true } },
+      location: { select: { id: true, name: true, address: true } },
     },
   },
 } as const;

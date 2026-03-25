@@ -209,7 +209,7 @@ export const zUserSummary = () =>
 
 export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
 export const zLocationSummary = () =>
-  zLocation().pick({ id: true, name: true });
+  zLocation().pick({ id: true, name: true, address: true });
 
 export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
 export const zStopPassenger = () =>
