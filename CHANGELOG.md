@@ -1,3 +1,42 @@
+# [1.1.0](https://github.com/BearStudio/cowat-v2/compare/v1.0.2...v1.1.0) (2026-03-25)
+
+
+### Bug Fixes
+
+* apply shadcn preset theme and UI polish ([#224](https://github.com/BearStudio/cowat-v2/issues/224)) ([c7461cb](https://github.com/BearStudio/cowat-v2/commit/c7461cb50d2d5e347c2e8cd851d21f8e0623d8b9))
+* booking submit button not visible on mobile + round-trip seat overcounting ([#195](https://github.com/BearStudio/cowat-v2/issues/195)) ([ee53df5](https://github.com/BearStudio/cowat-v2/commit/ee53df5203819090a504d96c8ddc3e9e022683c4)), closes [#147](https://github.com/BearStudio/cowat-v2/issues/147) [#148](https://github.com/BearStudio/cowat-v2/issues/148)
+* **booking:** left-align booking type tag in request card ([#199](https://github.com/BearStudio/cowat-v2/issues/199)) ([e9ccb9d](https://github.com/BearStudio/cowat-v2/commit/e9ccb9d70a1a6f3b9cd8091a59169c50e06e70cf)), closes [#166](https://github.com/BearStudio/cowat-v2/issues/166)
+* cancel modal layout and stop timeline redesign ([#212](https://github.com/BearStudio/cowat-v2/issues/212)) ([aced899](https://github.com/BearStudio/cowat-v2/commit/aced89956de61f10cafe3a9dd92f0f0ff93ec7b0)), closes [#211](https://github.com/BearStudio/cowat-v2/issues/211)
+* move date validation to Zod refine ([#232](https://github.com/BearStudio/cowat-v2/issues/232)) ([cfbf984](https://github.com/BearStudio/cowat-v2/commit/cfbf984d55886123642188ea46019def559a6c09))
+* prevent driver from booking seats on their own commute ([#142](https://github.com/BearStudio/cowat-v2/issues/142)) ([7973db5](https://github.com/BearStudio/cowat-v2/commit/7973db5ec4124d88171c5d9bdb78af9f71c2e39a))
+* prevent driver from opening booking drawer for own commute ([#141](https://github.com/BearStudio/cowat-v2/issues/141)) ([73f51f0](https://github.com/BearStudio/cowat-v2/commit/73f51f042e0daaa862776e1f4602feb1893160b9))
+* redirect to /commutes after creating a commute ([#230](https://github.com/BearStudio/cowat-v2/issues/230)) ([9b81dc8](https://github.com/BearStudio/cowat-v2/commit/9b81dc83d428275a657be2fd06ee07e99cf54b0e))
+* show item name and feature icon in deletion confirmation dialogs ([#206](https://github.com/BearStudio/cowat-v2/issues/206)) ([00d887b](https://github.com/BearStudio/cowat-v2/commit/00d887b79d1b7d77169c273448a4c76ceb3b26fc)), closes [#163](https://github.com/BearStudio/cowat-v2/issues/163) [#164](https://github.com/BearStudio/cowat-v2/issues/164)
+* small UI/UX issues ([#165](https://github.com/BearStudio/cowat-v2/issues/165), [#168](https://github.com/BearStudio/cowat-v2/issues/168), [#172](https://github.com/BearStudio/cowat-v2/issues/172)) ([#222](https://github.com/BearStudio/cowat-v2/issues/222)) ([e72b195](https://github.com/BearStudio/cowat-v2/commit/e72b195154584b5e58c3bae3725aea25f652c166))
+* sort imports in nav-sidebar ([#193](https://github.com/BearStudio/cowat-v2/issues/193)) ([c120555](https://github.com/BearStudio/cowat-v2/commit/c120555b5e33dc2e386525bcec1637d563c8113a))
+
+
+### Features
+
+* add daily carpool reminder cron notification ([#229](https://github.com/BearStudio/cowat-v2/issues/229)) ([120fdbf](https://github.com/BearStudio/cowat-v2/commit/120fdbf2e8643d682f609e1aa7b46bcf0315db79))
+* add hit-area utilities and apply to buttons for mobile tap targets ([#203](https://github.com/BearStudio/cowat-v2/issues/203)) ([bba8417](https://github.com/BearStudio/cowat-v2/commit/bba84179fd70943e67cb8fc1c3ea203b43fdb0d4))
+* add location address to stops timeline ([#233](https://github.com/BearStudio/cowat-v2/issues/233)) ([81310ac](https://github.com/BearStudio/cowat-v2/commit/81310aca5408ff28e0f23053de28049a241dacdf))
+* add phone number format validation ([#204](https://github.com/BearStudio/cowat-v2/issues/204)) ([2e9e7fb](https://github.com/BearStudio/cowat-v2/commit/2e9e7fb45946bdade9368de45d9ffb49b8661a68))
+* add QR code in terminal on dev server start ([#145](https://github.com/BearStudio/cowat-v2/issues/145)) ([b5c37d6](https://github.com/BearStudio/cowat-v2/commit/b5c37d643d432c5dea333257b7371d0b74669c6a))
+* add view transitions with directional slide animations ([#197](https://github.com/BearStudio/cowat-v2/issues/197)) ([c6dbb9c](https://github.com/BearStudio/cowat-v2/commit/c6dbb9c78221e4c216963d48b94491d4346b94c4))
+* animate speed dial open/close with stagger and exit transitions ([#198](https://github.com/BearStudio/cowat-v2/issues/198)) ([518d227](https://github.com/BearStudio/cowat-v2/commit/518d227b1c542ff319a26059fa8b7ab92c399a39))
+* apply start-ui-web upstream changes (2026-03-02 → 2026-03-19) ([#192](https://github.com/BearStudio/cowat-v2/issues/192)) ([a0b2eeb](https://github.com/BearStudio/cowat-v2/commit/a0b2eeb0a86401ae13aa4924ab7961b10416d948)), closes [better-auth#2398](https://github.com/better-auth/issues/2398)
+* commute request page and dashboard CTA ([#231](https://github.com/BearStudio/cowat-v2/issues/231)) ([d9375cb](https://github.com/BearStudio/cowat-v2/commit/d9375cb9801dc605baa9fb6d3d63dbb746150498))
+* commute request system with My Requests tabs ([#228](https://github.com/BearStudio/cowat-v2/issues/228)) ([3d73bf1](https://github.com/BearStudio/cowat-v2/commit/3d73bf1ff590e5d570e8ea712539f10cb00c70c0))
+* **devtools:** add owner login hint + fix speed dial label ([#200](https://github.com/BearStudio/cowat-v2/issues/200)) ([7db8d17](https://github.com/BearStudio/cowat-v2/commit/7db8d179d3802a73ef742a5ce9432d06d282996a))
+* **e2e:** manager organization — view details and update settings ([#138](https://github.com/BearStudio/cowat-v2/issues/138)) ([a00ec64](https://github.com/BearStudio/cowat-v2/commit/a00ec64e1d7ebcedfbe95308af8949ff685bd23a))
+* Firebase Cloud Messaging — web push notifications ([#210](https://github.com/BearStudio/cowat-v2/issues/210)) ([188fe72](https://github.com/BearStudio/cowat-v2/commit/188fe7207edde11d3f78e07d18ec264b01efa59d))
+* multi-email invite with user search ([#234](https://github.com/BearStudio/cowat-v2/issues/234)) ([a136983](https://github.com/BearStudio/cowat-v2/commit/a13698373b7e6192c4a7125ce8188c87c0372480))
+* redesign auth layout with carpooling-themed panel ([#146](https://github.com/BearStudio/cowat-v2/issues/146)) ([c36317a](https://github.com/BearStudio/cowat-v2/commit/c36317a89587968c6afe8ae481ed7438696ffeff))
+* redesign commute and booking cards ([#202](https://github.com/BearStudio/cowat-v2/issues/202)) ([fb6c576](https://github.com/BearStudio/cowat-v2/commit/fb6c576074f590215bc2a4d8d20dbc0a874bb5ac))
+* show auth image on mobile login ([#226](https://github.com/BearStudio/cowat-v2/issues/226)) ([0133131](https://github.com/BearStudio/cowat-v2/commit/013313114ffb90f2ae3b4b44c61e528d206d0a75))
+* typesafe route URLs in notification templates ([#221](https://github.com/BearStudio/cowat-v2/issues/221)) ([f4db262](https://github.com/BearStudio/cowat-v2/commit/f4db2627270636649ccecd4f79ed81161ea1a06a)), closes [#218](https://github.com/BearStudio/cowat-v2/issues/218) [#219](https://github.com/BearStudio/cowat-v2/issues/219) [#218](https://github.com/BearStudio/cowat-v2/issues/218) [#219](https://github.com/BearStudio/cowat-v2/issues/219)
+
 ## [1.0.2](https://github.com/BearStudio/cowat-v2/compare/v1.0.1...v1.0.2) (2026-02-25)
 
 
