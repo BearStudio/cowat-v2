@@ -5,7 +5,7 @@
     "mapsAction": "Maps",
     "deleteConfirmDescription": "Vous êtes sur le point de supprimer ce lieu.",
     "deleteSuccessMessage": "Lieu supprimé",
-    "emptyState": "Aucun lieu pour le moment",
+    "emptyState": "Aucun lieu — ajoutez votre premier arrêt !",
     "loadMore": "Charger plus"
   },
   "new": {

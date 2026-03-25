@@ -3,7 +3,7 @@
   "newCommuteAction": "New Commute",
   "requestCommuteAction": "Request a Commute",
   "today": "Today",
-  "noCommutesForDay": "No commutes for this day",
+  "noCommutesForDay": "Nothing planned yet — add a ride!",
   "noCommutesForWeek": "No commutes this week",
   "booking": {
     "title": "Book a ride",

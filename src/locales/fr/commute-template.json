@@ -4,7 +4,7 @@
     "newAction": "Nouveau modèle",
     "deleteConfirmDescription": "Vous êtes sur le point de supprimer ce modèle.",
     "deleteSuccessMessage": "Modèle supprimé",
-    "emptyState": "Aucun modèle pour le moment",
+    "emptyState": "Aucun modèle — gagnez du temps sur vos trajets récurrents !",
     "loadMore": "Charger plus",
     "stops": "{{count}} arrêt",
     "stops_other": "{{count}} arrêts",

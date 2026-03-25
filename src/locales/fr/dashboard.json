@@ -3,7 +3,7 @@
   "newCommuteAction": "Nouveau trajet",
   "requestCommuteAction": "Demander un trajet",
   "today": "Aujourd'hui",
-  "noCommutesForDay": "Aucun trajet pour ce jour",
+  "noCommutesForDay": "Rien de prévu — ajoutez un trajet !",
   "noCommutesForWeek": "Aucun trajet cette semaine",
   "booking": {
     "title": "Réserver un trajet",

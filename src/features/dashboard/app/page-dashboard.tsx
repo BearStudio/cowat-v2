@@ -9,6 +9,7 @@ import '@/lib/dayjs/config';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { cn } from '@/lib/tailwind/utils';
 
 import { DashboardSkeleton } from '@/components/loading/dashboard-skeleton';
 import { DataListErrorState } from '@/components/ui/datalist';
@@ -163,16 +164,25 @@ export const PageDashboard = () => {
                 const key = dayjs(day).f('common:iso');
                 const isToday = day.isToday();
                 const dayCommutes = commutesByDay.get(key) ?? [];
-
                 return (
                   <div key={key} className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-semibold">
+                      {isToday && (
+                        <span className="relative flex size-2.5">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75 [animation-duration:1.5s]" />
+                          <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
+                        </span>
+                      )}
+                      <h2
+                        className={cn('font-semibold capitalize', {
+                          'text-lg text-primary': isToday,
+                          'text-base text-foreground': !isToday,
+                        })}
+                      >
                         {isToday
                           ? t('dashboard:today')
                           : dayjs(day).f('dashboard:dayHeader')}
                       </h2>
-
                       <OrgButtonLink
                         variant="ghost"
                         size="sm"
