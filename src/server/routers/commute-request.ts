@@ -94,6 +94,17 @@ export default {
       return { items, nextCursor, total };
     }),
 
+  openCount: procedure()
+    .route({ method: 'GET', path: '/commute-requests/open-count', tags })
+    .input(z.object({}).prefault({}))
+    .output(z.object({ count: z.number() }))
+    .handler(async ({ context }) => {
+      const count = await context.commuteRequests.countOpen(
+        context.organizationId
+      );
+      return { count };
+    }),
+
   updateStatus: procedure()
     .route({
       method: 'POST',

@@ -71,4 +71,17 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
       },
       data: { status: 'FULFILLED', commuteId },
     }),
+
+  countOpen: (organizationId: string) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return db.commuteRequest.count({
+      where: {
+        date: { gte: today },
+        status: 'OPEN',
+        requester: { organizationId },
+      },
+    });
+  },
 });
