@@ -99,7 +99,9 @@ export const StepOutwardStops = ({
                 variant="ghost"
                 size="lg"
                 className="w-full border border-dashed"
-                onClick={() => insert(index + 1, defaultStop)}
+                onClick={() =>
+                  insert(index + 1, defaultStop, { shouldFocus: false })
+                }
               >
                 <PlusIcon className="size-3" />
                 {t(`${ns}:form.addStop`)}
