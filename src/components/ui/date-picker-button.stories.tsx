@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/popover';
 
 export default {
-  title: 'DatePickerButton',
+  title: 'UI/DatePickerButton',
 };
 
 export const Default = () => {

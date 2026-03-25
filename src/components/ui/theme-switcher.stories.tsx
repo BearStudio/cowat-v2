@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
 export default {
-  title: 'Theme Switcher',
+  title: 'UI/Theme Switcher',
 } satisfies Meta<typeof ThemeSwitcher>;
 
 export const Default = () => {

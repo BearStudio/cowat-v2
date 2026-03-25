@@ -9,13 +9,11 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
+import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -94,7 +92,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <CardListSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => templatesQuery.refetch()} />
           ))

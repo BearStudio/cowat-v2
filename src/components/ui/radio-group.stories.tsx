@@ -7,7 +7,7 @@ import { cn } from '@/lib/tailwind/utils';
 import { Radio, RadioGroup } from '@/components/ui/radio-group';
 
 export default {
-  title: 'RadioGroup',
+  title: 'UI/RadioGroup',
 } satisfies Meta<typeof RadioGroup>;
 
 const astrobears = [

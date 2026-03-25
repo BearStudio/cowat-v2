@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 
 export default {
-  title: 'Tooltip',
+  title: 'UI/Tooltip',
 } satisfies Meta<typeof Tooltip>;
 
 export function Default() {

@@ -3,7 +3,7 @@ import { Meta } from '@storybook/react-vite';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckboxGroup } from '@/components/ui/checkbox-group';
 export default {
-  title: 'CheckboxGroup',
+  title: 'UI/CheckboxGroup',
   component: CheckboxGroup,
 } satisfies Meta<typeof CheckboxGroup>;
 

@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 
 export default {
-  title: 'Dialog',
+  title: 'UI/Dialog',
 } satisfies Meta<typeof Dialog>;
 
 export const Default = () => {

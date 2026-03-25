@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default {
-  title: 'Skeleton',
+  title: 'UI/Skeleton',
 } satisfies Meta<typeof Skeleton>;
 
 export function Default() {

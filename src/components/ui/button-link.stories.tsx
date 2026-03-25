@@ -26,7 +26,7 @@ const RouterWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export default {
-  title: 'ButtonLink',
+  title: 'UI/ButtonLink',
   decorators: [(Story) => <RouterWrapper>{Story()}</RouterWrapper>],
 } satisfies Meta<typeof ButtonLink>;
 

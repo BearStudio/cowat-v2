@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/collapsible';
 
 export default {
-  title: 'Collapsible',
+  title: 'UI/Collapsible',
 } satisfies Meta;
 
 export const Default = () => {

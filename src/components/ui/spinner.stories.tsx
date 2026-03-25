@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { Spinner } from '@/components/ui/spinner';
 
 export default {
-  title: 'Spinner',
+  title: 'UI/Spinner',
 } satisfies Meta<typeof Spinner>;
 
 export const Default = () => {

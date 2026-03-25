@@ -6,7 +6,7 @@ import { cn } from '@/lib/tailwind/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export default {
-  title: 'Checkbox',
+  title: 'UI/Checkbox',
 } satisfies Meta<typeof Checkbox>;
 
 export function Default() {

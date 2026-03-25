@@ -4,7 +4,7 @@ import { PlusIcon } from 'lucide-react';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 export default {
-  title: 'ResponsiveIconButton',
+  title: 'UI/ResponsiveIconButton',
 } satisfies Meta<typeof ResponsiveIconButton>;
 
 export function Default() {

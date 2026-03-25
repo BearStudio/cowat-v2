@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { InputGroupText } from '@/components/ui/input-group';
 
 export default {
-  title: 'Input',
+  title: 'UI/Input',
 } satisfies Meta<typeof Input>;
 
 export const Default = () => {
