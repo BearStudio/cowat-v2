@@ -1,10 +1,10 @@
 # Project Conventions
 
-## Branch Naming
+## PR Title
 
-Branch names **must** match: `(feat|fix|chore|test|docs)(<scope>)?:<description>`
+PR titles **must** match: `(feat|fix|chore|test|docs)(<scope>)?: <description>`
 
-Examples: `feat:add-login`, `fix(auth):token-expiry`, `chore:drop-legacy-api`
+Examples: `feat: add login page`, `fix(auth): token expiry`, `chore: drop legacy api`
 
 This is enforced by CI (`.github/workflows/branch-name.yml`).
 
