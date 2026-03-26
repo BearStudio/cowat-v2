@@ -50,6 +50,8 @@
   "invitations": {
     "title": "Pending invitations",
     "cancel": "Cancel",
+    "cancelConfirm": "Are you sure you want to cancel the invitation for {{email}}?",
+    "cancelConfirmAction": "Cancel invitation",
     "empty": "No pending invitations"
   },
   "create": {

@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { MailIcon, XIcon } from 'lucide-react';
+import { MailIcon, MailXIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -8,6 +8,7 @@ import { orpc } from '@/lib/orpc/client';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataList,
   DataListCell,
@@ -88,17 +89,31 @@ export const OrgInvitations = (props: {
                 )}
               </DataListCell>
               <DataListCell className="flex-none">
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  loading={cancelInvitation.isPending}
-                  onClick={() =>
-                    cancelInvitation.mutate({ invitationId: invitation.id })
+                <ConfirmResponsiveDrawer
+                  title={invitation.email}
+                  description={t('organization:invitations.cancelConfirm', {
+                    email: invitation.email,
+                  })}
+                  confirmText={t(
+                    'organization:invitations.cancelConfirmAction'
+                  )}
+                  confirmVariant="destructive"
+                  icon={<MailXIcon />}
+                  onConfirm={() =>
+                    cancelInvitation.mutateAsync({
+                      invitationId: invitation.id,
+                    })
                   }
                 >
-                  <XIcon className="size-3" />
-                  {t('organization:invitations.cancel')}
-                </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    loading={cancelInvitation.isPending}
+                  >
+                    <XIcon className="size-3" />
+                    {t('organization:invitations.cancel')}
+                  </Button>
+                </ConfirmResponsiveDrawer>
               </DataListCell>
             </DataListRow>
           ))
