@@ -10,6 +10,7 @@ import {
   zStop,
   zStopInput,
 } from '@/features/commute/schema';
+import { toRecipient } from '@/server/notifications/utils';
 import {
   organizationProcedure,
   type OrganizationProcedureArgs,
@@ -167,26 +168,19 @@ export default {
 
       const { id, stops, ...data } = input;
 
+      const affectedPassengers =
+        await context.bookings.findAffectedPassengers(id);
+
       const commute = await context.commutes.update(id, {
         ...data,
         ...(stops && { stops: { deleteMany: {}, create: stops } }),
       });
 
-      const affectedPassengers =
-        await context.bookings.findAffectedPassengers(id);
-
       for (const booking of affectedPassengers) {
-        const passengerUser = booking.passenger.user;
         await context.notify(
           {
             type: 'commute.updated',
-            recipient: {
-              userId: passengerUser.id,
-              name: passengerUser.name,
-              email: passengerUser.email,
-              notificationPreferences:
-                booking.passenger.notificationPreferences,
-            },
+            recipient: toRecipient(booking.passenger),
             payload: {
               driverName: context.user.name,
               commuteDate: existing.date,
@@ -224,17 +218,10 @@ export default {
       await context.commutes.delete(input.id);
 
       for (const booking of affectedPassengers) {
-        const passengerUser = booking.passenger.user;
         await context.notify(
           {
             type: 'commute.canceled',
-            recipient: {
-              userId: passengerUser.id,
-              name: passengerUser.name,
-              email: passengerUser.email,
-              notificationPreferences:
-                booking.passenger.notificationPreferences,
-            },
+            recipient: toRecipient(booking.passenger),
             payload: {
               driverName: context.user.name,
               commuteDate: existing.date,
