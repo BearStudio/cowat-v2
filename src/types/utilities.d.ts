@@ -1,4 +1,4 @@
-declare module '@fontsource-variable/public-sans';
+declare module '@fontsource-variable/outfit';
 
 /* eslint-disable sonarjs/redundant-type-aliases */
 /* eslint-disable @typescript-eslint/no-explicit-any */

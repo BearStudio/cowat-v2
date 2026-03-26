@@ -46,17 +46,19 @@ const TimelineMarker = ({
   isFirst: boolean;
   isLast: boolean;
 }) => (
-  <div className="flex w-3 flex-col items-center self-stretch pt-[3px]">
+  <div className="flex w-3.5 flex-col items-center self-stretch pt-[3px]">
     <div className="flex h-5 items-center">
       {isFirst ? (
-        <div className="size-3 shrink-0 rounded-full border-2 border-primary bg-card" />
+        <div className="size-3.5 shrink-0 rounded-full border-2 border-primary bg-primary/10" />
       ) : isLast ? (
         <div className="size-3 shrink-0 rounded-full bg-primary" />
       ) : (
         <div className="size-2 shrink-0 rounded-full bg-primary/50" />
       )}
     </div>
-    {!isLast && <div className="w-0.5 flex-1 rounded-full bg-primary/15" />}
+    {!isLast && (
+      <div className="w-0.5 flex-1 rounded-full bg-gradient-to-b from-primary/30 to-primary/10" />
+    )}
   </div>
 );
 
