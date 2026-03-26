@@ -6,6 +6,8 @@ import type {
   Prisma,
 } from '@/server/db/generated/client';
 
+import { userProfileSelect } from './helpers';
+
 export const createCommuteRequestRepository = (db: AppDB) => ({
   create: (data: {
     date: Date;
@@ -22,7 +24,7 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
       },
     }),
 
-  findPaginated: async (
+  findPaginated: (
     organizationId: string,
     opts: { cursor?: string; limit: number }
   ) => {
@@ -32,24 +34,20 @@ export const createCommuteRequestRepository = (db: AppDB) => ({
       requester: { organizationId },
     } satisfies Prisma.CommuteRequestWhereInput;
 
-    return Promise.all([
-      db.commuteRequest.count({ where }),
-      db.commuteRequest.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    return db.commuteRequest.findManyPaginated(
+      {
         orderBy: { date: 'asc' },
         where,
         include: {
           requester: {
             include: {
-              user: {
-                select: { id: true, name: true, image: true, phone: true },
-              },
+              user: { select: userProfileSelect },
             },
           },
         },
-      }),
-    ]);
+      },
+      opts
+    );
   },
 
   updateStatus: (id: string, status: CommuteRequestStatus) =>

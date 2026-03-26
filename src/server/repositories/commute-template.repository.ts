@@ -1,15 +1,11 @@
 import type { AppDB } from '@/server/db';
 import type { CommuteType } from '@/server/db/generated/client';
 
+import { stopsWithLocationInclude } from './helpers';
 import type { StopCreateInput } from './types';
 
 const templateWithLocationInclude = {
-  stops: {
-    orderBy: { order: 'asc' as const },
-    include: {
-      location: { select: { id: true, name: true, address: true } },
-    },
-  },
+  stops: stopsWithLocationInclude,
 } as const;
 
 export const createCommuteTemplateRepository = (db: AppDB) => ({
@@ -26,16 +22,14 @@ export const createCommuteTemplateRepository = (db: AppDB) => ({
     memberId: string,
     opts: { cursor?: string; limit: number }
   ) =>
-    Promise.all([
-      db.commuteTemplate.count({ where: { driverMemberId: memberId } }),
-      db.commuteTemplate.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    db.commuteTemplate.findManyPaginated(
+      {
         orderBy: { updatedAt: 'desc' },
         where: { driverMemberId: memberId },
         include: templateWithLocationInclude,
-      }),
-    ]),
+      },
+      opts
+    ),
 
   findById: (id: string, organizationId: string) =>
     db.commuteTemplate.findFirst({

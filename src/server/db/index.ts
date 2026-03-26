@@ -1,7 +1,7 @@
 import { envServer } from '@/env/server';
 import { timingStore } from '@/server/timing-store';
 
-import { PrismaClient } from './generated/client';
+import { Prisma, PrismaClient } from './generated/client';
 
 const levels = {
   trace: ['query', 'error', 'warn', 'info'],
@@ -101,6 +101,30 @@ function createPrisma() {
             }
 
             return result;
+          },
+        },
+      },
+    })
+    .$extends({
+      name: 'cursor-pagination',
+      model: {
+        $allModels: {
+          async findManyPaginated<T, A>(
+            this: T,
+            findManyArgs: Prisma.Exact<A, Prisma.Args<T, 'findMany'>>,
+            opts: { limit: number; cursor?: string }
+          ): Promise<[number, Prisma.Result<T, A, 'findMany'>]> {
+            const ctx = Prisma.getExtensionContext(this) as never;
+            return Promise.all([
+              (ctx as any).count({
+                where: (findManyArgs as any).where,
+              }),
+              (ctx as any).findMany({
+                ...(findManyArgs as any),
+                take: opts.limit + 1,
+                cursor: opts.cursor ? { id: opts.cursor } : undefined,
+              }),
+            ]);
           },
         },
       },

@@ -2,6 +2,12 @@ import { ORPCError } from '@orpc/client';
 
 import type { RequestStatus } from '@/features/booking/schema';
 
+/** Booking statuses that count as "active" (not cancelled/refused) */
+export const ACTIVE_BOOKING_STATUSES: RequestStatus[] = [
+  'REQUESTED',
+  'ACCEPTED',
+];
+
 export const VALID_STATUS_TRANSITIONS: Record<RequestStatus, RequestStatus[]> =
   {
     REQUESTED: ['ACCEPTED', 'REFUSED', 'CANCELED'],
