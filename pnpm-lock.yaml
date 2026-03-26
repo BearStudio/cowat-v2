@@ -23,9 +23,9 @@ importers:
       '@better-upload/server':
         specifier: 3.0.14
         version: 3.0.14
-      '@fontsource-variable/public-sans':
-        specifier: ^5.2.7
-        version: 5.2.7
+      '@fontsource-variable/outfit':
+        specifier: 5.2.8
+        version: 5.2.8
       '@hookform/resolvers':
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.4))
@@ -1575,8 +1575,8 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@fontsource-variable/public-sans@5.2.7':
-    resolution: {integrity: sha512-4mvade2J3slKkvwRkS+p8T3szet/0vhWoSnuUJTVU81Uo2pRpSZY/Y8bSLRqpSwzIPxjVmRJ53oq6JKP/l/PSg==}
+  '@fontsource-variable/outfit@5.2.8':
+    resolution: {integrity: sha512-4oUDCZx/Tcz6HZP423w/niqEH31Gks5IsqHV2ZZz1qKHaVIZdj2f0/S1IK2n8jl6Xo0o3N+3RjNHlV9R73ozQA==}
 
   '@grpc/grpc-js@1.9.15':
     resolution: {integrity: sha512-nqE7Hc0AzI+euzUwDAy0aY5hCp10r734gMGRdU+qOPX0XSceI2ULrcXB5U2xSc5VkWwalCj4M7GzCAygZl2KoQ==}
@@ -10758,7 +10758,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@fontsource-variable/public-sans@5.2.7': {}
+  '@fontsource-variable/outfit@5.2.8': {}
 
   '@grpc/grpc-js@1.9.15':
     dependencies:
