@@ -1,3 +1,5 @@
+import type { NotificationChannelType } from '@/server/db/generated/client';
+
 import type {
   AllowedNotificationChannels,
   EventWithRecipient,
@@ -44,6 +46,19 @@ export function filterEventForChannel(
   }
 
   return event;
+}
+
+/** Map a member (with included user & notification prefs) to a Recipient. */
+export function toRecipient(member: {
+  notificationPreferences?: ReadonlyArray<{ channel: NotificationChannelType }>;
+  user: { id: string; name: string; email: string };
+}): Recipient {
+  return {
+    userId: member.user.id,
+    name: member.user.name,
+    email: member.user.email,
+    notificationPreferences: member.notificationPreferences,
+  };
 }
 
 /** Extracts recipients from any event shape (single, multi, or broadcast → empty). */

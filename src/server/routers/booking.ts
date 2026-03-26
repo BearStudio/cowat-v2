@@ -11,6 +11,7 @@ import {
   countPassengersByDirection,
   isTripTypeFull,
 } from '@/features/commute/commute-passenger-rules';
+import { toRecipient } from '@/server/notifications/utils';
 import {
   organizationProcedure,
   type OrganizationProcedureArgs,
@@ -98,7 +99,6 @@ export default {
       }
 
       const driverMember = stop.commute.driver;
-      const driverUser = driverMember.user;
       const status = driverMember.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
       const booking = await context.bookings.upsertRequest({
@@ -112,12 +112,7 @@ export default {
       await context.notify(
         {
           type: 'booking.requested',
-          recipient: {
-            userId: driverUser.id,
-            name: driverUser.name,
-            email: driverUser.email,
-            notificationPreferences: driverMember.notificationPreferences,
-          },
+          recipient: toRecipient(driverMember),
           payload: {
             passengerName: context.user.name,
             commuteDate: stop.commute.date,
@@ -168,16 +163,10 @@ export default {
 
       await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
-      const passengerUser = booking.passenger.user;
       await context.notify(
         {
           type: 'booking.accepted',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            notificationPreferences: booking.passenger.notificationPreferences,
-          },
+          recipient: toRecipient(booking.passenger),
           payload: {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
@@ -208,16 +197,10 @@ export default {
 
       await context.bookings.updateStatus(input.id, 'REFUSED');
 
-      const passengerUser = booking.passenger.user;
       await context.notify(
         {
           type: 'booking.refused',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            notificationPreferences: booking.passenger.notificationPreferences,
-          },
+          recipient: toRecipient(booking.passenger),
           payload: {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
@@ -249,16 +232,10 @@ export default {
       await context.bookings.updateStatus(input.id, 'CANCELED');
 
       const driverMember = booking.stop.commute.driver;
-      const driverUser = driverMember.user;
       await context.notify(
         {
           type: 'booking.canceled',
-          recipient: {
-            userId: driverUser.id,
-            name: driverUser.name,
-            email: driverUser.email,
-            notificationPreferences: driverMember.notificationPreferences,
-          },
+          recipient: toRecipient(driverMember),
           payload: {
             passengerName: context.user.name,
             commuteDate: booking.stop.commute.date,
