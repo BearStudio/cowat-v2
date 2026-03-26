@@ -62,15 +62,24 @@ export default {
         });
       }
 
-      const existingBooking = await context.bookings.findExistingBooking(
+      const activeBooking = await context.bookings.findActiveBooking(
         context.memberId,
         stop.commuteId
       );
 
-      if (existingBooking) {
+      if (activeBooking) {
         throw new ORPCError('CONFLICT', {
           message: 'You already have a booking on this commute',
         });
+      }
+
+      const previousBooking = await context.bookings.findBookingOnStop(
+        context.memberId,
+        input.stopId
+      );
+
+      if (previousBooking) {
+        validateStatusTransition(previousBooking.status, 'REQUESTED');
       }
 
       const acceptedBookings = await context.bookings.findAcceptedBookings(
