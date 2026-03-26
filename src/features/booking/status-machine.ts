@@ -6,8 +6,8 @@ export const VALID_STATUS_TRANSITIONS: Record<RequestStatus, RequestStatus[]> =
   {
     REQUESTED: ['ACCEPTED', 'REFUSED', 'CANCELED'],
     ACCEPTED: ['CANCELED'],
-    REFUSED: [],
-    CANCELED: [],
+    REFUSED: ['REQUESTED'],
+    CANCELED: ['REQUESTED'],
   };
 
 export function validateStatusTransition(

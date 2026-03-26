@@ -37,6 +37,7 @@ export default defineConfig({
         test: {
           name: 'unit',
           environment: 'node',
+          tags: [{ name: 'non-regression' }],
           include: ['src/**/*.unit.{test,spec}.?(c|m)[jt]s?(x)'],
           setupFiles: [
             resolve('src/tests/setup.base.ts'),
