@@ -50,12 +50,19 @@ export const createBookingRepository = (db: AppDB) => ({
       },
     }),
 
-  findExistingBooking: (passengerMemberId: string, commuteId: string) =>
+  findActiveBooking: (passengerMemberId: string, commuteId: string) =>
     db.passengersOnStops.findFirst({
       where: {
         passengerMemberId,
         status: { in: ['REQUESTED', 'ACCEPTED'] },
         stop: { commuteId },
+      },
+    }),
+
+  findBookingOnStop: (passengerMemberId: string, stopId: string) =>
+    db.passengersOnStops.findUnique({
+      where: {
+        passengerMemberId_stopId: { passengerMemberId, stopId },
       },
     }),
 

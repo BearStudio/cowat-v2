@@ -8,6 +8,8 @@ describe('validateStatusTransition', () => {
     ['REQUESTED', 'REFUSED'],
     ['REQUESTED', 'CANCELED'],
     ['ACCEPTED', 'CANCELED'],
+    ['REFUSED', 'REQUESTED'],
+    ['CANCELED', 'REQUESTED'],
   ] as const)('should allow %s → %s', (from, to) => {
     expect(() => validateStatusTransition(from, to)).not.toThrow();
   });
@@ -15,10 +17,8 @@ describe('validateStatusTransition', () => {
   it.each([
     ['ACCEPTED', 'ACCEPTED'],
     ['ACCEPTED', 'REFUSED'],
-    ['REFUSED', 'REQUESTED'],
     ['REFUSED', 'ACCEPTED'],
     ['REFUSED', 'CANCELED'],
-    ['CANCELED', 'REQUESTED'],
     ['CANCELED', 'ACCEPTED'],
     ['CANCELED', 'REFUSED'],
   ] as const)('should reject %s → %s', (from, to) => {
