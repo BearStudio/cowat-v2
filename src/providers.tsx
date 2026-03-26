@@ -3,7 +3,7 @@ import { NuqsAdapter } from 'nuqs/adapters/tanstack-router';
 import type { ReactNode } from 'react';
 import '@/lib/dayjs/config';
 import '@/lib/i18n';
-import '@fontsource-variable/public-sans';
+import '@fontsource-variable/outfit';
 
 import { QueryClientProvider } from '@/lib/tanstack-query/provider';
 

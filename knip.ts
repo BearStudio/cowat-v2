@@ -25,7 +25,7 @@ const config: KnipConfig = {
     'resize-observer-polyfill', // used in test setup
     'tailwindcss', // used via CSS @import
     'tw-animate-css', // used via CSS @import
-    '@fontsource-variable/public-sans', // used via CSS @import
+    '@fontsource-variable/plus-jakarta-sans', // used via CSS @import
   ],
   storybook: {
     config: ['.storybook/main.ts'],
