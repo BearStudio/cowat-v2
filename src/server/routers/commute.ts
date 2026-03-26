@@ -18,7 +18,12 @@ import {
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createCommuteRequestRepository } from '@/server/repositories/commute-request.repository';
-import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
+import {
+  assertDriverOwnership,
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['commutes'];
 
@@ -120,21 +125,8 @@ export default {
 
   getMyCommutes: procedure({ permissions: { commute: ['read'] } })
     .route({ method: 'GET', path: '/commutes/mine', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zCommuteEnriched()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zCommuteEnriched()))
     .handler(async ({ context, input }) => {
       const { total, items } = await context.commutes.findMyPaginated({
         memberId: context.memberId,

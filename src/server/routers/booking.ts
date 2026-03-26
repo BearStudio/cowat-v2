@@ -17,6 +17,11 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
@@ -260,36 +265,20 @@ export default {
 
   getRequestsForDriver: procedure({ permissions: { booking: ['read'] } })
     .route({ method: 'GET', path: '/bookings/driver-requests', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zBookingForDriver()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zBookingForDriver()))
     .handler(async ({ context, input }) => {
-      const [total, rawItems] =
-        await context.bookings.findDriverRequestsPaginated(context.memberId, {
+      const [total, items] = await context.bookings.findDriverRequestsPaginated(
+        context.memberId,
+        {
           cursor: input.cursor,
           limit: input.limit,
-        });
+        }
+      );
 
-      let nextCursor: string | undefined;
-      if (rawItems.length > input.limit) nextCursor = rawItems.pop()?.id;
-
-      const items = rawItems.map((item) => ({
+      return paginateResult(total, items, input.limit, (item) => ({
         ...item,
         passenger: item.passenger.user,
       }));
-
-      return { items, nextCursor, total };
     }),
 };
