@@ -4,6 +4,12 @@ import { useRef } from 'react';
  * Returns a container ref and a function that, after the next paint,
  * focuses the first visible text input inside the element matching
  * `[data-field-index="${index}"]` and scrolls it into view.
+ *
+ * React Hook Form's `setFocus` does not work reliably with field arrays:
+ * when appending a new field, `setFocus` fires before the DOM node exists,
+ * so the input is never focused or scrolled into view. This hook uses a
+ * DOM-based approach with `requestAnimationFrame` to wait for the next
+ * paint, then manually finds and focuses the input.
  */
 export function useFocusFieldAt<T extends HTMLElement = HTMLDivElement>() {
   const containerRef = useRef<T>(null);
