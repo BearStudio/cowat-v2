@@ -21,7 +21,9 @@ export const Route = createFileRoute('/manager/organizations/')({
     middlewares: [stripSearchParams({ searchTerm: '' })],
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchInfiniteQuery(organizationsInfiniteOptions({}));
+    context.queryClient.prefetchInfiniteQuery(
+      organizationsInfiniteOptions({ searchTerm: '' })
+    );
   },
 });
 

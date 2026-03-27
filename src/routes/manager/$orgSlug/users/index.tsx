@@ -18,7 +18,9 @@ export const Route = createFileRoute('/manager/$orgSlug/users/')({
     middlewares: [stripSearchParams({ searchTerm: '' })],
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchInfiniteQuery(usersInfiniteOptions({}));
+    context.queryClient.prefetchInfiniteQuery(
+      usersInfiniteOptions({ searchTerm: '' })
+    );
   },
 });
 

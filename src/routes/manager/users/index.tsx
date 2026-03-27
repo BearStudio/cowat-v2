@@ -19,7 +19,9 @@ export const Route = createFileRoute('/manager/users/')({
     middlewares: [stripSearchParams({ searchTerm: '' })],
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchInfiniteQuery(usersInfiniteOptions({}));
+    context.queryClient.prefetchInfiniteQuery(
+      usersInfiniteOptions({ searchTerm: '' })
+    );
   },
 });
 
