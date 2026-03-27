@@ -1,10 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageCommuteTemplates } from '@/features/commute-template/app/page-commute-templates';
+import {
+  commuteTemplatesInfiniteOptions,
+  PageCommuteTemplates,
+} from '@/features/commute-template/app/page-commute-templates';
 
 export const Route = createFileRoute(
   '/app/$orgSlug/account/commute-templates/'
 )({
+  loader: ({ context }) => {
+    context.queryClient.prefetchInfiniteQuery(
+      commuteTemplatesInfiniteOptions()
+    );
+  },
   component: RouteComponent,
 });
 
