@@ -298,12 +298,52 @@ describe('commute router', () => {
     });
   });
 
+  describe('getByIdEnriched', () => {
+    it('should return an enriched commute with driver and passengers', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteEnrichedRawFromDb);
+
+      const result = await call(commuteRouter.getByIdEnriched, {
+        id: 'commute-1',
+      });
+
+      expect(result).toEqual(mockCommuteEnriched);
+    });
+
+    it('should throw NOT_FOUND when commute does not exist', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(null);
+
+      await expect(
+        call(commuteRouter.getByIdEnriched, { id: 'nonexistent' })
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    });
+
+    it('should throw UNAUTHORIZED when user is not authenticated', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      await expect(
+        call(commuteRouter.getByIdEnriched, { id: 'commute-1' })
+      ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
+    });
+  });
+
   describe('update', () => {
     const updateInput = {
       id: 'commute-1',
       seats: 4,
       comment: 'Updated comment',
     };
+
+    const mockBooking = (id: string) => ({
+      id,
+      passenger: {
+        user: {
+          id: `user-${id}`,
+          name: `Passenger ${id}`,
+          email: `${id}@test.com`,
+        },
+        notificationPreferences: [],
+      },
+    });
 
     it('should update a commute and return it', async () => {
       mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
@@ -314,6 +354,7 @@ describe('commute router', () => {
       };
       mockDb.commute.update.mockResolvedValue(updatedCommute);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+      mockDb.stop.findMany.mockResolvedValue([]);
 
       const result = await call(commuteRouter.update, updateInput);
 
@@ -329,6 +370,7 @@ describe('commute router', () => {
       };
       mockDb.commute.update.mockResolvedValue(updatedCommute);
       mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+      mockDb.stop.findMany.mockResolvedValue([]);
 
       await call(commuteRouter.update, updateInput);
 
@@ -340,6 +382,44 @@ describe('commute router', () => {
           }),
         })
       );
+    });
+
+    it('should not cancel bookings when seats are not reduced', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      const bookings = [mockBooking('b1'), mockBooking('b2')];
+      mockDb.passengersOnStops.findMany.mockResolvedValue(bookings);
+      mockDb.stop.findMany.mockResolvedValue([]);
+      mockDb.commute.update.mockResolvedValue({
+        ...mockCommuteFromDb,
+        seats: 4,
+        comment: 'Updated comment',
+      });
+
+      await call(commuteRouter.update, updateInput);
+
+      expect(mockDb.passengersOnStops.updateMany).not.toHaveBeenCalled();
+    });
+
+    it('should cancel all bookings when seats are reduced', async () => {
+      mockDb.commute.findFirst.mockResolvedValue(mockCommuteFromDb);
+      const bookings = [
+        mockBooking('b1'),
+        mockBooking('b2'),
+        mockBooking('b3'),
+      ];
+      mockDb.passengersOnStops.findMany.mockResolvedValue(bookings);
+      mockDb.stop.findMany.mockResolvedValue([]);
+      mockDb.commute.update.mockResolvedValue({
+        ...mockCommuteFromDb,
+        seats: 2,
+      });
+
+      await call(commuteRouter.update, { id: 'commute-1', seats: 2 });
+
+      expect(mockDb.passengersOnStops.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['b1', 'b2', 'b3'] } },
+        data: { status: 'CANCELED' },
+      });
     });
 
     it('should throw NOT_FOUND when commute does not exist', async () => {

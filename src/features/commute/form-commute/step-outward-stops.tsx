@@ -68,7 +68,7 @@ export const StepOutwardStops = ({
                   .filter((id): id is string => !!id)}
               />
 
-              <div className="flex items-end gap-3">
+              <div className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
                   <FormField>
                     <FormFieldLabel required>
@@ -86,7 +86,7 @@ export const StepOutwardStops = ({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
+                    className="mt-7 shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
                     onClick={() => remove(index)}
                   >
                     <Trash2Icon className="size-4" />

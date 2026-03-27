@@ -33,6 +33,14 @@ export const createCommuteRepository = (db: AppDB) => ({
       include: { stops: true },
     }),
 
+  findByIdEnriched: async (id: string, organizationId: string) => {
+    const commute = await db.commute.findFirst({
+      where: { id, driver: { organizationId } },
+      include: enrichedCommuteInclude,
+    });
+    return commute ? flattenEnrichedCommute(commute) : null;
+  },
+
   findByDateRange: async (params: {
     from: Date;
     to: Date;
@@ -96,15 +104,55 @@ export const createCommuteRepository = (db: AppDB) => ({
       where: { id, driver: { organizationId } },
     }),
 
-  update: (
+  update: async (
     id: string,
     data: {
       seats?: number;
       type?: CommuteType;
       comment?: string | null;
-      stops?: { deleteMany: object; create: StopCreateInput[] };
+      stops?: StopCreateInput[];
     }
-  ) => db.commute.update({ where: { id }, data, include: { stops: true } }),
+  ) => {
+    const { stops, ...fields } = data;
+
+    if (!stops) {
+      return db.commute.update({
+        where: { id },
+        data: fields,
+        include: { stops: true },
+      });
+    }
+
+    const existingStops = await db.stop.findMany({
+      where: { commuteId: id },
+      orderBy: { order: 'asc' },
+      select: { id: true },
+    });
+
+    const stopsToDelete = existingStops.slice(stops.length);
+
+    return db.commute.update({
+      where: { id },
+      data: {
+        ...fields,
+        stops: {
+          ...(stopsToDelete.length > 0 && {
+            deleteMany: { id: { in: stopsToDelete.map((s) => s.id) } },
+          }),
+          update: existingStops.slice(0, stops.length).map((existing, i) => {
+            const stopData = stops[i];
+            if (!stopData)
+              throw new Error('unreachable: stop index out of bounds');
+            return { where: { id: existing.id }, data: stopData };
+          }),
+          ...(stops.length > existingStops.length && {
+            create: stops.slice(existingStops.length),
+          }),
+        },
+      },
+      include: { stops: true },
+    });
+  },
 
   delete: (id: string) => db.commute.delete({ where: { id } }),
 

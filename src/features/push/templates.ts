@@ -73,6 +73,16 @@ export function getPushContent(
         params: { orgSlug: e.payload.orgSlug },
       }),
     }))
+    .with({ type: 'booking.canceledByDriver' }, (e) => ({
+      title: t('notifications:push.booking.canceledByDriver.title'),
+      body: t('notifications:push.booking.canceledByDriver.body', {
+        driverName: e.payload.driverName,
+        date: formatDate(e.payload.commuteDate),
+      }),
+      link: routeUrl(baseUrl, '/app/$orgSlug', {
+        params: { orgSlug: e.payload.orgSlug },
+      }),
+    }))
     .with({ type: 'commute.updated' }, (e) => ({
       title: t('notifications:push.commute.updated.title'),
       body: t('notifications:push.commute.updated.body', {

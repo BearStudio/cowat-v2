@@ -45,7 +45,9 @@
   },
   "update": {
     "title": "Modifier le trajet",
-    "submitButton": "Enregistrer"
+    "submitButton": "Enregistrer",
+    "passengersWarning_one": "{{count}} passager est actuellement inscrit sur ce trajet et sera notifié des modifications.",
+    "passengersWarning_other": "{{count}} passagers sont actuellement inscrits sur ce trajet et seront notifiés des modifications."
   },
   "templatePicker": {
     "title": "Mes modèles",
