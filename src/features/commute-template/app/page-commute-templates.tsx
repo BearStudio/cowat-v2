@@ -175,6 +175,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                           commuteId: '',
                           passengers: [],
                         }))}
+                        disableLinks
                       />
                     </div>
                   </CardContent>
