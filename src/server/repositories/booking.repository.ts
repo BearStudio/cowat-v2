@@ -128,6 +128,12 @@ export const createBookingRepository = (db: AppDB) => ({
       },
     }),
 
+  cancelMany: (ids: string[]) =>
+    db.passengersOnStops.updateMany({
+      where: { id: { in: ids } },
+      data: { status: 'CANCELED' },
+    }),
+
   findAffectedPassengers: (commuteId: string) =>
     db.passengersOnStops.findMany({
       where: {

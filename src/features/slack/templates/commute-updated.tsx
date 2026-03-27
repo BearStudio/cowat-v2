@@ -28,7 +28,6 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
 
   const dateChanged = previousDate !== newDate;
   const typeChanged = payload.commuteType !== payload.newCommuteType;
-  const seatsChanged = payload.previousSeats !== payload.newSeats;
 
   const diffLines = [
     dateChanged
@@ -36,12 +35,6 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
       : null,
     typeChanged
       ? i18n.t('notifications:commute.updatedType', { previousType, newType })
-      : null,
-    seatsChanged
-      ? i18n.t('notifications:commute.updatedSeats', {
-          previousSeats: String(payload.previousSeats),
-          newSeats: String(payload.newSeats),
-        })
       : null,
   ].filter(Boolean) as string[];
 
@@ -72,12 +65,6 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
                   <>
                     <br />
                     {diffLines[1]}
-                  </>
-                )}
-                {diffLines[2] !== undefined && (
-                  <>
-                    <br />
-                    {diffLines[2]}
                   </>
                 )}
               </>

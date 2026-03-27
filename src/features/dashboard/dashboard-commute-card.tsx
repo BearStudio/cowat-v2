@@ -65,6 +65,7 @@ export const DashboardCommuteCard = ({
       bookingStatus={bookingStatus}
       open={open}
       onOpenChange={onOpenChange}
+      data-commute-id={commute.id}
     >
       <CardCommuteTrigger>
         <CardCommuteHeader
