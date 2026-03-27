@@ -2,11 +2,7 @@ import { z } from 'zod';
 
 import { zUserSummary } from '@/features/commute/schema';
 
-export const zCommuteRequestStatus = () =>
-  z.enum(['OPEN', 'FULFILLED', 'CANCELED']);
-export type CommuteRequestStatus = z.infer<
-  ReturnType<typeof zCommuteRequestStatus>
->;
+const zCommuteRequestStatus = () => z.enum(['OPEN', 'FULFILLED', 'CANCELED']);
 
 export type CommuteRequestForList = z.infer<
   ReturnType<typeof zCommuteRequestForList>

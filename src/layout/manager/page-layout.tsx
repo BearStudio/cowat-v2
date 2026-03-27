@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 
-export const PageLayoutContainer = (props: {
+const PageLayoutContainer = (props: {
   children?: ReactNode;
   className?: string;
 }) => {

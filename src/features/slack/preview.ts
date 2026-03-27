@@ -13,7 +13,6 @@ import type { CommuteReminderEvent } from '@/server/notifications/types';
 import type { BroadcastEvent, BroadcastOpts, PrivateEvent } from './templates';
 import {
   getBroadcastBlocks,
-  getFallbackText,
   getPrivateBlocks,
   type SlackBlock,
 } from './templates';
@@ -370,5 +369,3 @@ export function previewSlackRoute(
     headers: { 'Content-Type': 'text/html' },
   });
 }
-
-export { getFallbackText };

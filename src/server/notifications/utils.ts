@@ -9,7 +9,7 @@ import type {
 
 /** Returns true if the given channel is enabled for the recipient (or no preferences exist → all enabled).
  *  Accepts channel names in any case (e.g. 'SLACK', 'slack', 'Push'). */
-export function isChannelEnabledForRecipient(
+function isChannelEnabledForRecipient(
   recipient: Pick<Recipient, 'notificationPreferences'>,
   channelName: AllowedNotificationChannels
 ): boolean {

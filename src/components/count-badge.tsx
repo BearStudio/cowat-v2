@@ -7,7 +7,8 @@ const countBadgeVariants = cva(
   {
     variants: {
       variant: {
-        destructive: 'absolute -top-1 -right-1 size-4 bg-negative-500 text-white ring-2 ring-white md:size-3 md:text-[8px] dark:ring-neutral-900',
+        destructive:
+          'absolute -top-1 -right-1 size-4 bg-negative-500 text-white ring-2 ring-white md:size-3 md:text-[8px] dark:ring-neutral-900',
         subtle: 'ml-1 size-5 bg-muted text-muted-foreground',
       },
     },

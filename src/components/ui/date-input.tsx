@@ -24,7 +24,7 @@ type UseDayPickerInputManagementParams = {
   dateFormat: string;
   onChange: (newDate: Date | null) => void;
 };
-export const useDatePickerInputManagement = (
+const useDatePickerInputManagement = (
   params: UseDayPickerInputManagementParams
 ): UseDayPickerInputManagement => {
   const { dateValue, dateFormat, onChange } = params;
