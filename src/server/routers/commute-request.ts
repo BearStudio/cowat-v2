@@ -7,6 +7,11 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createCommuteRequestRepository } from '@/server/repositories/commute-request.repository';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['commute-requests'];
 
@@ -62,36 +67,18 @@ export default {
 
   getAll: procedure()
     .route({ method: 'GET', path: '/commute-requests', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zCommuteRequestForList()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zCommuteRequestForList()))
     .handler(async ({ context, input }) => {
-      const [total, rawItems] = await context.commuteRequests.findPaginated(
+      const [total, items] = await context.commuteRequests.findPaginated(
         context.organizationId,
         { cursor: input.cursor, limit: input.limit }
       );
 
-      let nextCursor: string | undefined;
-      if (rawItems.length > input.limit) nextCursor = rawItems.pop()?.id;
-
-      const items = rawItems.map((item) => ({
+      return paginateResult(total, items, input.limit, (item) => ({
         ...item,
         requester: item.requester.user,
       }));
-
-      return { items, nextCursor, total };
     }),
 
   openCount: procedure()

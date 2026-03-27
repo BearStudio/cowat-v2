@@ -711,9 +711,9 @@ describe('booking router', () => {
 
   describe('getRequestsForDriver', () => {
     it('should return paginated booking requests for the driver', async () => {
-      mockDb.passengersOnStops.count.mockResolvedValue(1);
-      mockDb.passengersOnStops.findMany.mockResolvedValue([
-        mockBookingForDriverRaw,
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        1,
+        [mockBookingForDriverRaw],
       ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {});
@@ -726,14 +726,14 @@ describe('booking router', () => {
     });
 
     it('should filter by driverMemberId', async () => {
-      mockDb.passengersOnStops.count.mockResolvedValue(1);
-      mockDb.passengersOnStops.findMany.mockResolvedValue([
-        mockBookingForDriverRaw,
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        1,
+        [mockBookingForDriverRaw],
       ]);
 
       await call(bookingRouter.getRequestsForDriver, {});
 
-      expect(mockDb.passengersOnStops.findMany).toHaveBeenCalledWith(
+      expect(mockDb.passengersOnStops.findManyPaginated).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             status: 'REQUESTED',
@@ -744,7 +744,8 @@ describe('booking router', () => {
               },
             },
           }),
-        })
+        }),
+        expect.any(Object)
       );
     });
 
@@ -763,8 +764,10 @@ describe('booking router', () => {
         ...mockBookingForDriverRaw,
         id: `booking-${i}`,
       }));
-      mockDb.passengersOnStops.count.mockResolvedValue(5);
-      mockDb.passengersOnStops.findMany.mockResolvedValue(bookings);
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        5,
+        bookings,
+      ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {
         limit: 2,

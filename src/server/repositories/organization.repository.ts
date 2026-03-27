@@ -1,6 +1,8 @@
 import type { AppDB } from '@/server/db';
 import type { Prisma } from '@/server/db/generated/client';
 
+import { userCardSelect } from './helpers';
+
 export const createOrganizationRepository = (db: AppDB) => ({
   findPaginated: (opts: {
     searchTerm?: string;
@@ -24,16 +26,14 @@ export const createOrganizationRepository = (db: AppDB) => ({
       ],
     } satisfies Prisma.OrganizationWhereInput;
 
-    return Promise.all([
-      db.organization.count({ where }),
-      db.organization.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    return db.organization.findManyPaginated(
+      {
         orderBy: { name: 'asc' },
         where,
         include: { _count: { select: { members: true } } },
-      }),
-    ]);
+      },
+      opts
+    );
   },
 
   updateMemberRole: (memberId: string, role: 'owner' | 'member') =>
@@ -48,9 +48,7 @@ export const createOrganizationRepository = (db: AppDB) => ({
       include: {
         members: {
           include: {
-            user: {
-              select: { id: true, name: true, email: true, image: true },
-            },
+            user: { select: userCardSelect },
           },
         },
         invitations: {
@@ -91,7 +89,7 @@ export const createOrganizationRepository = (db: AppDB) => ({
         email: { contains: opts.email, mode: 'insensitive' },
         members: { none: { organizationId: opts.organizationId } },
       },
-      select: { id: true, name: true, email: true, image: true },
+      select: userCardSelect,
       take: opts.limit,
       orderBy: { email: 'asc' },
     }),

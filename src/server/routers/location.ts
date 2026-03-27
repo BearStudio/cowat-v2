@@ -7,7 +7,11 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createLocationRepository } from '@/server/repositories/location.repository';
-import { paginateResult } from '@/server/routers/utils';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['locations'];
 
@@ -34,21 +38,8 @@ export default {
     permissions: { location: ['read'] },
   })
     .route({ method: 'GET', path: '/locations', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zLocation()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zLocation()))
     .handler(async ({ context, input }) => {
       const [total, items] = await context.locations.findPaginatedByMember(
         context.memberId,
