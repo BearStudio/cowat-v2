@@ -3,7 +3,7 @@ import { createSlackChannel } from './channels/slack';
 import { terminalChannel } from './channels/terminal';
 import { Notifier } from './notifier';
 
-export type { NotificationEvent, Recipient } from './types';
+export type { NotificationEvent } from './types';
 
 export const notifier = new Notifier()
   .register(terminalChannel)

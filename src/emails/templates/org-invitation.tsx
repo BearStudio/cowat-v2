@@ -12,7 +12,7 @@ import { EmailFooter } from '@/emails/components/email-footer';
 import { EmailLayout } from '@/emails/components/email-layout';
 import { styles } from '@/emails/styles';
 
-export const TemplateOrgInvitation = (props: {
+const TemplateOrgInvitation = (props: {
   language: string;
   organizationName: string;
   inviterName: string;

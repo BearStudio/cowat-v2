@@ -4,7 +4,7 @@ import { cn } from '@/lib/tailwind/utils';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const PageLayoutContainer = (props: {
+const PageLayoutContainer = (props: {
   children?: ReactNode;
   className?: string;
 }) => {

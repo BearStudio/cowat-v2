@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
-export type Location = z.infer<ReturnType<typeof zLocation>>;
 export const zLocation = () =>
   z.object({
     id: z.string(),

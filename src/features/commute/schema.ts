@@ -15,8 +15,7 @@ import { zUser } from '@/features/user/schema';
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
 export type CommuteType = z.infer<ReturnType<typeof zCommuteType>>;
 
-export const zCommuteStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'DELAYED']);
-export type CommuteStatus = z.infer<ReturnType<typeof zCommuteStatus>>;
+const zCommuteStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'DELAYED']);
 
 export type Commute = z.infer<ReturnType<typeof zCommute>>;
 export const zCommute = () =>
@@ -33,7 +32,6 @@ export const zCommute = () =>
     updatedAt: z.date(),
   });
 
-export type Stop = z.infer<ReturnType<typeof zStop>>;
 export const zStop = () =>
   z.object({
     id: z.string(),
@@ -46,7 +44,6 @@ export const zStop = () =>
     updatedAt: z.date(),
   });
 
-export type StopInput = z.infer<ReturnType<typeof zStopInput>>;
 export const zStopInput = () =>
   z.object({
     order: z.number().int().min(0),
@@ -207,8 +204,7 @@ export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
 export const zUserSummary = () =>
   zUser().pick({ id: true, name: true, image: true, phone: true });
 
-export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
-export const zLocationSummary = () =>
+const zLocationSummary = () =>
   zLocation().pick({ id: true, name: true, address: true });
 
 export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
