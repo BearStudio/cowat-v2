@@ -151,20 +151,24 @@ test.describe
     const userPage = await userCtx.newPage();
     const dashboard = new DashboardPage(userPage);
 
-    // Navigate with openCommutes to expand the specific commute card
+    // Navigate with openCommutes to auto-expand the specific card
     await userPage.goto(`/app/${ORG_SLUG}/?openCommutes=${commuteId}`);
     await expect(
       userPage.locator('[data-slot="card-commute"]').first()
     ).toBeVisible({ timeout: 10_000 });
 
-    const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
+    // Target the exact commute card by data attribute
+    const targetCard = userPage.locator(
+      `[data-slot="card-commute"][data-commute-id="${commuteId}"]`
+    );
+    await expect(targetCard).toBeVisible({ timeout: 10_000 });
 
     // The user's booking should have been cancelled — "Book" button should
     // be visible instead of "Cancel"
-    await expect(dashboard.bookButtons(adminCard).first()).toBeVisible({
+    await expect(dashboard.bookButtons(targetCard).first()).toBeVisible({
       timeout: 10_000,
     });
-    await expect(dashboard.cancelButton(adminCard)).not.toBeVisible();
+    await expect(dashboard.cancelButton(targetCard)).not.toBeVisible();
 
     await userPage.close();
     await userCtx.close();
