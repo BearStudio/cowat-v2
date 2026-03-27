@@ -30,6 +30,17 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
+export const organizationsInfiniteOptions = (search: { searchTerm?: string }) =>
+  orpc.organization.getAll.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      searchTerm: search.searchTerm,
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageOrganizations = (props: {
   orgSlug: string;
   search: { searchTerm?: string };
@@ -48,15 +59,7 @@ export const PageOrganizations = (props: {
   };
 
   const orgsQuery = useInfiniteQuery(
-    orpc.organization.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        searchTerm: props.search.searchTerm,
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
+    organizationsInfiniteOptions(props.search)
   );
 
   const ui = getUiState((set) => {

@@ -2,18 +2,24 @@ import { createFileRoute, stripSearchParams } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { z } from 'zod';
 
-import { PageUsers } from '@/features/user/manager/page-users';
+import {
+  PageUsers,
+  usersInfiniteOptions,
+} from '@/features/user/manager/page-users';
 
 export const Route = createFileRoute('/manager/users/')({
-  component: RouteComponent,
   validateSearch: zodValidator(
     z.object({
       searchTerm: z.string().prefault(''),
       organizationId: z.string().optional(),
     })
   ),
+  component: RouteComponent,
   search: {
     middlewares: [stripSearchParams({ searchTerm: '' })],
+  },
+  loader: ({ context }) => {
+    context.queryClient.prefetchInfiniteQuery(usersInfiniteOptions({}));
   },
 });
 

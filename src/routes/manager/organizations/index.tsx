@@ -4,18 +4,24 @@ import { z } from 'zod';
 
 import { Spinner } from '@/components/ui/spinner';
 
-import { PageOrganizations } from '@/features/organization/manager/page-organizations';
+import {
+  organizationsInfiniteOptions,
+  PageOrganizations,
+} from '@/features/organization/manager/page-organizations';
 import { useOrganizations } from '@/features/organization/use-organizations';
 
 export const Route = createFileRoute('/manager/organizations/')({
-  component: RouteComponent,
   validateSearch: zodValidator(
     z.object({
       searchTerm: z.string().prefault(''),
     })
   ),
+  component: RouteComponent,
   search: {
     middlewares: [stripSearchParams({ searchTerm: '' })],
+  },
+  loader: ({ context }) => {
+    context.queryClient.prefetchInfiniteQuery(organizationsInfiniteOptions({}));
   },
 });
 
