@@ -217,8 +217,10 @@ describe('commute router', () => {
 
   describe('getMyCommutes', () => {
     it('should return paginated commutes for the current user', async () => {
-      mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedRawFromDb]);
+      mockDb.commute.findManyPaginated.mockResolvedValue([
+        1,
+        [mockCommuteEnrichedRawFromDb],
+      ]);
 
       const result = await call(commuteRouter.getMyCommutes, {});
 
@@ -234,8 +236,7 @@ describe('commute router', () => {
         ...mockCommuteEnrichedRawFromDb,
         id: `commute-${i + 1}`,
       }));
-      mockDb.commute.count.mockResolvedValue(10);
-      mockDb.commute.findMany.mockResolvedValue(commutes);
+      mockDb.commute.findManyPaginated.mockResolvedValue([10, commutes]);
 
       const result = await call(commuteRouter.getMyCommutes, { limit: 3 });
 
@@ -245,8 +246,10 @@ describe('commute router', () => {
     });
 
     it('should not return nextCursor when items fit within limit', async () => {
-      mockDb.commute.count.mockResolvedValue(1);
-      mockDb.commute.findMany.mockResolvedValue([mockCommuteEnrichedRawFromDb]);
+      mockDb.commute.findManyPaginated.mockResolvedValue([
+        1,
+        [mockCommuteEnrichedRawFromDb],
+      ]);
 
       const result = await call(commuteRouter.getMyCommutes, { limit: 5 });
 
@@ -254,12 +257,11 @@ describe('commute router', () => {
     });
 
     it('should return empty result when user has no commutes', async () => {
-      mockDb.commute.count.mockResolvedValue(0);
-      mockDb.commute.findMany.mockResolvedValue([]);
+      mockDb.commute.findManyPaginated.mockResolvedValue([0, []]);
 
       await call(commuteRouter.getMyCommutes, {});
 
-      expect(mockDb.commute.findMany).toHaveBeenCalledWith(
+      expect(mockDb.commute.findManyPaginated).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             driver: { organizationId: mockOrganizationId },
@@ -280,6 +282,9 @@ describe('commute router', () => {
               },
             ],
           },
+        }),
+        expect.objectContaining({
+          limit: expect.any(Number),
         })
       );
     });
