@@ -6,7 +6,7 @@ import { cn } from '@/lib/tailwind/utils';
 
 import { Button } from '@/components/ui/button';
 
-export type DatePickerButtonProps = ComponentProps<typeof Button>;
+type DatePickerButtonProps = ComponentProps<typeof Button>;
 
 export const DatePickerButton = ({
   className,

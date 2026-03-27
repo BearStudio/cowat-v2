@@ -27,7 +27,6 @@ export const zUser = () =>
     onboardedAt: z.date().nullish(),
   });
 
-export type Session = z.infer<ReturnType<typeof zSession>>;
 export const zSession = () =>
   z.object({
     id: z.string(),

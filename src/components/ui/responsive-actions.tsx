@@ -15,7 +15,7 @@ import { SpeedDial, SpeedDialItem } from '@/components/ui/speed-dial';
 
 import { OrgButtonLink } from '@/features/organization/org-button-link';
 
-export type ActionConfig = {
+type ActionConfig = {
   key: string;
   label: string;
   icon: ReactNode;

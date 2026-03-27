@@ -41,8 +41,6 @@ const dateFormats = {
 
 export type DateFormats = typeof dateFormats;
 
-export type DateFormatNamespace = keyof DateFormats;
-
 /** Union of all valid "namespace:key" strings, e.g. 'common:short' | 'dashboard:dayHeader' | ... */
 export type DateFormatKey = FormatKey<DateFormats>;
 

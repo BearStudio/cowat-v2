@@ -7,7 +7,7 @@ export type StepConfig = {
   onNext: () => Promise<boolean> | boolean;
 };
 
-export type MultiStepFormContextValue = {
+type MultiStepFormContextValue = {
   steps: StepConfig[];
   currentStepIndex: number;
   isFirstStep: boolean;

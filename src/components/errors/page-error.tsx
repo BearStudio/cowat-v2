@@ -52,7 +52,7 @@ export const PageError = (props: {
   );
 };
 
-export const PageErrorButtonBack = () => {
+const PageErrorButtonBack = () => {
   const { t } = useTranslation(['components']);
   return (
     <Button
@@ -70,7 +70,7 @@ export const PageErrorButtonBack = () => {
     </Button>
   );
 };
-export const PageErrorButtonHome = () => {
+const PageErrorButtonHome = () => {
   const { t } = useTranslation(['components']);
   return (
     <Button

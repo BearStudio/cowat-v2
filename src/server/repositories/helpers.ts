@@ -3,7 +3,7 @@ import type { Prisma } from '@/server/db/generated/client';
 // ── User selects ─────────────────────────────────────────────────────────────
 
 /** id, name, email — used for notification payloads */
-export const userSummarySelect = {
+const userSummarySelect = {
   id: true,
   name: true,
   email: true,
@@ -34,7 +34,7 @@ export const locationSummarySelect = {
 // ── Notification preferences ─────────────────────────────────────────────────
 
 /** Pre-filtered to disabled channels — used to know which channels to skip */
-export const disabledChannelsInclude = {
+const disabledChannelsInclude = {
   notificationPreferences: {
     where: { enabled: false },
     select: { channel: true },
@@ -50,7 +50,7 @@ export const memberNotificationInclude = {
 } satisfies Prisma.MemberInclude;
 
 /** Member → user with profile fields (image, phone) */
-export const memberWithUserProfileInclude = {
+const memberWithUserProfileInclude = {
   user: { select: userProfileSelect },
 } satisfies Prisma.MemberInclude;
 
@@ -63,7 +63,7 @@ export const stopsWithLocationInclude = {
 } as const;
 
 /** Enriched stops: ordered, with location + passengers and their user profiles */
-export const stopsWithPassengersInclude = {
+const stopsWithPassengersInclude = {
   orderBy: { order: 'asc' as const },
   include: {
     location: { select: locationSummarySelect },
