@@ -1,8 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { orpc } from '@/lib/orpc/client';
+
 import { PageCommuteUpdate } from '@/features/commute/app/page-commute-update';
 
 export const Route = createFileRoute('/app/$orgSlug/commutes/$id/update/')({
+  loader: ({ context, params }) => {
+    context.queryClient.prefetchQuery(
+      orpc.commute.getById.queryOptions({
+        input: { id: params.id },
+      })
+    );
+  },
   component: RouteComponent,
 });
 
