@@ -180,10 +180,9 @@ export default {
       const affectedPassengers =
         await context.bookings.findAffectedPassengers(id);
 
-      // Cancel all bookings when seats are reduced
+      // Cancel all bookings when seats are reduced below current passenger count
       const newSeats = data.seats ?? existing.seats;
-      const seatsReduced =
-        newSeats < existing.seats && affectedPassengers.length > 0;
+      const seatsReduced = newSeats < affectedPassengers.length;
 
       if (seatsReduced) {
         await context.bookings.cancelMany(affectedPassengers.map((b) => b.id));

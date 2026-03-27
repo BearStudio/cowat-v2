@@ -135,14 +135,20 @@ export const createCommuteRepository = (db: AppDB) => ({
       where: { id },
       data: {
         ...fields,
-        stops: ({
-	...stopsToDelete.length > 0 && { deleteMany: { id: { in: stopsToDelete.map((s) => s.id) } } },
-	update: stops.slice(0, existingStops.length).map((stop, i) => ({
-		where: { id: existingStops[i]!.id },
-		data: stop
-	})),
-	...stops.length > existingStops.length && { create: stops.slice(existingStops.length) }
-}),
+        stops: {
+          ...(stopsToDelete.length > 0 && {
+            deleteMany: { id: { in: stopsToDelete.map((s) => s.id) } },
+          }),
+          update: existingStops.slice(0, stops.length).map((existing, i) => {
+            const stopData = stops[i];
+            if (!stopData)
+              throw new Error('unreachable: stop index out of bounds');
+            return { where: { id: existing.id }, data: stopData };
+          }),
+          ...(stops.length > existingStops.length && {
+            create: stops.slice(existingStops.length),
+          }),
+        },
       },
       include: { stops: true },
     });
