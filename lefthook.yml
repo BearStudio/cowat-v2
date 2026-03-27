@@ -8,6 +8,9 @@ pre-commit:
       glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}'
       run: pnpm oxlint --fix {staged_files}
       stage_fixed: true
+    knip-prod:
+      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}'
+      run: pnpm run knip:prod
 
 pre-push:
   commands:

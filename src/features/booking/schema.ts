@@ -6,14 +6,11 @@ export const zRequestStatus = () =>
   z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']);
 export type RequestStatus = z.infer<ReturnType<typeof zRequestStatus>>;
 
-export const zStopStatus = () =>
-  z.enum(['UNKNOWN', 'ON_TIME', 'AWAITING', 'DELAYED']);
-export type StopStatus = z.infer<ReturnType<typeof zStopStatus>>;
+const zStopStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'AWAITING', 'DELAYED']);
 
 export const zTripType = () => z.enum(['ROUND', 'ONEWAY', 'RETURN']);
 export type TripType = z.infer<ReturnType<typeof zTripType>>;
 
-export type Booking = z.infer<ReturnType<typeof zBooking>>;
 export const zBooking = () =>
   z.object({
     id: z.string(),
@@ -29,7 +26,6 @@ export const zBooking = () =>
     stopId: z.string(),
   });
 
-export type BookingRequest = z.infer<ReturnType<typeof zBookingRequest>>;
 export const zBookingRequest = () =>
   z.object({
     stopId: z.string(),

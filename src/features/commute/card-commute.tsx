@@ -249,5 +249,4 @@ export {
   CardCommuteContent,
   CardCommuteHeader,
   CardCommuteTrigger,
-  cardCommuteVariants,
 };

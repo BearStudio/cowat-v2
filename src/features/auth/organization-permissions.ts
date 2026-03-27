@@ -47,9 +47,6 @@ const roleOwner = ac.newRole({
   ...ownerOnlyStatements,
 });
 
-export const organizationRolesNames = ['owner', 'admin', 'member'] as const;
-export type OrgRole = (typeof organizationRolesNames)[number];
-
 const roles = { owner: roleOwner, admin: roleAdmin, member: roleMember };
 
 export const organizationPermissions = { ac, roles };

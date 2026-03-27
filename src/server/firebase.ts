@@ -146,7 +146,7 @@ export type FirebaseClientConfig = {
   vapidPublicKey: string;
 };
 
-export type FirebaseServerConfig = FirebaseClientConfig & {
+type FirebaseServerConfig = FirebaseClientConfig & {
   serviceAccount: string;
 };
 
@@ -184,7 +184,7 @@ export function getClientConfig(): FirebaseClientConfig | null {
   };
 }
 
-export function getServerConfig(): FirebaseServerConfig | null {
+function getServerConfig(): FirebaseServerConfig | null {
   const clientConfig = getClientConfig();
   const serviceAccount = envServer.FIREBASE_SERVICE_ACCOUNT;
   if (!clientConfig || !serviceAccount) return null;

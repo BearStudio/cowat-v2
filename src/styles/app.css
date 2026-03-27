@@ -1,12 +1,12 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans:
-    "Outfit Variable", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    'Outfit Variable', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --color-*: initial;
   --color-white: #fff;
   --color-black: #000;
@@ -342,13 +342,13 @@ html:active-view-transition-type(slide-right) {
       height: 100lvh; /* Force full height on iOS standalone */
     }
   }
-  input[type="time"] {
+  input[type='time'] {
     -webkit-appearance: none;
     appearance: none;
   }
-  input[type="time"]::-webkit-calendar-picker-indicator,
-  input[type="time"]::-webkit-inner-spin-button,
-  input[type="time"]::-webkit-clear-button {
+  input[type='time']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-inner-spin-button,
+  input[type='time']::-webkit-clear-button {
     display: none;
     -webkit-appearance: none;
   }
@@ -432,7 +432,7 @@ html:active-view-transition-type(slide-right) {
 @utility hit-area-debug {
   position: relative;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -449,7 +449,7 @@ html:active-view-transition-type(slide-right) {
 @utility hit-area {
   position: relative;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -470,7 +470,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-r: --spacing(--value(number) * -1);
   --hit-area-r: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -485,7 +485,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-l: --spacing(--value(number) * -1);
   --hit-area-l: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -500,7 +500,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-r: --spacing(--value(number) * -1);
   --hit-area-r: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -515,7 +515,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-t: --spacing(--value(number) * -1);
   --hit-area-t: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -530,7 +530,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-b: --spacing(--value(number) * -1);
   --hit-area-b: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -547,7 +547,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-r: --spacing(--value(number) * -1);
   --hit-area-r: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
@@ -564,7 +564,7 @@ html:active-view-transition-type(slide-right) {
   --hit-area-b: --spacing(--value(number) * -1);
   --hit-area-b: calc(--value([*]) * -1);
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: var(--hit-area-t, 0px);
     right: var(--hit-area-r, 0px);
