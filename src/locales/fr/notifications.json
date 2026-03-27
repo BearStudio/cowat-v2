@@ -20,6 +20,11 @@
       "body": "*{{passengerName}}* a annulé sa réservation."
     },
     "canceledContext": "📅 {{date}} · {{tripType}}",
+    "canceledByDriver": {
+      "headline": "🚫 *Réservation annulée par le conducteur*",
+      "body": "*{{driverName}}* a réduit le nombre de places et votre réservation a été annulée."
+    },
+    "canceledByDriverContext": "📅 {{date}} · {{commuteType}}",
     "viewRequests": "Voir les demandes →",
     "viewCommutes": "Voir les trajets →",
     "findCommute": "Trouver un trajet →"
@@ -36,7 +41,6 @@
     },
     "updatedDate": "📅 ~{{previousDate}}~ → *{{newDate}}*",
     "updatedType": "🚗 ~{{previousType}}~ → *{{newType}}*",
-    "updatedSeats": "💺 ~{{previousSeats}}~ → *{{newSeats}}*",
     "canceled": {
       "headline": "❌ *Trajet annulé*",
       "body": "*{{driverName}}* a annulé le trajet *{{commuteType}}*."
@@ -82,6 +86,10 @@
       "canceled": {
         "title": "Réservation annulée",
         "body": "{{passengerName}} a annulé sa réservation pour le {{date}}"
+      },
+      "canceledByDriver": {
+        "title": "Réservation annulée par le conducteur",
+        "body": "{{driverName}} a réduit les places et votre réservation du {{date}} a été annulée"
       }
     },
     "commute": {

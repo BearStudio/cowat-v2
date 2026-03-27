@@ -62,6 +62,15 @@ export class CommuteFormPage {
     await this.page.getByRole('button', { name: 'Create' }).click();
   }
 
+  async clickSave() {
+    await this.page.getByRole('button', { name: 'Save' }).click();
+  }
+
+  async gotoEdit(commuteId: string) {
+    await this.page.goto(`/app/${ORG_SLUG}/commutes/${commuteId}/update`);
+    await this.page.getByTestId('layout-app').waitFor({ timeout: 15_000 });
+  }
+
   // ─── Commutes list assertions ─────────────────────────────────────────
 
   get commutesListHeading() {

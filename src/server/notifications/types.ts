@@ -65,6 +65,15 @@ export type BookingCanceledEvent = {
   };
 };
 
+export type BookingCanceledByDriverEvent = {
+  type: 'booking.canceledByDriver';
+  recipient: Recipient;
+  payload: CommutePayload & {
+    driverName: string;
+    orgSlug: string;
+  };
+};
+
 export type CommuteCreatedStop = {
   stopId: string;
   locationName: string;
@@ -94,8 +103,6 @@ export type CommuteUpdatedEvent = {
     // New values after the update (CommutePayload fields hold the previous values)
     newCommuteDate: Commute['date'];
     newCommuteType: CommuteType;
-    previousSeats: number;
-    newSeats: number;
   };
 };
 
@@ -152,6 +159,7 @@ export type NotificationEvent =
   | BookingAcceptedEvent
   | BookingRefusedEvent
   | BookingCanceledEvent
+  | BookingCanceledByDriverEvent
   | CommuteCreatedEvent
   | CommuteUpdatedEvent
   | CommuteCanceledEvent

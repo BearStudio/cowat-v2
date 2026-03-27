@@ -10,7 +10,10 @@ import { orpc } from '@/lib/orpc/client';
 import { CommentText } from '@/components/comment-text';
 import { Badge } from '@/components/ui/badge';
 
-import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+import type {
+  FormFieldsCommuteBase,
+  StopPassenger,
+} from '@/features/commute/schema';
 import {
   type StopForTimeline,
   StopsTimelineItem,
@@ -19,9 +22,14 @@ import {
 type StepRecapProps = {
   control: Control<FormFieldsCommuteBase>;
   ns: 'commute' | 'commuteTemplate';
+  passengersByLocationId?: Map<string, StopPassenger[]>;
 };
 
-export const StepRecap = ({ control, ns }: StepRecapProps) => {
+export const StepRecap = ({
+  control,
+  ns,
+  passengersByLocationId,
+}: StepRecapProps) => {
   const { t } = useTranslation([ns, 'commute']);
   const values = useWatch({ control }) as FormFieldsCommuteBase &
     Record<string, unknown>;
@@ -65,6 +73,7 @@ export const StepRecap = ({ control, ns }: StepRecapProps) => {
       },
       outwardTime: time,
       inwardTime: null,
+      passengers: passengersByLocationId?.get(locationId),
     };
   };
 

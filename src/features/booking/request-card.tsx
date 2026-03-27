@@ -72,7 +72,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
 
   return (
     <Card className="relative overflow-hidden border-l-4 border-l-primary">
-      <div className="pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full bg-primary opacity-30 blur-2xl" />
+      <div className="pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full bg-primary opacity-15 blur-2xl" />
 
       <CardHeader>
         <div className="flex items-center gap-3">

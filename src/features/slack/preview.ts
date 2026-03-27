@@ -130,6 +130,22 @@ const FIXTURES: Record<string, TemplateFixture> = {
       },
     },
   },
+  'booking-canceled-by-driver': {
+    event: {
+      type: 'booking.canceledByDriver',
+      recipient: {
+        userId: 'user-2',
+        name: 'Alice Passenger',
+        email: 'alice@example.com',
+      },
+      payload: {
+        commuteDate: new Date('2026-03-15'),
+        commuteType: 'ROUND',
+        driverName: 'John Driver',
+        orgSlug: 'acme-corp',
+      },
+    },
+  },
   'commute-created': {
     event: {
       type: 'commute.created',
@@ -180,8 +196,6 @@ const FIXTURES: Record<string, TemplateFixture> = {
         orgSlug: 'acme-corp',
         newCommuteDate: new Date('2026-03-22'),
         newCommuteType: 'ONEWAY',
-        previousSeats: 2,
-        newSeats: 4,
       },
     },
   },

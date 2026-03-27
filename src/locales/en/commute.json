@@ -45,7 +45,9 @@
   },
   "update": {
     "title": "Edit Commute",
-    "submitButton": "Save"
+    "submitButton": "Save",
+    "passengersWarning_one": "{{count}} passenger is currently booked on this commute and will be notified of the changes.",
+    "passengersWarning_other": "{{count}} passengers are currently booked on this commute and will be notified of the changes."
   },
   "templatePicker": {
     "title": "My templates",
