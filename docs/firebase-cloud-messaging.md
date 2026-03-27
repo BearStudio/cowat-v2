@@ -16,19 +16,22 @@ usePushNotifications()          ← hook dans le layout authentifié
   │  Demande la permission navigateur
   │  Enregistre le service worker (/firebase-messaging-sw.js)
   │  Récupère le FCM token (via VAPID key)
-  └─► POST /account/fcm-token   ← token sauvegardé en base (table fcm_token)
+  └─► POST account/registerFcmToken   ← token sauvegardé en base (table FcmToken)
 
 Action dans l'app (booking accepté, trajet annulé, etc.)
         │
         ▼
-notifier.notify(event)          ← appelé dans les handlers ORPC
+context.notify(event, orgContext)    ← appelé dans les handlers oRPC
         │
         ▼
 pushChannel.send()
   │  Charge les tokens FCM du destinataire depuis la DB
-  │  Appelle Firebase Admin SDK → messaging.sendEachForMulticast()
+  │  Obtient un access token via google-auth-library
+  │  Appelle l'API REST FCM v1 → POST /messages:send par token
   └─► Notification reçue sur le device
 ```
+
+> **Note :** le serveur n'utilise PAS le SDK Firebase Admin. Les notifications sont envoyées via l'[API REST FCM HTTP v1](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send) directement avec `fetch`, pour éviter les problèmes de bundling ESM avec Nitro/Vercel (voir [troubleshooting](./push-notifications-troubleshooting.md)).
 
 ### Foreground vs Background
 
@@ -40,7 +43,7 @@ pushChannel.send()
 ### Tokens FCM
 
 - Un token est généré **par navigateur/device**.
-- Il est stocké dans la table `fcm_token`, rattaché à l'`userId` (pas au membre, pour fonctionner sur toutes les orgs).
+- Il est stocké dans la table `FcmToken`, rattaché à l'`userId` (pas au membre, pour fonctionner sur toutes les orgs).
 - Les tokens invalides ou expirés sont **supprimés automatiquement** après un échec d'envoi.
 - Un utilisateur peut avoir **plusieurs tokens** (plusieurs appareils/navigateurs).
 
@@ -69,18 +72,7 @@ pushChannel.send()
 
 ### 2. Récupérer la config Firebase
 
-Dans **Project Settings → General → Your apps → Web app**, copier la config :
-
-```env
-VITE_FIREBASE_API_KEY=AIza...
-VITE_FIREBASE_AUTH_DOMAIN=mon-projet.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=mon-projet
-VITE_FIREBASE_STORAGE_BUCKET=mon-projet.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-VITE_FIREBASE_APP_ID=1:123456789:web:abc123
-```
-
-Ces mêmes valeurs servent aussi au service worker (sans le préfixe `VITE_`) :
+Dans **Project Settings → General → Your apps → Web app**, copier la config dans `.env` :
 
 ```env
 FIREBASE_API_KEY=AIza...
@@ -91,6 +83,8 @@ FIREBASE_MESSAGING_SENDER_ID=123456789
 FIREBASE_APP_ID=1:123456789:web:abc123
 ```
 
+Ces variables sont utilisées côté serveur et exposées au client via un endpoint oRPC (`config.firebaseConfig`).
+
 ### 3. Récupérer la clé VAPID publique
 
 Dans **Project Settings → Cloud Messaging → Web Push certificates** :
@@ -99,26 +93,33 @@ Dans **Project Settings → Cloud Messaging → Web Push certificates** :
 - Copier la **clé publique** :
 
 ```env
-VITE_FIREBASE_VAPID_PUBLIC_KEY=BK...
+FIREBASE_VAPID_PUBLIC_KEY=BK...
 ```
-
-> La clé privée n'est pas nécessaire — Firebase Admin SDK gère l'authentification en interne.
 
 ### 4. Configurer les credentials serveur (pour envoyer les notifications)
 
-Le serveur utilise **Application Default Credentials (ADC)** via le Google Cloud SDK — pas besoin de télécharger de fichier JSON.
+Le serveur utilise `google-auth-library` avec un **Service Account** encodé en base64.
 
 ```bash
-# Installer gcloud CLI : https://cloud.google.com/sdk/docs/install
+# Générer un Service Account :
+# Firebase Console > Project Settings > Service Accounts > Generate new private key
 
-# S'authentifier (ouvre le navigateur)
-gcloud auth application-default login
-
-# Définir le projet par défaut
-gcloud config set project <FIREBASE_PROJECT_ID>
+# Encoder en base64 :
+base64 -i path/to/service-account.json | tr -d '\n'
 ```
 
-Les credentials sont stockés localement dans `~/.config/gcloud/application_default_credentials.json` et détectés automatiquement au démarrage du serveur.
+Ajouter dans `.env` :
+
+```env
+FIREBASE_SERVICE_ACCOUNT=eyJ0eXBlIjoic2Vydmljz...
+```
+
+Pour le développement local, vous pouvez aussi utiliser **Application Default Credentials (ADC)** via `gcloud` si vous préférez ne pas télécharger de fichier JSON :
+
+```bash
+gcloud auth application-default login
+gcloud config set project <FIREBASE_PROJECT_ID>
+```
 
 ### 5. Démarrer l'app
 
@@ -126,64 +127,39 @@ Les credentials sont stockés localement dans `~/.config/gcloud/application_defa
 pnpm dev
 ```
 
-Le service worker `public/firebase-messaging-sw.js` est **généré automatiquement** au démarrage avec la config Firebase baked-in.
+Le service worker `public/firebase-messaging-sw.js` est un fichier statique minimal — il ne dépend pas du SDK Firebase et ne nécessite aucune configuration.
 
 ---
 
 ## Setup production
 
-En production (Vercel, Railway, Fly.io, etc.), il n'y a pas de `gcloud` disponible — il faut un **Service Account**.
-
-### 1. Générer un Service Account
-
-Dans **Project Settings → Service Accounts → Generate new private key** → télécharger le JSON.
-
-### 2. Encoder en base64
-
-```bash
-base64 -i path/to/service-account.json | tr -d '\n'
-```
-
-### 3. Ajouter la variable d'environnement
+### Variables d'environnement complètes
 
 ```env
-FIREBASE_SERVICE_ACCOUNT=eyJ0eXBlIjoic2Vydmljz...
-```
-
-Le code utilise `FIREBASE_SERVICE_ACCOUNT` en priorité si défini, sinon tombe sur ADC :
-
-```ts
-// src/server/firebase.ts
-const credential = envServer.FIREBASE_SERVICE_ACCOUNT
-  ? cert(JSON.parse(Buffer.from(envServer.FIREBASE_SERVICE_ACCOUNT, 'base64').toString()))
-  : applicationDefault();
-```
-
-### Variables d'environnement complètes en production
-
-```env
-# Credentials serveur
+# Credentials serveur (base64 du JSON du Service Account)
 FIREBASE_SERVICE_ACCOUNT=<base64_du_json>
 
-# Config Firebase pour le service worker (rendu côté serveur)
+# Config Firebase (servie au client via endpoint oRPC)
 FIREBASE_API_KEY=...
 FIREBASE_AUTH_DOMAIN=...
 FIREBASE_PROJECT_ID=...
 FIREBASE_STORAGE_BUCKET=...
 FIREBASE_MESSAGING_SENDER_ID=...
 FIREBASE_APP_ID=...
-
-# Config Firebase côté client (injectée par Vite au build)
-VITE_FIREBASE_API_KEY=...
-VITE_FIREBASE_AUTH_DOMAIN=...
-VITE_FIREBASE_PROJECT_ID=...
-VITE_FIREBASE_STORAGE_BUCKET=...
-VITE_FIREBASE_MESSAGING_SENDER_ID=...
-VITE_FIREBASE_APP_ID=...
-VITE_FIREBASE_VAPID_PUBLIC_KEY=...
+FIREBASE_VAPID_PUBLIC_KEY=...
 ```
 
-> Les valeurs `FIREBASE_*` et `VITE_FIREBASE_*` sont identiques — les deux blocs sont nécessaires car l'un est utilisé côté serveur (service worker généré dynamiquement), l'autre côté client (SDK Firebase navigateur).
+Le code utilise `FIREBASE_SERVICE_ACCOUNT` pour s'authentifier via `google-auth-library` :
+
+```ts
+// src/server/firebase.ts
+const auth = new GoogleAuth({
+  credentials: JSON.parse(
+    Buffer.from(config.serviceAccount, 'base64').toString('utf-8')
+  ),
+  scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+});
+```
 
 ---
 
@@ -192,22 +168,22 @@ VITE_FIREBASE_VAPID_PUBLIC_KEY=...
 ```
 src/
 ├── server/
-│   ├── firebase.ts                          # Init Firebase Admin (ADC ou service account)
+│   ├── firebase.ts                          # Auth Google (google-auth-library) + envoi REST FCM v1
 │   ├── notifications/
-│   │   ├── channels/push.ts                 # Channel push — envoie via Admin SDK
-│   │   └── index.ts                         # Enregistrement du channel
+│   │   ├── channels/push.ts                 # Channel push — envoi via API REST FCM
+│   │   └── index.ts                         # Enregistrement des channels
 │   └── repositories/
 │       └── fcm-token.repository.ts          # CRUD des tokens en base
-├── features/notification/
+├── features/push/
 │   ├── firebase-client.ts                   # Init Firebase client + getFcmToken()
-│   └── use-push-notifications.ts            # Hook React (permission + enregistrement)
+│   ├── use-push-notifications.ts            # Hook React (permission + enregistrement)
+│   └── templates.ts                         # getPushContent() — titre/body/lien par type d'événement
 ├── server/routers/account.ts
 │   └── registerFcmToken / unregisterFcmToken  # Endpoints API
 └── layout/app/layout.tsx                    # Appel du hook dans le layout authentifié
 
 public/
-└── firebase-messaging-sw.js                 # Généré par Vite au démarrage (gitignored)
+└── firebase-messaging-sw.js                 # Service worker statique (pas de SDK Firebase)
 
-vite.config.ts                               # Plugin qui génère le service worker
 prisma/schema.prisma                         # Modèle FcmToken
 ```

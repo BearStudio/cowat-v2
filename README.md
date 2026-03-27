@@ -58,13 +58,13 @@ Cowat is a full-stack TypeScript web application that lets organizations coordin
 | Unit tests | [Vitest](https://vitest.dev/) |
 | E2E tests | [Playwright](https://playwright.dev/) |
 | Component dev | [Storybook](https://storybook.js.org/) |
-| Runtime | [Node.js](https://nodejs.org) >= 22 |
+| Runtime | [Node.js](https://nodejs.org) >= 24 |
 
 ---
 
 ## Requirements
 
-- [Node.js](https://nodejs.org) >= 22
+- [Node.js](https://nodejs.org) >= 24
 - [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/) (runs PostgreSQL + MinIO locally)
 
@@ -156,6 +156,7 @@ cp .zed/settings.example.json .zed/settings.json
 | `pnpm db:push` | Sync Prisma schema to the database |
 | `pnpm db:seed` | Seed the database |
 | `pnpm db:reset` | Full reset (destructive) |
+| `pnpm db:seed:week` | Re-seed commutes for the current week |
 | `pnpm db:ui` | Open Prisma Studio |
 
 #### Code quality
@@ -274,20 +275,28 @@ src/
 ├── components/           # Shared UI components and icons
 ├── emails/               # React Email templates
 ├── features/             # Feature modules (auth, commute, booking, …)
+│   ├── account/
 │   ├── auth/
 │   ├── booking/
+│   ├── build-info/
 │   ├── commute/
+│   ├── commute-request/
 │   ├── commute-template/
 │   ├── dashboard/
+│   ├── devtools/
 │   ├── location/
 │   ├── notification/
 │   ├── organization/
+│   ├── push/
 │   ├── slack/
 │   ├── stats/
 │   └── user/
 ├── locales/              # i18n translation files (en, fr)
 ├── routes/               # TanStack Router file-based routes
+│   ├── api/              # Server API routes (RPC, REST, uploads, dev tools)
 │   ├── app/              # User-facing routes (/app/$orgSlug/…)
+│   ├── invitations/      # Invitation acceptance flow
+│   ├── login/            # Auth / login pages
 │   └── manager/          # Manager routes (/manager/$orgSlug/…)
 ├── server/
 │   ├── db/               # Prisma client + middleware (soft-delete)
