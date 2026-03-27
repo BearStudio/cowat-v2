@@ -2,12 +2,11 @@ import dayjs from 'dayjs';
 import {
   BookingDrawer,
   CommuteFormPage,
-  ConfirmDialog,
   DashboardPage,
   RequestsPage,
 } from 'e2e/pages';
 import { expect, test } from 'e2e/utils';
-import { ADMIN_FILE, USER_FILE } from 'e2e/utils/constants';
+import { ADMIN_FILE, ORG_SLUG, USER_FILE } from 'e2e/utils/constants';
 
 /** Format a date for the DateInput (DD/MM/YYYY). */
 function formatDate(date: Date): string {
@@ -40,7 +39,7 @@ test.describe
     await commuteForm.goto();
     await commuteForm.fromScratchButton.click();
 
-    const date = daysFromNow(20);
+    const date = daysFromNow(3);
     await commuteForm.dateInput.fill(formatDate(date));
     await commuteForm.dateInput.blur();
 
@@ -63,9 +62,12 @@ test.describe
 
     const createResponse = await createResponsePromise;
     const createBody = await createResponse.json();
-    const createdCommute: { id: string } = createBody?.json ?? createBody;
+    const createdCommute: { id: string; stops: Array<{ id: string }> } =
+      createBody?.json ?? createBody;
     commuteId = createdCommute.id;
+    const stopId = createdCommute.stops[0]?.id;
     expect(commuteId).toBeTruthy();
+    expect(stopId).toBeTruthy();
 
     await expect(commuteForm.commutesListHeading).toBeVisible({
       timeout: 10_000,
@@ -74,27 +76,16 @@ test.describe
     // ── 2. User books a ride on the admin's commute ──────────────────────
     const userCtx = await browser.newContext({ storageState: USER_FILE });
     const userPage = await userCtx.newPage();
-    const dashboard = new DashboardPage(userPage);
     const bookingDrawer = new BookingDrawer(userPage);
-    const confirmDialog = new ConfirmDialog(userPage);
 
-    await userPage.goto('/app');
+    // Navigate directly to the specific commute via URL params
+    await userPage.goto(
+      `/app/${ORG_SLUG}/?bookingStop=${stopId}&openCommutes=${commuteId}`
+    );
     await expect(
       userPage.locator('[data-slot="card-commute"]').first()
     ).toBeVisible({ timeout: 10_000 });
 
-    const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
-    await dashboard.expandCard(adminCard);
-
-    // Cancel any existing booking first
-    const existingCancel = dashboard.cancelButton(adminCard);
-    if ((await existingCancel.count()) > 0) {
-      await existingCancel.click();
-      await confirmDialog.confirm();
-      await expect(dashboard.bookButtons(adminCard).first()).toBeVisible();
-    }
-
-    await dashboard.bookButtons(adminCard).first().click();
     await bookingDrawer.expectOpen();
     await bookingDrawer.submit();
 
@@ -160,13 +151,13 @@ test.describe
     const userPage = await userCtx.newPage();
     const dashboard = new DashboardPage(userPage);
 
-    await userPage.goto('/app');
+    // Navigate with openCommutes to expand the specific commute card
+    await userPage.goto(`/app/${ORG_SLUG}/?openCommutes=${commuteId}`);
     await expect(
       userPage.locator('[data-slot="card-commute"]').first()
     ).toBeVisible({ timeout: 10_000 });
 
     const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
-    await dashboard.expandCard(adminCard);
 
     // The user's booking should have been cancelled — "Book" button should
     // be visible instead of "Cancel"
