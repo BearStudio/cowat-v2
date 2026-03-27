@@ -50,6 +50,8 @@
   "invitations": {
     "title": "Invitations en attente",
     "cancel": "Annuler",
+    "cancelConfirm": "Êtes-vous sûr de vouloir annuler l'invitation pour {{email}} ?",
+    "cancelConfirmAction": "Annuler l'invitation",
     "empty": "Aucune invitation en attente"
   },
   "create": {
