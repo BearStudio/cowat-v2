@@ -6,7 +6,11 @@ import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
 import { protectedProcedure, type ProtectedProcedureArgs } from '@/server/orpc';
 import { createUserRepository } from '@/server/repositories/user.repository';
-import { paginateResult } from '@/server/routers/utils';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['users'];
 
@@ -19,33 +23,27 @@ export default {
   getAll: procedure({ permission: { user: ['list'] } })
     .route({ method: 'GET', path: '/users', tags })
     .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
+      zPaginationInput
+        .extend({
           searchTerm: z.string().trim().optional().prefault(''),
           organizationId: z.string().optional(),
         })
         .prefault({})
     )
     .output(
-      z.object({
-        items: z.array(
-          zUser().extend({
-            members: z.array(
-              z.object({
-                organization: z.object({
-                  id: z.string(),
-                  name: z.string(),
-                  slug: z.string(),
-                }),
-              })
-            ),
-          })
-        ),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
+      zPaginatedOutput(
+        zUser().extend({
+          members: z.array(
+            z.object({
+              organization: z.object({
+                id: z.string(),
+                name: z.string(),
+                slug: z.string(),
+              }),
+            })
+          ),
+        })
+      )
     )
     .handler(async ({ context, input }) => {
       context.logger.info('Getting users from database');
@@ -138,20 +136,8 @@ export default {
 
   getUserSessions: procedure({ permission: { session: ['list'] } })
     .route({ method: 'GET', path: '/users/{userId}/sessions', tags })
-    .input(
-      z.object({
-        userId: z.string(),
-        cursor: z.string().optional(),
-        limit: z.coerce.number().int().min(1).max(100).prefault(20),
-      })
-    )
-    .output(
-      z.object({
-        items: z.array(zSession()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.extend({ userId: z.string() }))
+    .output(zPaginatedOutput(zSession()))
     .handler(async ({ context, input }) => {
       context.logger.info('Getting user sessions from database');
 

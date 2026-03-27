@@ -5,50 +5,8 @@ import {
   type RequestStatus,
 } from '@/server/db/generated/client';
 
+import { enrichedCommuteInclude, flattenEnrichedCommute } from './helpers';
 import type { StopCreateInput } from './types';
-
-const enrichedCommuteInclude = {
-  driver: {
-    include: {
-      user: { select: { id: true, name: true, image: true, phone: true } },
-    },
-  },
-  stops: {
-    orderBy: { order: 'asc' as const },
-    include: {
-      location: { select: { id: true, name: true, address: true } },
-      passengers: {
-        include: {
-          passenger: {
-            include: {
-              user: {
-                select: { id: true, name: true, image: true, phone: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-} as const;
-
-type EnrichedCommute = Prisma.CommuteGetPayload<{
-  include: typeof enrichedCommuteInclude;
-}>;
-
-function flattenEnrichedCommute(c: EnrichedCommute) {
-  return {
-    ...c,
-    driver: c.driver.user,
-    stops: c.stops.map((s) => ({
-      ...s,
-      passengers: s.passengers.map((p) => ({
-        ...p,
-        passenger: p.passenger.user,
-      })),
-    })),
-  };
-}
 
 export const createCommuteRepository = (db: AppDB) => ({
   create: (data: {
@@ -118,16 +76,14 @@ export const createCommuteRepository = (db: AppDB) => ({
       ],
     };
 
-    const [total, rawItems] = await Promise.all([
-      db.commute.count({ where }),
-      db.commute.findMany({
-        take: params.limit + 1,
-        cursor: params.cursor ? { id: params.cursor } : undefined,
+    const [total, rawItems] = await db.commute.findManyPaginated(
+      {
         orderBy: { date: 'asc' },
         where,
         include: enrichedCommuteInclude,
-      }),
-    ]);
+      },
+      params
+    );
 
     const items = rawItems.map(flattenEnrichedCommute);
 

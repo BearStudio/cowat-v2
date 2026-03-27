@@ -13,7 +13,12 @@ import {
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
-import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
+import {
+  assertDriverOwnership,
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['commute-templates'];
 
@@ -40,24 +45,13 @@ export default {
 
   getAll: procedure({ permissions: { commuteTemplate: ['read'] } })
     .route({ method: 'GET', path: '/commute-templates', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
+    .input(zPaginationInput.prefault({}))
     .output(
-      z.object({
-        items: z.array(
-          zCommuteTemplate().extend({
-            stops: z.array(zTemplateStopWithLocation()),
-          })
-        ),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
+      zPaginatedOutput(
+        zCommuteTemplate().extend({
+          stops: z.array(zTemplateStopWithLocation()),
+        })
+      )
     )
     .handler(async ({ context, input }) => {
       const [total, items] = await context.templates.findPaginatedByMember(
