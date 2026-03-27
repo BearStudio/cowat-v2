@@ -125,6 +125,7 @@ export const TemplatePicker = ({
                         commuteId: '',
                         passengers: [],
                       }))}
+                      disableLinks
                     />
                   </div>
                 </CardContent>
