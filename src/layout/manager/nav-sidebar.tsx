@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import {
   BarChart3Icon,
   BuildingIcon,
+  MapPinIcon,
   MonitorSmartphoneIcon,
   PanelLeftIcon,
   SettingsIcon,
@@ -93,6 +94,25 @@ export const NavSidebar = (props: {
                           <span>
                             <SettingsIcon />
                             <span>{t('layout:nav.configuration')}</span>
+                          </span>
+                        }
+                      />
+                    )}
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link
+                    to="/manager/$orgSlug/locations"
+                    params={{ orgSlug }}
+                    activeOptions={{ exact: true }}
+                  >
+                    {({ isActive }) => (
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        render={
+                          <span>
+                            <MapPinIcon />
+                            <span>{t('layout:nav.locations')}</span>
                           </span>
                         }
                       />

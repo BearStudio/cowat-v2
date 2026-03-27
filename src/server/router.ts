@@ -7,6 +7,7 @@ import commuteRequestRouter from './routers/commute-request';
 import commuteTemplateRouter from './routers/commute-template';
 import configRouter from './routers/config';
 import locationRouter from './routers/location';
+import orgLocationRouter from './routers/org-location';
 import orgNotificationChannelRouter from './routers/org-notification-channel';
 import organizationRouter from './routers/organization';
 import statsRouter from './routers/stats';
@@ -22,6 +23,7 @@ export const router = {
   commuteRequest: commuteRequestRouter,
   commuteTemplate: commuteTemplateRouter,
   location: locationRouter,
+  orgLocation: orgLocationRouter,
   orgNotificationChannel: orgNotificationChannelRouter,
   organization: organizationRouter,
   stats: statsRouter,

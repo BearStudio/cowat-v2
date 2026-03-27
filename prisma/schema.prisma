@@ -164,12 +164,15 @@ model Location {
   isDeleted      Boolean        @default(false)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  memberId       String
-  member         Member         @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId       String?
+  member         Member?        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   stops          Stop[]
   templateStops  TemplateStop[]
 
   @@index([memberId])
+  @@index([organizationId])
   @@map("location")
 }
 
@@ -324,6 +327,7 @@ model Organization {
   members              Member[]
   invitations          Invitation[]
   notificationChannels OrgNotificationChannel[]
+  locations            Location[]
 
   @@unique([slug])
   @@map("organization")

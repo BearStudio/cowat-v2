@@ -1,0 +1,110 @@
+import { ORPCError } from '@orpc/client';
+import { z } from 'zod';
+
+import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
+import {
+  organizationProcedure,
+  type OrganizationProcedureArgs,
+} from '@/server/orpc';
+import { createLocationRepository } from '@/server/repositories/location.repository';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
+
+const tags = ['org-locations'];
+
+const procedure = (args: OrganizationProcedureArgs = {}) =>
+  organizationProcedure(args).use(({ context, next }) =>
+    next({ context: { locations: createLocationRepository(context.db) } })
+  );
+
+export default {
+  create: procedure({ permissions: { orgLocation: ['create'] } })
+    .route({ method: 'POST', path: '/org-locations', tags })
+    .input(zFormFieldsLocation())
+    .output(zLocation())
+    .handler(async ({ context, input }) => {
+      return await context.locations.createForOrg({
+        ...input,
+        organizationId: context.organizationId,
+      });
+    }),
+
+  getAll: procedure({ permissions: { orgLocation: ['read'] } })
+    .route({ method: 'GET', path: '/org-locations', tags })
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zLocation()))
+    .handler(async ({ context, input }) => {
+      const [total, items] = await context.locations.findPaginatedByOrg(
+        context.organizationId,
+        {
+          cursor: input.cursor,
+          limit: input.limit,
+        }
+      );
+
+      return paginateResult(total, items, input.limit);
+    }),
+
+  getById: procedure({ permissions: { orgLocation: ['read'] } })
+    .route({ method: 'GET', path: '/org-locations/{id}', tags })
+    .input(z.object({ id: z.string() }))
+    .output(zLocation())
+    .handler(async ({ context, input }) => {
+      const location = await context.locations.findOrgLocationById(
+        input.id,
+        context.organizationId
+      );
+
+      if (!location) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return location;
+    }),
+
+  update: procedure({ permissions: { orgLocation: ['update'] } })
+    .route({ method: 'POST', path: '/org-locations/{id}', tags })
+    .input(
+      zLocation().pick({
+        id: true,
+        name: true,
+        address: true,
+      })
+    )
+    .output(zLocation())
+    .handler(async ({ context, input }) => {
+      const existing = await context.locations.findOrgLocationById(
+        input.id,
+        context.organizationId
+      );
+
+      if (!existing) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return await context.locations.update(input.id, {
+        name: input.name,
+        address: input.address,
+      });
+    }),
+
+  delete: procedure({ permissions: { orgLocation: ['delete'] } })
+    .route({ method: 'DELETE', path: '/org-locations/{id}', tags })
+    .input(z.object({ id: z.string() }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      const existing = await context.locations.findOrgLocationById(
+        input.id,
+        context.organizationId
+      );
+
+      if (!existing) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      await context.locations.delete(input.id);
+    }),
+};

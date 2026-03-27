@@ -1,4 +1,9 @@
 {
+  "select": {
+    "orgGroup": "Organization",
+    "personalGroup": "Personal",
+    "noResults": "No locations found"
+  },
   "list": {
     "title": "Locations",
     "newAction": "New Location",

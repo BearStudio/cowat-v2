@@ -14,6 +14,7 @@ const customStatements = {
   booking: ['read', 'create', 'manage', 'request'],
   location: ['read', 'create', 'update', 'delete'],
   commuteTemplate: ['read', 'create', 'update', 'delete'],
+  orgLocation: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;
 
 const ownerOnlyStatements = {

@@ -1,11 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { tripTypeIcons } from '@/lib/feature-icons';
-import { orpc } from '@/lib/orpc/client';
 
 import { CommentText } from '@/components/comment-text';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +16,7 @@ import {
   type StopForTimeline,
   StopsTimelineItem,
 } from '@/features/commute/stops-timeline';
+import { useAllLocations } from '@/features/location/use-all-locations';
 
 type StepRecapProps = {
   control: Control<FormFieldsCommuteBase>;
@@ -34,24 +33,19 @@ export const StepRecap = ({
   const values = useWatch({ control }) as FormFieldsCommuteBase &
     Record<string, unknown>;
 
-  const locationsQuery = useInfiniteQuery(
-    orpc.location.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({ cursor, limit: 100 }),
-      initialPageParam: undefined,
-      maxPages: 1,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const { personalQuery, orgQuery } = useAllLocations();
 
   const locationsMap = useMemo(
     () =>
       new Map(
-        locationsQuery.data?.pages
-          .flatMap((p) => p.items)
-          .map((loc) => [loc.id, { name: loc.name, address: loc.address }]) ??
-          []
+        [
+          ...(orgQuery.data?.pages.flatMap((p) => p.items) ?? []),
+          ...(personalQuery.data?.pages.flatMap((p) => p.items) ?? []),
+        ].map(
+          (loc) => [loc.id, { name: loc.name, address: loc.address }] as const
+        )
       ),
-    [locationsQuery.data]
+    [personalQuery.data, orgQuery.data]
   );
 
   const { stops } = values;
