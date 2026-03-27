@@ -12,16 +12,16 @@ export const mockHasPermission = hoisted.mockHasPermission;
 
 import type { Mock } from 'vitest';
 
-import type { PrismaClient } from '@/server/db/generated/client';
+import type { db } from '@/server/db';
+
+type Db = typeof db;
 
 type ModelKeys = {
-  [K in keyof PrismaClient]: PrismaClient[K] extends { findMany: unknown }
-    ? K
-    : never;
-}[keyof PrismaClient];
+  [K in keyof Db]: Db[K] extends { findMany: unknown } ? K : never;
+}[keyof Db];
 
 type MockedModel<T> = { [K in keyof T]: Mock };
-type MockedDb = { [K in ModelKeys]: MockedModel<PrismaClient[K]> };
+type MockedDb = { [K in ModelKeys]: MockedModel<Db[K]> };
 
 // Auto-mock @/server/db: any model property returns a proxy where
 // every method is a vi.fn(), so tests don't need to declare the shape.

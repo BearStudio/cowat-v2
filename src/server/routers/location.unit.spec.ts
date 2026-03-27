@@ -63,8 +63,10 @@ describe('location router', () => {
 
   describe('getAll', () => {
     it('should return paginated locations with total count', async () => {
-      mockDb.location.count.mockResolvedValue(1);
-      mockDb.location.findMany.mockResolvedValue([mockLocationFromDb]);
+      mockDb.location.findManyPaginated.mockResolvedValue([
+        1,
+        [mockLocationFromDb],
+      ]);
 
       const result = await call(locationRouter.getAll, {});
 
@@ -80,8 +82,7 @@ describe('location router', () => {
         ...mockLocationFromDb,
         id: `location-${i + 1}`,
       }));
-      mockDb.location.count.mockResolvedValue(10);
-      mockDb.location.findMany.mockResolvedValue(locations);
+      mockDb.location.findManyPaginated.mockResolvedValue([10, locations]);
 
       const result = await call(locationRouter.getAll, { limit: 3 });
 
@@ -91,8 +92,10 @@ describe('location router', () => {
     });
 
     it('should not return nextCursor when items fit within limit', async () => {
-      mockDb.location.count.mockResolvedValue(1);
-      mockDb.location.findMany.mockResolvedValue([mockLocationFromDb]);
+      mockDb.location.findManyPaginated.mockResolvedValue([
+        1,
+        [mockLocationFromDb],
+      ]);
 
       const result = await call(locationRouter.getAll, { limit: 5 });
 
@@ -100,8 +103,7 @@ describe('location router', () => {
     });
 
     it('should not require any specific permission', async () => {
-      mockDb.location.count.mockResolvedValue(0);
-      mockDb.location.findMany.mockResolvedValue([]);
+      mockDb.location.findManyPaginated.mockResolvedValue([0, []]);
 
       await call(locationRouter.getAll, {});
 

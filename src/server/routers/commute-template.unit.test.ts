@@ -114,9 +114,9 @@ describe('commute-template router', () => {
     };
 
     it('should return paginated templates for the driver', async () => {
-      mockDb.commuteTemplate.count.mockResolvedValue(1);
-      mockDb.commuteTemplate.findMany.mockResolvedValue([
-        mockTemplateWithStops,
+      mockDb.commuteTemplate.findManyPaginated.mockResolvedValue([
+        1,
+        [mockTemplateWithStops],
       ]);
 
       const result = await call(commuteTemplateRouter.getAll, {});
@@ -133,8 +133,10 @@ describe('commute-template router', () => {
         ...mockTemplateWithStops,
         id: `template-${i}`,
       }));
-      mockDb.commuteTemplate.count.mockResolvedValue(5);
-      mockDb.commuteTemplate.findMany.mockResolvedValue(templates);
+      mockDb.commuteTemplate.findManyPaginated.mockResolvedValue([
+        5,
+        templates,
+      ]);
 
       const result = await call(commuteTemplateRouter.getAll, { limit: 2 });
 

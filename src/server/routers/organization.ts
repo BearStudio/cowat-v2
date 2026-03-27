@@ -10,7 +10,11 @@ import {
   type ProtectedProcedureArgs,
 } from '@/server/orpc';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
-import { paginateResult } from '@/server/routers/utils';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['organizations'];
 
@@ -41,21 +45,11 @@ export default {
   getAll: adminProcedure({ permission: { organization: ['list'] } })
     .route({ method: 'GET', path: '/organizations/all', tags })
     .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-          searchTerm: z.string().trim().optional().prefault(''),
-        })
+      zPaginationInput
+        .extend({ searchTerm: z.string().trim().optional().prefault('') })
         .prefault({})
     )
-    .output(
-      z.object({
-        items: z.array(zOrganizationListItem),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .output(zPaginatedOutput(zOrganizationListItem))
     .handler(async ({ context, input }) => {
       const [total, items] = await context.organizations.findPaginated({
         searchTerm: input.searchTerm,
