@@ -37,6 +37,7 @@ type StopsTimelineItemProps = {
   isFirst: boolean;
   isLast: boolean;
   actions?: ReactNode;
+  disableLinks?: boolean;
 };
 
 const TimelineMarker = ({
@@ -67,6 +68,7 @@ export const StopsTimelineItem = ({
   isFirst,
   isLast,
   actions,
+  disableLinks,
 }: StopsTimelineItemProps) => {
   const activePassengers = (stop.passengers ?? []).filter(
     (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
@@ -96,17 +98,22 @@ export const StopsTimelineItem = ({
             )}
           </div>
         </div>
-        {stop.location.address && (
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.location.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 truncate text-sm text-muted-foreground hover:text-foreground"
-          >
-            <span className="truncate">{stop.location.address}</span>
-            <ExternalLinkIcon className="size-3 shrink-0" />
-          </a>
-        )}
+        {stop.location.address &&
+          (disableLinks ? (
+            <span className="truncate text-sm text-muted-foreground">
+              {stop.location.address}
+            </span>
+          ) : (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stop.location.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <span className="truncate">{stop.location.address}</span>
+              <ExternalLinkIcon className="size-3 shrink-0" />
+            </a>
+          ))}
         {activePassengers.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {activePassengers.map((p) => {
@@ -141,12 +148,14 @@ type StopsTimelineProps = {
     info: { isFirst: boolean; isLast: boolean }
   ) => ReactNode;
   className?: string;
+  disableLinks?: boolean;
 };
 
 export const StopsTimeline = ({
   stops,
   renderActions,
   className,
+  disableLinks,
 }: StopsTimelineProps) => (
   <div className={cn('flex flex-col', className)}>
     {stops.map((stop, index) => (
@@ -155,6 +164,7 @@ export const StopsTimeline = ({
         stop={stop}
         isFirst={index === 0}
         isLast={index === stops.length - 1}
+        disableLinks={disableLinks}
         actions={renderActions?.(stop, {
           isFirst: index === 0,
           isLast: index === stops.length - 1,
