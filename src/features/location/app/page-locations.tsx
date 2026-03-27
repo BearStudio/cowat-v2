@@ -37,6 +37,16 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+export const locationsInfiniteOptions = () =>
+  orpc.location.getAll.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageLocations = () => {
   const { t } = useTranslation(['location', 'common']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -44,16 +54,7 @@ export const PageLocations = () => {
     null
   );
 
-  const locationsQuery = useInfiniteQuery(
-    orpc.location.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const locationsQuery = useInfiniteQuery(locationsInfiniteOptions());
 
   const locationDelete = useMutation(
     orpc.location.delete.mutationOptions({

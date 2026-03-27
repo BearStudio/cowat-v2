@@ -33,6 +33,21 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
+export const usersInfiniteOptions = (search: {
+  searchTerm?: string;
+  organizationId?: string;
+}) =>
+  orpc.user.getAll.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      searchTerm: search.searchTerm,
+      organizationId: search.organizationId,
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageUsers = (props: {
   search: { searchTerm?: string; organizationId?: string };
 }) => {
@@ -49,18 +64,7 @@ export const PageUsers = (props: {
       }),
   };
 
-  const usersQuery = useInfiniteQuery(
-    orpc.user.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        searchTerm: props.search.searchTerm,
-        organizationId: props.search.organizationId,
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const usersQuery = useInfiniteQuery(usersInfiniteOptions(props.search));
 
   const ui = getUiState((set) => {
     if (usersQuery.status === 'pending') return set('pending');

@@ -44,6 +44,16 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+export const myCommutesInfiniteOptions = () =>
+  orpc.commute.getMyCommutes.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageCommutes = () => {
   const { t } = useTranslation([
     'commute',
@@ -52,16 +62,7 @@ export const PageCommutes = () => {
     'commuteTemplate',
   ]);
   const session = authClient.useSession();
-  const commutesQuery = useInfiniteQuery(
-    orpc.commute.getMyCommutes.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const commutesQuery = useInfiniteQuery(myCommutesInfiniteOptions());
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({

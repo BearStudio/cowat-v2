@@ -36,20 +36,21 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+export const commuteTemplatesInfiniteOptions = () =>
+  orpc.commuteTemplate.getAll.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
 
-  const templatesQuery = useInfiniteQuery(
-    orpc.commuteTemplate.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const templatesQuery = useInfiniteQuery(commuteTemplatesInfiniteOptions());
 
   const templateDelete = useMutation(
     orpc.commuteTemplate.delete.mutationOptions({
