@@ -139,6 +139,23 @@ export default {
       return paginateResult(total, items, input.limit);
     }),
 
+  getByIdEnriched: procedure({ permissions: { commute: ['read'] } })
+    .route({ method: 'GET', path: '/commutes/{id}/enriched', tags })
+    .input(z.object({ id: z.string() }))
+    .output(zCommuteEnriched())
+    .handler(async ({ context, input }) => {
+      const commute = await context.commutes.findByIdEnriched(
+        input.id,
+        context.organizationId
+      );
+
+      if (!commute) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return commute;
+    }),
+
   update: procedure({ permissions: { commute: ['update'] } })
     .route({ method: 'POST', path: '/commutes/{id}', tags })
     .input(
@@ -163,29 +180,59 @@ export default {
       const affectedPassengers =
         await context.bookings.findAffectedPassengers(id);
 
+      // Cancel all bookings when seats are reduced
+      const newSeats = data.seats ?? existing.seats;
+      const seatsReduced =
+        newSeats < existing.seats && affectedPassengers.length > 0;
+
+      if (seatsReduced) {
+        await context.bookings.cancelMany(affectedPassengers.map((b) => b.id));
+      }
+
       const commute = await context.commutes.update(id, {
         ...data,
-        ...(stops && { stops: { deleteMany: {}, create: stops } }),
+        ...(stops && { stops }),
       });
 
+      const orgContext = {
+        db: context.db,
+        organizationId: context.organizationId,
+      };
+
       for (const booking of affectedPassengers) {
-        await context.notify(
-          {
-            type: 'commute.updated',
-            recipient: toRecipient(booking.passenger),
-            payload: {
-              driverName: context.user.name,
-              commuteDate: existing.date,
-              commuteType: existing.type,
-              orgSlug: context.orgSlug,
-              newCommuteDate: commute.date,
-              newCommuteType: commute.type,
-              previousSeats: existing.seats,
-              newSeats: commute.seats,
+        const recipient = toRecipient(booking.passenger);
+
+        if (seatsReduced) {
+          await context.notify(
+            {
+              type: 'booking.canceledByDriver',
+              recipient,
+              payload: {
+                driverName: context.user.name,
+                commuteDate: existing.date,
+                commuteType: existing.type,
+                orgSlug: context.orgSlug,
+              },
             },
-          },
-          { db: context.db, organizationId: context.organizationId }
-        );
+            orgContext
+          );
+        } else {
+          await context.notify(
+            {
+              type: 'commute.updated',
+              recipient,
+              payload: {
+                driverName: context.user.name,
+                commuteDate: existing.date,
+                commuteType: existing.type,
+                orgSlug: context.orgSlug,
+                newCommuteDate: commute.date,
+                newCommuteType: commute.type,
+              },
+            },
+            orgContext
+          );
+        }
       }
 
       return commute;

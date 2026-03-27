@@ -8,6 +8,7 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import type {
   BookingAcceptedEvent,
+  BookingCanceledByDriverEvent,
   BookingCanceledEvent,
   BookingRefusedEvent,
   BookingRequestedEvent,
@@ -20,6 +21,7 @@ import type {
 
 import { BookingAccepted } from './booking-accepted';
 import { BookingCanceled } from './booking-canceled';
+import { BookingCanceledByDriver } from './booking-canceled-by-driver';
 import { BookingRefused } from './booking-refused';
 import { BookingRequested } from './booking-requested';
 import { CommuteCanceled } from './commute-canceled';
@@ -39,6 +41,7 @@ export type PrivateEvent =
   | BookingAcceptedEvent
   | BookingRefusedEvent
   | BookingCanceledEvent
+  | BookingCanceledByDriverEvent
   | CommuteUpdatedEvent
   | CommuteCanceledEvent
   | CommuteReminderEvent;
@@ -94,6 +97,9 @@ export function getPrivateBlocks(
     ))
     .with({ type: 'booking.canceled' }, (e) => (
       <BookingCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
+    ))
+    .with({ type: 'booking.canceledByDriver' }, (e) => (
+      <BookingCanceledByDriver event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'commute.updated' }, (e) => (
       <CommuteUpdated event={e} baseUrl={opts?.baseUrl ?? ''} />
