@@ -15,20 +15,19 @@ Push notifications use **Firebase Cloud Messaging (FCM)** with two distinct part
 ### Server Side (Vercel serverless)
 
 - **No Firebase Admin SDK** — we use the FCM HTTP v1 REST API directly
-- `firebase.ts` handles OAuth2 authentication: signs a JWT with the service account's private key (Node.js `crypto`), exchanges it for an access token, and caches it for ~55 minutes
-- `push.ts` sends one HTTP request per device token via `sendFcmMessage()`, using `Promise.allSettled` for parallel delivery
+- `firebase.ts` handles OAuth2 authentication via `google-auth-library` (`GoogleAuth`), using the base64-encoded service account credentials
+- `push.ts` sends one HTTP request per device token via `postMessage()`, using `Promise.allSettled` for parallel delivery
 - Invalid tokens (NOT_FOUND / UNREGISTERED) are automatically cleaned up from the database
 
 ### Config / Environment Variables
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `VITE_FIREBASE_*` | Client | Firebase client config (apiKey, projectId, etc.) |
-| `FIREBASE_VAPID_PUBLIC_KEY` | Client (via API) | VAPID key for Web Push subscription |
+| `FIREBASE_*` | Server | Firebase config (apiKey, projectId, etc.) — served to client via oRPC endpoint |
+| `FIREBASE_VAPID_PUBLIC_KEY` | Server → Client | VAPID key for Web Push subscription |
 | `FIREBASE_SERVICE_ACCOUNT` | Server only | Base64-encoded service account JSON |
-| `FIREBASE_PROJECT_ID` | Server only | GCP project ID for FCM API calls |
 
-The client fetches its config from `/api/firebase-config` (server route that exposes only VITE-prefixed vars + VAPID key).
+The client fetches its config from an oRPC endpoint (`config.firebaseConfig`) which exposes the necessary Firebase config values and VAPID key.
 
 ---
 
@@ -56,7 +55,7 @@ TypeError: Cannot read properties of undefined (reading 'SDK_VERSION')
 
 **The fundamental problem:** On Vercel, Nitro's dependency management has a gap — you can either bundle a package (breaking ESM-incompatible packages) or externalize it (but it may not be traced into the deployment). There's no reliable way to say "don't bundle this, but include it as-is."
 
-**Final fix:** Remove `firebase-admin` entirely. Use the **FCM HTTP v1 REST API** directly with Node.js built-in `crypto` for JWT signing and `fetch` for HTTP requests. Zero external server dependencies = zero bundler issues.
+**Final fix:** Remove `firebase-admin` entirely. Use the **FCM HTTP v1 REST API** directly with `google-auth-library` for OAuth2 authentication and `fetch` for HTTP requests. Minimal external dependencies = zero bundler issues.
 
 ### 2. Service worker event handlers not registered synchronously
 
