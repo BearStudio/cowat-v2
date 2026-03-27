@@ -19,7 +19,7 @@ function daysFromNow(n: number): Date {
 }
 
 test.describe
-  .serial('Commute update — excess bookings cancelled on seat reduction', () => {
+  .serial('Commute update — bookings preserved when seats still sufficient', () => {
   let commuteId: string;
 
   test('setup: create commute, book, accept, then reduce seats', async ({
@@ -144,7 +144,7 @@ test.describe
     await adminCtx.close();
   });
 
-  test('user booking is no longer active after seat reduction', async ({
+  test('user booking is preserved when seats still sufficient', async ({
     browser,
   }) => {
     const userCtx = await browser.newContext({ storageState: USER_FILE });
@@ -163,12 +163,11 @@ test.describe
     );
     await expect(targetCard).toBeVisible({ timeout: 10_000 });
 
-    // The user's booking should have been cancelled — "Book" button should
-    // be visible instead of "Cancel"
-    await expect(dashboard.bookButtons(targetCard).first()).toBeVisible({
+    // 1 booking with 1 seat — booking should be preserved (cancel visible, no book button)
+    await expect(dashboard.cancelButton(targetCard)).toBeVisible({
       timeout: 10_000,
     });
-    await expect(dashboard.cancelButton(targetCard)).not.toBeVisible();
+    await expect(dashboard.bookButtons(targetCard).first()).not.toBeVisible();
 
     await userPage.close();
     await userCtx.close();
