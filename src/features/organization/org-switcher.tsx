@@ -43,18 +43,20 @@ export const OrgSwitcher = () => {
     await session.refetch();
 
     // If in app or manager route, navigate to the new org's URL
-    const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
+    const currentPath = router.state.location.pathname;
+    const orgSlugPattern = /^\/(app|manager)\/([^/]+)(\/.*)?$/;
+    const match = currentPath.match(orgSlugPattern);
+
     // Don't replace the slug on non-org-scoped routes like /manager/organizations
     if (
-      currentPath.match(orgSlugPattern) &&
+      match &&
       !currentPath.startsWith('/manager/organizations') &&
       !currentPath.startsWith('/manager/users')
     ) {
-      const newPath = currentPath.replace(
-        orgSlugPattern,
-        (_, prefix) => `/${prefix}/${org.slug}`
-      );
-      router.navigate({ to: newPath as string, replace: true });
+      const prefix = match[1];
+      const restOfPath = match[3] || '';
+      const newPath = `/${prefix}/${org.slug}${restOfPath}`;
+      router.navigate({ to: newPath, replace: true });
     }
 
     // Invalidate all queries since data is org-scoped
