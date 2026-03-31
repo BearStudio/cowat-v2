@@ -66,7 +66,7 @@ export function routeUrl<T extends RoutePath>(
     const searchParams = new URLSearchParams();
     for (const [key, value] of Object.entries(options.search)) {
       if (Array.isArray(value)) {
-        for (const v of value) searchParams.append(key, v);
+        searchParams.set(key, JSON.stringify(value));
       } else {
         searchParams.set(key, value);
       }
