@@ -67,7 +67,10 @@ export const DashboardCommuteCard = ({
   const formattedInwardDeparture =
     inwardTime && outwardTime && inwardTime < outwardTime ? (
       <>
-        {inwardTime} <span className="text-xs text-muted-foreground">+1</span>
+        <span className="font-medium text-foreground tabular-nums">
+          {inwardTime}
+        </span>
+        <span className="text-xs text-muted-foreground">+1</span>
       </>
     ) : (
       (inwardTime ?? undefined)
