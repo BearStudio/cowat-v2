@@ -482,7 +482,10 @@ export const PageCommuteNew = ({
 
       <SaveTemplateDrawer
         open={saveTemplateOpen}
-        onOpenChange={setSaveTemplateOpen}
+        onOpenChange={(open) => {
+          setSaveTemplateOpen(open);
+          if (!open) goBack();
+        }}
         commuteValues={submittedValues}
         onDone={goBack}
       />
