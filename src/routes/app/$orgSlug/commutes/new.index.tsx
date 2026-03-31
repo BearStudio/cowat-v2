@@ -15,7 +15,12 @@ export const Route = createFileRoute('/app/$orgSlug/commutes/new/')({
         undefined
       ).optional(),
       showForm: fallback(z.boolean(), false).optional(),
-      commuteRequestIds: z.array(z.string()).optional(),
+      commuteRequestIds: z
+        .preprocess(
+          (val) => (typeof val === 'string' ? [val] : val),
+          z.array(z.string())
+        )
+        .optional(),
     })
   ),
 });
