@@ -27,5 +27,18 @@ export const Route = createFileRoute('/app/$orgSlug/commutes/new/')({
 function RouteComponent() {
   const { orgSlug } = Route.useParams();
   const search = Route.useSearch();
-  return <PageCommuteNew search={search} orgSlug={orgSlug} />;
+  const navigate = Route.useNavigate();
+
+  return (
+    <PageCommuteNew
+      search={search}
+      orgSlug={orgSlug}
+      onDateChange={(date) =>
+        navigate({
+          replace: true,
+          search: (prev) => ({ ...prev, date }),
+        })
+      }
+    />
+  );
 }

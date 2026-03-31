@@ -31,6 +31,7 @@ import {
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
 import { OrgFloatingActionButtonLink } from '@/features/organization/org-button-link';
+import { OrgLink } from '@/features/organization/org-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -181,16 +182,22 @@ export const PageDashboard = () => {
                     </div>
 
                     {dayCommutes.length === 0 ? (
-                      <Empty className="border p-4">
-                        <EmptyHeader>
-                          <EmptyMedia variant="icon">
-                            <featureIcons.Commutes />
-                          </EmptyMedia>
-                          <EmptyTitle className="text-sm">
-                            {t('dashboard:noCommutesForDay')}
-                          </EmptyTitle>
-                        </EmptyHeader>
-                      </Empty>
+                      <OrgLink
+                        to="/app/$orgSlug/commutes/new"
+                        search={{ date: day.toDate() }}
+                        className="block"
+                      >
+                        <Empty className="cursor-pointer border p-4 transition-colors hover:bg-accent">
+                          <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                              <featureIcons.Commutes />
+                            </EmptyMedia>
+                            <EmptyTitle className="text-sm">
+                              {t('dashboard:noCommutesForDay')}
+                            </EmptyTitle>
+                          </EmptyHeader>
+                        </Empty>
+                      </OrgLink>
                     ) : (
                       <div className="flex flex-col gap-3">
                         {dayCommutes.map((item) => (

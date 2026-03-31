@@ -1,6 +1,5 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
@@ -21,8 +20,6 @@ export const TemplatePicker = ({
 }: {
   onSelect: (data: TemplateData) => void;
 }) => {
-  const { t } = useTranslation(['commute', 'commuteTemplate']);
-
   const templatesQuery = useQuery(
     orpc.commuteTemplate.getAll.queryOptions({
       input: { limit: 100 },
@@ -53,15 +50,19 @@ export const TemplatePicker = ({
     return set('default', { items });
   });
 
+  const maskStyle =
+    '[mask-image:linear-gradient(to_right,transparent,black_2rem,black_calc(100%-2rem),transparent)]';
+
   return ui
     .match('pending', () => (
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">
-          {t('commute:templatePicker.title')}
-        </h3>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className={maskStyle}>
+        <div className="no-scrollbar flex gap-3 overflow-x-auto ps-4 pe-4">
           {[1, 0.75, 0.5].map((opacity) => (
-            <Skeleton key={opacity} className="h-20" style={{ opacity }} />
+            <Skeleton
+              key={opacity}
+              className="h-40 w-64 shrink-0"
+              style={{ opacity }}
+            />
           ))}
         </div>
       </div>
@@ -69,15 +70,12 @@ export const TemplatePicker = ({
     .match('error', () => null)
     .match('empty', () => null)
     .match('default', ({ items }) => (
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">
-          {t('commute:templatePicker.title')}
-        </h3>
-        <div className="flex flex-col gap-3">
+      <div className={maskStyle}>
+        <div className="no-scrollbar flex gap-3 overflow-x-auto ps-4 pe-4">
           {items.map((item) => (
             <Card
               key={item.id}
-              className="cursor-pointer"
+              className="w-64 shrink-0 cursor-pointer"
               onClick={() => handleSelect(item)}
             >
               <CardHeader>

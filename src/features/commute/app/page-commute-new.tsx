@@ -1,17 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+import {
+  FieldPath,
+  FormStateSubscribe,
+  useForm,
+  useWatch,
+  Watch,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import {
   Form,
+  FormField,
+  FormFieldController,
+  FormFieldLabel,
   MultiStepForm,
   MultiStepFormContent,
   MultiStepFormNavigation,
@@ -23,13 +34,12 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 
 import { TemplatePicker } from '@/features/commute/app/template-picker';
 import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
@@ -39,9 +49,10 @@ import { StepRecap } from '@/features/commute/form-commute/step-recap';
 import {
   asCommuteBase,
   FormFieldsCommute,
+  FormFieldsCommuteRequest,
   zFormFieldsCommute,
+  zFormFieldsCommuteRequest,
 } from '@/features/commute/schema';
-import { OrgButtonLink } from '@/features/organization/org-button-link';
 import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
@@ -135,12 +146,121 @@ const SaveTemplateDrawer = ({
   );
 };
 
+const RequestCommuteDrawer = ({
+  open,
+  onOpenChange,
+  initialDate,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  initialDate?: Date;
+}) => {
+  const { t } = useTranslation(['commute']);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const form = useForm<FormFieldsCommuteRequest>({
+    resolver: zodResolver(zFormFieldsCommuteRequest()),
+    mode: 'all',
+    defaultValues: { date: initialDate, destination: null, comment: null },
+  });
+
+  useEffect(() => {
+    if (open) {
+      form.reset({ date: initialDate, destination: null, comment: null });
+    }
+  }, [open, form, initialDate]);
+
+  const commuteRequest = useMutation(
+    orpc.commuteRequest.create.mutationOptions({
+      onSuccess: () => {
+        toast.success(t('commute:new.requestDrawer.success'));
+        onOpenChange(false);
+      },
+    })
+  );
+
+  const handleSubmit = form.handleSubmit(({ date, destination, comment }) => {
+    commuteRequest.mutate({
+      date: toNoonUTC(date),
+      destination: destination ?? undefined,
+      comment: comment ?? undefined,
+    });
+  });
+
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="down">
+      <DrawerContent>
+        <Form {...form} noHtmlForm>
+          <DrawerHeader>
+            <DrawerTitle>{t('commute:new.requestDrawer.title')}</DrawerTitle>
+            <DrawerDescription>
+              {t('commute:new.requestDrawer.description')}
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerBody className="flex-col gap-4 pt-2 pb-4">
+            <FormField>
+              <FormFieldLabel required>{t('commute:form.date')}</FormFieldLabel>
+              <FormFieldController
+                type="date"
+                control={form.control}
+                name="date"
+                calendarProps={{
+                  disabled: (d) => d < today,
+                  startMonth: today,
+                }}
+              />
+            </FormField>
+            <FormField>
+              <FormFieldLabel>
+                {t('commute:new.requestDrawer.destination')}
+              </FormFieldLabel>
+              <FormFieldController
+                type="text"
+                control={form.control}
+                name="destination"
+                placeholder={t(
+                  'commute:new.requestDrawer.destinationPlaceholder'
+                )}
+              />
+            </FormField>
+            <FormField>
+              <FormFieldLabel>
+                {t('commute:new.requestDrawer.comment')}
+              </FormFieldLabel>
+              <FormFieldController
+                type="textarea"
+                control={form.control}
+                name="comment"
+                placeholder={t('commute:new.requestDrawer.commentPlaceholder')}
+                rows={3}
+              />
+            </FormField>
+          </DrawerBody>
+          <DrawerFooter>
+            <Button
+              className="w-full"
+              disabled={!form.formState.isValid}
+              loading={commuteRequest.isPending}
+              onClick={handleSubmit}
+            >
+              {t('commute:new.requestDrawer.submit')}
+            </Button>
+          </DrawerFooter>
+        </Form>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
 export const PageCommuteNew = ({
   search,
   orgSlug,
+  onDateChange,
 }: {
   search: { date?: Date; commuteRequestIds?: string[] };
   orgSlug: string;
+  onDateChange?: (date: Date | undefined) => void;
 }) => {
   const { t } = useTranslation(['commute']);
   const { navigateBack } = useNavigateBack();
@@ -148,16 +268,28 @@ export const PageCommuteNew = ({
     string | null
   >(null);
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+  const [requestCommuteOpen, setRequestCommuteOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
   const [submittedValues, setSubmittedValues] =
     useState<FormFieldsCommute | null>(null);
 
   useShouldShowNav('desktop-only');
+  const isMobile = useIsMobile();
 
   const form = useForm<FormFieldsCommute>({
     resolver: zodResolver(zFormFieldsCommute()),
     defaultValues: { ...DEFAULT_VALUES, date: search.date },
   });
+
+  const currentDate = useWatch({ control: form.control, name: 'date' });
+  const isMounted = useRef(false);
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    onDateChange?.(currentDate ?? undefined);
+  }, [currentDate, onDateChange]);
 
   const goBack = () => {
     navigateBack({
@@ -202,14 +334,44 @@ export const PageCommuteNew = ({
     <>
       <FormStateSubscribe
         control={form.control}
-        render={({ isDirty }) => (
-          <PreventNavigation shouldBlock={isDirty && !saveTemplateOpen} />
-        )}
+        render={({ dirtyFields }) => {
+          const { date: _date, ...otherDirtyFields } = dirtyFields;
+          const isFormDirty = Object.keys(otherDirtyFields).length > 0;
+          return (
+            <PreventNavigation shouldBlock={isFormDirty && !saveTemplateOpen} />
+          );
+        }}
       />
       <Form {...form} noHtmlForm>
         <MultiStepForm>
           <PageLayout>
-            <PageLayoutTopBar startActions={<BackButton />}>
+            <PageLayoutTopBar
+              startActions={<BackButton />}
+              endActions={
+                <>
+                  <Button
+                    variant="ghost"
+                    size={isMobile ? 'icon-lg' : 'xs'}
+                    onClick={() => setTemplatePickerOpen(true)}
+                  >
+                    <featureIcons.CommuteTemplates
+                      className={isMobile ? 'size-5' : 'size-3.5'}
+                    />
+                    {!isMobile && t('commute:templatePicker.useTemplate')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size={isMobile ? 'icon-lg' : 'xs'}
+                    onClick={() => setRequestCommuteOpen(true)}
+                  >
+                    <featureIcons.CommuteRequest
+                      className={isMobile ? 'size-5' : 'size-3.5'}
+                    />
+                    {!isMobile && t('commute:new.requestButton')}
+                  </Button>
+                </>
+              }
+            >
               <PageLayoutTopBarTitle>
                 {t('commute:new.title')}
               </PageLayoutTopBarTitle>
@@ -232,57 +394,6 @@ export const PageCommuteNew = ({
                     </p>
                   )}
                   <StepDetailsCommute />
-                  <Separator />
-                  <div className="flex items-center gap-2">
-                    <Drawer
-                      swipeDirection="up"
-                      open={templatePickerOpen}
-                      onOpenChange={setTemplatePickerOpen}
-                    >
-                      <DrawerTrigger
-                        render={
-                          <Button
-                            variant="ghost"
-                            size="xs"
-                            className="flex-1 text-muted-foreground"
-                          />
-                        }
-                      >
-                        <featureIcons.CommuteTemplates className="size-3.5" />
-                        {t('commute:templatePicker.useTemplate')}
-                      </DrawerTrigger>
-                      <DrawerContent>
-                        <DrawerHeader>
-                          <DrawerTitle>
-                            {t('commute:templatePicker.title')}
-                          </DrawerTitle>
-                        </DrawerHeader>
-                        <DrawerBody className="flex-col gap-3 pb-6">
-                          <TemplatePicker
-                            onSelect={({ templateName, ...data }) => {
-                              setSelectedTemplateName(templateName);
-                              form.reset({
-                                ...DEFAULT_VALUES,
-                                date: search.date,
-                                ...data,
-                              });
-                              setTemplatePickerOpen(false);
-                            }}
-                          />
-                        </DrawerBody>
-                      </DrawerContent>
-                    </Drawer>
-                    <OrgButtonLink
-                      variant="ghost"
-                      size="xs"
-                      className="flex-1 text-muted-foreground"
-                      to="/app/$orgSlug/requests/commute"
-                      search={{ date: search.date }}
-                    >
-                      <featureIcons.CommuteRequest className="size-3.5" />
-                      {t('commute:new.requestButton')}
-                    </OrgButtonLink>
-                  </div>
                 </div>
               </MultiStepFormStep>
               <MultiStepFormStep
@@ -344,11 +455,41 @@ export const PageCommuteNew = ({
         </MultiStepForm>
       </Form>
 
+      <Drawer
+        swipeDirection="up"
+        open={templatePickerOpen}
+        onOpenChange={setTemplatePickerOpen}
+      >
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{t('commute:templatePicker.title')}</DrawerTitle>
+          </DrawerHeader>
+          <DrawerBody className="gap-3 overflow-hidden pb-6">
+            <TemplatePicker
+              onSelect={({ templateName, ...data }) => {
+                setSelectedTemplateName(templateName);
+                form.reset({
+                  ...DEFAULT_VALUES,
+                  date: search.date,
+                  ...data,
+                });
+                setTemplatePickerOpen(false);
+              }}
+            />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
       <SaveTemplateDrawer
         open={saveTemplateOpen}
         onOpenChange={setSaveTemplateOpen}
         commuteValues={submittedValues}
         onDone={goBack}
+      />
+      <RequestCommuteDrawer
+        open={requestCommuteOpen}
+        onOpenChange={setRequestCommuteOpen}
+        initialDate={search.date}
       />
     </>
   );

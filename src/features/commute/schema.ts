@@ -200,6 +200,20 @@ export const zFormFieldsCommuteUpdate = () =>
     });
   });
 
+export type FormFieldsCommuteRequest = z.infer<
+  ReturnType<typeof zFormFieldsCommuteRequest>
+>;
+export const zFormFieldsCommuteRequest = () =>
+  z.object({
+    date: z
+      .date({ error: t('common:errors.required') })
+      .refine((date) => !dayjs(date).isBefore(dayjs(), 'day'), {
+        message: t('commute:form.errors.datePast'),
+      }),
+    destination: zu.fieldText.nullish(),
+    comment: zu.fieldText.nullish(),
+  });
+
 export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
 export const zUserSummary = () =>
   zUser().pick({ id: true, name: true, image: true, phone: true });

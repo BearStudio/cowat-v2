@@ -26,7 +26,7 @@ const CommuteOptionLinks = ({
   return (
     <>
       <OrgButtonLink
-        variant="ghost"
+        variant="secondary"
         size={size}
         className={className}
         to="/app/$orgSlug/account/commute-templates"
@@ -35,7 +35,7 @@ const CommuteOptionLinks = ({
         {t('commute:list.speedDial.myCommutes')}
       </OrgButtonLink>
       <OrgButtonLink
-        variant="ghost"
+        variant="secondary"
         size={size}
         className={className}
         to="/app/$orgSlug/account/locations"
@@ -59,7 +59,7 @@ export const CommuteOptionsMenu = () => {
             <EllipsisVerticalIcon />
           </DrawerTrigger>
           <DrawerContent>
-            <DrawerBody className="flex-col gap-2 py-4">
+            <DrawerBody className="flex-col gap-2 pt-6 pb-4">
               <CommuteOptionLinks
                 size="default"
                 className="w-full justify-start"

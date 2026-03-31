@@ -5,12 +5,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,31 +63,25 @@ export const PageCommuteRequest = ({
         <p className="text-center text-sm text-muted-foreground">
           {t('commute:new.requestDrawer.description')}
         </p>
-        <Calendar
-          className="mx-auto"
-          mode="single"
-          selected={requestDate}
-          onSelect={(date) => {
-            if (date) {
+        <div className="flex flex-col gap-1.5">
+          <Label>{t('commute:form.date')}</Label>
+          <DatePicker
+            value={requestDate ?? null}
+            onChange={(date) => {
               navigate({
                 to: '.',
                 search: (prev: typeof search) => ({
                   ...prev,
-                  date: toNoonUTC(date),
+                  date: date ?? undefined,
                 }),
               });
-            }
-          }}
-          defaultMonth={requestDate}
-          disabled={(date) => date < today}
-          startMonth={today}
-          classNames={{
-            day: 'size-10',
-            day_button: 'size-10',
-            weekday: 'w-10',
-          }}
-          style={{ width: '310px' }}
-        />
+            }}
+            calendarProps={{
+              disabled: (date) => date < today,
+              startMonth: today,
+            }}
+          />
+        </div>
         <div className="flex flex-col gap-1.5">
           <Label>{t('commute:new.requestDrawer.destination')}</Label>
           <Input
