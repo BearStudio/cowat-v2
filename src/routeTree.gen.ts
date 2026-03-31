@@ -51,7 +51,6 @@ import { Route as ApiDevEmailTemplateRouteImport } from './routes/api/dev.email.
 import { Route as ManagerUsersIdUpdateIndexRouteImport } from './routes/manager/users/$id.update.index'
 import { Route as ManagerOrgSlugUsersNewIndexRouteImport } from './routes/manager/$orgSlug/users/new.index'
 import { Route as ManagerOrgSlugUsersIdIndexRouteImport } from './routes/manager/$orgSlug/users/$id.index'
-import { Route as AppOrgSlugCommutesRequestIndexRouteImport } from './routes/app/$orgSlug/commutes/request.index'
 import { Route as AppOrgSlugCommutesNewIndexRouteImport } from './routes/app/$orgSlug/commutes/new.index'
 import { Route as AppOrgSlugAccountLocationsIndexRouteImport } from './routes/app/$orgSlug/account/locations/index'
 import { Route as AppOrgSlugAccountCommuteTemplatesIndexRouteImport } from './routes/app/$orgSlug/account/commute-templates/index'
@@ -279,12 +278,6 @@ const ManagerOrgSlugUsersIdIndexRoute =
     path: '/users/$id/',
     getParentRoute: () => ManagerOrgSlugRouteRoute,
   } as any)
-const AppOrgSlugCommutesRequestIndexRoute =
-  AppOrgSlugCommutesRequestIndexRouteImport.update({
-    id: '/commutes/request/',
-    path: '/commutes/request/',
-    getParentRoute: () => AppOrgSlugRouteRoute,
-  } as any)
 const AppOrgSlugCommutesNewIndexRoute =
   AppOrgSlugCommutesNewIndexRouteImport.update({
     id: '/commutes/new/',
@@ -371,7 +364,6 @@ export interface FileRoutesByFullPath {
   '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
-  '/app/$orgSlug/commutes/request/': typeof AppOrgSlugCommutesRequestIndexRoute
   '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
@@ -416,7 +408,6 @@ export interface FileRoutesByTo {
   '/app/$orgSlug/account/commute-templates': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new': typeof AppOrgSlugCommutesNewIndexRoute
-  '/app/$orgSlug/commutes/request': typeof AppOrgSlugCommutesRequestIndexRoute
   '/manager/$orgSlug/users/$id': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update': typeof ManagerUsersIdUpdateIndexRoute
@@ -469,7 +460,6 @@ export interface FileRoutesById {
   '/app/$orgSlug/account/commute-templates/': typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   '/app/$orgSlug/account/locations/': typeof AppOrgSlugAccountLocationsIndexRoute
   '/app/$orgSlug/commutes/new/': typeof AppOrgSlugCommutesNewIndexRoute
-  '/app/$orgSlug/commutes/request/': typeof AppOrgSlugCommutesRequestIndexRoute
   '/manager/$orgSlug/users/$id/': typeof ManagerOrgSlugUsersIdIndexRoute
   '/manager/$orgSlug/users/new/': typeof ManagerOrgSlugUsersNewIndexRoute
   '/manager/users/$id/update/': typeof ManagerUsersIdUpdateIndexRoute
@@ -523,7 +513,6 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/account/commute-templates/'
     | '/app/$orgSlug/account/locations/'
     | '/app/$orgSlug/commutes/new/'
-    | '/app/$orgSlug/commutes/request/'
     | '/manager/$orgSlug/users/$id/'
     | '/manager/$orgSlug/users/new/'
     | '/manager/users/$id/update/'
@@ -568,7 +557,6 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/account/commute-templates'
     | '/app/$orgSlug/account/locations'
     | '/app/$orgSlug/commutes/new'
-    | '/app/$orgSlug/commutes/request'
     | '/manager/$orgSlug/users/$id'
     | '/manager/$orgSlug/users/new'
     | '/manager/users/$id/update'
@@ -620,7 +608,6 @@ export interface FileRouteTypes {
     | '/app/$orgSlug/account/commute-templates/'
     | '/app/$orgSlug/account/locations/'
     | '/app/$orgSlug/commutes/new/'
-    | '/app/$orgSlug/commutes/request/'
     | '/manager/$orgSlug/users/$id/'
     | '/manager/$orgSlug/users/new/'
     | '/manager/users/$id/update/'
@@ -944,13 +931,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerOrgSlugUsersIdIndexRouteImport
       parentRoute: typeof ManagerOrgSlugRouteRoute
     }
-    '/app/$orgSlug/commutes/request/': {
-      id: '/app/$orgSlug/commutes/request/'
-      path: '/commutes/request'
-      fullPath: '/app/$orgSlug/commutes/request/'
-      preLoaderRoute: typeof AppOrgSlugCommutesRequestIndexRouteImport
-      parentRoute: typeof AppOrgSlugRouteRoute
-    }
     '/app/$orgSlug/commutes/new/': {
       id: '/app/$orgSlug/commutes/new/'
       path: '/commutes/new'
@@ -1011,7 +991,6 @@ interface AppOrgSlugRouteRouteChildren {
   AppOrgSlugAccountCommuteTemplatesIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesIndexRoute
   AppOrgSlugAccountLocationsIndexRoute: typeof AppOrgSlugAccountLocationsIndexRoute
   AppOrgSlugCommutesNewIndexRoute: typeof AppOrgSlugCommutesNewIndexRoute
-  AppOrgSlugCommutesRequestIndexRoute: typeof AppOrgSlugCommutesRequestIndexRoute
   AppOrgSlugAccountCommuteTemplatesNewIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesNewIndexRoute
   AppOrgSlugCommutesIdUpdateIndexRoute: typeof AppOrgSlugCommutesIdUpdateIndexRoute
   AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute: typeof AppOrgSlugAccountCommuteTemplatesIdUpdateIndexRoute
@@ -1026,7 +1005,6 @@ const AppOrgSlugRouteRouteChildren: AppOrgSlugRouteRouteChildren = {
     AppOrgSlugAccountCommuteTemplatesIndexRoute,
   AppOrgSlugAccountLocationsIndexRoute: AppOrgSlugAccountLocationsIndexRoute,
   AppOrgSlugCommutesNewIndexRoute: AppOrgSlugCommutesNewIndexRoute,
-  AppOrgSlugCommutesRequestIndexRoute: AppOrgSlugCommutesRequestIndexRoute,
   AppOrgSlugAccountCommuteTemplatesNewIndexRoute:
     AppOrgSlugAccountCommuteTemplatesNewIndexRoute,
   AppOrgSlugCommutesIdUpdateIndexRoute: AppOrgSlugCommutesIdUpdateIndexRoute,

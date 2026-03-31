@@ -37,7 +37,6 @@ test.describe
     );
 
     await commuteForm.goto();
-    await commuteForm.fromScratchButton.click();
 
     const date = daysFromNow(3);
     await commuteForm.dateInput.fill(formatDate(date));
@@ -68,6 +67,9 @@ test.describe
     const stopId = createdCommute.stops[0]?.id;
     expect(commuteId).toBeTruthy();
     expect(stopId).toBeTruthy();
+
+    // Save template drawer appears — skip it
+    await commuteForm.skipSaveTemplate();
 
     await expect(commuteForm.commutesListHeading).toBeVisible({
       timeout: 10_000,
