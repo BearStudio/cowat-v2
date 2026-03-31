@@ -87,14 +87,6 @@
   --container-5xs: 8rem; /* 128px */
   --container-4xs: 12rem; /* 192px */
   /* Tailwind --container-3xs: 16rem; (256px) */
-
-  /* Speed Dial */
-  --animate-speed-dial-item-in: speed-dial-item-in 200ms
-    cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-speed-dial-item-out: speed-dial-item-out 150ms
-    cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-speed-dial-backdrop-in: speed-dial-backdrop-in 200ms ease-out both;
-  --animate-speed-dial-backdrop-out: speed-dial-backdrop-out 200ms ease-out both;
 }
 
 :root {
@@ -244,7 +236,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  bottom: calc(64px + max(0.75rem, env(safe-area-inset-bottom)) + 1.5rem);
+  bottom: calc(64px + max(2.5rem, env(safe-area-inset-bottom)));
   right: 1.25rem;
   view-transition-name: fab;
 }
@@ -262,6 +254,77 @@
 
 ::view-transition-new(fab) {
   animation: none;
+}
+
+/* === Nested drawer stacking ===
+   Base UI sets --nested-drawers (int) and [data-nested-drawer-open] automatically.
+   We use those to scale back + peek the outer drawer when an inner one opens. */
+
+[data-slot='drawer-content'][data-swipe-direction='down'] {
+  --bleed: 3rem;
+  --peek: 1rem;
+  --stack-scale: calc(1 - (var(--nested-drawers, 0) * 0.05));
+  --stack-peek-offset: calc(var(--nested-drawers, 0) * var(--peek));
+  --stack-height: max(
+    0px,
+    calc(var(--drawer-frontmost-height, var(--drawer-height, 0px)) - var(--bleed))
+  );
+  --stack-shrink: calc(1 - var(--stack-scale));
+  --stack-translate: calc(
+    (-1 * var(--stack-peek-offset)) - (var(--stack-shrink) * var(--stack-height))
+  );
+
+  /* Override Tailwind's transform-[translateY(...)] to add scale + stacking offset */
+  transform-origin: 50% calc(100% - var(--bleed));
+  transform: translateY(
+      calc(
+        var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px) +
+          var(--stack-translate)
+      )
+    )
+    scale(var(--stack-scale));
+
+  /* Extend transition to cover height (for stacking collapse) */
+  transition-property: transform, height;
+  transition-duration: 450ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+
+  &[data-ending-style] {
+    transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
+    transform: translateY(100%);
+  }
+  &[data-starting-style] {
+    transform: translateY(100%);
+  }
+  &[data-swiping] {
+    transition-duration: 0ms;
+  }
+
+  /* When an inner drawer is open: lock height and add a subtle dim */
+  &[data-nested-drawer-open] {
+    height: calc(var(--stack-height) + var(--bleed));
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgb(0 0 0 / 0.05);
+      pointer-events: none;
+    }
+  }
+}
+
+/* Fade out the content of the outer drawer when an inner one is open */
+[data-slot='drawer-inner-content'] {
+  transition: opacity 300ms cubic-bezier(0.45, 1.005, 0, 1.005);
+}
+[data-slot='drawer-content'][data-nested-drawer-open] [data-slot='drawer-inner-content'] {
+  opacity: 0;
+}
+[data-slot='drawer-content'][data-nested-drawer-open][data-nested-drawer-swiping]
+  [data-slot='drawer-inner-content'] {
+  opacity: 1;
 }
 
 /* Slide left: navigating to a page further right in the nav */
@@ -330,6 +393,13 @@ html:active-view-transition-type(slide-right) {
   }
 }
 
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -369,47 +439,6 @@ html:active-view-transition-type(slide-right) {
 
   .animate-caret-blink {
     animation: caret-blink 1.25s ease-out infinite;
-  }
-}
-
-/* Speed Dial keyframes (registered via --animate-speed-dial-* in @theme) */
-@keyframes speed-dial-item-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes speed-dial-item-out {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(6px) scale(0.95);
-  }
-}
-
-@keyframes speed-dial-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes speed-dial-backdrop-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
   }
 }
 

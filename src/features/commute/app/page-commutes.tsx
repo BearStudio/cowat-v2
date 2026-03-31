@@ -19,10 +19,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import {
-  COMMUTE_ACTIONS,
-  ResponsiveActions,
-} from '@/components/ui/responsive-actions';
 
 import { authClient } from '@/features/auth/client';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
@@ -35,8 +31,12 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
+import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
-import { OrgButtonLink } from '@/features/organization/org-button-link';
+import {
+  OrgButtonLink,
+  OrgFloatingActionButtonLink,
+} from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -88,12 +88,17 @@ export const PageCommutes = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <ResponsiveActions
-            icon={<PlusIcon />}
-            label="commute:list.newAction"
-            actions={COMMUTE_ACTIONS}
-            ns={['commute']}
-          />
+          <>
+            <CommuteOptionsMenu />
+            <OrgFloatingActionButtonLink
+              label={t('commute:list.newAction')}
+              variant="secondary"
+              size="sm"
+              to="/app/$orgSlug/commutes/new"
+            >
+              <PlusIcon />
+            </OrgFloatingActionButtonLink>
+          </>
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>

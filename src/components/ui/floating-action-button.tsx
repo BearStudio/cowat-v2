@@ -8,7 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 
 export const fabVariants = cva(
-  'rounded-full shadow-lg transition-[color,box-shadow,transform] active:scale-[0.97]',
+  'rounded-3xl shadow-lg transition-[color,box-shadow,transform] active:scale-[0.97]',
   {
     variants: {
       size: {
