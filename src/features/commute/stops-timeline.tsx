@@ -15,7 +15,7 @@ export const TripTime = ({
   timeClassName,
 }: {
   type: 'ONEWAY' | 'RETURN';
-  time: string;
+  time: string | ReactNode;
   timeClassName?: string;
 }) => {
   const Icon = tripTypeIcons[type];
@@ -151,44 +151,67 @@ export const StopsTimelineItem = ({
   index,
   actions,
   disableLinks,
-}: StopsTimelineItemProps) => (
-  <div
-    className="relative flex items-start gap-3"
-    data-slot="stop-item"
-    style={{ '--stop-index': index ?? 0 } as CSSProperties}
-  >
-    <TimelineDot />
-    {!isLast && <TimelineLine from={isFirst ? 'dot' : 'top'} to="bottom" />}
-    {isLast && !isFirst && <TimelineLine from="top" to="dot" />}
+  departureReference,
+}: StopsTimelineItemProps & { departureReference?: string }) => {
+  const formatTimeWithPlusOne = (time?: string) => {
+    if (!time) return undefined;
+    return departureReference && time < departureReference ? (
+      <>
+        {time} <span className="text-xs text-muted-foreground">+1</span>
+      </>
+    ) : (
+      time
+    );
+  };
+
+  return (
     <div
-      className={cn('flex min-w-0 flex-1 flex-col gap-1.5', !isLast && 'pb-4')}
+      className="relative flex items-start gap-3"
+      data-slot="stop-item"
+      style={{ '--stop-index': index ?? 0 } as CSSProperties}
     >
-      <div className="-mb-1 flex items-center gap-1.5">
-        <span className="truncate text-sm leading-5 font-medium">
-          {stop.location.name}
-        </span>
-        <span className="text-muted-foreground/50">·</span>
-        <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
-          <TripTime type="ONEWAY" time={stop.outwardTime} />
-          {stop.inwardTime && (
-            <>
-              <span className="text-muted-foreground/50">·</span>
-              <TripTime type="RETURN" time={stop.inwardTime} />
-            </>
-          )}
+      <TimelineDot />
+      {!isLast && <TimelineLine from={isFirst ? 'dot' : 'top'} to="bottom" />}
+      {isLast && !isFirst && <TimelineLine from="top" to="dot" />}
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 flex-col gap-1.5',
+          !isLast && 'pb-4'
+        )}
+      >
+        <div className="-mb-1 flex items-center gap-1.5">
+          <span className="truncate text-sm leading-5 font-medium">
+            {stop.location.name}
+          </span>
+          <span className="text-muted-foreground/50">·</span>
+          <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+            <TripTime
+              type="ONEWAY"
+              time={formatTimeWithPlusOne(stop.outwardTime)}
+            />
+            {stop.inwardTime && (
+              <>
+                <span className="text-muted-foreground/50">·</span>
+                <TripTime
+                  type="RETURN"
+                  time={formatTimeWithPlusOne(stop.inwardTime)}
+                />
+              </>
+            )}
+          </div>
         </div>
+        {stop.location.address && (
+          <StopAddress
+            address={stop.location.address}
+            disableLink={disableLinks}
+          />
+        )}
+        <ActivePassengersBadges passengers={stop.passengers} />
+        {actions && <div className="min-w-0">{actions}</div>}
       </div>
-      {stop.location.address && (
-        <StopAddress
-          address={stop.location.address}
-          disableLink={disableLinks}
-        />
-      )}
-      <ActivePassengersBadges passengers={stop.passengers} />
-      {actions && <div className="min-w-0">{actions}</div>}
     </div>
-  </div>
-);
+  );
+};
 
 type StopsTimelineProps = {
   stops: Array<StopEnriched>;
@@ -205,22 +228,27 @@ export const StopsTimeline = ({
   renderActions,
   className,
   disableLinks,
-}: StopsTimelineProps) => (
-  <div className={cn('flex flex-col', className)}>
-    {stops.map((stop, index) => {
-      const isFirst = index === 0;
-      const isLast = index === stops.length - 1;
-      return (
-        <StopsTimelineItem
-          key={stop.id}
-          stop={stop}
-          index={index}
-          isFirst={isFirst}
-          isLast={isLast}
-          disableLinks={disableLinks}
-          actions={renderActions?.(stop, { isFirst, isLast })}
-        />
-      );
-    })}
-  </div>
-);
+}: StopsTimelineProps) => {
+  const departureReference = stops[0]?.outwardTime;
+
+  return (
+    <div className={cn('flex flex-col', className)}>
+      {stops.map((stop, index) => {
+        const isFirst = index === 0;
+        const isLast = index === stops.length - 1;
+        return (
+          <StopsTimelineItem
+            key={stop.id}
+            stop={stop}
+            index={index}
+            isFirst={isFirst}
+            isLast={isLast}
+            departureReference={departureReference}
+            disableLinks={disableLinks}
+            actions={renderActions?.(stop, { isFirst, isLast })}
+          />
+        );
+      })}
+    </div>
+  );
+};
