@@ -110,7 +110,11 @@ export const StepRecap = ({
 
       {/* Trip timelines — side by side for round trips */}
       <div
-        className={isRound && hasInwardTimes ? 'grid grid-cols-2 gap-4' : ''}
+        className={
+          isRound && hasInwardTimes
+            ? 'flex flex-col gap-4 sm:grid sm:grid-cols-2'
+            : ''
+        }
       >
         {/* Outbound trip */}
         <div className="flex flex-col gap-2">

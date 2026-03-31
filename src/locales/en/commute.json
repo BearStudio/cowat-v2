@@ -31,6 +31,11 @@
     "title": "New Commute",
     "submitButton": "Create",
     "requestButton": "Request a commute",
+    "saveTemplateTitle": "Save as template?",
+    "saveTemplateDescription": "Save this commute as a template to reuse it next time.",
+    "saveTemplateConfirm": "Post and save template",
+    "saveTemplateSkip": "Continue without creating a template",
+    "templateSaved": "Template saved!",
     "requestDrawer": {
       "title": "Request a commute",
       "description": "Pick a date and notify the team that you need a ride.",
@@ -52,7 +57,9 @@
   "templatePicker": {
     "title": "My templates",
     "emptyState": "Save time: create a template",
-    "fromScratch": "Create from scratch"
+    "fromScratch": "New commute",
+    "useTemplate": "Use a template",
+    "usingTemplate": "Created from template \"{{name}}\""
   },
   "stepper": {
     "details": "Details",

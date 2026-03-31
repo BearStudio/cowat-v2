@@ -91,7 +91,7 @@ function DrawerContent({
           <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[swipe-direction=down]/drawer-content:block" />
           <DrawerPrimitive.Content
             data-slot="drawer-inner-content"
-            className="flex min-h-0 flex-1 flex-col overflow-hidden pb-safe-bottom"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden pb-safe-bottom group-data-[swipe-direction=up]/drawer-content:pb-0"
           >
             {children}
           </DrawerPrimitive.Content>

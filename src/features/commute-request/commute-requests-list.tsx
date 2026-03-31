@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
@@ -20,11 +20,12 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { CommuteRequestCard } from '@/features/commute-request/commute-request-card';
-import { OrgButtonLink } from '@/features/organization/org-button-link';
+import { RequestCommuteDrawer } from '@/features/commute-request/request-commute-drawer';
 
 export const CommuteRequestsList = () => {
   const { t } = useTranslation(['commuteRequest']);
   const session = authClient.useSession();
+  const [requestDrawerOpen, setRequestDrawerOpen] = useState(false);
 
   const requestsQuery = useInfiniteQuery(
     orpc.commuteRequest.getAll.infiniteOptions({
@@ -63,7 +64,7 @@ export const CommuteRequestsList = () => {
     return set('default');
   });
 
-  return ui
+  const content = ui
     .match('pending', () => <CardListSkeleton />)
     .match('error', () => (
       <DataListErrorState retry={() => requestsQuery.refetch()} />
@@ -80,13 +81,13 @@ export const CommuteRequestsList = () => {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <OrgButtonLink
+          <Button
             variant="secondary"
             size="sm"
-            to="/app/$orgSlug/commutes/request"
+            onClick={() => setRequestDrawerOpen(true)}
           >
             {t('commuteRequest:list.createAction')}
-          </OrgButtonLink>
+          </Button>
         </EmptyContent>
       </Empty>
     ))
@@ -121,13 +122,13 @@ export const CommuteRequestsList = () => {
               <p className="text-sm text-muted-foreground">
                 {t('commuteRequest:list.emptyMyRequests')}
               </p>
-              <OrgButtonLink
+              <Button
                 variant="secondary"
                 size="sm"
-                to="/app/$orgSlug/commutes/request"
+                onClick={() => setRequestDrawerOpen(true)}
               >
                 {t('commuteRequest:list.createAction')}
-              </OrgButtonLink>
+              </Button>
             </div>
           )}
         </section>
@@ -147,4 +148,14 @@ export const CommuteRequestsList = () => {
       </div>
     ))
     .exhaustive();
+
+  return (
+    <>
+      {content}
+      <RequestCommuteDrawer
+        open={requestDrawerOpen}
+        onOpenChange={setRequestDrawerOpen}
+      />
+    </>
+  );
 };

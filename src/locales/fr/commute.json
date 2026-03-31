@@ -31,6 +31,11 @@
     "title": "Nouveau trajet",
     "submitButton": "Créer",
     "requestButton": "Demander un trajet",
+    "saveTemplateTitle": "Enregistrer comme modèle ?",
+    "saveTemplateDescription": "Enregistrez ce trajet comme modèle pour le réutiliser la prochaine fois.",
+    "saveTemplateConfirm": "Poster et enregistrer le modèle",
+    "saveTemplateSkip": "Continuer sans créer de modèle",
+    "templateSaved": "Modèle enregistré !",
     "requestDrawer": {
       "title": "Demander un trajet",
       "description": "Choisissez une date pour notifier l'équipe que vous avez besoin d'un trajet.",
@@ -52,7 +57,9 @@
   "templatePicker": {
     "title": "Mes modèles",
     "emptyState": "Gagnez du temps : créez un modèle",
-    "fromScratch": "Créer de zéro"
+    "fromScratch": "Nouveau trajet",
+    "useTemplate": "Utiliser un modèle",
+    "usingTemplate": "Créé à partir du modèle « {{name}} »"
   },
   "stepper": {
     "details": "Détails",

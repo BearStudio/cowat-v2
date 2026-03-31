@@ -67,15 +67,29 @@ export const DatePicker = ({
           />
         </div>
         {!noCalendar && (
-          <Drawer open={datePicker.isOpen} onOpenChange={datePicker.toggle}>
+          <Drawer
+            open={datePicker.isOpen}
+            onOpenChange={datePicker.toggle}
+            swipeDirection="down"
+          >
             <DrawerContent>
-              <DrawerBody className="items-center pt-2 pb-6">
+              <DrawerBody className="pt-2 pb-6">
                 <Calendar
                   mode="single"
                   selected={props.value ?? undefined}
                   onSelect={handleSelect}
                   defaultMonth={props.value ?? undefined}
                   autoFocus
+                  className="w-full px-4"
+                  style={{ width: '100%' }}
+                  classNames={{
+                    month_grid: 'w-full',
+                    weekdays: 'w-full',
+                    weekday: 'w-0 flex-1 text-center',
+                    week: 'w-full',
+                    day: 'w-0 h-auto flex-1 aspect-square',
+                    day_button: 'size-full',
+                  }}
                   {...calendarProps}
                 />
               </DrawerBody>
