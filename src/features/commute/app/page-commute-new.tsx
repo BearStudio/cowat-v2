@@ -282,14 +282,16 @@ export const PageCommuteNew = ({
   });
 
   const currentDate = useWatch({ control: form.control, name: 'date' });
+  const onDateChangeRef = useRef(onDateChange);
+  onDateChangeRef.current = onDateChange;
   const isMounted = useRef(false);
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
       return;
     }
-    onDateChange?.(currentDate ?? undefined);
-  }, [currentDate, onDateChange]);
+    onDateChangeRef.current?.(currentDate ?? undefined);
+  }, [currentDate]);
 
   const goBack = () => {
     navigateBack({
