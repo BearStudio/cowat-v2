@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { ChevronDown } from 'lucide-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/tailwind/utils';
@@ -139,7 +140,7 @@ type CardCommuteHeaderProps = {
   outwardTaken: number;
   inwardTaken?: number;
   outwardDeparture?: string;
-  inwardDeparture?: string;
+  inwardDeparture?: string | React.ReactNode;
   stops?: StopEnriched[];
   passengers?: PassengerSummary[];
   badge?: React.ReactNode;
@@ -158,18 +159,19 @@ function TripInfo({
   seatLabel,
 }: {
   type: 'ONEWAY' | 'RETURN';
-  time?: string;
+  time?: string | React.ReactNode;
   seatLabel: string;
 }) {
   return (
     <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-      {time && (
+      {time && typeof time === 'string' && (
         <TripTime
           type={type}
           time={time}
           timeClassName="font-medium text-foreground"
         />
       )}
+      {time && typeof time !== 'string' && time}
       <span className="text-muted-foreground/50">·</span>
       <span className="text-xs">{seatLabel}</span>
     </span>

@@ -65,9 +65,13 @@ export const DashboardCommuteCard = ({
   const inwardTime = commute.stops.at(-1)?.inwardTime;
 
   const formattedInwardDeparture =
-    inwardTime && outwardTime && inwardTime < outwardTime
-      ? `${inwardTime} +1`
-      : (inwardTime ?? undefined);
+    inwardTime && outwardTime && inwardTime < outwardTime ? (
+      <>
+        {inwardTime} <span className="text-xs text-muted-foreground">+1</span>
+      </>
+    ) : (
+      (inwardTime ?? undefined)
+    );
 
   return (
     <CardCommute
