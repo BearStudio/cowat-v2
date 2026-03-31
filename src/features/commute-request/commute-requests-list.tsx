@@ -83,7 +83,7 @@ export const CommuteRequestsList = () => {
           <OrgButtonLink
             variant="secondary"
             size="sm"
-            to="/app/$orgSlug/commutes/request"
+            to="/app/$orgSlug/requests/commute"
           >
             {t('commuteRequest:list.createAction')}
           </OrgButtonLink>
@@ -124,7 +124,7 @@ export const CommuteRequestsList = () => {
               <OrgButtonLink
                 variant="secondary"
                 size="sm"
-                to="/app/$orgSlug/commutes/request"
+                to="/app/$orgSlug/requests/commute"
               >
                 {t('commuteRequest:list.createAction')}
               </OrgButtonLink>

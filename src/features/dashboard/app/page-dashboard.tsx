@@ -15,7 +15,6 @@ import { DashboardSkeleton } from '@/components/loading/dashboard-skeleton';
 import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
-  EmptyContent,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -31,11 +30,7 @@ import {
 } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
-import {
-  OrgButtonLink,
-  OrgFloatingActionButtonLink,
-} from '@/features/organization/org-button-link';
-import { OrgLink } from '@/features/organization/org-link';
+import { OrgFloatingActionButtonLink } from '@/features/organization/org-button-link';
 import {
   PageLayout,
   PageLayoutContent,
@@ -183,18 +178,6 @@ export const PageDashboard = () => {
                           ? t('dashboard:today')
                           : dayjs(day).f('dashboard:dayHeader')}
                       </h2>
-                      {dayCommutes.length > 0 && (
-                        <OrgButtonLink
-                          variant="ghost"
-                          size="sm"
-                          className="ml-auto"
-                          to="/app/$orgSlug/commutes/new"
-                          search={{ date: day.toDate() }}
-                        >
-                          <PlusIcon />
-                          {t('dashboard:newCommuteAction')}
-                        </OrgButtonLink>
-                      )}
                     </div>
 
                     {dayCommutes.length === 0 ? (
@@ -207,30 +190,6 @@ export const PageDashboard = () => {
                             {t('dashboard:noCommutesForDay')}
                           </EmptyTitle>
                         </EmptyHeader>
-                        <EmptyContent>
-                          <div className="flex items-center gap-4">
-                            <OrgButtonLink
-                              className="hit-area-y-5"
-                              variant="default"
-                              size="sm"
-                              to="/app/$orgSlug/commutes/new"
-                              search={{ date: day.toDate() }}
-                            >
-                              <PlusIcon />
-                              {t('dashboard:newCommuteAction')}
-                            </OrgButtonLink>
-                            <OrgButtonLink
-                              className="hit-area-y-5"
-                              variant="secondary"
-                              size="sm"
-                              to="/app/$orgSlug/commutes/request"
-                              search={{ date: day.toDate() }}
-                            >
-                              <featureIcons.CommuteRequest />
-                              {t('dashboard:requestCommuteAction')}
-                            </OrgButtonLink>
-                          </div>
-                        </EmptyContent>
                       </Empty>
                     ) : (
                       <div className="flex flex-col gap-3">
@@ -254,16 +213,6 @@ export const PageDashboard = () => {
                             }
                           />
                         ))}
-                        <p className="text-right text-xs text-muted-foreground">
-                          {t('dashboard:noMatchingRide')}{' '}
-                          <OrgLink
-                            className="text-primary underline-offset-2 hover:underline"
-                            to="/app/$orgSlug/commutes/request"
-                            search={{ date: day.toDate() }}
-                          >
-                            {t('dashboard:requestCommuteAction')}
-                          </OrgLink>
-                        </p>
                       </div>
                     )}
                   </div>

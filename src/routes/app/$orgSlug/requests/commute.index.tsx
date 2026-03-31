@@ -6,7 +6,7 @@ import { toNoonUTC } from '@/lib/dayjs/to-noon-utc';
 
 import { PageCommuteRequest } from '@/features/commute/app/page-commute-request';
 
-export const Route = createFileRoute('/app/$orgSlug/commutes/request/')({
+export const Route = createFileRoute('/app/$orgSlug/requests/commute/')({
   component: RouteComponent,
   validateSearch: zodValidator(
     z.object({

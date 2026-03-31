@@ -87,14 +87,6 @@
   --container-5xs: 8rem; /* 128px */
   --container-4xs: 12rem; /* 192px */
   /* Tailwind --container-3xs: 16rem; (256px) */
-
-  /* Speed Dial */
-  --animate-speed-dial-item-in: speed-dial-item-in 200ms
-    cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-speed-dial-item-out: speed-dial-item-out 150ms
-    cubic-bezier(0.23, 1, 0.32, 1) both;
-  --animate-speed-dial-backdrop-in: speed-dial-backdrop-in 200ms ease-out both;
-  --animate-speed-dial-backdrop-out: speed-dial-backdrop-out 200ms ease-out both;
 }
 
 :root {
@@ -369,47 +361,6 @@ html:active-view-transition-type(slide-right) {
 
   .animate-caret-blink {
     animation: caret-blink 1.25s ease-out infinite;
-  }
-}
-
-/* Speed Dial keyframes (registered via --animate-speed-dial-* in @theme) */
-@keyframes speed-dial-item-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes speed-dial-item-out {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(6px) scale(0.95);
-  }
-}
-
-@keyframes speed-dial-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes speed-dial-backdrop-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
   }
 }
 

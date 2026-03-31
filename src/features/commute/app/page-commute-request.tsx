@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -30,6 +31,7 @@ export const PageCommuteRequest = ({
   search: { date?: Date };
 }) => {
   const { t } = useTranslation(['commute', 'common']);
+  useShouldShowNav('desktop-only');
   const navigate = useNavigate();
 
   const requestDate = search.date;

@@ -15,7 +15,6 @@ test.describe('[REGRESSION] Driver cannot open booking drawer for their own comm
     );
 
     await commuteFormPage.goto();
-    await commuteFormPage.fromScratchButton.click();
 
     // Use a date within the dashboard's 7-day range so getByDate returns it
     const futureDate = dayjs().add(3, 'day').format('DD/MM/YYYY');
@@ -50,6 +49,9 @@ test.describe('[REGRESSION] Driver cannot open booking drawer for their own comm
     const stopId = createdCommute.stops[0]?.id;
     const commuteId = createdCommute.id;
     expect(stopId).toBeTruthy();
+
+    // Save template drawer appears — skip it
+    await commuteFormPage.skipSaveTemplate();
 
     // Navigate to the dashboard with URL params that would open the booking drawer
     await page.goto(

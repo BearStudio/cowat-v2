@@ -14,7 +14,6 @@ export const Route = createFileRoute('/app/$orgSlug/commutes/new/')({
         z.coerce.date().transform((d) => toNoonUTC(d)),
         undefined
       ).optional(),
-      showForm: fallback(z.boolean(), false).optional(),
       commuteRequestIds: z
         .preprocess(
           (val) => (typeof val === 'string' ? [val] : val),
