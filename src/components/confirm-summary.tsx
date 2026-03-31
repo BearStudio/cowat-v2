@@ -26,6 +26,8 @@ export const ConfirmSummary = ({
   typeLabel,
   stops,
 }: ConfirmSummaryProps) => {
+  const departureReference = stops?.[0]?.outwardTime;
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
       <div className="flex items-center gap-3">
@@ -60,6 +62,7 @@ export const ConfirmSummary = ({
                 stop={stop}
                 isFirst={i === 0}
                 isLast={i === stops.length - 1}
+                departureReference={departureReference}
               />
             ))}
           </div>
