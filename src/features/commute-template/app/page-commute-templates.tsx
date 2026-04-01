@@ -74,7 +74,8 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   return (
     <PageLayout>
       <PageLayoutTopBar
-        startActions={<BackButton />}
+        className="[view-transition-name:none]"
+        startActions={<BackButton viewTransition={{ types: ['slide-down'] }} />}
         endActions={
           <OrgButtonLink
             variant="secondary"

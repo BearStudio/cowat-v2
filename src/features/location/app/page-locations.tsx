@@ -90,7 +90,8 @@ export const PageLocations = () => {
   return (
     <PageLayout>
       <PageLayoutTopBar
-        startActions={<BackButton />}
+        className="[view-transition-name:none]"
+        startActions={<BackButton viewTransition={{ types: ['slide-down'] }} />}
         endActions={
           <Button variant="secondary" size="sm" onClick={openCreateDrawer}>
             <PlusIcon />

@@ -1,0 +1,62 @@
+/* Keep nav bars, page topbar, and devtools static during transitions */
+::view-transition-group(main-nav),
+::view-transition-group(main-nav-mobile),
+::view-transition-group(page-topbar),
+::view-transition-group(env-hint) {
+  animation: none;
+}
+
+::view-transition-old(page-topbar) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(page-topbar) {
+  animation: none;
+}
+
+::view-transition-old(main-nav-mobile) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(main-nav-mobile) {
+  animation: none;
+}
+
+::view-transition-old(env-hint) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(env-hint) {
+  animation: none;
+}
+
+/* FAB portal root — always present in the DOM at body level */
+#fab-portal-root {
+  position: fixed;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  bottom: calc(64px + max(1.5rem, env(safe-area-inset-bottom)));
+  right: 1.25rem;
+  view-transition-name: fab;
+}
+
+/* Keep FAB static and above page content during transitions */
+::view-transition-group(fab) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(fab) {
+  animation: none;
+  opacity: 0; /* Hide old snapshot immediately — prevents double-shadow overlap */
+}
+
+::view-transition-new(fab) {
+  animation: none;
+}

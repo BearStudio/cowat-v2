@@ -40,6 +40,7 @@ export const PageRequests = ({ tab }: { tab?: string }) => {
               variant="secondary"
               size="sm"
               to="/app/$orgSlug/commutes/new"
+              viewTransition={{ types: ['slide-up'] }}
             >
               <PlusIcon />
             </OrgFloatingActionButtonLink>
