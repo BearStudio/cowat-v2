@@ -65,6 +65,8 @@ export const RequestCard = ({ request }: RequestCardProps) => {
 
   const isMutating = accept.isPending || refuse.isPending;
 
+  const departureReference = request.stop.outwardTime;
+
   return (
     <Card className="relative overflow-hidden border-l-4 border-l-primary">
       <div className="pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full bg-primary opacity-15 blur-2xl" />
@@ -96,7 +98,12 @@ export const RequestCard = ({ request }: RequestCardProps) => {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3">
-        <StopsTimelineItem stop={request.stop} isFirst isLast />
+        <StopsTimelineItem
+          stop={request.stop}
+          isFirst
+          isLast
+          departureReference={departureReference}
+        />
         {request.comment && <CommentText>{request.comment}</CommentText>}
       </CardContent>
 
