@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { zUserSummary } from '@/features/commute/schema';
+import { zUserSummary } from '@/features/user/schema';
 
 const zCommuteRequestStatus = () => z.enum(['OPEN', 'FULFILLED', 'CANCELED']);
 
