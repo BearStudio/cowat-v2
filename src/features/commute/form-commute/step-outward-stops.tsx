@@ -45,7 +45,7 @@ export const StepOutwardStops = ({
   const { containerRef, focusFieldAt } = useFocusFieldAt();
 
   return (
-    <div ref={containerRef} className="flex flex-col gap-3 py-4">
+    <div ref={containerRef} className="flex flex-col gap-3">
       {fields.map((field, index) => {
         const isFirst = index === 0;
         const isLast = index === fields.length - 1;

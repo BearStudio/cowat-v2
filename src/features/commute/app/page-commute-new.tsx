@@ -25,6 +25,7 @@ import {
   MultiStepFormStep,
 } from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -280,17 +281,7 @@ export const PageCommuteNew = ({
                   return form.trigger(['date', 'seats', 'type']);
                 }}
               >
-                <div className="flex flex-col gap-6">
-                  {selectedTemplateName && (
-                    <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <featureIcons.CommuteTemplates className="size-4 shrink-0" />
-                      {t('commute:templatePicker.usingTemplate', {
-                        name: selectedTemplateName,
-                      })}
-                    </p>
-                  )}
-                  <StepDetailsCommute />
-                </div>
+                <StepDetailsCommute />
               </MultiStepFormStep>
               <MultiStepFormStep
                 name={t('commute:stepper.stops')}
@@ -346,6 +337,33 @@ export const PageCommuteNew = ({
               submitLabel={t('commute:stepper.submit')}
               nextLabel={t('commute:stepper.next')}
               backLabel={t('commute:stepper.back')}
+              banner={
+                selectedTemplateName ? (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={commuteCreate.isPending}
+                    className="mx-auto w-full max-w-4xl px-4"
+                  >
+                    <Alert
+                      variant="primary"
+                      className="grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-x-3 transition-opacity hover:opacity-80"
+                    >
+                      <featureIcons.CommuteTemplates className="size-4" />
+                      <AlertTitle className="col-start-2 text-left">
+                        {t('commute:templatePicker.quickCreate', {
+                          name: selectedTemplateName,
+                        })}
+                      </AlertTitle>
+                      <span className="col-start-3 row-start-1 text-sm font-medium text-primary">
+                        {commuteCreate.isPending
+                          ? '...'
+                          : t('commute:stepper.submit')}
+                      </span>
+                    </Alert>
+                  </button>
+                ) : null
+              }
             />
           </PageLayout>
         </MultiStepForm>
@@ -371,6 +389,7 @@ export const PageCommuteNew = ({
                   ...data,
                 });
                 setTemplatePickerOpen(false);
+                toast.success(t('commute:templatePicker.templateApplied'));
               }}
             />
           </ResponsiveDrawerBody>
