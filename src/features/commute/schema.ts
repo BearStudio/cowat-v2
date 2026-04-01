@@ -5,12 +5,13 @@ import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import { zRequestStatus, zTripType } from '@/features/booking/schema';
 import {
   createCommuteRules,
   createStopOrderRules,
 } from '@/features/commute/form-commute-rules';
-import { zLocation } from '@/features/location/schema';
-import { zUser } from '@/features/user/schema';
+import { zLocationSummary } from '@/features/location/schema';
+import { zUserSummary } from '@/features/user/schema';
 
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
 export type CommuteType = z.infer<ReturnType<typeof zCommuteType>>;
@@ -214,19 +215,12 @@ export const zFormFieldsCommuteRequest = () =>
     comment: zu.fieldText.nullish(),
   });
 
-export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
-export const zUserSummary = () =>
-  zUser().pick({ id: true, name: true, image: true, phone: true });
-
-const zLocationSummary = () =>
-  zLocation().pick({ id: true, name: true, address: true });
-
 export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
 export const zStopPassenger = () =>
   z.object({
     id: z.string(),
-    status: z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']),
-    tripType: z.enum(['ROUND', 'ONEWAY', 'RETURN']),
+    status: zRequestStatus(),
+    tripType: zTripType(),
     comment: z.string().nullish(),
     passenger: zUserSummary(),
   });
