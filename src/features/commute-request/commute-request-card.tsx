@@ -7,6 +7,7 @@ import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
 
+import { CommentText } from '@/components/comment-text';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,7 +58,7 @@ export const CommuteRequestCard = ({
 
   return (
     <Card className="border-l-warning relative overflow-hidden border-l-4">
-      <div className="bg-warning pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full opacity-20 blur-2xl" />
+      <div className="bg-warning pointer-events-none absolute top-1/2 -left-6 size-28 -translate-y-1/2 rounded-full opacity-15 blur-2xl" />
 
       <CardHeader>
         <div className="flex items-center gap-3">
@@ -96,12 +97,7 @@ export const CommuteRequestCard = ({
           )}
           <span className="text-2xs text-muted-foreground">{relativeDate}</span>
         </div>
-        {request.comment && (
-          <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-            <MessageSquareIcon className="mt-0.5 size-3 shrink-0" />
-            {request.comment}
-          </p>
-        )}
+        {request.comment && <CommentText>{request.comment}</CommentText>}
       </CardContent>
 
       <CardFooter className="justify-between gap-2 border-t pt-3">
