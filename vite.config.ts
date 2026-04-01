@@ -1,7 +1,8 @@
+import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
-import viteReact from '@vitejs/plugin-react';
+import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
 import { defineConfig, loadEnv } from 'vite';
 import { qrcode } from 'vite-plugin-qrcode';
@@ -37,10 +38,9 @@ export default defineConfig(({ mode }) => {
         routeRules: { '/storybook': { redirect: '/storybook/' } },
       }),
       // react's vite plugin must come after start's vite plugin
-      viteReact({
-        babel: {
-          plugins: ['babel-plugin-react-compiler'],
-        },
+      viteReact(),
+      babel({
+        plugins: [reactCompilerPreset()],
       }),
       // Copy prisma binaries at the end
       prismaCopyBinariesPlugin(),
