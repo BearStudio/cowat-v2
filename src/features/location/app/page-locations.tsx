@@ -164,6 +164,7 @@ export const PageLocations = () => {
                 {items.map((item) => (
                   <div
                     key={item.id}
+                    data-testid="location-card"
                     className="group relative flex flex-col overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md dark:bg-neutral-900"
                   >
                     {/* Map preview → opens in Google Maps */}
