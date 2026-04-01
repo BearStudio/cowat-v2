@@ -13,7 +13,7 @@ import {
   type NotificationEvent,
 } from '@/server/notifications/types';
 
-export type PushContent = {
+type PushContent = {
   title: string;
   body: string;
   link?: string;

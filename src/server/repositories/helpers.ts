@@ -85,7 +85,7 @@ export const enrichedCommuteInclude = {
   stops: stopsWithPassengersInclude,
 } as const;
 
-export type EnrichedCommute = Prisma.CommuteGetPayload<{
+type EnrichedCommute = Prisma.CommuteGetPayload<{
   include: typeof enrichedCommuteInclude;
 }>;
 
