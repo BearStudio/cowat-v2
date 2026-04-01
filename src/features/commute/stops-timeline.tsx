@@ -146,6 +146,7 @@ type StopsTimelineItemProps = {
   index?: number;
   actions?: ReactNode;
   disableLinks?: boolean;
+  departureReference?: string;
 };
 
 export const StopsTimelineItem = ({
@@ -156,16 +157,7 @@ export const StopsTimelineItem = ({
   actions,
   disableLinks,
   departureReference,
-}: StopsTimelineItemProps & { departureReference?: string }) => {
-export const StopsTimelineItem = ({
-  stop,
-  isFirst,
-  isLast,
-  index,
-  actions,
-  disableLinks,
-  departureReference,
-}: StopsTimelineItemProps & { departureReference?: string }) => {
+}: StopsTimelineItemProps) => {
   return (
     <div
       className="relative flex items-start gap-3"
