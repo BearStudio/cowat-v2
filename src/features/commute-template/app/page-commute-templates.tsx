@@ -9,8 +9,8 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
+import { LoadMoreButton } from '@/components/load-more-button';
 import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import { DataListErrorState } from '@/components/ui/datalist';
@@ -182,18 +182,10 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                   </CardContent>
                 </Card>
               ))}
-              {templatesQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => templatesQuery.fetchNextPage()}
-                    loading={templatesQuery.isFetchingNextPage}
-                  >
-                    {t('commuteTemplate:list.loadMore')}
-                  </Button>
-                </div>
-              )}
+              <LoadMoreButton
+                query={templatesQuery}
+                label={t('commuteTemplate:list.loadMore')}
+              />
             </div>
           ))
           .exhaustive()}
