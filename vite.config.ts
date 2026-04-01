@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
       // react's vite plugin must come after start's vite plugin
       viteReact(),
       babel({
-        plugins: [reactCompilerPreset()],
+        presets: [reactCompilerPreset()],
       }),
       // Copy prisma binaries at the end
       prismaCopyBinariesPlugin(),
