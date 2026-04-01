@@ -35,6 +35,13 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import {
+  ResponsiveDrawer,
+  ResponsiveDrawerBody,
+  ResponsiveDrawerContent,
+  ResponsiveDrawerHeader,
+  ResponsiveDrawerTitle,
+} from '@/components/ui/responsive-drawer';
 
 import { TemplatePicker } from '@/features/commute/app/template-picker';
 import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
@@ -344,16 +351,17 @@ export const PageCommuteNew = ({
         </MultiStepForm>
       </Form>
 
-      <Drawer
-        swipeDirection="up"
+      <ResponsiveDrawer
         open={templatePickerOpen}
         onOpenChange={setTemplatePickerOpen}
       >
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{t('commute:templatePicker.title')}</DrawerTitle>
-          </DrawerHeader>
-          <DrawerBody className="gap-3 overflow-hidden pb-6">
+        <ResponsiveDrawerContent>
+          <ResponsiveDrawerHeader>
+            <ResponsiveDrawerTitle>
+              {t('commute:templatePicker.title')}
+            </ResponsiveDrawerTitle>
+          </ResponsiveDrawerHeader>
+          <ResponsiveDrawerBody className="gap-3 overflow-hidden pb-6">
             <TemplatePicker
               onSelect={({ templateName, ...data }) => {
                 setSelectedTemplateName(templateName);
@@ -365,9 +373,9 @@ export const PageCommuteNew = ({
                 setTemplatePickerOpen(false);
               }}
             />
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </ResponsiveDrawerBody>
+        </ResponsiveDrawerContent>
+      </ResponsiveDrawer>
 
       <SaveTemplateDrawer
         open={saveTemplateOpen}
