@@ -22,11 +22,11 @@ export type FcmMessage = {
   webpush?: FcmWebPushConfig;
 };
 
-export type FcmSuccessResponse = {
+type FcmSuccessResponse = {
   messageId: string;
 };
 
-export type FcmErrorResponse = {
+type FcmErrorResponse = {
   code: string;
   message: string;
   status?: string;
@@ -134,9 +134,7 @@ export async function postMessage(
   });
 }
 
-// ── Config ───────────────────────────────────────────────────────────────────
-
-export type FirebaseClientConfig = {
+type FirebaseClientConfig = {
   apiKey: string;
   authDomain: string;
   projectId: string;
