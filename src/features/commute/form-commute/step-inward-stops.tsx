@@ -58,7 +58,7 @@ export const StepInwardStops = ({
     : [];
 
   return (
-    <div className="flex flex-col gap-3 py-4">
+    <div className="flex flex-col gap-3">
       {reversedIndices.map((index, displayPos) => {
         const stop = stops?.[index];
         if (!stop) return null;
