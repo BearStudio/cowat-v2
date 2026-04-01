@@ -1,6 +1,14 @@
 import { t } from 'i18next';
 import { z } from 'zod';
 
+export type FormFieldsOrg = z.infer<ReturnType<typeof zFormFieldsOrg>>;
+export const zFormFieldsOrg = () =>
+  z.object({
+    name: z.string().min(1).max(100),
+    slug: z.string().min(1).max(100),
+    ownerUserId: z.string().min(1),
+  });
+
 export const zInviteForm = () =>
   z.object({
     emails: z

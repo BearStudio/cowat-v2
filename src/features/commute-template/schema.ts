@@ -5,6 +5,7 @@ import { zu } from '@/lib/zod/zod-utils';
 
 import { createStopOrderRules } from '@/features/commute/form-commute-rules';
 import { zCommuteType } from '@/features/commute/schema';
+import { zLocationSummary } from '@/features/location/schema';
 
 export const zCommuteTemplate = () =>
   z.object({
@@ -87,9 +88,5 @@ export const zTemplateStop = () =>
 
 export const zTemplateStopWithLocation = () =>
   zTemplateStop().extend({
-    location: z.object({
-      id: z.string(),
-      name: z.string(),
-      address: z.string(),
-    }),
+    location: zLocationSummary(),
   });

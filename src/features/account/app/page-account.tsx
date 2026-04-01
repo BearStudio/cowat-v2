@@ -1,10 +1,11 @@
-import { ChevronRightIcon, SettingsIcon } from 'lucide-react';
+import { SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
 
 import { Button } from '@/components/ui/button';
 
+import { AccountNavLink } from '@/features/account/app/account-nav-link';
 import { DisplayPreferences } from '@/features/account/display-preferences';
 import { MemberPreferences } from '@/features/account/member-preferences';
 import { NotificationPreferences } from '@/features/account/notification-preferences';
@@ -14,7 +15,6 @@ import { Role } from '@/features/auth/permissions';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
 import { FcmDebug } from '@/features/devtools/fcm-debug';
-import { OrgLink } from '@/features/organization/org-link';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { useOrganizations } from '@/features/organization/use-organizations';
 import {
@@ -22,26 +22,6 @@ import {
   PageLayoutContent,
   PageLayoutTopBar,
 } from '@/layout/app/page-layout';
-
-function AccountNavLink({
-  icon: Icon,
-  children,
-  ...linkProps
-}: Omit<React.ComponentProps<typeof OrgLink>, 'children' | 'className'> & {
-  icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-}) {
-  return (
-    <OrgLink
-      {...linkProps}
-      className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors duration-150 ease-out hover:bg-accent"
-    >
-      <Icon className="size-5 text-muted-foreground" />
-      <span className="flex-1">{children}</span>
-      <ChevronRightIcon className="size-4 text-muted-foreground" />
-    </OrgLink>
-  );
-}
 
 export const PageAccount = () => {
   const { t } = useTranslation(['account']);
