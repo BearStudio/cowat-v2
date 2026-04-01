@@ -107,6 +107,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
 
       <CardFooter className="justify-between gap-2 border-t pt-3">
         <Button
+          className="flex-1"
           size="sm"
           loading={accept.isPending}
           disabled={isMutating}
@@ -132,6 +133,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
           onConfirm={() => refuse.mutateAsync({ id: request.id })}
         >
           <Button
+            className="flex-1"
             variant="destructive-secondary"
             size="sm"
             disabled={isMutating}
