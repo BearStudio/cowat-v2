@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { LoadMoreButton } from '@/components/load-more-button';
 import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
 import { Button } from '@/components/ui/button';
 import { DataListErrorState } from '@/components/ui/datalist';
@@ -133,18 +134,10 @@ export const CommuteRequestsList = () => {
           )}
         </section>
 
-        {requestsQuery.hasNextPage && (
-          <div className="flex justify-center">
-            <Button
-              size="xs"
-              variant="secondary"
-              onClick={() => requestsQuery.fetchNextPage()}
-              loading={requestsQuery.isFetchingNextPage}
-            >
-              {t('commuteRequest:list.loadMore')}
-            </Button>
-          </div>
-        )}
+        <LoadMoreButton
+          query={requestsQuery}
+          label={t('commuteRequest:list.loadMore')}
+        />
       </div>
     ))
     .exhaustive();

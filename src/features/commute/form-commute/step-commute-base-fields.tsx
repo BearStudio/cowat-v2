@@ -8,14 +8,18 @@ import {
 } from '@/components/form';
 import { Checkbox } from '@/components/ui/checkbox';
 
-import type { FormFieldsCommuteUpdate } from '@/features/commute/schema';
+import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 
-export const StepDetailsCommuteUpdate = () => {
-  const { t } = useTranslation(['commute']);
-  const form = useFormContext<FormFieldsCommuteUpdate>();
+type StepCommuteBaseFieldsProps = {
+  ns: 'commute' | 'commuteTemplate';
+};
+
+export const StepCommuteBaseFields = ({ ns }: StepCommuteBaseFieldsProps) => {
+  const { t } = useTranslation([ns]);
+  const form = useFormContext<FormFieldsCommuteBase>();
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       <FormFieldController
         type="custom"
         control={form.control}
@@ -27,13 +31,13 @@ export const StepDetailsCommuteUpdate = () => {
               field.onChange(checked ? 'ROUND' : 'ONEWAY')
             }
           >
-            {t('commute:form.roundTrip')}
+            {t(`${ns}:form.roundTrip`)}
           </Checkbox>
         )}
       />
 
       <FormField>
-        <FormFieldLabel required>{t('commute:form.seats')}</FormFieldLabel>
+        <FormFieldLabel required>{t(`${ns}:form.seats`)}</FormFieldLabel>
         <FormFieldController
           type="number"
           control={form.control}
@@ -44,14 +48,14 @@ export const StepDetailsCommuteUpdate = () => {
       </FormField>
 
       <FormField>
-        <FormFieldLabel>{t('commute:form.comment')}</FormFieldLabel>
+        <FormFieldLabel>{t(`${ns}:form.comment`)}</FormFieldLabel>
         <FormFieldController
           type="textarea"
           control={form.control}
           name="comment"
-          placeholder={t('commute:form.commentPlaceholder')}
+          placeholder={t(`${ns}:form.commentPlaceholder`)}
         />
       </FormField>
-    </div>
+    </>
   );
 };
