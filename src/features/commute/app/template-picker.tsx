@@ -1,14 +1,25 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
+import { PlusIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
+import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Empty,
+  EmptyContent,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import type { FormFieldsCommute } from '@/features/commute/schema';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
 
 type TemplateData = Pick<
   FormFieldsCommute,
@@ -20,6 +31,7 @@ export const TemplatePicker = ({
 }: {
   onSelect: (data: TemplateData) => void;
 }) => {
+  const { t } = useTranslation(['commute', 'commuteTemplate']);
   const templatesQuery = useQuery(
     orpc.commuteTemplate.getAll.queryOptions({
       input: { limit: 100 },
@@ -68,7 +80,26 @@ export const TemplatePicker = ({
       </div>
     ))
     .match('error', () => null)
-    .match('empty', () => null)
+    .match('empty', () => (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <featureIcons.CommuteTemplates />
+          </EmptyMedia>
+          <EmptyTitle>{t('commute:templatePicker.emptyState')}</EmptyTitle>
+        </EmptyHeader>
+        <EmptyContent>
+          <OrgButtonLink
+            variant="secondary"
+            size="sm"
+            to="/app/$orgSlug/account/commute-templates/new"
+          >
+            <PlusIcon />
+            {t('commuteTemplate:list.newAction')}
+          </OrgButtonLink>
+        </EmptyContent>
+      </Empty>
+    ))
     .match('default', ({ items }) => (
       <div className={maskStyle}>
         <div className="no-scrollbar flex gap-3 overflow-x-auto ps-4 pe-4">

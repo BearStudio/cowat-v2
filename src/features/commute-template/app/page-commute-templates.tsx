@@ -25,10 +25,8 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
-import {
-  OrgButtonLink,
-  OrgFloatingActionButtonLink,
-} from '@/features/organization/org-button-link';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -50,6 +48,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
 
+  useShouldShowNav('desktop-only');
   const templatesQuery = useInfiniteQuery(commuteTemplatesInfiniteOptions());
 
   const templateDelete = useMutation(
@@ -77,14 +76,14 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
       <PageLayoutTopBar
         startActions={<BackButton />}
         endActions={
-          <OrgFloatingActionButtonLink
-            label={t('commuteTemplate:list.newAction')}
+          <OrgButtonLink
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/commute-templates/new"
           >
             <PlusIcon />
-          </OrgFloatingActionButtonLink>
+            {t('commuteTemplate:list.newAction')}
+          </OrgButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
