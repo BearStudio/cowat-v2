@@ -1,7 +1,5 @@
 import { db } from '@/server/db';
 
-import { SEED_EMAILS } from './user';
-
 const LOCATIONS = [
   {
     name: 'Home',
@@ -28,15 +26,12 @@ export async function createLocations(organizationId: string) {
 
   let createdCounter = 0;
 
-  for (const email of SEED_EMAILS) {
-    const user = await db.user.findUnique({ where: { email } });
-    if (!user) continue;
+  const members = await db.member.findMany({
+    where: { organizationId },
+    select: { id: true },
+  });
 
-    const member = await db.member.findFirst({
-      where: { userId: user.id, organizationId },
-    });
-    if (!member) continue;
-
+  for (const member of members) {
     const existingCount = await db.location.count({
       where: { memberId: member.id },
     });
