@@ -66,16 +66,29 @@ export const useAutoInwardTimes = ({
     const lastInward = stops[lastIndex]?.inwardTime;
     const canCompute = !!lastOutward && !!lastInward;
 
-    const lastOutwardMin = canCompute ? timeToMinutes(lastOutward) : 0;
+    const outwardMinutes = stops.map((stop) =>
+      stop?.outwardTime ? timeToMinutes(stop.outwardTime) : null
+    );
+    for (let i = 1; i < outwardMinutes.length; i++) {
+      if (
+        outwardMinutes[i] !== null &&
+        outwardMinutes[i - 1] !== null &&
+        outwardMinutes[i]! < outwardMinutes[i - 1]!
+      ) {
+        outwardMinutes[i]! += 24 * 60;
+      }
+    }
+    const lastOutwardMin =
+      canCompute && outwardMinutes[lastIndex] != null
+        ? outwardMinutes[lastIndex]
+        : 0;
     const lastInwardMin = canCompute ? timeToMinutes(lastInward) : 0;
 
     for (let i = 0; i < lastIndex; i++) {
-      const stopOutward = stops[i]?.outwardTime;
+      const stopOutward = outwardMinutes[i];
       const computed =
         canCompute && stopOutward
-          ? minutesToTime(
-              lastInwardMin + (lastOutwardMin - timeToMinutes(stopOutward))
-            )
+          ? minutesToTime(lastInwardMin + (lastOutwardMin - stopOutward))
           : null;
 
       if ((stops[i]?.inwardTime ?? null) !== computed) {
@@ -95,15 +108,29 @@ export const useAutoInwardTimes = ({
     const lastInward = stops[lastIndex]?.inwardTime;
     if (!lastOutward || !lastInward) return new Set<number>();
 
-    const lastOutwardMin = timeToMinutes(lastOutward);
+    const outwardMinutes = stops.map((stop) =>
+      stop?.outwardTime ? timeToMinutes(stop.outwardTime) : null
+    );
+
+    for (let i = 1; i < outwardMinutes.length; i++) {
+      if (
+        outwardMinutes[i] !== null &&
+        outwardMinutes[i - 1] !== null &&
+        outwardMinutes[i]! < outwardMinutes[i - 1]!
+      ) {
+        outwardMinutes[i]! += 24 * 60;
+      }
+    }
+    const lastOutwardMin =
+      outwardMinutes[lastIndex] != null ? outwardMinutes[lastIndex] : 0;
     const lastInwardMin = timeToMinutes(lastInward);
 
     const result = new Set<number>();
     for (let i = 0; i < lastIndex; i++) {
-      const stopOutward = stops[i]?.outwardTime;
+      const stopOutward = outwardMinutes[i];
       if (!stopOutward) continue;
       const computed = minutesToTime(
-        lastInwardMin + (lastOutwardMin - timeToMinutes(stopOutward))
+        lastInwardMin + (lastOutwardMin - stopOutward)
       );
       if (stops[i]?.inwardTime === computed) {
         result.add(i);
