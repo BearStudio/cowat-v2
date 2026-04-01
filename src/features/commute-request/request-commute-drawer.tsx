@@ -16,14 +16,14 @@ import {
 } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+  ResponsiveDrawer,
+  ResponsiveDrawerBody,
+  ResponsiveDrawerContent,
+  ResponsiveDrawerDescription,
+  ResponsiveDrawerFooter,
+  ResponsiveDrawerHeader,
+  ResponsiveDrawerTitle,
+} from '@/components/ui/responsive-drawer';
 
 import {
   FormFieldsCommuteRequest,
@@ -45,7 +45,7 @@ export const RequestCommuteDrawer = ({
 
   const form = useForm<FormFieldsCommuteRequest>({
     resolver: zodResolver(zFormFieldsCommuteRequest()),
-    mode: 'all',
+    mode: 'onSubmit',
     defaultValues: { date: initialDate, destination: null, comment: null },
   });
 
@@ -73,16 +73,18 @@ export const RequestCommuteDrawer = ({
   });
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="down">
-      <DrawerContent>
+    <ResponsiveDrawer open={open} onOpenChange={onOpenChange}>
+      <ResponsiveDrawerContent>
         <Form {...form} noHtmlForm>
-          <DrawerHeader>
-            <DrawerTitle>{t('commute:new.requestDrawer.title')}</DrawerTitle>
-            <DrawerDescription>
+          <ResponsiveDrawerHeader>
+            <ResponsiveDrawerTitle>
+              {t('commute:new.requestDrawer.title')}
+            </ResponsiveDrawerTitle>
+            <ResponsiveDrawerDescription>
               {t('commute:new.requestDrawer.description')}
-            </DrawerDescription>
-          </DrawerHeader>
-          <DrawerBody className="flex-col gap-4 pt-2 pb-4">
+            </ResponsiveDrawerDescription>
+          </ResponsiveDrawerHeader>
+          <ResponsiveDrawerBody className="flex-col gap-4 pt-2 pb-4">
             <FormField>
               <FormFieldLabel required>{t('commute:form.date')}</FormFieldLabel>
               <FormFieldController
@@ -120,19 +122,19 @@ export const RequestCommuteDrawer = ({
                 rows={3}
               />
             </FormField>
-          </DrawerBody>
-          <DrawerFooter>
+          </ResponsiveDrawerBody>
+          <ResponsiveDrawerFooter>
             <Button
               className="w-full"
-              disabled={!form.formState.isValid}
+              disabled={commuteRequest.isPending}
               loading={commuteRequest.isPending}
               onClick={handleSubmit}
             >
               {t('commute:new.requestDrawer.submit')}
             </Button>
-          </DrawerFooter>
+          </ResponsiveDrawerFooter>
         </Form>
-      </DrawerContent>
-    </Drawer>
+      </ResponsiveDrawerContent>
+    </ResponsiveDrawer>
   );
 };

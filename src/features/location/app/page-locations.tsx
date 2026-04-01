@@ -30,6 +30,7 @@ import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { LocationDrawer } from '@/features/location/app/location-drawer';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -54,6 +55,7 @@ export const PageLocations = () => {
     null
   );
 
+  useShouldShowNav('desktop-only');
   const locationsQuery = useInfiniteQuery(locationsInfiniteOptions());
 
   const locationDelete = useMutation(
