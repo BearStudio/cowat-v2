@@ -25,3 +25,7 @@ export const zFormFieldsLocation = () =>
     latitude: true,
     longitude: true,
   });
+
+export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
+export const zLocationSummary = () =>
+  zLocation().pick({ id: true, name: true, address: true });

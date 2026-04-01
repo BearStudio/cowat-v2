@@ -27,12 +27,12 @@ import {
   CommuteEnriched,
   type CommuteType,
   type StopEnriched,
-  type UserSummary,
 } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
 import { OrgFloatingActionButtonLink } from '@/features/organization/org-button-link';
 import { OrgLink } from '@/features/organization/org-link';
+import type { UserSummary } from '@/features/user/schema';
 import {
   PageLayout,
   PageLayoutContent,

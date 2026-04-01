@@ -43,3 +43,7 @@ export const zFormFieldsUser = () =>
     email: true,
     role: true,
   });
+
+export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
+export const zUserSummary = () =>
+  zUser().pick({ id: true, name: true, image: true, phone: true });

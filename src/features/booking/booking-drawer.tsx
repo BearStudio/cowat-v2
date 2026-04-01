@@ -27,11 +27,8 @@ import {
 } from '@/components/ui/responsive-drawer';
 
 import { type TripType, zTripType } from '@/features/booking/schema';
-import {
-  type CommuteType,
-  type StopEnriched,
-  type UserSummary,
-} from '@/features/commute/schema';
+import { type CommuteType, type StopEnriched } from '@/features/commute/schema';
+import type { UserSummary } from '@/features/user/schema';
 
 const zBookingForm = () =>
   z.object({
