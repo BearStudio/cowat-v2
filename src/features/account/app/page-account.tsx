@@ -21,6 +21,7 @@ import {
   PageLayout,
   PageLayoutContent,
   PageLayoutTopBar,
+  PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
 export const PageAccount = () => {
@@ -47,9 +48,7 @@ export const PageAccount = () => {
   return (
     <PageLayout>
       <PageLayoutTopBar>
-        <h1 className="text-base font-medium md:text-sm">
-          {t('account:title')}
-        </h1>
+        <PageLayoutTopBarTitle>{t('account:title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
         <div className="flex flex-col gap-6">
