@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { MapPinIcon, PencilIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { PencilIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -20,9 +20,13 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
-import { Skeleton } from '@/components/ui/skeleton';
 
+import {
+  LocationCardSkeleton,
+  LocationMapPreview,
+} from '@/features/location/app/location-card';
 import { LocationDrawer } from '@/features/location/app/location-drawer';
+import { locationsInfiniteOptions } from '@/features/location/location-queries';
 import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
@@ -30,46 +34,6 @@ import {
   PageLayoutTopBar,
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
-
-export const locationsInfiniteOptions = () =>
-  orpc.location.getAll.infiniteOptions({
-    input: (cursor: string | undefined) => ({
-      cursor,
-    }),
-    initialPageParam: undefined,
-    maxPages: 10,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-  });
-
-const LocationMapPreview = ({ address }: { address: string }) => {
-  const src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-  return (
-    <iframe
-      title={address}
-      src={src}
-      className="pointer-events-none h-full w-full"
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    />
-  );
-};
-
-const LocationCardSkeleton = ({ opacity }: { opacity: number }) => (
-  <div
-    className="flex flex-col overflow-hidden rounded-lg border bg-white dark:bg-neutral-900"
-    style={{ opacity }}
-  >
-    <div className="relative aspect-[16/9] bg-neutral-100 dark:bg-neutral-800">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <MapPinIcon className="size-8 animate-pulse text-neutral-300 dark:text-neutral-600" />
-      </div>
-    </div>
-    <div className="flex flex-col gap-2 p-3">
-      <Skeleton className="h-4 w-3/5" />
-      <Skeleton className="h-3 w-4/5" />
-    </div>
-  </div>
-);
 
 export const PageLocations = () => {
   const { t } = useTranslation(['location', 'common']);

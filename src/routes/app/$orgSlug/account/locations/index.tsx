@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import {
-  locationsInfiniteOptions,
-  PageLocations,
-} from '@/features/location/app/page-locations';
+import { PageLocations } from '@/features/location/app/page-locations';
+import { locationsInfiniteOptions } from '@/features/location/location-queries';
 
 export const Route = createFileRoute('/app/$orgSlug/account/locations/')({
   loader: ({ context }) => {

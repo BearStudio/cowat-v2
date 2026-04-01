@@ -12,7 +12,7 @@ import {
   FormFieldLabel,
 } from '@/components/form';
 
-import { FormFieldsOrg } from '@/features/organization/manager/page-organization-new';
+import { FormFieldsOrg } from '@/features/organization/schema';
 
 function toSlug(value: string): string {
   return value

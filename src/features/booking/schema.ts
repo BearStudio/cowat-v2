@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-import { zCommuteType, zUserSummary } from '@/features/commute/schema';
+import { zLocationSummary } from '@/features/location/schema';
+import { zUserSummary } from '@/features/user/schema';
 
 export const zRequestStatus = () =>
   z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']);
@@ -42,15 +43,11 @@ export const zBookingForDriver = () =>
       order: z.number(),
       outwardTime: z.string(),
       inwardTime: z.string().nullish(),
-      location: z.object({
-        id: z.string(),
-        name: z.string(),
-        address: z.string(),
-      }),
+      location: zLocationSummary(),
       commute: z.object({
         id: z.string(),
         date: z.date(),
-        type: zCommuteType(),
+        type: z.enum(['ROUND', 'ONEWAY']),
       }),
     }),
   });
