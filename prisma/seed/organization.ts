@@ -1,7 +1,5 @@
 import { db } from '@/server/db';
 
-import { SEED_EMAILS } from './user';
-
 const DEFAULT_ORG_SLUG = 'default';
 
 export async function createOrganization() {
@@ -25,11 +23,11 @@ export async function createOrganization() {
     console.log(`✅ Default organization already exists`);
   }
 
-  // Add seed users as members
-  for (const email of SEED_EMAILS) {
-    const user = await db.user.findUnique({ where: { email } });
-    if (!user) continue;
-
+  // Add ALL users as members of the default org
+  const allUsers = await db.user.findMany({
+    select: { id: true, email: true },
+  });
+  for (const user of allUsers) {
     const existingMember = await db.member.findFirst({
       where: { userId: user.id, organizationId: org.id },
     });
@@ -41,7 +39,7 @@ export async function createOrganization() {
         userId: user.id,
         organizationId: org.id,
         role:
-          email === 'admin@admin.com' || email === 'owner@owner.com'
+          user.email === 'admin@admin.com' || user.email === 'owner@owner.com'
             ? 'owner'
             : 'member',
         createdAt: new Date(),

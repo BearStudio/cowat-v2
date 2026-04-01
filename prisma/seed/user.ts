@@ -17,7 +17,7 @@ export async function createUsers() {
   const existingCount = await db.user.count();
 
   await Promise.all(
-    Array.from({ length: Math.max(0, 98 - existingCount) }, async () => {
+    Array.from({ length: Math.max(0, 17 - existingCount) }, async () => {
       await db.user.create({
         data: {
           name: faker.person.fullName(),
