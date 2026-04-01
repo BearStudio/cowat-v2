@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +41,8 @@ export const RequestCommuteDrawer = ({
   initialDate?: Date;
 }) => {
   const { t } = useTranslation(['commute']);
+  const navigate = useNavigate();
+  const { orgSlug } = useParams({ strict: false });
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -60,6 +63,11 @@ export const RequestCommuteDrawer = ({
       onSuccess: () => {
         toast.success(t('commute:new.requestDrawer.success'));
         onOpenChange(false);
+        navigate({
+          to: '/app/$orgSlug/requests',
+          params: { orgSlug: orgSlug as string },
+          search: { tab: 'commuteRequests' },
+        });
       },
     })
   );

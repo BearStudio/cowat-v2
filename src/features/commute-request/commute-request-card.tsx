@@ -1,11 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import {
-  CalendarIcon,
-  CheckCircleIcon,
-  MapPinIcon,
-  MessageSquareIcon,
-} from 'lucide-react';
+import { CalendarIcon, MapPinIcon, MessageSquareIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -112,6 +107,7 @@ export const CommuteRequestCard = ({
       <CardFooter className="justify-between gap-2 border-t pt-3">
         {!isOwner ? (
           <OrgButtonLink
+            className="flex-1"
             size="sm"
             to="/app/$orgSlug/commutes/new"
             search={{ date: request.date, commuteRequestIds: [request.id] }}
@@ -121,15 +117,14 @@ export const CommuteRequestCard = ({
           </OrgButtonLink>
         ) : (
           <Button
+            className="flex-1"
             size="sm"
-            variant="secondary"
             loading={updateStatus.isPending}
             disabled={updateStatus.isPending}
             onClick={() =>
               updateStatus.mutate({ id: request.id, status: 'FULFILLED' })
             }
           >
-            <CheckCircleIcon className="size-3.5" />
             {t('commuteRequest:actions.fulfillButton')}
           </Button>
         )}
@@ -165,7 +160,11 @@ export const CommuteRequestCard = ({
                   {(request.destination || request.comment) && (
                     <div className="flex flex-col gap-2 border-t pt-2">
                       {request.destination && (
-                        <Badge variant="secondary" size="sm">
+                        <Badge
+                          variant="secondary"
+                          size="sm"
+                          className="self-start"
+                        >
                           <MapPinIcon className="size-3" />
                           {request.destination}
                         </Badge>
@@ -191,6 +190,7 @@ export const CommuteRequestCard = ({
             }
           >
             <Button
+              className="flex-1"
               variant="destructive-secondary"
               size="sm"
               disabled={updateStatus.isPending}
