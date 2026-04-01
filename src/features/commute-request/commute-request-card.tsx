@@ -115,6 +115,7 @@ export const CommuteRequestCard = ({
             size="sm"
             to="/app/$orgSlug/commutes/new"
             search={{ date: request.date, commuteRequestIds: [request.id] }}
+            viewTransition={{ types: ['slide-up'] }}
           >
             {t('commuteRequest:actions.offerRide')}
           </OrgButtonLink>
