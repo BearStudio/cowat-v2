@@ -1,5 +1,6 @@
 import type { KnipConfig } from 'knip';
 
+// @ts-ignore
 const isProductionMode = process.argv.includes('--production');
 
 const productionEntryPoints = [
