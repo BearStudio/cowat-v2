@@ -6,6 +6,7 @@ import { DEFAULT_LANGUAGE_KEY, DEFAULT_NAMESPACE } from '@/lib/i18n/constants';
 import locales from '@/locales';
 
 export const i18nConfig: InitOptions = {
+  showSupportNotice: false,
   defaultNS: DEFAULT_NAMESPACE,
   ns: keys(locales[DEFAULT_LANGUAGE_KEY]),
   resources: locales,
