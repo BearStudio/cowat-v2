@@ -9,6 +9,7 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
+import { LoadMoreButton } from '@/components/load-more-button';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import { DataListErrorState } from '@/components/ui/datalist';
@@ -191,18 +192,10 @@ export const PageLocations = () => {
                   </div>
                 ))}
               </div>
-              {locationsQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => locationsQuery.fetchNextPage()}
-                    loading={locationsQuery.isFetchingNextPage}
-                  >
-                    {t('location:list.loadMore')}
-                  </Button>
-                </div>
-              )}
+              <LoadMoreButton
+                query={locationsQuery}
+                label={t('location:list.loadMore')}
+              />
             </div>
           ))
           .exhaustive()}

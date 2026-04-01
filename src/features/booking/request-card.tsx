@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -5,6 +6,18 @@ import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
+
+const invalidateBookingQueries = (client: QueryClient) =>
+  Promise.all([
+    client.invalidateQueries({
+      queryKey: orpc.booking.getRequestsForDriver.key(),
+      type: 'all',
+    }),
+    client.invalidateQueries({
+      queryKey: orpc.booking.pendingRequestCount.key(),
+      type: 'all',
+    }),
+  ]);
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
@@ -36,16 +49,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     orpc.booking.accept.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         toast.success(t('booking:request.acceptSuccess'));
-        await Promise.all([
-          context.client.invalidateQueries({
-            queryKey: orpc.booking.getRequestsForDriver.key(),
-            type: 'all',
-          }),
-          context.client.invalidateQueries({
-            queryKey: orpc.booking.pendingRequestCount.key(),
-            type: 'all',
-          }),
-        ]);
+        await invalidateBookingQueries(context.client);
       },
     })
   );
@@ -54,16 +58,7 @@ export const RequestCard = ({ request }: RequestCardProps) => {
     orpc.booking.refuse.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         toast.success(t('booking:request.refuseSuccess'));
-        await Promise.all([
-          context.client.invalidateQueries({
-            queryKey: orpc.booking.getRequestsForDriver.key(),
-            type: 'all',
-          }),
-          context.client.invalidateQueries({
-            queryKey: orpc.booking.pendingRequestCount.key(),
-            type: 'all',
-          }),
-        ]);
+        await invalidateBookingQueries(context.client);
       },
     })
   );

@@ -9,8 +9,8 @@ import { orpc } from '@/lib/orpc/client';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
+import { LoadMoreButton } from '@/components/load-more-button';
 import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
-import { Button } from '@/components/ui/button';
 import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
@@ -197,18 +197,10 @@ export const PageCommutes = () => {
                   </CardCommute>
                 );
               })}
-              {commutesQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => commutesQuery.fetchNextPage()}
-                    loading={commutesQuery.isFetchingNextPage}
-                  >
-                    {t('commute:list.loadMore')}
-                  </Button>
-                </div>
-              )}
+              <LoadMoreButton
+                query={commutesQuery}
+                label={t('commute:list.loadMore')}
+              />
             </div>
           ))
           .exhaustive()}

@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
+import { LoadMoreButton } from '@/components/load-more-button';
 import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
-import { Button } from '@/components/ui/button';
 import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
@@ -63,18 +63,10 @@ export const BookingRequestsList = () => {
         {items.map((item) => (
           <RequestCard key={item.id} request={item} />
         ))}
-        {requestsQuery.hasNextPage && (
-          <div className="flex justify-center">
-            <Button
-              size="xs"
-              variant="secondary"
-              onClick={() => requestsQuery.fetchNextPage()}
-              loading={requestsQuery.isFetchingNextPage}
-            >
-              {t('booking:requests.loadMore')}
-            </Button>
-          </div>
-        )}
+        <LoadMoreButton
+          query={requestsQuery}
+          label={t('booking:requests.loadMore')}
+        />
       </div>
     ))
     .exhaustive();

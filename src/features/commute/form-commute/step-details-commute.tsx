@@ -8,8 +8,8 @@ import {
   FormFieldController,
   FormFieldLabel,
 } from '@/components/form';
-import { Checkbox } from '@/components/ui/checkbox';
 
+import { StepCommuteBaseFields } from '@/features/commute/form-commute/step-commute-base-fields';
 import type { FormFieldsCommute } from '@/features/commute/schema';
 
 const TodayWarning = ({ control }: { control: Control<FormFieldsCommute> }) => {
@@ -52,42 +52,7 @@ export const StepDetailsCommute = () => {
         <TodayWarning control={form.control} />
       </FormField>
 
-      <FormFieldController
-        type="custom"
-        control={form.control}
-        name="type"
-        render={({ field }) => (
-          <Checkbox
-            checked={field.value === 'ROUND'}
-            onCheckedChange={(checked) =>
-              field.onChange(checked ? 'ROUND' : 'ONEWAY')
-            }
-          >
-            {t('commute:form.roundTrip')}
-          </Checkbox>
-        )}
-      />
-
-      <FormField>
-        <FormFieldLabel required>{t('commute:form.seats')}</FormFieldLabel>
-        <FormFieldController
-          type="number"
-          control={form.control}
-          name="seats"
-          min={1}
-          buttons="mobile"
-        />
-      </FormField>
-
-      <FormField>
-        <FormFieldLabel>{t('commute:form.comment')}</FormFieldLabel>
-        <FormFieldController
-          type="textarea"
-          control={form.control}
-          name="comment"
-          placeholder={t('commute:form.commentPlaceholder')}
-        />
-      </FormField>
+      <StepCommuteBaseFields ns="commute" />
     </div>
   );
 };
