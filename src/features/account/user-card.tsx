@@ -52,6 +52,9 @@ export const UserCard = () => {
                 )}
               </CardTitle>
               <PenLineIcon className="size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 max-md:opacity-100" />
+              <span className="sr-only">
+                {t('account:userCard.name.updateAction')}
+              </span>
             </button>
           </EditNameDrawer>
         </div>
