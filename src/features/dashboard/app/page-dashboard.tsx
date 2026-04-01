@@ -22,6 +22,7 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
+import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import {
   CommuteEnriched,
   type CommuteType,
@@ -136,14 +137,17 @@ export const PageDashboard = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgFloatingActionButtonLink
-            label={t('dashboard:newCommuteAction')}
-            variant="secondary"
-            size="sm"
-            to="/app/$orgSlug/commutes/new"
-          >
-            <PlusIcon />
-          </OrgFloatingActionButtonLink>
+          <>
+            <CommuteOptionsMenu />
+            <OrgFloatingActionButtonLink
+              label={t('dashboard:newCommuteAction')}
+              variant="secondary"
+              size="sm"
+              to="/app/$orgSlug/commutes/new"
+            >
+              <PlusIcon />
+            </OrgFloatingActionButtonLink>
+          </>
         }
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>

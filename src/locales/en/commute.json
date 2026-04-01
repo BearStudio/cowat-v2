@@ -59,7 +59,9 @@
     "emptyState": "Save time: create a template",
     "fromScratch": "New commute",
     "useTemplate": "Use a template",
-    "usingTemplate": "Created from template \"{{name}}\""
+    "usingTemplate": "Created from template \"{{name}}\"",
+    "templateApplied": "Template applied",
+    "quickCreate": "Quick create from template \"{{name}}\""
   },
   "stepper": {
     "details": "Details",
@@ -67,7 +69,7 @@
     "inwardStops": "Return times",
     "recap": "Summary",
     "next": "Next",
-    "back": "Back",
+    "back": "Previous",
     "submit": "Create",
     "outboundTrip": "Outbound trip",
     "inboundTrip": "Inbound trip"

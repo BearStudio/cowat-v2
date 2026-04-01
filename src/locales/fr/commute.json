@@ -59,7 +59,9 @@
     "emptyState": "Gagnez du temps : créez un modèle",
     "fromScratch": "Nouveau trajet",
     "useTemplate": "Utiliser un modèle",
-    "usingTemplate": "Créé à partir du modèle « {{name}} »"
+    "usingTemplate": "Créé à partir du modèle « {{name}} »",
+    "templateApplied": "Modèle appliqué",
+    "quickCreate": "Création rapide depuis le modèle « {{name}} »"
   },
   "stepper": {
     "details": "Détails",
@@ -67,7 +69,7 @@
     "inwardStops": "Heures retour",
     "recap": "Résumé",
     "next": "Suivant",
-    "back": "Retour",
+    "back": "Précédent",
     "submit": "Créer",
     "outboundTrip": "Aller",
     "inboundTrip": "Retour"
