@@ -8,7 +8,7 @@ function TabsIndicator({ className, ...props }: TabsPrimitive.Indicator.Props) {
     <TabsPrimitive.Indicator
       data-slot="tabs-indicator"
       className={cn(
-        'absolute rounded-xl bg-background transition-all duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-data-horizontal/tabs:top-[3px] group-data-horizontal/tabs:h-[calc(100%-6px)] group-data-vertical/tabs:left-[3px] group-data-vertical/tabs:w-[calc(100%-6px)] dark:border-input dark:bg-input/30',
+        'absolute rounded-xl bg-background transition-all duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-data-horizontal/tabs:top-[3px] group-data-horizontal/tabs:h-[calc(100%-6px)] group-data-vertical/tabs:left-[3px] group-data-vertical/tabs:w-[calc(100%-6px)] dark:border-input dark:bg-input/50',
         className
       )}
       style={{
