@@ -95,6 +95,7 @@ export const PageCommutes = () => {
               variant="secondary"
               size="sm"
               to="/app/$orgSlug/commutes/new"
+              viewTransition={{ types: ['slide-up'] }}
             >
               <PlusIcon />
             </OrgFloatingActionButtonLink>
@@ -122,6 +123,7 @@ export const PageCommutes = () => {
                   variant="secondary"
                   size="sm"
                   to="/app/$orgSlug/commutes/new"
+                  viewTransition={{ types: ['slide-up'] }}
                 >
                   <PlusIcon />
                   {t('commute:list.newAction')}

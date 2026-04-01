@@ -144,6 +144,7 @@ export const PageDashboard = () => {
               variant="secondary"
               size="sm"
               to="/app/$orgSlug/commutes/new"
+              viewTransition={{ types: ['slide-up'] }}
             >
               <PlusIcon />
             </OrgFloatingActionButtonLink>
@@ -190,6 +191,7 @@ export const PageDashboard = () => {
                         to="/app/$orgSlug/commutes/new"
                         search={{ date: day.toDate() }}
                         className="block"
+                        viewTransition={{ types: ['slide-up'] }}
                       >
                         <Empty className="cursor-pointer border p-4 transition-colors hover:bg-accent">
                           <EmptyHeader>

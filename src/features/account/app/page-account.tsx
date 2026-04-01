@@ -99,12 +99,14 @@ export const PageAccount = () => {
             <AccountNavLink
               to="/app/$orgSlug/account/locations"
               icon={featureIcons.Locations}
+              viewTransition={{ types: ['slide-up'] }}
             >
               {t('account:locationsLink')}
             </AccountNavLink>
             <AccountNavLink
               to="/app/$orgSlug/account/commute-templates"
               icon={featureIcons.CommuteTemplates}
+              viewTransition={{ types: ['slide-up'] }}
             >
               {t('account:commuteTemplatesLink')}
             </AccountNavLink>
