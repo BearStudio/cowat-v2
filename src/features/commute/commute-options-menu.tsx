@@ -32,6 +32,7 @@ const CommuteOptionLinks = ({
         size={size}
         className={className}
         to="/app/$orgSlug/account/commute-templates"
+        viewTransition={{ types: ['slide-up'] }}
       >
         <featureIcons.CommuteTemplates />
         {t('commute:list.speedDial.myCommutes')}
@@ -41,6 +42,7 @@ const CommuteOptionLinks = ({
         size={size}
         className={className}
         to="/app/$orgSlug/account/locations"
+        viewTransition={{ types: ['slide-up'] }}
       >
         <featureIcons.Locations />
         {t('commute:list.speedDial.myLocations')}

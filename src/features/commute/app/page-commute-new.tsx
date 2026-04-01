@@ -189,11 +189,21 @@ export const PageCommuteNew = ({
   }, [currentDate]);
 
   const goBack = () => {
-    navigateBack({
-      ignoreBlocker: true,
-      to: '/app/$orgSlug/commutes',
-      params: { orgSlug },
-    });
+    const navigate = () =>
+      navigateBack({
+        ignoreBlocker: true,
+        to: '/app/$orgSlug/commutes',
+        params: { orgSlug },
+      });
+
+    if (document.startViewTransition) {
+      document.startViewTransition({
+        update: navigate,
+        types: ['slide-down'],
+      });
+    } else {
+      navigate();
+    }
   };
 
   const commuteCreate = useMutation(
@@ -243,7 +253,10 @@ export const PageCommuteNew = ({
         <MultiStepForm>
           <PageLayout>
             <PageLayoutTopBar
-              startActions={<BackButton />}
+              className="[view-transition-name:none]"
+              startActions={
+                <BackButton viewTransition={{ types: ['slide-down'] }} />
+              }
               endActions={
                 <>
                   <Button

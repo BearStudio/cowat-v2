@@ -1,0 +1,22 @@
+/* Slide down: closing a page to bottom (e.g. back from new commute) */
+html:active-view-transition-type(slide-down) {
+  &::view-transition-old(page-content) {
+    animation: 200ms cubic-bezier(0.16, 1, 0.3, 1) both slide-out-down;
+    z-index: 1;
+  }
+  &::view-transition-new(page-content) {
+    animation: none;
+  }
+  &::view-transition-group(page-content) {
+    z-index: 100;
+  }
+}
+
+@keyframes slide-out-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
