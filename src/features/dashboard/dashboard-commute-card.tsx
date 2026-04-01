@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
@@ -85,10 +86,12 @@ export const DashboardCommuteCard = ({
         <div className="flex flex-col gap-3">
           {commute.comment && <CommentText>{commute.comment}</CommentText>}
           {isFull && !isDriver && (
-            <div className="flex items-center gap-1.5 rounded-md bg-warning-100 px-3 py-2 text-sm text-warning-700 dark:bg-warning-500/15 dark:text-warning-400">
-              <AlertTriangleIcon className="size-4 shrink-0" />
-              {t('dashboard:booking.fullWarning')}
-            </div>
+            <Alert variant="warning">
+              <AlertTriangleIcon />
+              <AlertDescription>
+                {t('dashboard:booking.fullWarning')}
+              </AlertDescription>
+            </Alert>
           )}
           <CardCommuteStopsList
             stops={commute.stops}

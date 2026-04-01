@@ -15,7 +15,7 @@
   },
   "actions": {
     "offerRide": "Offer a ride",
-    "fulfillButton": "Ride found",
+    "fulfillButton": "I found a ride",
     "fulfillSuccess": "Request fulfilled",
     "cancelButton": "Cancel",
     "cancelConfirmButton": "Confirm cancellation",

@@ -36,7 +36,7 @@
   "commuteTemplatesLink": "Modèles de trajet",
   "editNameDrawer": {
     "title": "Modifier votre nom",
-    "description": "Formulaire pour modifier votre nom",
+    "description": "Votre nom est visible par les autres membres.",
     "label": "Nom",
     "submitButton": "Modifier",
     "successMessage": "Nom mis à jour",
@@ -44,7 +44,7 @@
   },
   "editPhoneDrawer": {
     "title": "Modifier votre numéro de téléphone",
-    "description": "Formulaire pour modifier votre numéro de téléphone",
+    "description": "Votre numéro est partagé avec les conducteurs et passagers.",
     "label": "Numéro de téléphone",
     "submitButton": "Modifier",
     "successMessage": "Numéro de téléphone mis à jour",
@@ -52,7 +52,7 @@
   },
   "editImageDrawer": {
     "title": "Modifier votre photo de profil",
-    "description": "Formulaire pour modifier votre photo de profil",
+    "description": "Votre photo apparaît sur les trajets et demandes.",
     "label": "URL de la photo de profil",
     "submitButton": "Modifier",
     "successMessage": "Photo de profil mise à jour",
