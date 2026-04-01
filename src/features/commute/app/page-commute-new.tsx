@@ -28,15 +28,6 @@ import { PreventNavigation } from '@/components/prevent-navigation';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import {
   ResponsiveDrawer,
   ResponsiveDrawerBody,
   ResponsiveDrawerContent,
@@ -44,6 +35,7 @@ import {
   ResponsiveDrawerTitle,
 } from '@/components/ui/responsive-drawer';
 
+import { SaveTemplateDrawer } from '@/features/commute/app/save-template-drawer';
 import { TemplatePicker } from '@/features/commute/app/template-picker';
 import { StepDetailsCommute } from '@/features/commute/form-commute/step-details-commute';
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
@@ -71,81 +63,6 @@ const DEFAULT_VALUES: Omit<FormFieldsCommute, 'date'> = {
     { locationId: '', outwardTime: '', inwardTime: null },
     { locationId: '', outwardTime: '', inwardTime: null },
   ],
-};
-
-const SaveTemplateDrawer = ({
-  open,
-  onOpenChange,
-  commuteValues,
-  onDone,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  commuteValues: FormFieldsCommute | null;
-  onDone: () => void;
-}) => {
-  const { t } = useTranslation(['commute', 'commuteTemplate']);
-  const [templateName, setTemplateName] = useState('');
-
-  const templateCreate = useMutation(
-    orpc.commuteTemplate.create.mutationOptions({
-      onSuccess: async (_data, _variables, _onMutateResult, context) => {
-        toast.success(t('commute:new.templateSaved'));
-        await context.client.invalidateQueries({
-          queryKey: orpc.commuteTemplate.getAll.key(),
-          type: 'all',
-        });
-        onDone();
-      },
-    })
-  );
-
-  const handleSave = () => {
-    if (!commuteValues || !templateName.trim()) return;
-    templateCreate.mutate({
-      name: templateName.trim(),
-      seats: commuteValues.seats,
-      type: commuteValues.type,
-      comment: commuteValues.comment,
-      stops: commuteValues.stops.map((stop, index) => ({
-        ...stop,
-        order: index,
-      })),
-    });
-  };
-
-  return (
-    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="down">
-      <DrawerContent initialFocus={false}>
-        <DrawerHeader>
-          <DrawerTitle>{t('commute:new.saveTemplateTitle')}</DrawerTitle>
-        </DrawerHeader>
-        <DrawerBody className="flex-col gap-4 py-4">
-          <p className="text-sm text-muted-foreground">
-            {t('commute:new.saveTemplateDescription')}
-          </p>
-          <Input
-            value={templateName}
-            onChange={(e) => setTemplateName(e.target.value)}
-            placeholder={t('commuteTemplate:form.namePlaceholder')}
-          />
-        </DrawerBody>
-        <DrawerFooter>
-          <Button
-            className="w-full"
-            onClick={handleSave}
-            disabled={!templateName.trim()}
-            loading={templateCreate.isPending}
-          >
-            {t('commute:new.saveTemplateConfirm')}
-          </Button>
-          <Button variant="ghost" className="w-full" onClick={onDone}>
-            {t('commute:new.saveTemplateSkip')}
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
 };
 
 export const PageCommuteNew = ({
