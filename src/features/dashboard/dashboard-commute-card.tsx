@@ -61,21 +61,6 @@ export const DashboardCommuteCard = ({
   const isFull =
     commute.type === 'ROUND' ? outwardFull && inwardFull : outwardFull;
 
-  const outwardTime = commute.stops.at(0)?.outwardTime;
-  const inwardTime = commute.stops.at(-1)?.inwardTime;
-
-  const formattedInwardDeparture =
-    inwardTime && outwardTime && inwardTime < outwardTime ? (
-      <>
-        <span className="font-medium text-foreground tabular-nums">
-          {inwardTime}
-        </span>
-        <span className="text-xs text-muted-foreground">+1</span>
-      </>
-    ) : (
-      (inwardTime ?? undefined)
-    );
-
   return (
     <CardCommute
       bookingStatus={bookingStatus}
@@ -91,7 +76,8 @@ export const DashboardCommuteCard = ({
           outwardTaken={outwardCount}
           inwardTaken={commute.type === 'ROUND' ? inwardCount : undefined}
           outwardDeparture={commute.stops.at(0)?.outwardTime}
-          inwardDeparture={formattedInwardDeparture}
+          inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
+          referenceTime={commute.stops.at(0)?.outwardTime}
           stops={commute.stops}
           passengers={[...acceptedPassengers.values()]}
           badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}

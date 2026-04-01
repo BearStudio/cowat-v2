@@ -12,17 +12,21 @@ import { StopEnriched, StopPassenger } from '@/features/commute/schema';
 export const TripTime = ({
   type,
   time,
+  referenceTime,
   timeClassName,
 }: {
   type: 'ONEWAY' | 'RETURN';
-  time: string | ReactNode;
+  time?: string;
+  referenceTime?: string;
   timeClassName?: string;
 }) => {
   const Icon = tripTypeIcons[type];
+  const isNextDay = time && referenceTime && time < referenceTime;
   return (
     <span className="flex items-center gap-1">
       <Icon className="size-3.5 shrink-0" />
       <span className={cn('tabular-nums', timeClassName)}>{time}</span>
+      {isNextDay && <span className="text-xs text-muted-foreground">+1</span>}
     </span>
   );
 };
@@ -153,17 +157,15 @@ export const StopsTimelineItem = ({
   disableLinks,
   departureReference,
 }: StopsTimelineItemProps & { departureReference?: string }) => {
-  const formatTimeWithPlusOne = (time?: string) => {
-    if (!time) return undefined;
-    return departureReference && time < departureReference ? (
-      <>
-        {time} <span className="text-xs text-muted-foreground">+1</span>
-      </>
-    ) : (
-      time
-    );
-  };
-
+export const StopsTimelineItem = ({
+  stop,
+  isFirst,
+  isLast,
+  index,
+  actions,
+  disableLinks,
+  departureReference,
+}: StopsTimelineItemProps & { departureReference?: string }) => {
   return (
     <div
       className="relative flex items-start gap-3"
@@ -187,14 +189,16 @@ export const StopsTimelineItem = ({
           <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
             <TripTime
               type="ONEWAY"
-              time={formatTimeWithPlusOne(stop.outwardTime)}
+              time={stop.outwardTime}
+              referenceTime={departureReference}
             />
             {stop.inwardTime && (
               <>
                 <span className="text-muted-foreground/50">·</span>
                 <TripTime
                   type="RETURN"
-                  time={formatTimeWithPlusOne(stop.inwardTime)}
+                  time={stop.inwardTime}
+                  referenceTime={departureReference}
                 />
               </>
             )}

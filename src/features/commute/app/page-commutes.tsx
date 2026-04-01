@@ -188,15 +188,6 @@ export const PageCommutes = () => {
                             currentUserId
                           );
 
-                          const outwardTime = item.stops.at(0)?.outwardTime;
-                          const inwardTime = item.stops.at(-1)?.inwardTime;
-                          const formattedInwardDeparture =
-                            inwardTime &&
-                            outwardTime &&
-                            inwardTime < outwardTime
-                              ? `${inwardTime} +1`
-                              : (inwardTime ?? undefined);
-
                           return (
                             <CardCommute
                               key={item.id}
@@ -216,7 +207,10 @@ export const PageCommutes = () => {
                                   outwardDeparture={
                                     item.stops.at(0)?.outwardTime
                                   }
-                                  inwardDeparture={formattedInwardDeparture}
+                                  inwardDeparture={
+                                    item.stops.at(-1)?.inwardTime ?? undefined
+                                  }
+                                  referenceTime={item.stops.at(0)?.outwardTime}
                                   stops={item.stops}
                                   passengers={[...acceptedPassengers.values()]}
                                   badge={
