@@ -16,9 +16,11 @@ import { OrgButtonLink } from '@/features/organization/org-button-link';
 
 const CommuteOptionLinks = ({
   size = 'sm',
+  variant = 'secondary',
   className,
 }: {
   size?: ComponentProps<typeof OrgButtonLink>['size'];
+  variant?: ComponentProps<typeof OrgButtonLink>['variant'];
   className?: string;
 }) => {
   const { t } = useTranslation(['commute']);
@@ -26,7 +28,7 @@ const CommuteOptionLinks = ({
   return (
     <>
       <OrgButtonLink
-        variant="secondary"
+        variant={variant}
         size={size}
         className={className}
         to="/app/$orgSlug/account/commute-templates"
@@ -35,7 +37,7 @@ const CommuteOptionLinks = ({
         {t('commute:list.speedDial.myCommutes')}
       </OrgButtonLink>
       <OrgButtonLink
-        variant="secondary"
+        variant={variant}
         size={size}
         className={className}
         to="/app/$orgSlug/account/locations"
@@ -51,7 +53,7 @@ export const CommuteOptionsMenu = () => {
   return (
     <>
       <div className="hidden md:contents">
-        <CommuteOptionLinks size="sm" />
+        <CommuteOptionLinks size="sm" variant="ghost" />
       </div>
       <div className="contents md:hidden">
         <Drawer swipeDirection="up">
