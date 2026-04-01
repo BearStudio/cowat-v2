@@ -21,7 +21,7 @@ import { PreventNavigation } from '@/components/prevent-navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { StepDetailsCommuteUpdate } from '@/features/commute/form-commute/step-details-commute-update';
+import { StepCommuteBaseFields } from '@/features/commute/form-commute/step-commute-base-fields';
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
@@ -160,7 +160,7 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                 name={t('commute:stepper.details')}
                 onNext={() => form.trigger(['seats', 'type'])}
               >
-                <StepDetailsCommuteUpdate />
+                <StepCommuteBaseFields ns="commute" />
               </MultiStepFormStep>
               <MultiStepFormStep
                 name={t('commute:stepper.stops')}
