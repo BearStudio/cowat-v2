@@ -61,7 +61,8 @@
     "useTemplate": "Use a template",
     "usingTemplate": "Created from template \"{{name}}\"",
     "templateApplied": "Template applied",
-    "quickCreate": "Quick create from template \"{{name}}\""
+    "quickCreate": "Quick create from template \"{{name}}\"",
+    "selectTemplate": "Select a template"
   },
   "stepper": {
     "details": "Details",
