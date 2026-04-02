@@ -19,6 +19,7 @@ export class CommuteFormPage {
   async selectTemplateFromDrawer(templateName: string) {
     await this.useTemplateButton.click();
     await this.page
+      .getByRole('dialog')
       .locator('[data-slot="card"]')
       .filter({ has: this.page.getByText(templateName) })
       .first()

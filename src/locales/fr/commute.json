@@ -61,7 +61,8 @@
     "useTemplate": "Utiliser un modèle",
     "usingTemplate": "Créé à partir du modèle « {{name}} »",
     "templateApplied": "Modèle appliqué",
-    "quickCreate": "Création rapide depuis le modèle « {{name}} »"
+    "quickCreate": "Création rapide depuis le modèle « {{name}} »",
+    "selectTemplate": "Sélectionner un modèle"
   },
   "stepper": {
     "details": "Détails",

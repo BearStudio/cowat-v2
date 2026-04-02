@@ -1,10 +1,12 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
-import { PlusIcon } from 'lucide-react';
+import { ChevronRightIcon, PlusIcon } from 'lucide-react';
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { cn } from '@/lib/tailwind/utils';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -28,8 +30,10 @@ type TemplateData = Pick<
 
 export const TemplatePicker = ({
   onSelect,
+  compact = false,
 }: {
   onSelect: (data: TemplateData) => void;
+  compact?: boolean;
 }) => {
   const { t } = useTranslation(['commute', 'commuteTemplate']);
   const templatesQuery = useQuery(
@@ -72,7 +76,7 @@ export const TemplatePicker = ({
           {[1, 0.75, 0.5].map((opacity) => (
             <Skeleton
               key={opacity}
-              className="h-40 w-64 shrink-0"
+              className={cn('w-64 shrink-0', compact ? 'h-20' : 'h-40')}
               style={{ opacity }}
             />
           ))}
@@ -106,7 +110,7 @@ export const TemplatePicker = ({
           {items.map((item) => (
             <Card
               key={item.id}
-              className="w-64 shrink-0 cursor-pointer"
+              className="group w-64 shrink-0 cursor-pointer"
               onClick={() => handleSelect(item)}
             >
               <CardHeader>
@@ -115,6 +119,9 @@ export const TemplatePicker = ({
                   type={item.type}
                   stopsCount={item.stops.length}
                   seats={item.seats}
+                  actions={
+                    <ChevronRightIcon className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                  }
                 />
               </CardHeader>
               <CardContent>
@@ -124,14 +131,27 @@ export const TemplatePicker = ({
                       {item.comment}
                     </p>
                   )}
-                  <CardCommuteStopsList
-                    stops={item.stops.map((stop) => ({
-                      ...stop,
-                      commuteId: '',
-                      passengers: [],
-                    }))}
-                    disableLinks
-                  />
+                  {compact ? (
+                    <p className="flex flex-wrap items-center gap-x-1 text-xs text-muted-foreground">
+                      {item.stops.map((stop, i) => (
+                        <Fragment key={stop.locationId}>
+                          {i > 0 && (
+                            <ChevronRightIcon className="size-3 shrink-0" />
+                          )}
+                          <span>{stop.location.name}</span>
+                        </Fragment>
+                      ))}
+                    </p>
+                  ) : (
+                    <CardCommuteStopsList
+                      stops={item.stops.map((stop) => ({
+                        ...stop,
+                        commuteId: '',
+                        passengers: [],
+                      }))}
+                      disableLinks
+                    />
+                  )}
                 </div>
               </CardContent>
             </Card>

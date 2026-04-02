@@ -146,6 +146,22 @@ export const PageCommuteNew = ({
     })
   );
 
+  const handleSelectTemplate = ({
+    templateName,
+    ...data
+  }: { templateName: string } & Pick<
+    FormFieldsCommute,
+    'seats' | 'type' | 'comment' | 'stops'
+  >) => {
+    setSelectedTemplateName(templateName);
+    form.reset({
+      ...DEFAULT_VALUES,
+      date: search.date,
+      ...data,
+    });
+    toast.success(t('commute:templatePicker.templateApplied'));
+  };
+
   const handleSubmit = form.handleSubmit((values) => {
     commuteCreate.mutate({
       ...values,
@@ -212,6 +228,12 @@ export const PageCommuteNew = ({
                 }}
               >
                 <StepDetailsCommute />
+                <div className="-mx-4 mt-4 flex flex-col gap-2">
+                  <p className="px-4 text-sm font-medium text-muted-foreground">
+                    {t('commute:templatePicker.selectTemplate')}
+                  </p>
+                  <TemplatePicker onSelect={handleSelectTemplate} compact />
+                </div>
               </MultiStepFormStep>
               <MultiStepFormStep
                 name={t('commute:stepper.stops')}
@@ -311,15 +333,9 @@ export const PageCommuteNew = ({
           </ResponsiveDrawerHeader>
           <ResponsiveDrawerBody className="gap-3 overflow-hidden pb-6">
             <TemplatePicker
-              onSelect={({ templateName, ...data }) => {
-                setSelectedTemplateName(templateName);
-                form.reset({
-                  ...DEFAULT_VALUES,
-                  date: search.date,
-                  ...data,
-                });
+              onSelect={(data) => {
+                handleSelectTemplate(data);
                 setTemplatePickerOpen(false);
-                toast.success(t('commute:templatePicker.templateApplied'));
               }}
             />
           </ResponsiveDrawerBody>
