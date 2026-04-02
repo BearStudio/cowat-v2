@@ -100,6 +100,7 @@
     "errors": {
       "seatsMin": "Au moins 1 place requise",
       "stopsMin": "Au moins 2 arrêts requis",
+      "inwardBeforeOutward": "L'heure retour doit être après l'heure aller",
       "inwardInPast": "L'heure retour doit être dans le futur",
       "outwardInPast": "L'heure aller doit être dans le futur",
       "outwardNotIncreasing": "Doit être après l'heure aller de l'arrêt précédent",

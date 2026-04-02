@@ -133,6 +133,14 @@ export const zFormFieldsCommute = () =>
           });
         }
 
+        if (!rules.shouldInwardBeAfterOutward(stop)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.inwardBeforeOutward'),
+            path: ['stops', index, 'inwardTime'],
+          });
+        }
+
         if (!rules.isInwardInFuture(stop)) {
           ctx.addIssue({
             code: 'custom',
@@ -148,6 +156,13 @@ export const zFormFieldsCommute = () =>
             path: ['stops', index, 'inwardTime'],
           });
         }
+        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.outwardNotIncreasing'),
+            path: ['stops', index, 'outwardTime'],
+          });
+        }
       });
     });
 
@@ -159,6 +174,22 @@ export const zFormFieldsCommuteUpdate = () =>
     const rules = createStopOrderRules(data);
 
     data.stops.forEach((stop, index) => {
+      if (!rules.shouldInwardBeAfterOutward(stop)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.inwardBeforeOutward'),
+          path: ['stops', index, 'inwardTime'],
+        });
+      }
+
+      if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: t('commute:form.errors.outwardNotIncreasing'),
+          path: ['stops', index, 'outwardTime'],
+        });
+      }
+
       if (!rules.shouldInwardBeDecreasing(stop, index)) {
         ctx.addIssue({
           code: 'custom',
