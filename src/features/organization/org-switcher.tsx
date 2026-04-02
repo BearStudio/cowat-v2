@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useMatch, useParams, useRouter } from '@tanstack/react-router';
 import { BuildingIcon, CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,12 +22,14 @@ export const OrgSwitcher = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const params = useParams({ strict: false }); // works even outside org routes
+  const match = useMatch({ strict: false });
+
   const { organizations, activeOrg, activeOrgId } = useOrganizations();
 
-  // In manager routes, only show orgs where user is owner
-  const currentPath = router.state.location.pathname;
-  const isInManagerRoutes = currentPath.startsWith('/manager/');
-  const filteredOrgs = isInManagerRoutes
+  const isManagerRoute = match?.routeId?.startsWith('/manager');
+
+  const filteredOrgs = isManagerRoute
     ? organizations?.filter((org) =>
         authClient.organization.checkRolePermission({
           role: org.role as 'owner' | 'admin' | 'member',
@@ -42,19 +44,16 @@ export const OrgSwitcher = () => {
     await authClient.organization.setActive({ organizationId: org.id });
     await session.refetch();
 
-    // If in app or manager route, navigate to the new org's URL
-    const orgSlugPattern = /^\/(app|manager)\/[^/]+/;
-    // Don't replace the slug on non-org-scoped routes like /manager/organizations
-    if (
-      currentPath.match(orgSlugPattern) &&
-      !currentPath.startsWith('/manager/organizations') &&
-      !currentPath.startsWith('/manager/users')
-    ) {
-      const newPath = currentPath.replace(
-        orgSlugPattern,
-        (_, prefix) => `/${prefix}/${org.slug}`
-      );
-      router.navigate({ to: newPath as string, replace: true });
+    // Only navigate if current route has orgSlug param
+    if (params?.orgSlug) {
+      router.navigate({
+        to: '.', // stay on same route
+        params: {
+          ...params,
+          orgSlug: org.slug,
+        },
+        replace: true,
+      });
     }
 
     // Invalidate all queries since data is org-scoped
@@ -62,16 +61,14 @@ export const OrgSwitcher = () => {
   };
 
   if (!filteredOrgs || filteredOrgs.length <= 1) {
-    // Don't show switcher if user only has 1 org (after filtering)
-    if (activeOrg) {
-      return (
-        <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium">
-          <BuildingIcon className="size-4 shrink-0 text-neutral-500" />
-          <span className="truncate">{activeOrg.name}</span>
-        </div>
-      );
-    }
-    return null;
+    if (!activeOrg) return null;
+
+    return (
+      <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-medium">
+        <BuildingIcon className="size-4 shrink-0 text-neutral-500" />
+        <span className="truncate">{activeOrg.name}</span>
+      </div>
+    );
   }
 
   return (
