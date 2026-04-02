@@ -1,3 +1,36 @@
+# [1.2.0](https://github.com/BearStudio/cowat-v2/compare/v1.1.0...v1.2.0) (2026-04-02)
+
+
+### Bug Fixes
+
+* add confirmation modal when cancelling a pending invitation ([#252](https://github.com/BearStudio/cowat-v2/issues/252)) ([d28e198](https://github.com/BearStudio/cowat-v2/commit/d28e1986b06f5ef0cccd1bf2ebf18cabdf1fe132)), closes [#167](https://github.com/BearStudio/cowat-v2/issues/167)
+* allow re-requesting a booking after cancel or refusal ([#248](https://github.com/BearStudio/cowat-v2/issues/248)) ([565a825](https://github.com/BearStudio/cowat-v2/commit/565a8250f4441716a7a13e028fce52a152061fed))
+* animate tab indicator and disable stop links in templates ([#256](https://github.com/BearStudio/cowat-v2/issues/256)) ([dd25870](https://github.com/BearStudio/cowat-v2/commit/dd25870609b7381f983f7fbbf42c3191ee127852))
+* **ci:** only run PR title check on open and edit events ([#277](https://github.com/BearStudio/cowat-v2/issues/277)) ([7065208](https://github.com/BearStudio/cowat-v2/commit/7065208585c26cefe4f319770aded8a09e7b5975))
+* focus and scroll to input when adding a stop ([#249](https://github.com/BearStudio/cowat-v2/issues/249)) ([9487951](https://github.com/BearStudio/cowat-v2/commit/9487951930db43fb8e1b97ffeb5ce9cbf748f3fe)), closes [#153](https://github.com/BearStudio/cowat-v2/issues/153)
+* improve database seeds with fewer users and correct timings ([#268](https://github.com/BearStudio/cowat-v2/issues/268)) ([4614954](https://github.com/BearStudio/cowat-v2/commit/46149544085331deb2a6dc9d4258cb6be17c2874))
+* increase active tab indicator opacity in dark mode ([#267](https://github.com/BearStudio/cowat-v2/issues/267)) ([f9bd393](https://github.com/BearStudio/cowat-v2/commit/f9bd3938ffa1701148c5c00f09d484c48c31e28b))
+* notify passengers when commute is modified ([#250](https://github.com/BearStudio/cowat-v2/issues/250)) ([767b721](https://github.com/BearStudio/cowat-v2/commit/767b7217047dfa8f9d7e62d75792adabad42dd2a))
+* preserve bookings on commute edit, cancel on seat reduction ([#254](https://github.com/BearStudio/cowat-v2/issues/254)) ([35c0fa2](https://github.com/BearStudio/cowat-v2/commit/35c0fa261b1cc0fdd31dd9f3bea6ed7676258c7a))
+* serialize array search params as JSON in routeUrl ([#261](https://github.com/BearStudio/cowat-v2/issues/261)) ([ba429cd](https://github.com/BearStudio/cowat-v2/commit/ba429cd96983437b919013d2d6d9a29ac0b56b4c)), closes [#242](https://github.com/BearStudio/cowat-v2/issues/242)
+* update e2e tests and enable CI workflow ([#235](https://github.com/BearStudio/cowat-v2/issues/235)) ([cd52487](https://github.com/BearStudio/cowat-v2/commit/cd524871e9b5ee94204ad3ae5815d40dfa75b0d5)), closes [#234](https://github.com/BearStudio/cowat-v2/issues/234)
+* update pr-title workflow content ([c6c7b4f](https://github.com/BearStudio/cowat-v2/commit/c6c7b4f681b0483bb7bff3453431bf872d0c0e18))
+
+
+### Features
+
+* **account:** improve avatar and name editing UX ([#263](https://github.com/BearStudio/cowat-v2/issues/263)) ([28f0aa0](https://github.com/BearStudio/cowat-v2/commit/28f0aa03aaa8f10a2d6221556343062a5dec4f7f))
+* better loading states with layout-matching skeletons ([#246](https://github.com/BearStudio/cowat-v2/issues/246)) ([f30c031](https://github.com/BearStudio/cowat-v2/commit/f30c0312570d2304a4aa8f5b2579ee501ebaa491)), closes [#240](https://github.com/BearStudio/cowat-v2/issues/240)
+* **commute:** show template picker below details step ([#278](https://github.com/BearStudio/cowat-v2/issues/278)) ([cf83630](https://github.com/BearStudio/cowat-v2/commit/cf83630ecc16b34427b59347368d155177a90845))
+* improve request cards UX and commute request redirect ([#266](https://github.com/BearStudio/cowat-v2/issues/266)) ([d0aff63](https://github.com/BearStudio/cowat-v2/commit/d0aff6389a05285db54b142aba62462bc80bbe50))
+* improve template picker and account pages UX ([#262](https://github.com/BearStudio/cowat-v2/issues/262)) ([22c6e5c](https://github.com/BearStudio/cowat-v2/commit/22c6e5c0d4a0481a963f28bb539c22200c353c9c))
+* include commute requests in navbar badge count ([#245](https://github.com/BearStudio/cowat-v2/issues/245)) ([7ac7cdc](https://github.com/BearStudio/cowat-v2/commit/7ac7cdc65e79f38c9a8ef8df4e47f4a3bee6190f)), closes [#243](https://github.com/BearStudio/cowat-v2/issues/243)
+* move step navigation to top with progress bar and quick create banner ([#264](https://github.com/BearStudio/cowat-v2/issues/264)) ([c6b1324](https://github.com/BearStudio/cowat-v2/commit/c6b13244e7c3af5e56e7203809d5dbec865f7b89))
+* prefetch query data in route loaders ([#255](https://github.com/BearStudio/cowat-v2/issues/255)) ([78b429a](https://github.com/BearStudio/cowat-v2/commit/78b429aeec130462fa5b0a6bd223d3642ea9397a))
+* redesign location cards with map preview and streamlined actions ([#265](https://github.com/BearStudio/cowat-v2/issues/265)) ([6dac57c](https://github.com/BearStudio/cowat-v2/commit/6dac57c5333a4a090c8934787df42baa62ddfbdb))
+* simplify commute creation flow and remove speed dials ([#260](https://github.com/BearStudio/cowat-v2/issues/260)) ([b72bfbe](https://github.com/BearStudio/cowat-v2/commit/b72bfbe5d51e0012b7322ad85c4402ad44d8f0fd))
+* UI polish pass — font, colors, dashboard, timeline, empty states ([#247](https://github.com/BearStudio/cowat-v2/issues/247)) ([e41a5e7](https://github.com/BearStudio/cowat-v2/commit/e41a5e7ab2488328faa24d51767a9389bda92d4f))
+
 # [1.1.0](https://github.com/BearStudio/cowat-v2/compare/v1.0.2...v1.1.0) (2026-03-25)
 
 
