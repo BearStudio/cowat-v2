@@ -1,0 +1,16 @@
+@media not (prefers-reduced-motion: reduce) {
+  @keyframes stop-reveal {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  [data-slot='card-commute-content'][data-open] [data-slot='stop-item'] {
+    animation: stop-reveal 150ms ease both;
+    animation-delay: calc(var(--stop-index, 0) * 30ms);
+  }
+}

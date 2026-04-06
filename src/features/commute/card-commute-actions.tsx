@@ -29,7 +29,7 @@ export function CardCommuteActions({
   if (!hasActions) return null;
 
   return (
-    <div className="-mx-4 border-t px-4 pt-3">
+    <div className="-mx-4 border-t px-4 py-3">
       <div className="flex items-center justify-between gap-2">
         {isDriver && (
           <>

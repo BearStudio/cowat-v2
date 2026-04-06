@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 import { tripTypeIcons } from '@/lib/feature-icons';
 import { cn } from '@/lib/tailwind/utils';
@@ -36,37 +36,25 @@ type StopsTimelineItemProps = {
   stop: StopForTimeline;
   isFirst: boolean;
   isLast: boolean;
+  index?: number;
   actions?: ReactNode;
   disableLinks?: boolean;
 };
 
-const TimelineMarker = ({
-  isFirst,
-  isLast,
-}: {
-  isFirst: boolean;
-  isLast: boolean;
-}) => (
-  <div className="flex w-3.5 flex-col items-center self-stretch pt-[3px]">
-    <div className="flex h-5 items-center">
-      {isFirst ? (
-        <div className="size-3.5 shrink-0 rounded-full border-2 border-primary bg-primary/10" />
-      ) : isLast ? (
-        <div className="size-3 shrink-0 rounded-full bg-primary" />
-      ) : (
-        <div className="size-2 shrink-0 rounded-full bg-primary/50" />
-      )}
-    </div>
-    {!isLast && (
-      <div className="w-0.5 flex-1 rounded-full bg-gradient-to-b from-primary/30 to-primary/10" />
+export const TimelineDot = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      'relative z-10 mt-[7px] size-1.5 shrink-0 rounded-full bg-foreground/70',
+      className
     )}
-  </div>
+  />
 );
 
 export const StopsTimelineItem = ({
   stop,
   isFirst,
   isLast,
+  index,
   actions,
   disableLinks,
 }: StopsTimelineItemProps) => {
@@ -75,8 +63,25 @@ export const StopsTimelineItem = ({
   );
 
   return (
-    <div className="flex items-start gap-3">
-      <TimelineMarker isFirst={isFirst} isLast={isLast} />
+    <div
+      className="relative flex items-start gap-3"
+      data-slot="stop-item"
+      style={{ '--stop-index': index ?? 0 } as CSSProperties}
+    >
+      <TimelineDot />
+      {/* Line going down from dot */}
+      {!isLast && (
+        <div
+          className={cn(
+            'absolute bottom-0 left-[2px] w-px bg-foreground/70',
+            isFirst ? 'top-[10px]' : 'top-0'
+          )}
+        />
+      )}
+      {/* Line coming up to dot (last item) */}
+      {isLast && !isFirst && (
+        <div className="absolute top-0 left-[2px] h-[10px] w-px bg-foreground/70" />
+      )}
       <div
         className={cn(
           'flex min-w-0 flex-1 flex-col gap-1.5',
@@ -162,6 +167,7 @@ export const StopsTimeline = ({
       <StopsTimelineItem
         key={stop.id}
         stop={stop}
+        index={index}
         isFirst={index === 0}
         isLast={index === stops.length - 1}
         disableLinks={disableLinks}

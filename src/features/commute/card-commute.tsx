@@ -1,8 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import dayjs from 'dayjs';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import '@/lib/dayjs/config';
 
 import { cn } from '@/lib/tailwind/utils';
 
@@ -18,7 +16,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -29,6 +26,10 @@ import {
 } from '@/components/ui/collapsible';
 
 import { UserBookingStatus } from '@/features/booking/status-colors';
+import {
+  HeaderStopsTimeline,
+  type MiniStop,
+} from '@/features/commute/header-stops-timeline';
 import { TripTime } from '@/features/commute/stops-timeline';
 
 const cardCommuteVariants = cva('border-l-4', {
@@ -99,7 +100,7 @@ function CardCommuteTrigger({
       nativeButton={false}
       render={<CardHeader />}
       className={cn(
-        'cursor-pointer [&[data-panel-open]_.chevron-icon]:rotate-180',
+        'group cursor-pointer [&[data-panel-open]_.chevron-icon]:rotate-180',
         className
       )}
       {...props}
@@ -117,25 +118,25 @@ function CardCommuteContent({
       data-slot="card-commute-content"
       keepMounted
       className={cn(
-        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-180 ease-[cubic-bezier(0.28,1.3,0.5,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
+        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
         className
       )}
       {...props}
     >
-      <CardContent>{children}</CardContent>
+      <CardContent className="-mb-4">{children}</CardContent>
     </CollapsibleContent>
   );
 }
 
 type CardCommuteHeaderProps = {
   driver: { name?: string | null; image?: string | null };
-  date: Date;
   type: 'ROUND' | 'ONEWAY';
   totalSeats: number;
   outwardTaken: number;
   inwardTaken?: number;
   outwardDeparture?: string;
   inwardDeparture?: string;
+  stops?: MiniStop[];
   passengers?: Array<{
     id: string;
     name?: string | null;
@@ -143,22 +144,27 @@ type CardCommuteHeaderProps = {
   }>;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
+  renderStopActions?: (
+    stopId: string,
+    info: { isFirst: boolean; isLast: boolean }
+  ) => React.ReactNode;
 };
 
 const MAX_VISIBLE_PASSENGERS = 4;
 
 function CardCommuteHeader({
   driver,
-  date,
   type,
   totalSeats,
   outwardTaken,
   inwardTaken,
   outwardDeparture,
   inwardDeparture,
+  stops,
   passengers,
   badge,
   actions,
+  renderStopActions,
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
 
@@ -194,26 +200,25 @@ function CardCommuteHeader({
           <AvatarImage src={driver.image ?? undefined} className="rounded-md" />
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <CardTitle className="truncate capitalize">
-            {dayjs(date).f('commute:dayHeader')}
-          </CardTitle>
-          <CardDescription className="truncate">{driver.name}</CardDescription>
+        <div className="flex min-w-0 flex-col gap-2">
+          <CardTitle className="truncate capitalize">{driver.name}</CardTitle>
+          <div className="flex items-center gap-1">
+            <Badge variant="secondary" size="sm">
+              {t(`commute:list.type.${type}`)}
+            </Badge>
+            {badge}
+          </div>
         </div>
       </div>
       <CardAction className="row-span-1">
         <div className="flex items-center gap-1">
           {actions}
-          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]" />
+          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]" />
         </div>
       </CardAction>
 
-      <div className="col-span-full flex items-center gap-2">
-        <Badge variant="secondary" size="sm">
-          {t(`commute:list.type.${type}`)}
-        </Badge>
-        {badge}
-        {!!passengers?.length && (
+      {!!passengers?.length && (
+        <div className="col-span-full flex items-center gap-2">
           <AvatarGroup className="ml-auto">
             {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
               <Avatar key={p.id} size="sm">
@@ -227,8 +232,8 @@ function CardCommuteHeader({
               </AvatarGroupCount>
             )}
           </AvatarGroup>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="col-span-full flex flex-wrap items-center gap-x-4 gap-y-1">
         <TripInfo type="ONEWAY" time={outwardDeparture} taken={outwardTaken} />
@@ -240,6 +245,13 @@ function CardCommuteHeader({
           />
         )}
       </div>
+
+      {!!stops?.length && (
+        <HeaderStopsTimeline
+          stops={stops}
+          renderStopActions={renderStopActions}
+        />
+      )}
     </>
   );
 }

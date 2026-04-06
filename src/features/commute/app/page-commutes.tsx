@@ -1,11 +1,14 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import '@/lib/dayjs/config';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { cn } from '@/lib/tailwind/utils';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
@@ -30,7 +33,6 @@ import {
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
-import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import {
@@ -57,6 +59,7 @@ export const myCommutesInfiniteOptions = () =>
 export const PageCommutes = () => {
   const { t } = useTranslation([
     'commute',
+    'dashboard',
     'common',
     'location',
     'commuteTemplate',
@@ -131,78 +134,141 @@ export const PageCommutes = () => {
               </EmptyContent>
             </Empty>
           ))
-          .match('default', ({ items }) => (
-            <div className="flex flex-col gap-3">
-              {items.map((item) => {
-                const { outwardCount, inwardCount, acceptedPassengers } =
-                  getCommutePassengerStats(item);
-                const hasPassengers = acceptedPassengers.size > 0;
-                const currentUserId = session.data?.user.id ?? '';
-                const isDriver = currentUserId === item.driver.id;
-                const bookingStatus = getUserBookingStatus(item, currentUserId);
+          .match('default', ({ items }) => {
+            // Group commutes by day
+            const commutesByDay = new Map<string, typeof items>();
+            for (const commute of items) {
+              const key = dayjs(commute.date).f('common:iso');
+              const existing = commutesByDay.get(key) ?? [];
+              existing.push(commute);
+              commutesByDay.set(key, existing);
+            }
 
-                return (
-                  <CardCommute key={item.id} bookingStatus={bookingStatus}>
-                    <CardCommuteTrigger>
-                      <CardCommuteHeader
-                        driver={item.driver}
-                        date={item.date}
-                        type={item.type}
-                        totalSeats={item.seats}
-                        outwardTaken={outwardCount}
-                        inwardTaken={
-                          item.type === 'ROUND' ? inwardCount : undefined
-                        }
-                        outwardDeparture={item.stops.at(0)?.outwardTime}
-                        inwardDeparture={
-                          item.stops.at(-1)?.inwardTime ?? undefined
-                        }
-                        passengers={[...acceptedPassengers.values()]}
-                        badge={<BookingStatusBadge status={bookingStatus} />}
-                      />
-                    </CardCommuteTrigger>
-                    <CardCommuteContent>
-                      <div className="flex flex-col gap-3">
-                        {item.comment && (
-                          <CommentText>{item.comment}</CommentText>
+            const today = dayjs().startOf('day');
+
+            return (
+              <div className="flex flex-col gap-6">
+                {[...commutesByDay.entries()].map(([dateKey, dayCommutes]) => {
+                  const day = dayjs(dateKey);
+                  const isToday = day.isSame(today, 'day');
+
+                  return (
+                    <div key={dateKey} className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        {isToday && (
+                          <span className="relative flex size-2.5">
+                            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75 [animation-duration:1.5s]" />
+                            <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
+                          </span>
                         )}
-                        <CardCommuteStopsList stops={item.stops} />
-                        <CardCommuteActions
-                          isDriver={isDriver}
-                          commuteId={item.id}
-                          driverPhone={item.driver.phone}
-                          cancelConfirmDescription={
-                            <div className="flex flex-col gap-3">
-                              <span>
-                                {t(
-                                  hasPassengers
-                                    ? 'commute:list.cancelConfirmDescriptionWithPassengers'
-                                    : 'commute:list.cancelConfirmDescription'
-                                )}
-                              </span>
-                              <ConfirmSummary
-                                user={item.driver}
-                                date={item.date}
-                                typeLabel={t(`commute:list.type.${item.type}`)}
-                                stops={item.stops}
-                              />
-                            </div>
-                          }
-                          onCancel={() =>
-                            commuteCancel.mutateAsync({ id: item.id })
-                          }
-                        />
+                        <h2
+                          className={cn('font-semibold capitalize', {
+                            'text-lg text-primary': isToday,
+                            'text-base text-foreground': !isToday,
+                          })}
+                        >
+                          {isToday
+                            ? t('dashboard:today')
+                            : day.f('commute:dayHeader')}
+                        </h2>
                       </div>
-                    </CardCommuteContent>
-                  </CardCommute>
-                );
-              })}
-              <LoadMoreButton
-                query={commutesQuery}
-                label={t('commute:list.loadMore')}
-              />
-            </div>
-          ))
+
+                      <div className="flex flex-col gap-3">
+                        {dayCommutes.map((item) => {
+                          const {
+                            outwardCount,
+                            inwardCount,
+                            acceptedPassengers,
+                          } = getCommutePassengerStats(item);
+                          const hasPassengers = acceptedPassengers.size > 0;
+                          const currentUserId = session.data?.user.id ?? '';
+                          const isDriver = currentUserId === item.driver.id;
+                          const bookingStatus = getUserBookingStatus(
+                            item,
+                            currentUserId
+                          );
+
+                          return (
+                            <CardCommute
+                              key={item.id}
+                              bookingStatus={bookingStatus}
+                            >
+                              <CardCommuteTrigger>
+                                <CardCommuteHeader
+                                  driver={item.driver}
+                                  type={item.type}
+                                  totalSeats={item.seats}
+                                  outwardTaken={outwardCount}
+                                  inwardTaken={
+                                    item.type === 'ROUND'
+                                      ? inwardCount
+                                      : undefined
+                                  }
+                                  outwardDeparture={
+                                    item.stops.at(0)?.outwardTime
+                                  }
+                                  inwardDeparture={
+                                    item.stops.at(-1)?.inwardTime ?? undefined
+                                  }
+                                  stops={item.stops}
+                                  passengers={[...acceptedPassengers.values()]}
+                                  badge={
+                                    <BookingStatusBadge
+                                      status={bookingStatus}
+                                    />
+                                  }
+                                />
+                              </CardCommuteTrigger>
+                              <CardCommuteContent>
+                                <div className="flex flex-col gap-3">
+                                  {item.comment && (
+                                    <CommentText>{item.comment}</CommentText>
+                                  )}
+                                  <CardCommuteActions
+                                    isDriver={isDriver}
+                                    commuteId={item.id}
+                                    driverPhone={item.driver.phone}
+                                    cancelConfirmDescription={
+                                      <div className="flex flex-col gap-3">
+                                        <span>
+                                          {t(
+                                            hasPassengers
+                                              ? 'commute:list.cancelConfirmDescriptionWithPassengers'
+                                              : 'commute:list.cancelConfirmDescription'
+                                          )}
+                                        </span>
+                                        <ConfirmSummary
+                                          user={item.driver}
+                                          date={item.date}
+                                          typeLabel={t(
+                                            `commute:list.type.${item.type}`
+                                          )}
+                                          stops={item.stops}
+                                        />
+                                      </div>
+                                    }
+                                    onCancel={() =>
+                                      commuteCancel.mutateAsync({
+                                        id: item.id,
+                                      })
+                                    }
+                                  />
+                                </div>
+                              </CardCommuteContent>
+                            </CardCommute>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+                <LoadMoreButton
+                  query={commutesQuery}
+                  label={t('commute:list.loadMore')}
+                />
+              </div>
+            );
+          })
           .exhaustive()}
       </PageLayoutContent>
     </PageLayout>
