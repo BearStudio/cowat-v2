@@ -5,7 +5,6 @@ import i18n from '@/lib/i18n';
 import { routeUrl } from '@/lib/route-url';
 
 import { SlackBody } from '@/features/slack/components/body';
-import { SlackFooter } from '@/features/slack/components/footer';
 import { SlackHeader } from '@/features/slack/components/header';
 import type { BookingRequestedEvent } from '@/server/notifications/types';
 
@@ -36,13 +35,17 @@ export function BookingRequested({ event, baseUrl }: Props) {
         {i18n.t('notifications:booking.requested.body', {
           passengerName: event.payload.passengerName,
         })}
-      </SlackBody>
-      <SlackFooter>
-        {i18n.t('notifications:booking.requestedContext', {
-          date: formatDate(event.payload.commuteDate),
+        <br />
+        <br />
+        {i18n.t('notifications:booking.requestedContext.tripType', {
           tripType: localizeTripType(event.payload.tripType),
         })}
-      </SlackFooter>
+        <br />
+        <br />
+        {i18n.t('notifications:booking.requestedContext.date', {
+          date: formatDate(event.payload.commuteDate),
+        })}
+      </SlackBody>
     </Blocks>
   );
 }

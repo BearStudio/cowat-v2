@@ -2,9 +2,12 @@
   "booking": {
     "requested": {
       "headline": "🙋 *New booking request!*",
-      "body": "*{{passengerName}}* wants to join your commute."
+      "body": "👤 *{{passengerName}}* wants to join your commute."
     },
-    "requestedContext": "📅 {{date}} · {{tripType}}",
+    "requestedContext": {
+      "date": "📅 {{date}}",
+      "tripType": "🔁 *{{tripType}}*"
+    },
     "accepted": {
       "headline": "✅ *Booking confirmed!*",
       "body": "*{{driverName}}* accepted your booking."
