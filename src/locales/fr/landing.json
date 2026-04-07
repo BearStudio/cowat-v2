@@ -24,6 +24,17 @@
     "link": "Écrivez-nous",
     "textAfter": "pour embarquer votre organisation."
   },
+  "featuresCta": {
+    "text": "Prêt à vous lancer ?",
+    "login": "Se connecter",
+    "requestAccess": "Demander un accès"
+  },
+  "story": {
+    "title": "Pourquoi on a créé Cowat",
+    "paragraph1": "Chez BearStudio, on construit des produits numériques pour les organisations qui veulent faire bouger les choses. Quand un de nos partenaires nous a posé une question simple — « nos employés veulent covoiturer mais n'ont aucun moyen simple de s'organiser » — on savait que la réponse n'était pas une énième appli générique.",
+    "paragraph2": "On a construit Cowat comme l'outil qu'on voudrait utiliser nous-mêmes : pas de bruit, pas de fonctionnalités sociales que personne n'a demandées, juste un moyen clair de partager un trajet avec les gens avec qui on travaille déjà.",
+    "paragraph3": "Cowat est ouvert à toute organisation qui veut rendre les trajets plus simples et plus humains."
+  },
   "cta": {
     "login": "Se connecter",
     "requestAccess": "Demander un accès"

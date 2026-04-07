@@ -72,6 +72,34 @@ export const PageLanding = () => {
         />
       </section>
 
+      {/* Features CTA */}
+      <section className="landing-features-cta">
+        <p className="landing-features-cta-text">
+          {t('landing:featuresCta.text')}
+        </p>
+        <div className="landing-features-cta-actions">
+          <Link to="/login" className={buttonVariants({ size: 'lg' })}>
+            {t('landing:featuresCta.login')}
+          </Link>
+          <a
+            href="mailto:hello@cowat.app"
+            className={buttonVariants({ size: 'lg', variant: 'secondary' })}
+          >
+            {t('landing:featuresCta.requestAccess')}
+          </a>
+        </div>
+      </section>
+
+      {/* Story */}
+      <section className="landing-story">
+        <h2 className="landing-story-title">{t('landing:story.title')}</h2>
+        <div className="landing-story-body">
+          <p>{t('landing:story.paragraph1')}</p>
+          <p>{t('landing:story.paragraph2')}</p>
+          <p>{t('landing:story.paragraph3')}</p>
+        </div>
+      </section>
+
       {/* Access note */}
       <section className="landing-access">
         <p className="landing-access-title">{t('landing:access.title')}</p>
@@ -314,6 +342,80 @@ const styles = `
     line-height: 1.6;
     color: var(--color-neutral-500);
     margin: 0;
+  }
+
+  /* Features CTA */
+  .landing-features-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+    background-color: var(--color-brand-50);
+    border-top: 1px solid var(--color-brand-100);
+    border-bottom: 1px solid var(--color-brand-100);
+  }
+
+  :is(.dark) .landing-features-cta {
+    background-color: oklch(0.18 0.02 240);
+    border-color: var(--color-neutral-800);
+  }
+
+  .landing-features-cta-text {
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 0;
+    color: var(--color-neutral-900);
+  }
+
+  :is(.dark) .landing-features-cta-text {
+    color: var(--color-neutral-100);
+  }
+
+  .landing-features-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  /* Story */
+  .landing-story {
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 40rem;
+  }
+
+  .landing-story-title {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--color-neutral-900);
+  }
+
+  :is(.dark) .landing-story-title {
+    color: var(--color-neutral-100);
+  }
+
+  .landing-story-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .landing-story-body p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-neutral-600);
+    margin: 0;
+  }
+
+  :is(.dark) .landing-story-body p {
+    color: var(--color-neutral-400);
   }
 
   /* Access */

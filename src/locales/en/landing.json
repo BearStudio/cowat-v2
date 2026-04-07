@@ -24,6 +24,17 @@
     "link": "Get in touch",
     "textAfter": "to bring your organization on board."
   },
+  "featuresCta": {
+    "text": "Ready to get started?",
+    "login": "Sign in",
+    "requestAccess": "Request access"
+  },
+  "story": {
+    "title": "Why we built Cowat",
+    "paragraph1": "At BearStudio, we build digital products for organizations that want to make a real difference. When one of our partners came to us with a simple problem — \"our employees want to carpool but have no easy way to organize it\" — we knew the answer wasn't another generic app.",
+    "paragraph2": "We built Cowat to be the tool we'd want to use ourselves: no noise, no social features nobody asked for, just a clear way to share a ride with the people you already work with.",
+    "paragraph3": "Cowat is open to any organization that wants to make commuting simpler and more human."
+  },
   "cta": {
     "login": "Sign in",
     "requestAccess": "Request access"
