@@ -20,7 +20,7 @@
     "refusedContext": "📅 {{date}} · {{tripType}}",
     "canceled": {
       "headline": "🙅 *Booking canceled*",
-      "body": "*{{passengerName}}* canceled their booking."
+      "body": "👤 *{{passengerName}}* canceled their booking."
     },
     "canceledContext": "📅 {{date}} · {{tripType}}",
     "canceledByDriver": {
