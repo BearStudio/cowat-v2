@@ -92,11 +92,16 @@ export const PageLanding = () => {
 
       {/* Story */}
       <section className="landing-story">
-        <h2 className="landing-story-title">{t('landing:story.title')}</h2>
-        <div className="landing-story-body">
-          <p>{t('landing:story.paragraph1')}</p>
-          <p>{t('landing:story.paragraph2')}</p>
-          <p>{t('landing:story.paragraph3')}</p>
+        <div className="landing-story-text">
+          <h2 className="landing-story-title">{t('landing:story.title')}</h2>
+          <div className="landing-story-body">
+            <p>{t('landing:story.paragraph1')}</p>
+            <p>{t('landing:story.paragraph2')}</p>
+            <p>{t('landing:story.paragraph3')}</p>
+          </div>
+        </div>
+        <div className="landing-story-visual" aria-hidden>
+          <Logo className="landing-story-logo" />
         </div>
       </section>
 
@@ -383,10 +388,38 @@ const styles = `
   /* Story */
   .landing-story {
     padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .landing-story {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .landing-story-text {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    max-width: 40rem;
+  }
+
+  .landing-story-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .landing-story-logo {
+    width: clamp(10rem, 20vw, 16rem);
+    height: auto;
+    opacity: 0.06;
+  }
+
+  :is(.dark) .landing-story-logo {
+    opacity: 0.08;
   }
 
   .landing-story-title {
