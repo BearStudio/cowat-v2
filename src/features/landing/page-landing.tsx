@@ -28,7 +28,8 @@ export const PageLanding = () => {
 
       {/* Hero */}
       <main className="landing-hero">
-        <div className="landing-blob" aria-hidden />
+        <div className="landing-blob landing-blob-1" aria-hidden />
+        <div className="landing-blob landing-blob-2" aria-hidden />
         <div className="landing-hero-content">
           <h1 className="landing-headline">
             {t('landing:hero.headline')}
@@ -155,33 +156,68 @@ const styles = `
 
   .landing-blob {
     position: absolute;
-    top: -10%;
-    right: -5%;
-    width: clamp(300px, 55vw, 700px);
+    pointer-events: none;
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+    filter: blur(40px);
+  }
+
+  .landing-blob-1 {
+    top: -12%;
+    right: -8%;
+    width: clamp(280px, 50vw, 650px);
     aspect-ratio: 1;
     background: radial-gradient(
-      ellipse at 60% 40%,
-      oklch(0.85 0.1 235 / 0.3),
-      oklch(0.8 0.08 240 / 0.1) 55%,
-      transparent 75%
+      ellipse at 55% 45%,
+      oklch(0.82 0.12 235 / 0.28),
+      oklch(0.78 0.09 245 / 0.12) 50%,
+      transparent 72%
     );
-    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-    pointer-events: none;
-    animation: landing-blob-drift 12s ease-in-out infinite alternate;
+    animation: landing-blob-1 16s ease-in-out infinite alternate;
   }
 
-  :is(.dark) .landing-blob {
+  .landing-blob-2 {
+    bottom: -5%;
+    left: -10%;
+    width: clamp(200px, 35vw, 450px);
+    aspect-ratio: 1.2;
     background: radial-gradient(
-      ellipse at 60% 40%,
-      oklch(0.4 0.1 240 / 0.25),
-      oklch(0.35 0.07 235 / 0.1) 55%,
+      ellipse at 50% 50%,
+      oklch(0.85 0.08 220 / 0.2),
+      oklch(0.8 0.06 250 / 0.08) 55%,
+      transparent 75%
+    );
+    border-radius: 40% 60% 50% 50% / 60% 40% 60% 40%;
+    animation: landing-blob-2 20s ease-in-out infinite alternate;
+  }
+
+  :is(.dark) .landing-blob-1 {
+    background: radial-gradient(
+      ellipse at 55% 45%,
+      oklch(0.35 0.12 240 / 0.3),
+      oklch(0.3 0.08 235 / 0.12) 50%,
+      transparent 72%
+    );
+  }
+
+  :is(.dark) .landing-blob-2 {
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      oklch(0.3 0.1 250 / 0.2),
+      oklch(0.25 0.06 240 / 0.08) 55%,
       transparent 75%
     );
   }
 
-  @keyframes landing-blob-drift {
-    from { transform: translate(0, 0) rotate(0deg) scale(1); }
-    to   { transform: translate(-3%, 4%) rotate(8deg) scale(1.04); }
+  @keyframes landing-blob-1 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(-4%, 6%) rotate(12deg) scale(1.06); }
+    100% { transform: translate(2%, -3%) rotate(-5deg) scale(0.97); }
+  }
+
+  @keyframes landing-blob-2 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(5%, -4%) rotate(-8deg) scale(1.08); }
+    100% { transform: translate(-2%, 3%) rotate(6deg) scale(0.95); }
   }
 
   .landing-hero-content {
@@ -190,12 +226,6 @@ const styles = `
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
-    animation: landing-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @keyframes landing-fade-up {
-    from { opacity: 0; transform: translateY(1.5rem); }
-    to   { opacity: 1; transform: translateY(0); }
   }
 
   .landing-headline {
@@ -205,7 +235,6 @@ const styles = `
     letter-spacing: -0.025em;
     margin: 0;
     color: var(--color-neutral-900);
-    animation: landing-fade-up 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   :is(.dark) .landing-headline {
@@ -227,7 +256,6 @@ const styles = `
     color: var(--color-neutral-500);
     max-width: 36rem;
     margin: 0;
-    animation: landing-fade-up 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .landing-cta {
@@ -235,7 +263,6 @@ const styles = `
     flex-wrap: wrap;
     gap: 0.75rem;
     align-items: center;
-    animation: landing-fade-up 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   /* Features */
@@ -257,9 +284,6 @@ const styles = `
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
-    animation: landing-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 40%;
   }
 
   :is(.dark) .landing-feature {
@@ -368,11 +392,6 @@ const styles = `
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .landing-hero-content,
-    .landing-headline,
-    .landing-subline,
-    .landing-cta,
-    .landing-feature,
     .landing-blob {
       animation: none;
     }
