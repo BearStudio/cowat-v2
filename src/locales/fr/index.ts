@@ -11,6 +11,7 @@ import commuteTemplate from './commute-template.json' with { type: 'json' };
 import components from './components.json' with { type: 'json' };
 import dashboard from './dashboard.json' with { type: 'json' };
 import emails from './emails.json' with { type: 'json' };
+import landing from './landing.json' with { type: 'json' };
 import layout from './layout.json' with { type: 'json' };
 import location from './location.json' with { type: 'json' };
 import notifications from './notifications.json' with { type: 'json' };
@@ -30,6 +31,7 @@ export default {
   components,
   dashboard,
   emails,
+  landing,
   layout,
   location,
   notifications,

@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "headline": "Your teams already share an office.",
+    "headlineEm": "What if they shared the road?",
+    "subline": "Cowat organizes carpooling within your organization. Your colleagues post their commutes, you book a seat — that's it."
+  },
+  "features": {
+    "post": {
+      "title": "Post your commute",
+      "description": "Enter where you leave from, where you're going and when. Cowat finds colleagues on your route."
+    },
+    "book": {
+      "title": "Book a seat",
+      "description": "A colleague takes the same route? Book in one click. No negotiation, no calls."
+    },
+    "ride": {
+      "title": "Ride together",
+      "description": "Fewer cars in the parking lot, more conversations on the road. The habit catches on fast."
+    }
+  },
+  "access": {
+    "title": "Available by invitation",
+    "text": "Cowat is built for companies, associations and collectives.",
+    "link": "Get in touch",
+    "textAfter": "to bring your organization on board."
+  },
+  "cta": {
+    "login": "Sign in",
+    "requestAccess": "Request access"
+  }
+}

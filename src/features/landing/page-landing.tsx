@@ -1,44 +1,52 @@
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 import { Logo } from '@/components/brand/logo';
 import { buttonVariants } from '@/components/ui/button';
+import { LocalSwitcher } from '@/components/ui/local-switcher';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
 export const PageLanding = () => {
+  const { t } = useTranslation(['landing']);
+
   return (
     <div className="landing-root">
       {/* Nav */}
       <header className="landing-nav">
         <Logo className="landing-logo" />
-        <Link
-          to="/login"
-          className={buttonVariants({ size: 'sm', variant: 'ghost' })}
-        >
-          Se connecter
-        </Link>
+        <div className="flex items-center gap-1">
+          <ThemeSwitcher iconOnly />
+          <LocalSwitcher iconOnly />
+          <Link
+            to="/login"
+            className={buttonVariants({ size: 'sm', variant: 'ghost' })}
+          >
+            {t('landing:cta.login')}
+          </Link>
+        </div>
       </header>
 
       {/* Hero */}
       <main className="landing-hero">
         <div className="landing-blob" aria-hidden />
         <div className="landing-hero-content">
-          <p className="landing-eyebrow">Covoiturage pour organisations</p>
           <h1 className="landing-headline">
-            Le trajet du matin,{' '}
-            <em className="landing-headline-em">fait ensemble.</em>
+            {t('landing:hero.headline')}
+            <br />
+            <em className="landing-headline-em">
+              {t('landing:hero.headlineEm')}
+            </em>
           </h1>
-          <p className="landing-subline">
-            Cowat connecte vos équipes sur la route. Moins de voitures vides,
-            plus de liens entre collègues — et une empreinte carbone qui fond.
-          </p>
+          <p className="landing-subline">{t('landing:hero.subline')}</p>
           <div className="landing-cta">
             <Link to="/login" className={buttonVariants({ size: 'lg' })}>
-              Se connecter
+              {t('landing:cta.login')}
             </Link>
             <a
               href="mailto:hello@cowat.app"
               className={buttonVariants({ size: 'lg', variant: 'ghost' })}
             >
-              Demander un accès →
+              {t('landing:cta.requestAccess')}
             </a>
           </div>
         </div>
@@ -47,30 +55,31 @@ export const PageLanding = () => {
       {/* Features */}
       <section className="landing-features">
         <Feature
-          icon="🌱"
-          title="Plus responsable"
-          description="Chaque trajet partagé, c'est une voiture de moins sur la route. L'impact s'accumule, vraiment."
+          number="01"
+          title={t('landing:features.post.title')}
+          description={t('landing:features.post.description')}
         />
         <Feature
-          icon="🤝"
-          title="Plus humain"
-          description="Le covoiturage tisse des liens là où l'open space ne suffit pas. Une communauté qui se déplace ensemble."
+          number="02"
+          title={t('landing:features.book.title')}
+          description={t('landing:features.book.description')}
         />
         <Feature
-          icon="⚙️"
-          title="Géré pour vous"
-          description="Les managers ont une vue claire sur les trajets de l'organisation. Simple, sans friction."
+          number="03"
+          title={t('landing:features.ride.title')}
+          description={t('landing:features.ride.description')}
         />
       </section>
 
       {/* Access note */}
       <section className="landing-access">
+        <p className="landing-access-title">{t('landing:access.title')}</p>
         <p className="landing-access-text">
-          Cowat est disponible sur invitation.{' '}
+          {t('landing:access.text')}{' '}
           <a href="mailto:hello@cowat.app" className="landing-access-link">
-            Contactez-nous
+            {t('landing:access.link')}
           </a>{' '}
-          pour rejoindre la communauté.
+          {t('landing:access.textAfter')}
         </p>
       </section>
 
@@ -88,17 +97,17 @@ export const PageLanding = () => {
 };
 
 const Feature = ({
-  icon,
+  number,
   title,
   description,
 }: {
-  icon: string;
+  number: string;
   title: string;
   description: string;
 }) => (
   <div className="landing-feature">
-    <span className="landing-feature-icon" aria-hidden>
-      {icon}
+    <span className="landing-feature-number" aria-hidden>
+      {number}
     </span>
     <h2 className="landing-feature-title">{title}</h2>
     <p className="landing-feature-desc">{description}</p>
@@ -111,21 +120,14 @@ const styles = `
     display: flex;
     flex-direction: column;
     font-family: var(--font-sans);
-    background-color: oklch(0.983 0.006 95);
-    color: oklch(0.22 0.012 240);
+    background-color: var(--color-neutral-50);
+    color: var(--color-neutral-950);
     overflow-x: hidden;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-root {
-      background-color: oklch(0.14 0.01 250);
-      color: oklch(0.93 0.008 95);
-    }
-  }
-
   :is(.dark) .landing-root {
-    background-color: oklch(0.14 0.01 250);
-    color: oklch(0.93 0.008 95);
+    background-color: var(--color-neutral-950);
+    color: var(--color-neutral-100);
   }
 
   /* Nav */
@@ -159,8 +161,8 @@ const styles = `
     aspect-ratio: 1;
     background: radial-gradient(
       ellipse at 60% 40%,
-      oklch(0.88 0.09 150 / 0.35),
-      oklch(0.88 0.07 220 / 0.12) 55%,
+      oklch(0.85 0.1 235 / 0.3),
+      oklch(0.8 0.08 240 / 0.1) 55%,
       transparent 75%
     );
     border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
@@ -168,22 +170,11 @@ const styles = `
     animation: landing-blob-drift 12s ease-in-out infinite alternate;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-blob {
-      background: radial-gradient(
-        ellipse at 60% 40%,
-        oklch(0.45 0.1 150 / 0.2),
-        oklch(0.4 0.07 220 / 0.08) 55%,
-        transparent 75%
-      );
-    }
-  }
-
   :is(.dark) .landing-blob {
     background: radial-gradient(
       ellipse at 60% 40%,
-      oklch(0.45 0.1 150 / 0.2),
-      oklch(0.4 0.07 220 / 0.08) 55%,
+      oklch(0.4 0.1 240 / 0.25),
+      oklch(0.35 0.07 235 / 0.1) 55%,
       transparent 75%
     );
   }
@@ -195,10 +186,10 @@ const styles = `
 
   .landing-hero-content {
     position: relative;
-    max-width: 42rem;
+    max-width: 44rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.75rem;
     animation: landing-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
@@ -207,59 +198,44 @@ const styles = `
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .landing-eyebrow {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: oklch(0.55 0.14 150);
-    animation: landing-fade-up 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .landing-eyebrow { color: oklch(0.72 0.14 150); }
-  }
-  :is(.dark) .landing-eyebrow { color: oklch(0.72 0.14 150); }
-
   .landing-headline {
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-size: clamp(2.25rem, 5.5vw, 3.5rem);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: -0.025em;
     margin: 0;
-    animation: landing-fade-up 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    color: var(--color-neutral-900);
+    animation: landing-fade-up 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  :is(.dark) .landing-headline {
+    color: var(--color-neutral-100);
   }
 
   .landing-headline-em {
     font-style: normal;
-    color: oklch(0.52 0.15 150);
+    color: var(--color-brand-600);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-headline-em { color: oklch(0.72 0.14 150); }
+  :is(.dark) .landing-headline-em {
+    color: var(--color-brand-400);
   }
-  :is(.dark) .landing-headline-em { color: oklch(0.72 0.14 150); }
 
   .landing-subline {
     font-size: clamp(1rem, 2vw, 1.125rem);
     line-height: 1.65;
-    color: oklch(0.45 0.01 240);
+    color: var(--color-neutral-500);
     max-width: 36rem;
     margin: 0;
-    animation: landing-fade-up 0.7s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: landing-fade-up 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-
-  @media (prefers-color-scheme: dark) {
-    .landing-subline { color: oklch(0.72 0.008 95); }
-  }
-  :is(.dark) .landing-subline { color: oklch(0.72 0.008 95); }
 
   .landing-cta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     align-items: center;
-    animation: landing-fade-up 0.7s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: landing-fade-up 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   /* Features */
@@ -267,38 +243,39 @@ const styles = `
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
     gap: 0;
-    border-top: 1px solid oklch(0.88 0.005 240);
+    border-top: 1px solid var(--color-neutral-200);
     margin: 0 clamp(1.25rem, 5vw, 3rem);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-features { border-color: oklch(0.28 0.01 240); }
+  :is(.dark) .landing-features {
+    border-color: var(--color-neutral-800);
   }
-  :is(.dark) .landing-features { border-color: oklch(0.28 0.01 240); }
 
   .landing-feature {
     padding: clamp(1.75rem, 4vw, 2.5rem);
-    border-right: 1px solid oklch(0.88 0.005 240);
+    border-right: 1px solid var(--color-neutral-200);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.625rem;
     animation: landing-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-timeline: view();
     animation-range: entry 0% entry 40%;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-feature { border-color: oklch(0.28 0.01 240); }
+  :is(.dark) .landing-feature {
+    border-color: var(--color-neutral-800);
   }
-  :is(.dark) .landing-feature { border-color: oklch(0.28 0.01 240); }
 
   .landing-feature:last-child {
     border-right: none;
   }
 
-  .landing-feature-icon {
-    font-size: 1.5rem;
-    line-height: 1;
+  .landing-feature-number {
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-500);
+    letter-spacing: 0.04em;
   }
 
   .landing-feature-title {
@@ -311,34 +288,42 @@ const styles = `
   .landing-feature-desc {
     font-size: 0.9375rem;
     line-height: 1.6;
-    color: oklch(0.5 0.01 240);
+    color: var(--color-neutral-500);
     margin: 0;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-feature-desc { color: oklch(0.65 0.008 95); }
-  }
-  :is(.dark) .landing-feature-desc { color: oklch(0.65 0.008 95); }
-
   /* Access */
   .landing-access {
-    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .landing-access-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-brand-600);
+    margin: 0;
+  }
+
+  :is(.dark) .landing-access-title {
+    color: var(--color-brand-400);
   }
 
   .landing-access-text {
     font-size: 0.9375rem;
-    color: oklch(0.52 0.01 240);
+    color: var(--color-neutral-500);
     margin: 0;
+    max-width: 28rem;
   }
-
-  @media (prefers-color-scheme: dark) {
-    .landing-access-text { color: oklch(0.65 0.008 95); }
-  }
-  :is(.dark) .landing-access-text { color: oklch(0.65 0.008 95); }
 
   .landing-access-link {
-    color: oklch(0.52 0.15 150);
+    color: var(--color-brand-600);
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
@@ -346,15 +331,16 @@ const styles = `
   }
 
   .landing-access-link:hover {
-    color: oklch(0.42 0.15 150);
+    color: var(--color-brand-700);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-access-link { color: oklch(0.72 0.14 150); }
-    .landing-access-link:hover { color: oklch(0.82 0.12 150); }
+  :is(.dark) .landing-access-link {
+    color: var(--color-brand-400);
   }
-  :is(.dark) .landing-access-link { color: oklch(0.72 0.14 150); }
-  :is(.dark) .landing-access-link:hover { color: oklch(0.82 0.12 150); }
+
+  :is(.dark) .landing-access-link:hover {
+    color: var(--color-brand-300);
+  }
 
   /* Footer */
   .landing-footer {
@@ -362,34 +348,27 @@ const styles = `
     align-items: center;
     justify-content: space-between;
     padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 5vw, 3rem);
-    border-top: 1px solid oklch(0.88 0.005 240);
+    border-top: 1px solid var(--color-neutral-200);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-footer { border-color: oklch(0.28 0.01 240); }
+  :is(.dark) .landing-footer {
+    border-color: var(--color-neutral-800);
   }
-  :is(.dark) .landing-footer { border-color: oklch(0.28 0.01 240); }
 
   .landing-footer-logo {
     height: 1.25rem;
     width: auto;
-    opacity: 0.45;
+    opacity: 0.4;
   }
 
   .landing-footer-copy {
     font-size: 0.8125rem;
-    color: oklch(0.6 0.008 240);
+    color: var(--color-neutral-400);
     margin: 0;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .landing-footer-copy { color: oklch(0.55 0.008 95); }
-  }
-  :is(.dark) .landing-footer-copy { color: oklch(0.55 0.008 95); }
-
   @media (prefers-reduced-motion: reduce) {
     .landing-hero-content,
-    .landing-eyebrow,
     .landing-headline,
     .landing-subline,
     .landing-cta,

@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "headline": "Vos équipes partagent déjà un bureau.",
+    "headlineEm": "Et si elles partageaient la route ?",
+    "subline": "Cowat organise le covoiturage au sein de votre organisation. Vos collègues publient leurs trajets, vous réservez une place — c'est tout."
+  },
+  "features": {
+    "post": {
+      "title": "Publiez votre trajet",
+      "description": "Indiquez d'où vous partez, où vous allez et à quelle heure. Cowat trouve les collègues sur votre route."
+    },
+    "book": {
+      "title": "Réservez une place",
+      "description": "Un collègue fait le même chemin ? Réservez en un clic. Pas de négociation, pas d'appel."
+    },
+    "ride": {
+      "title": "Roulez ensemble",
+      "description": "Moins de voitures sur le parking, plus de conversations sur la route. L'habitude se prend vite."
+    }
+  },
+  "access": {
+    "title": "Disponible sur invitation",
+    "text": "Cowat s'adresse aux entreprises, associations et collectifs.",
+    "link": "Écrivez-nous",
+    "textAfter": "pour embarquer votre organisation."
+  },
+  "cta": {
+    "login": "Se connecter",
+    "requestAccess": "Demander un accès"
+  }
+}
