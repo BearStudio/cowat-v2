@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { Activity } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
 import { useRedirectAfterLogin } from '@/features/auth/utils';
+import { PageLanding } from '@/features/landing/page-landing';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -18,7 +19,7 @@ function RouteComponent() {
     <>
       {session.isPending && <Spinner full />}
       <Activity mode={session.isPending ? 'hidden' : 'visible'}>
-        <Link to="/login">Login</Link>
+        <PageLanding />
       </Activity>
     </>
   );
