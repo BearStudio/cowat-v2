@@ -3,6 +3,7 @@ import type { LanguageKey } from '@/lib/i18n/constants';
 
 import type { TripType } from '@/features/booking/schema';
 import type { CommuteType } from '@/features/commute/schema';
+import { TripType as TripTypeEnum } from '@/server/db/generated/enums';
 export type SlackBlock = {
   type: string;
   [key: string]: unknown;
@@ -48,4 +49,17 @@ export function getFallbackText(blocks: SlackBlock[]): string {
     }
   }
   return 'New notification';
+}
+
+export function getTripTypeIcon(type: TripType): string {
+  switch (type) {
+    case TripTypeEnum.ROUND:
+      return '🔁';
+    case TripTypeEnum.ONEWAY:
+      return '⬆️';
+    case TripTypeEnum.RETURN:
+      return '⬇️';
+    default:
+      return '';
+  }
 }

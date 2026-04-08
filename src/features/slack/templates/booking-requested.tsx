@@ -8,7 +8,7 @@ import { SlackBody } from '@/features/slack/components/body';
 import { SlackHeader } from '@/features/slack/components/header';
 import type { BookingRequestedEvent } from '@/server/notifications/types';
 
-import { formatDate, localizeTripType } from '../utils';
+import { formatDate, getTripTypeIcon, localizeTripType } from '../utils';
 
 type Props = {
   event: BookingRequestedEvent;
@@ -37,8 +37,9 @@ export function BookingRequested({ event, baseUrl }: Props) {
         })}
         <br />
         <br />
+        {getTripTypeIcon(event.payload.tripType)}{' '}
         {i18n.t('notifications:booking.requestedContext.tripType', {
-          tripType: localizeTripType(event.payload.tripType),
+          tripType: localizeTripType(event.payload.tripType).toUpperCase(),
         })}
         <br />
         <br />

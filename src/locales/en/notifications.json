@@ -6,7 +6,7 @@
     },
     "requestedContext": {
       "date": "📅 {{date}}",
-      "tripType": "🔁 *{{tripType}}*"
+      "tripType": "*{{tripType}}*"
     },
     "accepted": {
       "headline": "✅ *Booking confirmed!*",
