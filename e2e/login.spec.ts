@@ -1,5 +1,5 @@
 import { test } from 'e2e/utils';
-import { ADMIN_EMAIL, OWNER_EMAIL,USER_EMAIL } from 'e2e/utils/constants';
+import { ADMIN_EMAIL, OWNER_EMAIL, USER_EMAIL } from 'e2e/utils/constants';
 
 test.describe('Login flow', () => {
   test('Login as admin', async ({ page, loginPage }) => {
