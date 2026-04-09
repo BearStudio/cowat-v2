@@ -9,6 +9,8 @@ import {
   USER_FILE,
 } from 'e2e/utils/constants';
 
+import { OWNER_EMAIL, OWNER_FILE } from '../utils/constants';
+
 /**
  * @see https://playwright.dev/docs/auth#multiple-signed-in-roles
  */
@@ -21,6 +23,16 @@ setup('authenticate as admin', async ({ page }) => {
   await expect(page.getByTestId('layout-app')).toBeVisible();
 
   await page.context().storageState({ path: ADMIN_FILE });
+});
+
+setup('authenticate as owner', async ({ page }) => {
+  await page.to('/login');
+  await page.login({ email: OWNER_EMAIL });
+
+  await page.waitForURL('/app');
+  await expect(page.getByTestId('layout-app')).toBeVisible();
+
+  await page.context().storageState({ path: OWNER_FILE });
 });
 
 setup('authenticate as user', async ({ page }) => {

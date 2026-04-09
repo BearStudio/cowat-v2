@@ -3,6 +3,9 @@ const AUTH_FILE_BASE = 'e2e/.auth';
 export const USER_FILE = `${AUTH_FILE_BASE}/user.json`;
 export const USER_EMAIL = 'user@user.com';
 
+export const OWNER_FILE = `${AUTH_FILE_BASE}/owner.json`;
+export const OWNER_EMAIL = 'owner@owner.com';
+
 export const ADMIN_FILE = `${AUTH_FILE_BASE}/admin.json`;
 export const ADMIN_EMAIL = 'admin@admin.com';
 
