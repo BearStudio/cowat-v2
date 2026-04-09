@@ -59,7 +59,6 @@
       "headline": "🔔 *Carpool reminder!*",
       "body": "Here are your commutes for today:",
       "lineDriverWithPassengers": "🚗 *{{date}}* — You're driving (passengers: {{passengers}})",
-      "lineDriverNoPassengers": "🚗 *{{date}}* — You're driving (no passengers yet)",
       "linePassenger": "💺 *{{date}}* — Passenger with *{{driverName}}*"
     },
     "reminderContext": "🚗 {{count}} commute(s) today",
