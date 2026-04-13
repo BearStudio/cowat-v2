@@ -18,6 +18,20 @@ export class ManagerOrgPage {
     await this.page.getByLabel('Name').waitFor({ timeout: 15_000 });
   }
 
+  async gotoOrganizationsList() {
+    await this.page.goto('/manager/organizations');
+    await this.page.getByTestId('layout-manager').waitFor({ timeout: 15_000 });
+  }
+
+  async selectOwnerByEmail(email: string) {
+    await this.page.getByRole('combobox').last().click();
+    await this.page.getByRole('option', { name: new RegExp(email) }).click();
+  }
+
+  async openDeleteOrgDrawer() {
+    await this.page.getByRole('button', { name: 'Confirm' }).click();
+  }
+
   get orgSettingsCard() {
     return this.page.getByText('Organization Settings').first();
   }
