@@ -244,4 +244,63 @@ test.describe('Commute creation', () => {
     });
     await commuteFormPage.expectCommuteInList();
   });
+
+  test('Edit a commute', async ({ page, commuteFormPage }) => {
+    const date = daysFromNow(18);
+    const dateStr = formatDate(date);
+
+    await commuteFormPage.dateInput.fill(dateStr);
+    await commuteFormPage.dateInput.blur();
+
+    const roundTrip = commuteFormPage.roundTripCheckbox;
+    if (await roundTrip.isChecked()) {
+      await roundTrip.click(); // one-way for simplicity
+    }
+
+    await commuteFormPage.seatsInput.clear();
+    await commuteFormPage.seatsInput.fill('2');
+
+    await commuteFormPage.clickNext();
+
+    await commuteFormPage.selectLocation(0, 'Home');
+    await commuteFormPage.fillOutwardTime(0, '08:00');
+    await commuteFormPage.selectLocation(1, 'Office');
+    await commuteFormPage.fillOutwardTime(1, '08:30');
+
+    await commuteFormPage.clickNext();
+
+    await commuteFormPage.clickCreate();
+    await commuteFormPage.skipSaveTemplate();
+
+    await expect(commuteFormPage.commutesListHeading).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await commuteFormPage.expectCommuteInList();
+
+    const commuteItem = page.getByText('DRIVER').first();
+    await commuteItem.click();
+
+    await page.getByRole('link', { name: 'Edit' }).click();
+
+    // Step 1 — change seats
+    await commuteFormPage.seatsInput.clear();
+    await commuteFormPage.seatsInput.fill('4');
+
+    await commuteFormPage.clickNext();
+
+    // Step 2 — outward (no change, just continue)
+    await commuteFormPage.clickNext();
+
+    // Step 3 — recap
+    await expect(page.getByText('4 seats').first()).toBeVisible();
+
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(commuteFormPage.commutesListHeading).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(page.getByText('4 seats').first()).toBeVisible();
+  });
 });
