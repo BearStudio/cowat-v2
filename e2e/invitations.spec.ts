@@ -134,5 +134,22 @@ test.describe('Invitation flow', () => {
 
       await managerOrgPage.expectInvitationNotVisible(INVITED_EMAIL);
     });
+
+    test('Expiration organization invitation', async ({ browser, page }) => {
+      const invitationId = await ensureInvitation(browser);
+      const adminContext = await browser.newContext({
+        storageState: ADMIN_FILE,
+      });
+
+      await adminContext.request.post('/api/test/expire-invitation', {
+        data: { invitationId },
+      });
+      await adminContext.close();
+
+      await page.goto(`/invitations/${invitationId}`);
+      await expect(
+        page.getByText('This invitation has expired or is no longer valid.')
+      ).toBeVisible();
+    });
   });
 });
