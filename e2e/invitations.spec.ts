@@ -2,6 +2,8 @@ import { type Browser } from '@playwright/test';
 import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, INVITED_EMAIL, INVITED_FILE } from 'e2e/utils/constants';
 
+import { OWNER_FILE } from './utils/constants';
+
 type Invitation = { id: string; email: string; status: string };
 type Member = { user: { email: string } };
 
@@ -109,5 +111,28 @@ test.describe('Invitation flow', () => {
       await page.getByRole('button', { name: 'Continue' }).click();
       await expect(layoutApp).toBeVisible({ timeout: 15_000 });
     }
+  });
+
+  test.describe('Invitation flow as owner', () => {
+    test.use({ storageState: OWNER_FILE });
+
+    test('Cancel an organization invitation', async ({
+      browser,
+      page,
+      managerOrgPage,
+    }) => {
+      await ensureInvitation(browser);
+      await managerOrgPage.gotoOrgDashboard();
+
+      await managerOrgPage.expectPendingInvitationsSectionVisible();
+      await expect(page.getByText(INVITED_EMAIL).first()).toBeVisible({
+        timeout: 15_000,
+      });
+
+      await managerOrgPage.clickCancelInvitation(INVITED_EMAIL);
+      await managerOrgPage.confirmCancelInvitation();
+
+      await managerOrgPage.expectInvitationNotVisible(INVITED_EMAIL);
+    });
   });
 });
