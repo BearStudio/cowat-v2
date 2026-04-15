@@ -1,3 +1,5 @@
+import { PrismaPg } from '@prisma/adapter-pg';
+
 import { envServer } from '@/env/server';
 import { timingStore } from '@/server/timing-store';
 
@@ -31,7 +33,12 @@ const SOFT_DELETE_READ_OPERATIONS = [
 let _client: any;
 
 function createPrisma() {
+  const adapter = new PrismaPg({
+    connectionString: envServer.DATABASE_URL,
+  });
+
   const client = new PrismaClient({
+    adapter,
     log: levels[envServer.LOGGER_LEVEL],
   })
     .$extends({
