@@ -14,6 +14,11 @@ const customStatements = {
   booking: ['read', 'create', 'manage', 'request'],
   location: ['read', 'create', 'update', 'delete'],
   commuteTemplate: ['read', 'create', 'update', 'delete'],
+  orgLocation: ['read'],
+} satisfies Statements;
+
+const adminStatements = {
+  orgLocation: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;
 
 const ownerOnlyStatements = {
@@ -23,6 +28,7 @@ const ownerOnlyStatements = {
 const organizationStatements = {
   ...defaultStatements,
   ...customStatements,
+  ...adminStatements,
   ...ownerOnlyStatements,
 };
 
@@ -39,11 +45,13 @@ const roleMember = ac.newRole({
 const roleAdmin = ac.newRole({
   ...adminAc.statements,
   ...customStatements,
+  ...adminStatements,
 });
 
 const roleOwner = ac.newRole({
   ...ownerAc.statements,
   ...customStatements,
+  ...adminStatements,
   ...ownerOnlyStatements,
 });
 

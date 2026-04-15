@@ -1,6 +1,5 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useMemo, useState } from 'react';
 import {
   Control,
   FieldPath,
@@ -10,16 +9,33 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { orpc } from '@/lib/orpc/client';
-
 import {
   FormField,
   FormFieldController,
   FormFieldLabel,
 } from '@/components/form';
+import { FormFieldContainer } from '@/components/form/form-field-container';
+import { FormFieldError } from '@/components/form/form-field-error';
 import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+} from '@/components/ui/combobox';
 
 import { LocationDrawer } from '@/features/location/app/location-drawer';
+import { useAllLocations } from '@/features/location/use-all-locations';
+
+type LocationItem = {
+  label: string;
+  value: string;
+};
 
 type FormFieldLocationSelectProps<
   TFieldValues extends FieldValues,
@@ -48,20 +64,25 @@ export const FormFieldLocationSelect = <
   const { t } = useTranslation(['commute', 'location']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const locationsQuery = useInfiniteQuery(
-    orpc.location.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({ cursor, limit: 100 }),
-      initialPageParam: undefined,
-      maxPages: 1,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const { personalQuery, orgQuery } = useAllLocations();
 
-  const locationItems =
-    locationsQuery.data?.pages
-      .flatMap((p) => p.items)
-      .filter((loc) => !excludeLocationIds?.includes(loc.id))
-      .map((loc) => ({ label: loc.name, value: loc.id })) ?? [];
+  const { allItems, orgItems, personalItems } = useMemo(() => {
+    const excluded = new Set(excludeLocationIds);
+
+    const org = (orgQuery.data?.pages.flatMap((p) => p.items) ?? [])
+      .filter((loc) => !excluded.has(loc.id))
+      .map((loc) => ({ label: loc.name, value: loc.id }));
+
+    const personal = (personalQuery.data?.pages.flatMap((p) => p.items) ?? [])
+      .filter((loc) => !excluded.has(loc.id))
+      .map((loc) => ({ label: loc.name, value: loc.id }));
+
+    return {
+      allItems: [...org, ...personal],
+      orgItems: org,
+      personalItems: personal,
+    };
+  }, [orgQuery.data, personalQuery.data, excludeLocationIds]);
 
   return (
     <>
@@ -72,11 +93,77 @@ export const FormFieldLocationSelect = <
         <div className="flex items-start gap-2">
           <div className="flex-1">
             <FormFieldController
-              type="combobox"
+              type="custom"
               control={control}
               name={name}
-              items={locationItems}
-              placeholder={placeholder ?? t('commute:form.locationPlaceholder')}
+              render={({ field, fieldState }) => (
+                <FormFieldContainer>
+                  <Combobox
+                    items={allItems}
+                    disabled={field.disabled}
+                    value={
+                      allItems.find((item) => item.value === field.value) ??
+                      null
+                    }
+                    isItemEqualToValue={(a, b) =>
+                      (a as LocationItem).value === (b as LocationItem).value
+                    }
+                    itemToStringLabel={(item) =>
+                      (item as LocationItem).label ?? ''
+                    }
+                    itemToStringValue={(item) => (item as LocationItem).value}
+                    onValueChange={(item) => {
+                      const typedItem = item as LocationItem | null;
+                      field.onChange(typedItem?.value ?? null);
+                    }}
+                    inputRef={field.ref}
+                  >
+                    <ComboboxInput
+                      disabled={field.disabled}
+                      onBlur={field.onBlur}
+                      placeholder={
+                        placeholder ?? t('commute:form.locationPlaceholder')
+                      }
+                      aria-invalid={fieldState.invalid ? true : undefined}
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>
+                        {t('location:select.noResults')}
+                      </ComboboxEmpty>
+                      <ComboboxList>
+                        {orgItems.length > 0 && (
+                          <ComboboxGroup>
+                            <ComboboxLabel>
+                              {t('location:select.orgGroup')}
+                            </ComboboxLabel>
+                            {orgItems.map((item) => (
+                              <ComboboxItem key={item.value} value={item}>
+                                {item.label}
+                              </ComboboxItem>
+                            ))}
+                          </ComboboxGroup>
+                        )}
+                        {orgItems.length > 0 && personalItems.length > 0 && (
+                          <ComboboxSeparator />
+                        )}
+                        {personalItems.length > 0 && (
+                          <ComboboxGroup>
+                            <ComboboxLabel>
+                              {t('location:select.personalGroup')}
+                            </ComboboxLabel>
+                            {personalItems.map((item) => (
+                              <ComboboxItem key={item.value} value={item}>
+                                {item.label}
+                              </ComboboxItem>
+                            ))}
+                          </ComboboxGroup>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  <FormFieldError />
+                </FormFieldContainer>
+              )}
             />
           </div>
           <Button

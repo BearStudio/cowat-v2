@@ -1,9 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
 import { Control, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-
-import { orpc } from '@/lib/orpc/client';
 
 import {
   FormField,
@@ -19,6 +16,7 @@ import {
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
 import { useAutoInwardTimes } from '@/features/commute/use-auto-inward-times';
+import { useAllLocations } from '@/features/location/use-all-locations';
 
 type StepInwardStopsProps = {
   control: Control<FormFieldsCommuteBase>;
@@ -37,19 +35,13 @@ export const StepInwardStops = ({
     setValue,
   });
 
-  const locationsQuery = useInfiniteQuery(
-    orpc.location.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({ cursor, limit: 100 }),
-      initialPageParam: undefined,
-      maxPages: 1,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const { personalQuery, orgQuery } = useAllLocations();
 
   const locationsMap = new Map(
-    locationsQuery.data?.pages
-      .flatMap((p) => p.items)
-      .map((loc) => [loc.id, loc.name]) ?? []
+    [
+      ...(orgQuery.data?.pages.flatMap((p) => p.items) ?? []),
+      ...(personalQuery.data?.pages.flatMap((p) => p.items) ?? []),
+    ].map((loc) => [loc.id, loc.name] as const)
   );
 
   // Reverse order so stops are chronological for the return trip
