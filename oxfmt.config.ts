@@ -1,0 +1,31 @@
+import { defineConfig } from 'oxfmt';
+
+export default defineConfig({
+  printWidth: 80,
+  tabWidth: 2,
+  semi: true,
+  singleQuote: true,
+  trailingComma: 'es5',
+  arrowParens: 'always',
+  sortTailwindcss: {
+    stylesheet: './src/styles/app.css',
+    functions: ['cn', 'cva'],
+  },
+  ignorePatterns: [
+    '.cache',
+    '.db',
+    '.history',
+    'output',
+    '.vinxi',
+    'node_modules',
+    'package-lock.json',
+    'pnpm-lock.yaml',
+    'yarn.lock',
+    'public',
+    '**/*.md',
+    '**/*.mdx',
+    '.env*',
+    '**/*.gen.ts',
+    'src/server/db/generated',
+  ],
+});
