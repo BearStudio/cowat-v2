@@ -288,6 +288,7 @@ test.describe('Commute creation', () => {
 
     // Step 3 — recap
 
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
 
     await expect(commuteFormPage.commutesListHeading).toBeVisible({
