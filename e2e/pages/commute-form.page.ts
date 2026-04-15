@@ -61,7 +61,7 @@ export class CommuteFormPage {
   }
 
   async clickCreate() {
-    await this.page.getByRole('button', { name: 'Create' }).click();
+    await this.page.getByRole('button', { name: 'Create' }).last().click();
   }
 
   async clickSave() {

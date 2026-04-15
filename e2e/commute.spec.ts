@@ -22,6 +22,7 @@ type CreateCommuteParams = {
 };
 
 async function createCommute({
+  page,
   commuteFormPage,
   date,
   seats,
@@ -64,6 +65,14 @@ async function createCommute({
     await commuteFormPage.fillInwardTime(1, '19:00');
     await commuteFormPage.clickNext();
   }
+
+  // Step 4 — Recap
+  if (roundTrip) {
+    await expect(page.getByText('Round trip')).toBeVisible();
+  } else {
+    await expect(page.getByText('One way')).toBeVisible();
+  }
+  await expect(page.getByText(`${seats} seats`).first()).toBeVisible();
 
   await commuteFormPage.clickCreate();
   await commuteFormPage.skipSaveTemplate();
@@ -259,7 +268,11 @@ test.describe('Commute creation', () => {
       roundTrip: false,
     });
 
-    const commuteItem = page.getByText('DRIVER').first();
+    const commuteItem = page
+      .locator('div', {
+        has: page.getByText(dateStr),
+      })
+      .first();
     await commuteItem.click();
 
     await page.getByRole('link', { name: 'Edit' }).click();
@@ -296,7 +309,11 @@ test.describe('Commute creation', () => {
       roundTrip: false,
     });
 
-    const commuteItem = page.getByText('DRIVER').first();
+    const commuteItem = page
+      .locator('div', {
+        has: page.getByText(dateStr),
+      })
+      .first();
     await commuteItem.click();
 
     await page.getByRole('button', { name: 'Cancel' }).click();
