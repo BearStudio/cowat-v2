@@ -51,12 +51,6 @@ const config: KnipConfig = {
     '@semantic-release/commit-analyzer',
     '@semantic-release/github',
     '@semantic-release/release-notes-generator',
-    // eslint plugins loaded via oxlint jsPlugins in .oxlintrc.json
-    '@tanstack/eslint-plugin-query',
-    '@tanstack/eslint-plugin-router',
-    'eslint-plugin-simple-import-sort',
-    'eslint-plugin-sonarjs',
-    'eslint-plugin-storybook',
   ],
   storybook: {
     config: ['.storybook/main.ts'],
