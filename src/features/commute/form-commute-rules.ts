@@ -25,6 +25,8 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
   return {
     isRound,
 
+    // allows inward < outward only if the time difference is greater than 12 hours
+    // to handle trips that cross midnight
     shouldInwardBeAfterOutward: (
       stop: Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>
     ) => {
