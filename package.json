@@ -39,9 +39,9 @@
     "dk:stop": "docker compose stop",
     "dk:clear": "docker compose down --volumes",
     "db:init": "pnpm db:push && pnpm db:seed",
-    "db:push": "prisma db push",
+    "db:push": "dotenv -- prisma db push",
     "db:reset": "dotenv -- cross-env node ./run-jiti ./prisma/seed/reset.ts",
-    "db:ui": "prisma studio",
+    "db:ui": "dotenv -- prisma studio",
     "db:seed": "dotenv -- cross-env node ./run-jiti ./prisma/seed/index.ts",
     "db:seed:week": "dotenv -- cross-env node ./run-jiti ./prisma/seed/reseed-commutes.ts"
   },
