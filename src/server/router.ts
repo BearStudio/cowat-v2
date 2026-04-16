@@ -1,3 +1,4 @@
+/* eslint-disable no-process-env */
 import { InferRouterInputs, InferRouterOutputs } from '@orpc/server';
 
 import accountRouter from './routers/account';
@@ -15,6 +16,12 @@ import userRouter from './routers/user';
 export type Router = typeof router;
 export type Inputs = InferRouterInputs<typeof router>;
 export type Outputs = InferRouterOutputs<typeof router>;
+
+const testRouters =
+  process.env.NODE_ENV === 'test'
+    ? { test: (await import('./routers/test.router')).default }
+    : {};
+
 export const router = {
   account: accountRouter,
   booking: bookingRouter,
@@ -27,4 +34,5 @@ export const router = {
   stats: statsRouter,
   user: userRouter,
   config: configRouter,
+  ...testRouters,
 };

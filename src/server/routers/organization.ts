@@ -363,27 +363,6 @@ export default {
       });
     }),
 
-  expireInvitation: adminProcedure({ permission: null })
-    .route({
-      method: 'POST',
-      path: '/organizations/expire-invitation',
-      tags,
-    })
-    .input(
-      z.object({
-        invitationId: z.string(),
-      })
-    )
-    .output(z.void())
-    .handler(async ({ context, input }) => {
-      await context.db.invitation.update({
-        where: { id: input.invitationId },
-        data: {
-          expiresAt: new Date(Date.now() - 1000 * 60),
-        },
-      });
-    }),
-
   update: orgProcedure({ permissions: { organization: ['update'] } })
     .route({ method: 'POST', path: '/organizations/update', tags })
     .input(z.object({ name: z.string().min(1).max(100) }))

@@ -141,7 +141,7 @@ test.describe('Invitation flow', () => {
         storageState: ADMIN_FILE,
       });
 
-      await adminContext.request.post('/api/test/expire-invitation', {
+      await adminContext.request.post('/api/rest/expire-invitation', {
         data: { invitationId },
       });
       await adminContext.close();
