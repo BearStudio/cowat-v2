@@ -20,7 +20,7 @@ export type Outputs = InferRouterOutputs<typeof router>;
 const testRouters =
   process.env.NODE_ENV === 'test'
     ? { test: (await import('./routers/test.router')).default }
-    : {};
+    : ({} as Record<string, never>);
 
 export const router = {
   account: accountRouter,
