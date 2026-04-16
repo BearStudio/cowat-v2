@@ -1,29 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { tripTypeIcons } from '@/lib/feature-icons';
+import { cn } from '@/lib/tailwind/utils';
 
-import { Badge } from '@/components/ui/badge';
-
-import { bookingStatusBadgeVariants } from '@/features/booking/booking-status-badge';
-import { TimelineDot, TripTime } from '@/features/commute/stops-timeline';
-
-export type MiniStop = {
-  id: string;
-  location: { name: string; address: string };
-  outwardTime: string;
-  inwardTime?: string | null;
-  passengers?: Array<{
-    id: string;
-    status: string;
-    tripType: string;
-    passenger: { name?: string | null };
-  }>;
-};
+import {
+  ActivePassengersBadges,
+  StopForTimeline,
+  TimelineDot,
+  TimelineLine,
+  TripTime,
+} from '@/features/commute/stops-timeline';
 
 function parseMins(time: string) {
-  const parts = time.split(':');
-  return Number(parts[0] ?? 0) * 60 + Number(parts[1] ?? 0);
+  const [h, m] = time.split(':');
+  return Number(h ?? 0) * 60 + Number(m ?? 0);
 }
 
 function formatDuration(mins: number) {
@@ -34,28 +24,53 @@ function formatDuration(mins: number) {
   return `${h}h${m.toString().padStart(2, '0')}`;
 }
 
+type HeaderStop = StopForTimeline & { id: string };
+
+type StopActionsRenderer = (
+  stopId: string,
+  info: { isFirst: boolean; isLast: boolean }
+) => React.ReactNode;
+
 type HeaderStopsTimelineProps = {
-  stops: MiniStop[];
-  renderStopActions?: (
-    stopId: string,
-    info: { isFirst: boolean; isLast: boolean }
-  ) => React.ReactNode;
+  stops: HeaderStop[];
+  renderStopActions?: StopActionsRenderer;
 };
 
+/**
+ * Grid-rows reveal trick: close smoothly without leaving action rows visible.
+ * Open transitions match the card panel duration so the total card height
+ * changes as one motion instead of jumping before the panel animation starts.
+ */
 const EXPAND_CLS =
-  'grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-rows-[1fr]';
-
+  'grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-rows-[1fr] group-data-[panel-open]:opacity-100 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]';
 const COLLAPSE_CLS =
-  'grid grid-rows-[1fr] overflow-hidden transition-[grid-template-rows] duration-150 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-rows-[0fr]';
+  'grid grid-rows-[1fr] overflow-hidden opacity-100 transition-[grid-template-rows,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-rows-[0fr] group-data-[panel-open]:opacity-0 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]';
 
-function getActivePassengers(stop: MiniStop) {
-  return (stop.passengers ?? []).filter(
-    (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
+function StopNameRow({ stop }: { stop: StopForTimeline }) {
+  return (
+    <div className="-mb-1 flex items-center gap-1.5">
+      <span className="truncate text-sm leading-5 font-medium">
+        {stop.location.name}
+      </span>
+      {/* Horizontal grid-cols trick: collapse times to 0fr when closed so they
+          reveal fluidly on open, instead of display-swapping. */}
+      <div className="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-cols-[1fr] group-data-[panel-open]:opacity-100 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]">
+        <div className="flex min-w-0 items-center gap-1.5 overflow-hidden text-sm whitespace-nowrap text-muted-foreground">
+          <span className="text-muted-foreground/50">·</span>
+          <TripTime type="ONEWAY" time={stop.outwardTime} />
+          {stop.inwardTime && (
+            <>
+              <span className="text-muted-foreground/50">·</span>
+              <TripTime type="RETURN" time={stop.inwardTime} />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
-function StopDetails({ stop }: { stop: MiniStop }) {
-  const active = getActivePassengers(stop);
+function StopDetails({ stop }: { stop: StopForTimeline }) {
   return (
     <>
       {stop.location.address && (
@@ -63,51 +78,54 @@ function StopDetails({ stop }: { stop: MiniStop }) {
           {stop.location.address}
         </span>
       )}
-      {active.length > 0 && (
-        <div className="flex flex-wrap gap-1 pt-0.5">
-          {active.map((p) => {
-            const TripIcon =
-              tripTypeIcons[p.tripType as keyof typeof tripTypeIcons];
-            return (
-              <Badge
-                key={p.id}
-                variant={
-                  bookingStatusBadgeVariants({
-                    status: p.status as
-                      | 'DRIVER'
-                      | 'REQUESTED'
-                      | 'ACCEPTED'
-                      | 'REFUSED'
-                      | 'CANCELED',
-                  }) as React.ComponentProps<typeof Badge>['variant']
-                }
-                size="sm"
-              >
-                {TripIcon && <TripIcon />}
-                {p.passenger.name}
-              </Badge>
-            );
-          })}
-        </div>
-      )}
+      <ActivePassengersBadges passengers={stop.passengers} className="pt-0.5" />
     </>
   );
 }
 
-function StopNameRow({ stop }: { stop: MiniStop }) {
+type StopRowPosition = 'first' | 'intermediate' | 'last';
+
+function TimelineStopRow({
+  stop,
+  position,
+  isOnly = false,
+  renderStopActions,
+}: {
+  stop: HeaderStop;
+  position: StopRowPosition;
+  isOnly?: boolean;
+  renderStopActions?: StopActionsRenderer;
+}) {
+  const isFirst = position === 'first' || isOnly;
+  const isLast = position === 'last' || isOnly;
+  const stopActions = renderStopActions?.(stop.id, { isFirst, isLast });
+  const details = (
+    <div className="min-h-0 overflow-hidden">
+      <StopDetails stop={stop} />
+      {stopActions}
+    </div>
+  );
+
   return (
-    <div className="-mb-1 flex items-center gap-1.5">
-      <span className="truncate text-sm leading-5 font-medium">
-        {stop.location.name}
-      </span>
-      <div className="hidden shrink-0 items-center gap-1.5 text-sm text-muted-foreground group-data-[panel-open]:flex">
-        <span className="text-muted-foreground/50">·</span>
-        <TripTime type="ONEWAY" time={stop.outwardTime} />
-        {stop.inwardTime && (
-          <>
-            <span className="text-muted-foreground/50">·</span>
-            <TripTime type="RETURN" time={stop.inwardTime} />
-          </>
+    <div
+      className={cn(
+        'relative flex items-start gap-3',
+        position !== 'last' && 'pb-3'
+      )}
+    >
+      {!isOnly && (
+        <TimelineLine
+          from={position === 'first' ? 'dot' : 'top'}
+          to={position === 'last' ? 'dot' : 'bottom'}
+        />
+      )}
+      <TimelineDot />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <StopNameRow stop={stop} />
+        {position === 'intermediate' ? (
+          details
+        ) : (
+          <div className={EXPAND_CLS}>{details}</div>
         )}
       </div>
     </div>
@@ -124,6 +142,7 @@ export function HeaderStopsTimeline({
   const lastStop = stops[stops.length - 1];
   if (!firstStop || !lastStop) return null;
 
+  const isOnlyStop = stops.length === 1;
   const intermediateStops = stops.length > 2 ? stops.slice(1, -1) : [];
   const duration = formatDuration(
     parseMins(lastStop.outwardTime) - parseMins(firstStop.outwardTime)
@@ -135,38 +154,27 @@ export function HeaderStopsTimeline({
 
   return (
     <div className="col-span-full flex flex-col">
-      {/* FIRST STOP */}
-      <div className="relative flex items-start gap-3 pb-3">
-        {stops.length > 1 && (
-          <div className="absolute top-[10px] bottom-0 left-[2px] w-px bg-foreground/70" />
-        )}
-        <TimelineDot />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <StopNameRow stop={firstStop} />
-          <div className={EXPAND_CLS}>
-            <div className="min-h-0 overflow-hidden">
-              <StopDetails stop={firstStop} />
-              {renderStopActions?.(firstStop.id, {
-                isFirst: true,
-                isLast: stops.length === 1,
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
+      <TimelineStopRow
+        stop={firstStop}
+        position="first"
+        isOnly={isOnlyStop}
+        renderStopActions={renderStopActions}
+      />
 
-      {stops.length > 1 && (
+      {!isOnlyStop && (
         <>
           {/* CONNECTOR — visible when closed, collapses when open */}
           <div className={COLLAPSE_CLS}>
             <div className="min-h-0 overflow-hidden">
               <div className="relative flex items-center gap-3 pb-3">
-                <div className="absolute top-0 bottom-0 left-[2px] w-px bg-foreground/70" />
-                {intermediateStops.length > 0 ? (
-                  <div className="relative z-10 size-1.5 shrink-0 rounded-full bg-foreground/70" />
-                ) : (
-                  <div className="size-1.5 shrink-0" />
-                )}
+                <TimelineLine from="top" to="bottom" />
+                <div
+                  className={cn(
+                    'size-1.5 shrink-0',
+                    intermediateStops.length > 0 &&
+                      'relative z-10 rounded-full bg-foreground'
+                  )}
+                />
                 <span className="text-xs text-muted-foreground">
                   {connectorLabel}
                 </span>
@@ -174,43 +182,23 @@ export function HeaderStopsTimeline({
             </div>
           </div>
 
-          {/* INTERMEDIATE STOPS */}
           {intermediateStops.map((stop) => (
             <div key={stop.id} className={EXPAND_CLS}>
               <div className="min-h-0 overflow-hidden">
-                <div className="relative flex items-start gap-3 pb-3">
-                  <div className="absolute top-0 bottom-0 left-[2px] w-px bg-foreground/70" />
-                  <TimelineDot />
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <StopNameRow stop={stop} />
-                    <StopDetails stop={stop} />
-                    {renderStopActions?.(stop.id, {
-                      isFirst: false,
-                      isLast: false,
-                    })}
-                  </div>
-                </div>
+                <TimelineStopRow
+                  stop={stop}
+                  position="intermediate"
+                  renderStopActions={renderStopActions}
+                />
               </div>
             </div>
           ))}
 
-          {/* LAST STOP */}
-          <div className="relative flex items-start gap-3">
-            <div className="absolute top-0 left-[2px] h-[10px] w-px bg-foreground/70" />
-            <TimelineDot />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <StopNameRow stop={lastStop} />
-              <div className={EXPAND_CLS}>
-                <div className="min-h-0 overflow-hidden">
-                  <StopDetails stop={lastStop} />
-                  {renderStopActions?.(lastStop.id, {
-                    isFirst: false,
-                    isLast: true,
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
+          <TimelineStopRow
+            stop={lastStop}
+            position="last"
+            renderStopActions={renderStopActions}
+          />
         </>
       )}
     </div>

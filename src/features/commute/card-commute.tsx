@@ -26,10 +26,8 @@ import {
 } from '@/components/ui/collapsible';
 
 import { UserBookingStatus } from '@/features/booking/status-colors';
-import {
-  HeaderStopsTimeline,
-  type MiniStop,
-} from '@/features/commute/header-stops-timeline';
+import { HeaderStopsTimeline } from '@/features/commute/header-stops-timeline';
+import type { CommuteType, StopEnriched } from '@/features/commute/schema';
 import { TripTime } from '@/features/commute/stops-timeline';
 
 const cardCommuteVariants = cva('border-l-4', {
@@ -78,7 +76,7 @@ function CardCommute({
     <Collapsible data-slot="card-commute" {...props}>
       <Card
         className={cn(
-          'relative overflow-hidden',
+          'relative gap-0 overflow-hidden',
           cardCommuteVariants({ bookingStatus }),
           className
         )}
@@ -118,30 +116,32 @@ function CardCommuteContent({
       data-slot="card-commute-content"
       keepMounted
       className={cn(
-        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[height] data-ending-style:h-0 data-starting-style:h-0',
+        'h-[var(--collapsible-panel-height)] overflow-hidden transition-[height] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:h-0 data-open:duration-200 data-open:ease-[cubic-bezier(0.2,0,0,1)] data-starting-style:h-0',
         className
       )}
       {...props}
     >
-      <CardContent className="-mb-4">{children}</CardContent>
+      <CardContent className="pt-2">{children}</CardContent>
     </CollapsibleContent>
   );
 }
 
+type PassengerSummary = {
+  id: string;
+  name?: string | null;
+  image?: string | null;
+};
+
 type CardCommuteHeaderProps = {
   driver: { name?: string | null; image?: string | null };
-  type: 'ROUND' | 'ONEWAY';
+  type: CommuteType;
   totalSeats: number;
   outwardTaken: number;
   inwardTaken?: number;
   outwardDeparture?: string;
   inwardDeparture?: string;
-  stops?: MiniStop[];
-  passengers?: Array<{
-    id: string;
-    name?: string | null;
-    image?: string | null;
-  }>;
+  stops?: StopEnriched[];
+  passengers?: PassengerSummary[];
   badge?: React.ReactNode;
   actions?: React.ReactNode;
   renderStopActions?: (
@@ -151,6 +151,51 @@ type CardCommuteHeaderProps = {
 };
 
 const MAX_VISIBLE_PASSENGERS = 4;
+
+function TripInfo({
+  type,
+  time,
+  seatLabel,
+}: {
+  type: 'ONEWAY' | 'RETURN';
+  time?: string;
+  seatLabel: string;
+}) {
+  return (
+    <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+      {time && (
+        <TripTime
+          type={type}
+          time={time}
+          timeClassName="font-medium text-foreground"
+        />
+      )}
+      <span className="text-muted-foreground/50">·</span>
+      <span className="text-xs">{seatLabel}</span>
+    </span>
+  );
+}
+
+function HeaderPassengersRow({
+  passengers,
+}: {
+  passengers: PassengerSummary[];
+}) {
+  const overflow = passengers.length - MAX_VISIBLE_PASSENGERS;
+  return (
+    <div className="col-span-full flex items-center gap-2">
+      <AvatarGroup className="ml-auto">
+        {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
+          <Avatar key={p.id} size="sm">
+            <AvatarImage src={p.image ?? undefined} />
+            <AvatarFallback variant="boring" name={p.name ?? '?'} />
+          </Avatar>
+        ))}
+        {overflow > 0 && <AvatarGroupCount>+{overflow}</AvatarGroupCount>}
+      </AvatarGroup>
+    </div>
+  );
+}
 
 function CardCommuteHeader({
   driver,
@@ -167,31 +212,8 @@ function CardCommuteHeader({
   renderStopActions,
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
-
   const seatLabel = (taken: number) =>
     t('commute:list.seatCount', { taken, total: totalSeats });
-
-  const TripInfo = ({
-    type,
-    time,
-    taken,
-  }: {
-    type: 'ONEWAY' | 'RETURN';
-    time?: string;
-    taken: number;
-  }) => (
-    <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-      {time && (
-        <TripTime
-          type={type}
-          time={time}
-          timeClassName="font-medium text-foreground"
-        />
-      )}
-      <span className="text-muted-foreground/50">·</span>
-      <span className="text-xs">{seatLabel(taken)}</span>
-    </span>
-  );
 
   return (
     <>
@@ -217,31 +239,19 @@ function CardCommuteHeader({
         </div>
       </CardAction>
 
-      {!!passengers?.length && (
-        <div className="col-span-full flex items-center gap-2">
-          <AvatarGroup className="ml-auto">
-            {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
-              <Avatar key={p.id} size="sm">
-                <AvatarImage src={p.image ?? undefined} />
-                <AvatarFallback variant="boring" name={p.name ?? '?'} />
-              </Avatar>
-            ))}
-            {passengers.length > MAX_VISIBLE_PASSENGERS && (
-              <AvatarGroupCount>
-                +{passengers.length - MAX_VISIBLE_PASSENGERS}
-              </AvatarGroupCount>
-            )}
-          </AvatarGroup>
-        </div>
-      )}
+      {!!passengers?.length && <HeaderPassengersRow passengers={passengers} />}
 
       <div className="col-span-full flex flex-wrap items-center gap-x-4 gap-y-1">
-        <TripInfo type="ONEWAY" time={outwardDeparture} taken={outwardTaken} />
+        <TripInfo
+          type="ONEWAY"
+          time={outwardDeparture}
+          seatLabel={seatLabel(outwardTaken)}
+        />
         {type === 'ROUND' && (
           <TripInfo
             type="RETURN"
             time={inwardDeparture}
-            taken={inwardTaken ?? outwardTaken}
+            seatLabel={seatLabel(inwardTaken ?? outwardTaken)}
           />
         )}
       </div>
