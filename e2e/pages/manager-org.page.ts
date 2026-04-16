@@ -63,6 +63,16 @@ export class ManagerOrgPage {
     await this.page.getByRole('button', { name: 'Cancel invitation' }).click();
   }
 
+  async expectInvitationVisible(email: string) {
+    const invitationsSection = this.page
+      .locator('div')
+      .filter({ hasText: 'Pending invitations' });
+
+    await expect(invitationsSection.getByText(email)).toBeVisible({
+      timeout: 10_000,
+    });
+  }
+
   async expectInvitationNotVisible(email: string) {
     const invitationsSection = this.page
       .locator('div')

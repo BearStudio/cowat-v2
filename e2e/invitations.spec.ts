@@ -129,6 +129,8 @@ test.describe('Invitation flow', () => {
         timeout: 15_000,
       });
 
+      await managerOrgPage.expectInvitationVisible(INVITED_EMAIL);
+
       await managerOrgPage.clickCancelInvitation(INVITED_EMAIL);
       await managerOrgPage.confirmCancelInvitation();
 
