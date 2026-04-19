@@ -8,7 +8,7 @@ export class ManagerUsersPage {
   }
 
   get newUserButton() {
-    return this.page.getByText('New User');
+    return this.page.getByRole('link', { name: 'New User' });
   }
 
   get searchInput() {
@@ -32,11 +32,11 @@ export class ManagerUsersPage {
   }
 
   async waitForUsersPage() {
-    await this.page.waitForURL('**/manager/users');
+    await expect(this.page).toHaveURL(/\/manager\/users\/?(?:\?.*)?$/);
   }
 
   async waitForNewUserPage() {
-    await this.page.waitForURL('**/manager/users/new');
+    await expect(this.page).toHaveURL(/\/manager\/users\/new\/?(?:\?.*)?$/);
   }
 
   async clickUser(identifier: string, options?: { exact?: boolean }) {

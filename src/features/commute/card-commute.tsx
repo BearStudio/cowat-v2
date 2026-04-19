@@ -235,7 +235,10 @@ function CardCommuteHeader({
       <CardAction className="row-span-1">
         <div className="flex items-center gap-1">
           {actions}
-          <ChevronDown className="chevron-icon size-4 text-muted-foreground transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]" />
+          <ChevronDown
+            data-slot="card-commute-toggle"
+            className="chevron-icon size-4 text-muted-foreground transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
+          />
         </div>
       </CardAction>
 
