@@ -102,9 +102,7 @@ function TimelineStopRow({
   const details = (
     <div className="min-h-0 overflow-hidden">
       <StopDetails stop={stop} />
-      {stopActions && (
-        <div onClick={(e) => e.stopPropagation()}>{stopActions}</div>
-      )}
+      {stopActions}
     </div>
   );
 

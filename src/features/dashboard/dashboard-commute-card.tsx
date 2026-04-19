@@ -95,34 +95,40 @@ export const DashboardCommuteCard = ({
 
                   if (userBooking) {
                     return (
-                      <ConfirmResponsiveDrawer
-                        description={
-                          <div className="flex flex-col gap-3">
-                            <span>
-                              {t('dashboard:cancelBooking.confirmDescription')}
-                            </span>
-                            <ConfirmSummary
-                              user={commute.driver}
-                              date={commute.date}
-                              typeLabel={t(`commute:list.type.${commute.type}`)}
-                              stops={[stop]}
-                            />
-                          </div>
-                        }
-                        confirmText={t('common:actions.confirm')}
-                        confirmVariant="destructive"
-                        onConfirm={() =>
-                          bookingCancel.mutateAsync({ id: userBooking.id })
-                        }
-                      >
-                        <Button
-                          variant="destructive-secondary"
-                          size="sm"
-                          className="mt-2 w-full font-normal tracking-[0.15em] uppercase"
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <ConfirmResponsiveDrawer
+                          description={
+                            <div className="flex flex-col gap-3">
+                              <span>
+                                {t(
+                                  'dashboard:cancelBooking.confirmDescription'
+                                )}
+                              </span>
+                              <ConfirmSummary
+                                user={commute.driver}
+                                date={commute.date}
+                                typeLabel={t(
+                                  `commute:list.type.${commute.type}`
+                                )}
+                                stops={[stop]}
+                              />
+                            </div>
+                          }
+                          confirmText={t('common:actions.confirm')}
+                          confirmVariant="destructive"
+                          onConfirm={() =>
+                            bookingCancel.mutateAsync({ id: userBooking.id })
+                          }
                         >
-                          {t('common:actions.cancel')}
-                        </Button>
-                      </ConfirmResponsiveDrawer>
+                          <Button
+                            variant="destructive-secondary"
+                            size="sm"
+                            className="mt-2 w-full font-normal tracking-[0.15em] uppercase"
+                          >
+                            {t('common:actions.cancel')}
+                          </Button>
+                        </ConfirmResponsiveDrawer>
+                      </div>
                     );
                   }
 
@@ -135,7 +141,10 @@ export const DashboardCommuteCard = ({
                       variant="secondary"
                       size="sm"
                       className="mt-2 w-full font-normal tracking-[0.15em] uppercase"
-                      onClick={() => onBookStop(stop.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onBookStop(stop.id);
+                      }}
                     >
                       {t('dashboard:booking.submitButton')}
                     </Button>
