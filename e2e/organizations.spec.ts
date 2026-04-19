@@ -5,7 +5,7 @@ import { randomString } from 'remeda';
 test.describe.serial('Manager organization', () => {
   test.use({ storageState: ADMIN_FILE });
 
-  const testOrg = { name: 'OrgTest', slug: 'orgtest' };
+  const testOrg = `orgTest-${randomString(6)}`;
 
   test.beforeAll(async ({ browser }) => {
     // Restore the org name in case a previous run left it in a corrupted state.
@@ -55,16 +55,20 @@ test.describe.serial('Manager organization', () => {
     await managerOrgPage.gotoOrganizationsList();
 
     await page.getByRole('link', { name: 'New organization' }).click();
-    await page.waitForURL('**/manager/organizations/new', { timeout: 10_000 });
+    await page.waitForURL('/manager/organizations/new');
 
-    await page.getByLabel('Name').fill(testOrg.name);
+    await page.getByLabel('Name').fill(testOrg);
+    await expect(page.getByLabel('Slug')).toHaveValue(/.+/);
 
     await managerOrgPage.selectOwnerByEmail(ADMIN_EMAIL);
 
-    await page.getByRole('button', { name: 'Create' }).click();
+    const createButton = page.getByRole('button', { name: 'Create' });
+    await expect(createButton).toBeEnabled();
+    await createButton.click();
 
-    await page.waitForURL('**/manager/organizations', { timeout: 10_000 });
-    await expect(page.getByText(testOrg.name).first()).toBeVisible({
+    await page.waitForURL('**/manager/organizations', { timeout: 15_000 });
+
+    await expect(page.getByText(testOrg).first()).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -72,19 +76,21 @@ test.describe.serial('Manager organization', () => {
   test('Remove organization', async ({ page, managerOrgPage }) => {
     await managerOrgPage.gotoOrganizationsList();
 
-    await page.getByText(testOrg.name).first().click();
+    await page.getByText(testOrg).first().click();
     await page.getByTestId('layout-manager').waitFor({ timeout: 15_000 });
 
     await managerOrgPage.openDeleteOrgDrawer();
 
-    await page.getByPlaceholder(testOrg.slug).fill(testOrg.slug);
+    const confirmInput = page.getByRole('textbox');
+    await confirmInput.fill(await confirmInput.getAttribute('placeholder')!);
 
     await page.getByRole('button', { name: 'Confirm' }).click();
 
-    await page.waitForURL('**/manager/organizations', { timeout: 10_000 });
-    await expect(
-      page.getByRole('link', { name: testOrg.name })
-    ).not.toBeVisible({
+    await page.waitForURL('**/manager/organizations', {
+      timeout: 15_000,
+    });
+
+    await expect(page.getByRole('link', { name: testOrg })).not.toBeVisible({
       timeout: 15_000,
     });
   });

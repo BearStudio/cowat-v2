@@ -25,7 +25,9 @@ export class ManagerOrgPage {
 
   async selectOwnerByEmail(email: string) {
     await this.page.getByRole('combobox').last().click();
-    await this.page.getByRole('option', { name: new RegExp(email) }).click();
+    const option = this.page.getByRole('option', { name: new RegExp(email) });
+    await option.waitFor({ timeout: 10_000 });
+    await option.click();
   }
 
   async openDeleteOrgDrawer() {
