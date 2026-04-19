@@ -24,10 +24,14 @@ export class DashboardPage {
   }
 
   bookButtons(card: Locator) {
-    return this.cardContent(card).getByRole('button', { name: 'Book' });
+    return card
+      .locator('[data-slot="card-commute-trigger"]')
+      .getByRole('button', { name: 'Book' });
   }
 
   cancelButton(card: Locator) {
-    return this.cardContent(card).getByRole('button', { name: 'Cancel' });
+    return card
+      .locator('[data-slot="card-commute-trigger"]')
+      .getByRole('button', { name: 'Cancel' });
   }
 }
