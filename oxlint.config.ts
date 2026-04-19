@@ -1,6 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
+  ignorePatterns: ['.context/**'],
   plugins: ['react', 'unicorn', 'typescript', 'node'],
   jsPlugins: [
     '@tanstack/eslint-plugin-query',

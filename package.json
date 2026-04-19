@@ -23,7 +23,7 @@
     "knip": "knip --treat-config-hints-as-errors",
     "knip:prod": "pnpm run knip --production --exclude dependencies,unresolved,binaries",
     "lint": "run-p lint:*",
-    "lint:oxlint": "oxlint --fix --ignore-pattern '.context/**' .",
+    "lint:oxlint": "oxlint --fix .",
     "lint:ts": "tsc --noEmit",
     "gen:prisma": "prisma generate --no-hints",
     "gen:build-info": "dotenv -- node ./run-jiti ./src/features/build-info/script-to-generate-json.ts",
