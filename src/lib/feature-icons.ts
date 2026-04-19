@@ -1,6 +1,6 @@
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
   HandIcon,
   InboxIcon,
   MapPinIcon,
@@ -19,6 +19,6 @@ export const featureIcons = {
 
 export const tripTypeIcons = {
   ROUND: Repeat,
-  ONEWAY: ArrowUpRight,
-  RETURN: ArrowDownLeft,
+  ONEWAY: ArrowRight,
+  RETURN: ArrowLeft,
 } as const;
