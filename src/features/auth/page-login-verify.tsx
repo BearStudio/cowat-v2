@@ -105,7 +105,7 @@ export default function PageLoginVerify({
             control={form.control}
             name="otp"
             size="lg"
-            maxLength={6}
+            length={6}
             autoSubmit
             autoFocus
             autoComplete="one-time-code"

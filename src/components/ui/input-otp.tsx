@@ -1,18 +1,24 @@
+import { OTPFieldPreview as OTPField } from '@base-ui/react/otp-field';
 import { cva, VariantProps } from 'class-variance-authority';
-import { OTPInput, OTPInputContext as OTPInputContextFromLib } from 'input-otp';
 import { MinusIcon } from 'lucide-react';
 import * as React from 'react';
-import { ReactNode } from 'react';
 
 import { cn } from '@/lib/tailwind/utils';
 
 const InputOTPContext = React.createContext<
-  (VariantProps<typeof inputOTPVariants> & { invalid: boolean }) | null
+  (VariantProps<typeof inputOTPSlotVariants> & { invalid: boolean }) | null
 >(null);
 
-const inputOTPVariants = cva(
+const inputOTPSlotVariants = cva(
   cn(
-    'relative flex items-center justify-center border-y border-e border-input text-base shadow-xs transition-all outline-none first:rounded-s-md first:border-s last:rounded-e-md aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-[3px] data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 md:text-sm dark:data-[active=true]:aria-invalid:ring-destructive/40'
+    'border-y border-e border-input text-base shadow-xs transition-all outline-none',
+    'first:rounded-s-md first:border-s last:rounded-e-md',
+    'text-center text-base!', // text-base! prevents zoom on iOS
+    'aria-invalid:border-destructive',
+    'focus:z-10 focus:border-ring focus:ring-[3px] focus:ring-ring/50',
+    'focus:aria-invalid:border-destructive focus:aria-invalid:ring-destructive/20',
+    'dark:focus:aria-invalid:ring-destructive/40',
+    'disabled:cursor-not-allowed'
   ),
   {
     variants: {
@@ -38,35 +44,26 @@ const useInputOTPContext = () => {
 
 function InputOTP({
   className,
-  containerClassName,
   size,
+  children,
   ...props
-}: Omit<React.ComponentProps<typeof OTPInput>, 'size' | 'render'> &
-  VariantProps<typeof inputOTPVariants> & { children: ReactNode }) {
+}: React.ComponentProps<typeof OTPField.Root> &
+  VariantProps<typeof inputOTPSlotVariants>) {
   const invalid = !!props['aria-invalid'];
-  const value = React.useMemo(
-    () => ({
-      size,
-      invalid,
-    }),
-    [size, invalid]
-  );
+  const value = React.useMemo(() => ({ size, invalid }), [size, invalid]);
 
   return (
     <InputOTPContext value={value}>
-      <OTPInput
+      <OTPField.Root
         data-slot="input-otp"
-        containerClassName={cn(
-          'flex w-fit items-center gap-2 has-disabled:opacity-50',
-          containerClassName
-        )}
         className={cn(
-          'text-base!', // Prevent zoom on iOS (no impact on visual render)
-          'disabled:cursor-not-allowed',
+          'flex w-fit items-center gap-2 has-disabled:opacity-50',
           className
         )}
         {...props}
-      />
+      >
+        {children}
+      </OTPField.Root>
     </InputOTPContext>
   );
 }
@@ -82,31 +79,18 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function InputOTPSlot({
-  index,
   className,
   ...props
-}: React.ComponentProps<'div'> & {
-  index: number;
-}) {
+}: React.ComponentProps<typeof OTPField.Input>) {
   const ctx = useInputOTPContext();
-  const { char, hasFakeCaret, isActive } =
-    React.use(OTPInputContextFromLib)?.slots[index] ?? {};
 
   return (
-    <div
+    <OTPField.Input
       data-slot="input-otp-slot"
-      data-active={isActive}
-      className={cn(inputOTPVariants({ size: ctx.size }), className)}
+      className={cn(inputOTPSlotVariants({ size: ctx.size }), className)}
       aria-invalid={ctx.invalid ? true : undefined}
       {...props}
-    >
-      {char}
-      {hasFakeCaret && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-4 w-px animate-caret-blink bg-foreground duration-1000" />
-        </div>
-      )}
-    </div>
+    />
   );
 }
 

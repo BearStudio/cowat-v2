@@ -48,7 +48,7 @@ export const Default = () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
         <div>
@@ -76,7 +76,7 @@ export const DefaultValue = () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
         <div>
@@ -99,7 +99,7 @@ export const Disabled = () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             disabled
           />
         </FormField>
@@ -126,7 +126,7 @@ export const CustomLength = () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={4}
+            length={4}
           />
         </FormField>
         <div>
@@ -149,7 +149,7 @@ export const AutoSubmit = () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             autoSubmit
           />
         </FormField>

@@ -28,14 +28,14 @@ test('update value', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
       )}
     </FormMocked>
   );
 
-  const input = page.getByLabelText('Code');
+  const input = page.getByLabelText('Code').first();
   await user.click(input);
   // Add the code to the user clipboard
   await navigator.clipboard.writeText('000000');
@@ -65,7 +65,7 @@ test('default value', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
       )}
@@ -92,14 +92,14 @@ test('auto submit', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             autoSubmit
           />
         </FormField>
       )}
     </FormMocked>
   );
-  const input = page.getByLabelText('Code');
+  const input = page.getByLabelText('Code').first();
   await user.click(input);
   // Add the code to the user clipboard
   await navigator.clipboard.writeText('000000');
@@ -124,7 +124,7 @@ test('disabled', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             disabled
           />
         </FormField>
