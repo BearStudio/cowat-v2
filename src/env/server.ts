@@ -19,6 +19,12 @@ export const envServer = createEnv({
       .string()
       .optional()
       .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
+    AUTH_ALLOWED_HOSTS: z
+      .string()
+      .optional()
+      .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
+    VERCEL_URL: z.string().optional(),
+    VERCEL_BRANCH_URL: z.string().optional(),
 
     EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
     EMAIL_FROM: z.string(),
@@ -38,11 +44,26 @@ export const envServer = createEnv({
     S3_HOST: z.string(),
     S3_SECURE: z.stringbool().default(true),
     S3_FORCE_PATH_STYLE: z.stringbool().default(false),
+
+    FIREBASE_API_KEY: zRequiredInProd(),
+    FIREBASE_AUTH_DOMAIN: zRequiredInProd(),
+    FIREBASE_PROJECT_ID: zRequiredInProd(),
+    FIREBASE_STORAGE_BUCKET: zRequiredInProd(),
+    FIREBASE_MESSAGING_SENDER_ID: zRequiredInProd(),
+    FIREBASE_APP_ID: zRequiredInProd(),
+    FIREBASE_VAPID_PUBLIC_KEY: zRequiredInProd(),
+    FIREBASE_SERVICE_ACCOUNT: zRequiredInProd(),
+
+    CRON_SECRET: zRequiredInProd(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
+
+function zRequiredInProd() {
+  return isProd ? z.string() : z.string().optional();
+}
 
 function zOptionalWithReplaceMe() {
   return z

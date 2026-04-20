@@ -53,8 +53,15 @@ enum TripType {
   RETURN
 }
 
+enum CommuteRequestStatus {
+  OPEN
+  FULFILLED
+  CANCELED
+}
+
 enum NotificationChannelType {
   SLACK
+  PUSH
 }
 
 model User {
@@ -67,6 +74,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  fcmTokens     FcmToken[]
 
   phone         String?
 
@@ -123,6 +131,18 @@ model Account {
   @@index([userId])
 }
 
+model FcmToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("fcm_token")
+}
+
 model Verification {
   id         String    @id @default(cuid())
   identifier String
@@ -165,8 +185,9 @@ model Commute {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   driverMemberId String
-  driver         Member        @relation("CommuteDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
+  driver         Member           @relation("CommuteDriver", fields: [driverMemberId], references: [id], onDelete: Cascade)
   stops          Stop[]
+  commuteRequests CommuteRequest[]
 
   @@index([driverMemberId, date])
   @@map("commute")
@@ -184,7 +205,7 @@ model Stop {
   commuteId    String
   commute      Commute             @relation(fields: [commuteId], references: [id], onDelete: Cascade)
   locationId   String
-  location     Location            @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  location     Location            @relation(fields: [locationId], references: [id], onDelete: Cascade)
   passengers   PassengersOnStops[]
 
   @@index([commuteId])
@@ -210,6 +231,23 @@ model PassengersOnStops {
   @@index([passengerMemberId])
   @@index([stopId])
   @@map("passengers_on_stops")
+}
+
+model CommuteRequest {
+  id               String               @id @default(cuid())
+  date             DateTime             @db.Date
+  destination      String?
+  comment          String?
+  status           CommuteRequestStatus @default(OPEN)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  requesterMemberId String
+  requester        Member               @relation("CommuteRequester", fields: [requesterMemberId], references: [id], onDelete: Cascade)
+  commuteId        String?
+  commute          Commute?             @relation(fields: [commuteId], references: [id], onDelete: SetNull)
+
+  @@index([requesterMemberId])
+  @@map("commute_request")
 }
 
 model CommuteTemplate {
@@ -239,7 +277,7 @@ model TemplateStop {
   templateId  String
   template    CommuteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
   locationId  String
-  location    Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  location    Location        @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([templateId])
   @@map("template_stop")
@@ -306,6 +344,7 @@ model Member {
   drivenCommutes      Commute[]           @relation("CommuteDriver")
   drivenTemplates     CommuteTemplate[]   @relation("TemplateDriver")
   passengerBookings   PassengersOnStops[] @relation("BookingPassenger")
+  commuteRequests     CommuteRequest[]    @relation("CommuteRequester")
 
   @@index([organizationId])
   @@index([userId])

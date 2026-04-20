@@ -1,5 +1,7 @@
 import type { AppDB } from '@/server/db';
 
+import { userCardSelect } from './helpers';
+
 type DateRange = { from?: Date; to?: Date };
 
 export const createStatsRepository = (db: AppDB) => ({
@@ -13,7 +15,7 @@ export const createStatsRepository = (db: AppDB) => ({
       where: { organizationId },
       include: {
         user: {
-          select: { id: true, name: true, email: true, image: true },
+          select: userCardSelect,
         },
         _count: {
           select: {

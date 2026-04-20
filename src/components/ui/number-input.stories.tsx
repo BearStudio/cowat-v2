@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { NumberInput } from '@/components/ui/number-input';
 
 export default {
-  title: 'NumberInput',
+  title: 'UI/NumberInput',
 } satisfies Meta<typeof NumberInput>;
 
 export const Default = () => {

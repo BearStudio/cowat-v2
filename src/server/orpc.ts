@@ -88,7 +88,7 @@ const base = os
     return await next({
       context: {
         notify: (event: NotificationEvent, orgContext?: NotifyOrgContext) => {
-          notifier.notify(event, context.logger, orgContext);
+          return notifier.notify(event, context.logger, orgContext);
         },
       },
     });
@@ -124,21 +124,22 @@ const base = os
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        throw match(error.code)
+        const prismaError = error as Prisma.PrismaClientKnownRequestError;
+        throw match(prismaError.code)
           .with('P2002', () => {
             context.logger.warn(
-              error.meta,
-              `Prisma Error: ${error.code} ${error.message}`
+              prismaError.meta,
+              `Prisma Error: ${prismaError.code} ${prismaError.message}`
             );
             return new ORPCError('CONFLICT', {
               message: 'Unique constraint violation',
-              data: { target: error.meta?.target },
+              data: { target: prismaError.meta?.target },
             });
           })
           .with('P2025', () => {
             context.logger.warn(
-              error.meta,
-              `Prisma Error ${error.code}: ${error.message}`
+              prismaError.meta,
+              `Prisma Error ${prismaError.code}: ${prismaError.message}`
             );
             return new ORPCError('NOT_FOUND', {
               message: 'Record not found',
@@ -146,8 +147,8 @@ const base = os
           })
           .with('P2003', () => {
             context.logger.error(
-              error.meta,
-              `Prisma Error ${error.code}: ${error.message}`
+              prismaError.meta,
+              `Prisma Error ${prismaError.code}: ${prismaError.message}`
             );
             return new ORPCError('BAD_REQUEST', {
               message: 'Foreign key constraint violation',
@@ -155,8 +156,8 @@ const base = os
           })
           .otherwise(() => {
             context.logger.error(
-              error.meta,
-              `Prisma Error ${error.code}: ${error.message}`
+              prismaError.meta,
+              `Prisma Error ${prismaError.code}: ${prismaError.message}`
             );
             return new ORPCError('INTERNAL_SERVER_ERROR', {
               message: 'Database error',
@@ -165,8 +166,9 @@ const base = os
       }
 
       if (error instanceof Prisma.PrismaClientValidationError) {
+        const validationError = error as Prisma.PrismaClientValidationError;
         context.logger.error(
-          `Prisma Client Validation Error: ${error.message}`
+          `Prisma Client Validation Error: ${validationError.message}`
         );
         throw new ORPCError('BAD_REQUEST', {
           message: 'Database validation error',
@@ -205,7 +207,7 @@ export const protectedProcedure = ({
     const userHasPermission = await auth.api.userHasPermission({
       body: {
         userId: user.id,
-        permission,
+        permissions: permission,
       },
     });
 
@@ -256,7 +258,7 @@ export const organizationProcedure = ({
       const hasPermission = await auth.api.hasPermission({
         headers: getRequestHeaders(),
         body: {
-          permission: permissions,
+          permissions: permissions,
         },
       });
 
@@ -267,10 +269,16 @@ export const organizationProcedure = ({
       }
     }
 
+    const organization = await context.db.organization.findUnique({
+      where: { id: organizationId },
+      select: { slug: true },
+    });
+
     return await next({
       context: {
         organizationId,
         memberId: member.id,
+        orgSlug: organization?.slug ?? '',
       },
     });
   });

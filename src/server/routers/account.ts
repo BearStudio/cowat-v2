@@ -10,12 +10,18 @@ import {
   type ProtectedProcedureArgs,
 } from '@/server/orpc';
 import { createAccountRepository } from '@/server/repositories/account.repository';
+import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
 
 const tags = ['account'];
 
 const authProcedure = (args: ProtectedProcedureArgs) =>
   protectedProcedure(args).use(({ context, next }) =>
-    next({ context: { account: createAccountRepository(context.db) } })
+    next({
+      context: {
+        account: createAccountRepository(context.db),
+        fcmTokens: createFcmTokenRepository(context.db),
+      },
+    })
   );
 
 const orgProcedure = (args: OrganizationProcedureArgs = {}) =>
@@ -100,5 +106,23 @@ export default {
         channel: input.channel,
         enabled: input.enabled,
       });
+    }),
+
+  toggleFcmToken: authProcedure({ permission: null })
+    .route({ method: 'POST', path: '/account/fcm-token', tags })
+    .input(z.object({ token: z.string().min(1), registered: z.boolean() }))
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      const MAX_TOKENS_PER_USER = 10;
+
+      if (input.registered) {
+        await context.fcmTokens.upsertToken(context.user.id, input.token);
+        await context.fcmTokens.deleteOldestTokensForUser(
+          context.user.id,
+          MAX_TOKENS_PER_USER
+        );
+      } else {
+        await context.fcmTokens.deleteToken(input.token);
+      }
     }),
 };

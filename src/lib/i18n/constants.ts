@@ -1,6 +1,6 @@
 import locales from '@/locales';
 
-export type Language = {
+type Language = {
   key: keyof typeof locales;
   dir?: 'ltr' | 'rtl';
   fontScale?: number;

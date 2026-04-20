@@ -48,12 +48,12 @@ export const GuardOrganization = ({
     // App admins bypass org-level permission checks
     const isAdmin = authClient.admin.checkRolePermission({
       role: userRole as Role,
-      permission: { apps: ['manager'] },
+      permissions: { apps: ['manager'] },
     });
     if (isAdmin) return true;
     return authClient.organization.checkRolePermission({
       role: targetOrg.role as 'owner' | 'admin' | 'member',
-      permission: organizationPermission,
+      permissions: organizationPermission,
     });
   }, [organizationPermission, targetOrg, session.data?.user.role]);
 

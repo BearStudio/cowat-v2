@@ -5,6 +5,7 @@ import type {
   NotificationEvent,
   NotifyOrgContext,
 } from './types';
+import { filterEventForChannel } from './utils';
 
 export class Notifier {
   private channels: NotificationChannel[] = [];
@@ -14,32 +15,44 @@ export class Notifier {
     return this;
   }
 
-  notify(
+  async notify(
     event: NotificationEvent,
     logger: Logger,
     orgContext?: NotifyOrgContext
-  ): void {
-    const recipient = 'recipient' in event ? event.recipient : undefined;
+  ): Promise<void> {
+    const promises: Promise<void>[] = [];
 
     for (const channel of this.channels) {
-      const isDisabledForRecipient =
-        recipient?.notificationPreferences?.some(
-          (p) => p.channel.toLowerCase() === channel.name
-        ) ?? false;
+      const channelEvent = filterEventForChannel(event, channel.name);
 
-      if (isDisabledForRecipient) continue;
+      if (!channelEvent) {
+        logger.debug(
+          { channel: channel.name, eventType: event.type },
+          '[NOTIFY] no eligible recipients for channel, skipping'
+        );
+        continue;
+      }
 
-      Promise.resolve(channel.canSend(event, orgContext))
+      const promise = Promise.resolve(channel.canSend(channelEvent, orgContext))
         .then((canSend) => {
+          logger.debug(
+            { channel: channel.name, eventType: event.type, canSend },
+            '[NOTIFY] canSend result'
+          );
           if (!canSend) return;
-          return channel.send(event, logger, orgContext);
+          return channel.send(channelEvent, logger, orgContext);
         })
+        .then(() => undefined)
         .catch((error) => {
           logger.error(
-            { error, channel: channel.name, eventType: event.type },
+            { err: error, channel: channel.name, eventType: event.type },
             'Notification channel failed'
           );
         });
+
+      promises.push(promise);
     }
+
+    await Promise.allSettled(promises);
   }
 }

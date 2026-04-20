@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
+import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import { Form } from '@/components/form';
@@ -15,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import { FormOrganization } from '@/features/organization/manager/form-organization';
+import { FormFieldsOrg, zFormFieldsOrg } from '@/features/organization/schema';
 import {
   PageLayout,
   PageLayoutContent,
@@ -22,22 +22,13 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
 
-const zFormFieldsOrg = z.object({
-  name: z.string().min(1).max(100),
-  slug: z.string().min(1).max(100),
-  ownerUserId: z.string().min(1),
-});
-
-export type FormFieldsOrg = z.infer<typeof zFormFieldsOrg>;
-
 export const PageOrganizationNew = () => {
   const { t } = useTranslation(['organization']);
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
   const queryClient = useQueryClient();
+  const { navigateBack } = useNavigateBack();
 
   const form = useForm<FormFieldsOrg>({
-    resolver: zodResolver(zFormFieldsOrg),
+    resolver: zodResolver(zFormFieldsOrg()),
     defaultValues: {
       name: '',
       slug: '',
@@ -53,11 +44,7 @@ export const PageOrganizationNew = () => {
           type: 'all',
         });
 
-        if (canGoBack) {
-          router.history.back({ ignoreBlocker: true });
-        } else {
-          router.navigate({ to: '..', replace: true, ignoreBlocker: true });
-        }
+        navigateBack({ ignoreBlocker: true });
       },
       onError: () => {
         toast.error(t('organization:manager.new.createError'));

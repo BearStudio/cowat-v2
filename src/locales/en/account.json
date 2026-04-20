@@ -36,7 +36,7 @@
   "commuteTemplatesLink": "Commute Templates",
   "editNameDrawer": {
     "title": "Update your name",
-    "description": "Form to update your name",
+    "description": "Your name is visible to other members.",
     "label": "Name",
     "submitButton": "Update",
     "successMessage": "Name updated",
@@ -44,7 +44,7 @@
   },
   "editPhoneDrawer": {
     "title": "Update your phone number",
-    "description": "Form to update your phone number",
+    "description": "Your number is shared with drivers and passengers.",
     "label": "Phone number",
     "submitButton": "Update",
     "successMessage": "Phone number updated",
@@ -52,7 +52,7 @@
   },
   "editImageDrawer": {
     "title": "Update your profile picture",
-    "description": "Form to update your profile picture",
+    "description": "Your picture appears on commutes and requests.",
     "label": "Profile picture URL",
     "submitButton": "Update",
     "successMessage": "Profile picture updated",
@@ -70,6 +70,11 @@
     "slack": {
       "label": "Slack",
       "description": "Receive notifications via Slack DM"
+    },
+    "push": {
+      "label": "Push notifications",
+      "description": "Receive push notifications on this device",
+      "descriptionDenied": "Notifications are blocked in your browser settings"
     }
   }
 }

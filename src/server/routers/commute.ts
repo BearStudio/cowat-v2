@@ -1,6 +1,8 @@
 import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
+import { getTodayMidnight } from '@/lib/date';
+
 import {
   zCommute,
   zCommuteEnriched,
@@ -8,14 +10,20 @@ import {
   zStop,
   zStopInput,
 } from '@/features/commute/schema';
+import { toRecipient } from '@/server/notifications/utils';
 import {
   organizationProcedure,
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
-import { createOrganizationRepository } from '@/server/repositories/organization.repository';
-import { assertDriverOwnership, paginateResult } from '@/server/routers/utils';
+import { createCommuteRequestRepository } from '@/server/repositories/commute-request.repository';
+import {
+  assertDriverOwnership,
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['commutes'];
 
@@ -25,7 +33,7 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
       context: {
         commutes: createCommuteRepository(context.db),
         bookings: createBookingRepository(context.db),
-        organizations: createOrganizationRepository(context.db),
+        commuteRequests: createCommuteRequestRepository(context.db),
       },
     })
   );
@@ -40,23 +48,27 @@ export default {
         type: zCommuteType(),
         comment: z.string().nullish(),
         stops: z.array(zStopInput()).min(1),
+        commuteRequestIds: z.array(z.string()).nullish(),
       })
     )
     .output(zCommute().extend({ stops: z.array(zStop()) }))
     .handler(async ({ context, input }) => {
-      const { stops, ...commuteData } = input;
+      const { stops, commuteRequestIds, ...commuteData } = input;
       const commute = await context.commutes.create({
         ...commuteData,
         driverMemberId: context.memberId,
         stops: { create: stops },
       });
 
-      const organization = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
+      if (commuteRequestIds?.length) {
+        await context.commuteRequests.fulfillMany(
+          commuteRequestIds,
+          commute.id,
+          context.organizationId
+        );
+      }
 
-      context.notify(
+      await context.notify(
         {
           type: 'commute.created',
           payload: {
@@ -73,7 +85,7 @@ export default {
               outwardTime: stop.outwardTime,
               inwardTime: stop.inwardTime,
             })),
-            orgSlug: organization?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -113,34 +125,35 @@ export default {
 
   getMyCommutes: procedure({ permissions: { commute: ['read'] } })
     .route({ method: 'GET', path: '/commutes/mine', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zCommuteEnriched()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zCommuteEnriched()))
     .handler(async ({ context, input }) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
       const { total, items } = await context.commutes.findMyPaginated({
         memberId: context.memberId,
         organizationId: context.organizationId,
-        fromDate: today,
+        fromDate: getTodayMidnight(),
         cursor: input.cursor,
         limit: input.limit,
       });
 
       return paginateResult(total, items, input.limit);
+    }),
+
+  getByIdEnriched: procedure({ permissions: { commute: ['read'] } })
+    .route({ method: 'GET', path: '/commutes/{id}/enriched', tags })
+    .input(z.object({ id: z.string() }))
+    .output(zCommuteEnriched())
+    .handler(async ({ context, input }) => {
+      const commute = await context.commutes.findByIdEnriched(
+        input.id,
+        context.organizationId
+      );
+
+      if (!commute) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      return commute;
     }),
 
   update: procedure({ permissions: { commute: ['update'] } })
@@ -164,43 +177,61 @@ export default {
 
       const { id, stops, ...data } = input;
 
-      const commute = await context.commutes.update(id, {
-        ...data,
-        ...(stops && { stops: { deleteMany: {}, create: stops } }),
-      });
-
       const affectedPassengers =
         await context.bookings.findAffectedPassengers(id);
 
-      const updatedOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
+      // Cancel all bookings when seats are reduced below current passenger count
+      const newSeats = data.seats ?? existing.seats;
+      const seatsReduced = newSeats < affectedPassengers.length;
+
+      if (seatsReduced) {
+        await context.bookings.cancelMany(affectedPassengers.map((b) => b.id));
+      }
+
+      const commute = await context.commutes.update(id, {
+        ...data,
+        ...(stops && { stops }),
       });
+
+      const orgContext = {
+        db: context.db,
+        organizationId: context.organizationId,
+      };
+
       for (const booking of affectedPassengers) {
-        const passengerUser = booking.passenger.user;
-        context.notify(
-          {
-            type: 'commute.updated',
-            recipient: {
-              userId: passengerUser.id,
-              name: passengerUser.name,
-              email: passengerUser.email,
-              notificationPreferences:
-                booking.passenger.notificationPreferences,
+        const recipient = toRecipient(booking.passenger);
+
+        if (seatsReduced) {
+          await context.notify(
+            {
+              type: 'booking.canceledByDriver',
+              recipient,
+              payload: {
+                driverName: context.user.name,
+                commuteDate: existing.date,
+                commuteType: existing.type,
+                orgSlug: context.orgSlug,
+              },
             },
-            payload: {
-              driverName: context.user.name,
-              commuteDate: existing.date,
-              commuteType: existing.type,
-              orgSlug: updatedOrg?.slug ?? '',
-              newCommuteDate: commute.date,
-              newCommuteType: commute.type,
-              previousSeats: existing.seats,
-              newSeats: commute.seats,
+            orgContext
+          );
+        } else {
+          await context.notify(
+            {
+              type: 'commute.updated',
+              recipient,
+              payload: {
+                driverName: context.user.name,
+                commuteDate: existing.date,
+                commuteType: existing.type,
+                orgSlug: context.orgSlug,
+                newCommuteDate: commute.date,
+                newCommuteType: commute.type,
+              },
             },
-          },
-          { db: context.db, organizationId: context.organizationId }
-        );
+            orgContext
+          );
+        }
       }
 
       return commute;
@@ -224,59 +255,20 @@ export default {
 
       await context.commutes.delete(input.id);
 
-      const canceledOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
       for (const booking of affectedPassengers) {
-        const passengerUser = booking.passenger.user;
-        context.notify(
+        await context.notify(
           {
             type: 'commute.canceled',
-            recipient: {
-              userId: passengerUser.id,
-              name: passengerUser.name,
-              email: passengerUser.email,
-              notificationPreferences:
-                booking.passenger.notificationPreferences,
-            },
+            recipient: toRecipient(booking.passenger),
             payload: {
               driverName: context.user.name,
               commuteDate: existing.date,
               commuteType: existing.type,
-              orgSlug: canceledOrg?.slug ?? '',
+              orgSlug: context.orgSlug,
             },
           },
           { db: context.db, organizationId: context.organizationId }
         );
       }
-    }),
-
-  requestCommute: procedure()
-    .route({ method: 'POST', path: '/commutes/request', tags })
-    .input(z.object({ date: z.date(), destination: z.string().optional() }))
-    .output(z.void())
-    .handler(async ({ context, input }) => {
-      const organization = await context.organizations.findSlugById(
-        context.organizationId
-      );
-
-      if (!organization?.slug) {
-        throw new ORPCError('NOT_FOUND');
-      }
-
-      context.notify(
-        {
-          type: 'commute.requested',
-          payload: {
-            requesterName: context.user.name,
-            requesterEmail: context.user.email,
-            commuteDate: input.date,
-            orgSlug: organization.slug,
-            locationName: input.destination || undefined,
-          },
-        },
-        { db: context.db, organizationId: context.organizationId }
-      );
     }),
 };

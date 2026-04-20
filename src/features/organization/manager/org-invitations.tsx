@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { MailIcon, XIcon } from 'lucide-react';
+import { MailIcon, MailXIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -8,6 +8,7 @@ import { orpc } from '@/lib/orpc/client';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataList,
   DataListCell,
@@ -29,21 +30,20 @@ export const OrgInvitations = (props: {
   }>;
 }) => {
   const { t } = useTranslation(['organization']);
-  const queryClient = useQueryClient();
 
-  const cancelInvitation = useMutation({
-    mutationFn: (invitationId: string) =>
-      orpc.organization.cancelInvitation.call({ invitationId }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: orpc.organization.getActiveOrganization.key(),
-      });
-      toast.success(t('organization:manager.detail.invitationCancelled'));
-    },
-    onError: () => {
-      toast.error(t('organization:manager.detail.cancelInvitationError'));
-    },
-  });
+  const cancelInvitation = useMutation(
+    orpc.organization.cancelInvitation.mutationOptions({
+      onSuccess: async (_data, _variables, _onMutateResult, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        toast.success(t('organization:manager.detail.invitationCancelled'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.detail.cancelInvitationError'));
+      },
+    })
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,10 +62,7 @@ export const OrgInvitations = (props: {
           </DataListEmptyState>
         ) : (
           props.invitations.map((invitation) => (
-            <DataListRow
-              key={invitation.id}
-              className="max-md:flex-col max-md:py-2 max-md:[&>div]:py-1"
-            >
+            <DataListRow key={invitation.id} className="">
               <DataListCell className="flex-none">
                 <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <MailIcon className="size-4 text-neutral-500" />
@@ -92,15 +89,31 @@ export const OrgInvitations = (props: {
                 )}
               </DataListCell>
               <DataListCell className="flex-none">
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  loading={cancelInvitation.isPending}
-                  onClick={() => cancelInvitation.mutate(invitation.id)}
+                <ConfirmResponsiveDrawer
+                  title={invitation.email}
+                  description={t('organization:invitations.cancelConfirm', {
+                    email: invitation.email,
+                  })}
+                  confirmText={t(
+                    'organization:invitations.cancelConfirmAction'
+                  )}
+                  confirmVariant="destructive"
+                  icon={<MailXIcon />}
+                  onConfirm={() =>
+                    cancelInvitation.mutateAsync({
+                      invitationId: invitation.id,
+                    })
+                  }
                 >
-                  <XIcon className="size-3" />
-                  {t('organization:invitations.cancel')}
-                </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    loading={cancelInvitation.isPending}
+                  >
+                    <XIcon className="size-3" />
+                    {t('organization:invitations.cancel')}
+                  </Button>
+                </ConfirmResponsiveDrawer>
               </DataListCell>
             </DataListRow>
           ))

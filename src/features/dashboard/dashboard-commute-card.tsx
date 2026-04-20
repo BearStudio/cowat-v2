@@ -2,6 +2,9 @@ import { UseMutationResult } from '@tanstack/react-query';
 import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { CommentText } from '@/components/comment-text';
+import { ConfirmSummary } from '@/components/confirm-summary';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
@@ -15,7 +18,6 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CommuteSummary } from '@/features/commute/commute-summary';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import { CommuteEnriched } from '@/features/commute/schema';
 
@@ -64,6 +66,7 @@ export const DashboardCommuteCard = ({
       bookingStatus={bookingStatus}
       open={open}
       onOpenChange={onOpenChange}
+      data-commute-id={commute.id}
     >
       <CardCommuteTrigger>
         <CardCommuteHeader
@@ -71,10 +74,8 @@ export const DashboardCommuteCard = ({
           date={commute.date}
           type={commute.type}
           totalSeats={commute.seats}
-          outwardAvailable={commute.seats - outwardCount}
-          inwardAvailable={
-            commute.type === 'ROUND' ? commute.seats - inwardCount : undefined
-          }
+          outwardTaken={outwardCount}
+          inwardTaken={commute.type === 'ROUND' ? inwardCount : undefined}
           outwardDeparture={commute.stops.at(0)?.outwardTime}
           inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
           passengers={[...acceptedPassengers.values()]}
@@ -82,19 +83,19 @@ export const DashboardCommuteCard = ({
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
-        <div className="flex flex-col gap-2">
-          {commute.comment && (
-            <p className="text-sm text-muted-foreground">{commute.comment}</p>
-          )}
+        <div className="flex flex-col gap-3">
+          {commute.comment && <CommentText>{commute.comment}</CommentText>}
           {isFull && !isDriver && (
-            <p className="flex items-center gap-1 text-sm text-warning-600 dark:text-warning-400">
-              <AlertTriangleIcon size="1em" className="flex-none" />
-              {t('dashboard:booking.fullWarning')}
-            </p>
+            <Alert variant="warning">
+              <AlertTriangleIcon />
+              <AlertDescription>
+                {t('dashboard:booking.fullWarning')}
+              </AlertDescription>
+            </Alert>
           )}
           <CardCommuteStopsList
             stops={commute.stops}
-            renderActions={(stop) => {
+            renderActions={(stop, { isLast }) => {
               if (isDriver) return null;
 
               const userBooking = stop.passengers?.find(
@@ -110,21 +111,25 @@ export const DashboardCommuteCard = ({
                         <span>
                           {t('dashboard:cancelBooking.confirmDescription')}
                         </span>
-                        <CommuteSummary
+                        <ConfirmSummary
+                          user={commute.driver}
                           date={commute.date}
-                          type={commute.type}
+                          typeLabel={t(`commute:list.type.${commute.type}`)}
                           stops={[stop]}
-                          driver={commute.driver}
                         />
                       </div>
                     }
-                    confirmText={t('common:actions.delete')}
+                    confirmText={t('common:actions.confirm')}
                     confirmVariant="destructive"
                     onConfirm={() =>
                       bookingCancel.mutateAsync({ id: userBooking.id })
                     }
                   >
-                    <Button variant="destructive-secondary" className="w-2/3">
+                    <Button
+                      variant="destructive-secondary"
+                      size="sm"
+                      className="w-full font-normal tracking-[0.15em] uppercase"
+                    >
                       {t('common:actions.cancel')}
                     </Button>
                   </ConfirmResponsiveDrawer>
@@ -132,10 +137,13 @@ export const DashboardCommuteCard = ({
               }
               if (hasBookingOnCommute) return null;
               if (isFull) return null;
+              // Last stop of a one-way commute has no valid trip type
+              if (commute.type === 'ONEWAY' && isLast) return null;
               return (
                 <Button
                   variant="secondary"
-                  className="w-2/3"
+                  size="sm"
+                  className="w-full font-normal tracking-[0.15em] uppercase"
                   onClick={() => onBookStop(stop.id)}
                 >
                   {t('dashboard:booking.submitButton')}
@@ -156,11 +164,11 @@ export const DashboardCommuteCard = ({
                       : 'commute:list.cancelConfirmDescription'
                   )}
                 </span>
-                <CommuteSummary
+                <ConfirmSummary
+                  user={commute.driver}
                   date={commute.date}
-                  type={commute.type}
+                  typeLabel={t(`commute:list.type.${commute.type}`)}
                   stops={commute.stops}
-                  driver={commute.driver}
                 />
               </div>
             }

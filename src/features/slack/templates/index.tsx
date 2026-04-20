@@ -8,21 +8,25 @@ import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
 import type {
   BookingAcceptedEvent,
+  BookingCanceledByDriverEvent,
   BookingCanceledEvent,
   BookingRefusedEvent,
   BookingRequestedEvent,
   CommuteCanceledEvent,
   CommuteCreatedEvent,
+  CommuteReminderEvent,
   CommuteRequestedEvent,
   CommuteUpdatedEvent,
 } from '@/server/notifications/types';
 
 import { BookingAccepted } from './booking-accepted';
 import { BookingCanceled } from './booking-canceled';
+import { BookingCanceledByDriver } from './booking-canceled-by-driver';
 import { BookingRefused } from './booking-refused';
 import { BookingRequested } from './booking-requested';
 import { CommuteCanceled } from './commute-canceled';
 import { CommuteCreated } from './commute-created';
+import { CommuteReminder } from './commute-reminder';
 import { CommuteRequested } from './commute-requested';
 import { CommuteUpdated } from './commute-updated';
 import type { SlackBlock } from '../utils';
@@ -37,8 +41,10 @@ export type PrivateEvent =
   | BookingAcceptedEvent
   | BookingRefusedEvent
   | BookingCanceledEvent
+  | BookingCanceledByDriverEvent
   | CommuteUpdatedEvent
-  | CommuteCanceledEvent;
+  | CommuteCanceledEvent
+  | CommuteReminderEvent;
 
 export type BroadcastOpts = {
   driverSlackId?: string;
@@ -75,7 +81,7 @@ export function getBroadcastBlocks(
 
 export function getPrivateBlocks(
   event: PrivateEvent,
-  opts?: { locale?: LanguageKey; baseUrl?: string }
+  opts?: { locale?: LanguageKey; baseUrl?: string; recipientUserId?: string }
 ): JSXSlack.JSX.Element {
   i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
@@ -92,11 +98,21 @@ export function getPrivateBlocks(
     .with({ type: 'booking.canceled' }, (e) => (
       <BookingCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
+    .with({ type: 'booking.canceledByDriver' }, (e) => (
+      <BookingCanceledByDriver event={e} baseUrl={opts?.baseUrl ?? ''} />
+    ))
     .with({ type: 'commute.updated' }, (e) => (
       <CommuteUpdated event={e} baseUrl={opts?.baseUrl ?? ''} />
     ))
     .with({ type: 'commute.canceled' }, (e) => (
       <CommuteCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
+    ))
+    .with({ type: 'commute.reminder' }, (e) => (
+      <CommuteReminder
+        event={e}
+        baseUrl={opts?.baseUrl ?? ''}
+        recipientUserId={opts?.recipientUserId ?? ''}
+      />
     ))
     .exhaustive();
 }

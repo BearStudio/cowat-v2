@@ -54,7 +54,7 @@ test.describe('Commute template management', () => {
     await commuteTemplatesPage.expectTemplateVisible(name);
   });
 
-  test('Edit a commute template', async ({ page, commuteTemplatesPage }) => {
+  test('Edit a commute template', async ({ page: _page, commuteTemplatesPage }) => {
     // This test creates a template then edits it — double the form interactions.
     test.setTimeout(60_000);
     const originalName = `Edit Me ${randomString(6)}`;

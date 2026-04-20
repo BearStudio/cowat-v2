@@ -1,10 +1,11 @@
-import { ChevronRightIcon, SettingsIcon } from 'lucide-react';
+import { SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
 
 import { Button } from '@/components/ui/button';
 
+import { AccountNavLink } from '@/features/account/app/account-nav-link';
 import { DisplayPreferences } from '@/features/account/display-preferences';
 import { MemberPreferences } from '@/features/account/member-preferences';
 import { NotificationPreferences } from '@/features/account/notification-preferences';
@@ -13,13 +14,14 @@ import { authClient } from '@/features/auth/client';
 import { Role } from '@/features/auth/permissions';
 import { BuildInfoDrawer } from '@/features/build-info/build-info-drawer';
 import { BuildInfoVersion } from '@/features/build-info/build-info-version';
-import { OrgLink } from '@/features/organization/org-link';
+import { FcmDebug } from '@/features/devtools/fcm-debug';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
 import { useOrganizations } from '@/features/organization/use-organizations';
 import {
   PageLayout,
   PageLayoutContent,
   PageLayoutTopBar,
+  PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
 export const PageAccount = () => {
@@ -35,20 +37,18 @@ export const PageAccount = () => {
     (userRole &&
       authClient.admin.checkRolePermission({
         role: userRole as Role,
-        permission: { apps: ['manager'] },
+        permissions: { apps: ['manager'] },
       })) ||
     (activeOrg &&
       authClient.organization.checkRolePermission({
         role: activeOrg.role as 'owner' | 'admin' | 'member',
-        permission: { organization: ['delete'] },
+        permissions: { organization: ['delete'] },
       }));
 
   return (
     <PageLayout>
       <PageLayoutTopBar>
-        <h1 className="text-base font-medium md:text-sm">
-          {t('account:title')}
-        </h1>
+        <PageLayoutTopBarTitle>{t('account:title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
         <div className="flex flex-col gap-6">
@@ -71,34 +71,27 @@ export const PageAccount = () => {
             <MemberPreferences />
             <NotificationPreferences />
             {showManagerLink && (
-              <OrgLink
-                to="/manager"
-                className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
-              >
-                <SettingsIcon className="size-5 text-muted-foreground" />
-                <span className="flex-1">{t('account:managerLink')}</span>
-                <ChevronRightIcon className="size-4 text-muted-foreground" />
-              </OrgLink>
+              <AccountNavLink to="/manager/$orgSlug" icon={SettingsIcon}>
+                {t('account:managerLink')}
+              </AccountNavLink>
             )}
-            <OrgLink
+            <AccountNavLink
               to="/app/$orgSlug/account/locations"
-              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+              icon={featureIcons.Locations}
+              viewTransition={{ types: ['slide-up'] }}
             >
-              <featureIcons.Locations className="size-5 text-muted-foreground" />
-              <span className="flex-1">{t('account:locationsLink')}</span>
-              <ChevronRightIcon className="size-4 text-muted-foreground" />
-            </OrgLink>
-            <OrgLink
+              {t('account:locationsLink')}
+            </AccountNavLink>
+            <AccountNavLink
               to="/app/$orgSlug/account/commute-templates"
-              className="flex items-center gap-3 rounded-lg border bg-card p-4 text-sm font-medium transition-colors hover:bg-accent"
+              icon={featureIcons.CommuteTemplates}
+              viewTransition={{ types: ['slide-up'] }}
             >
-              <featureIcons.CommuteTemplates className="size-5 text-muted-foreground" />
-              <span className="flex-1">
-                {t('account:commuteTemplatesLink')}
-              </span>
-              <ChevronRightIcon className="size-4 text-muted-foreground" />
-            </OrgLink>
+              {t('account:commuteTemplatesLink')}
+            </AccountNavLink>
           </section>
+
+          {import.meta.env.DEV && <FcmDebug />}
 
           <BuildInfoDrawer>
             <Button variant="ghost" size="xs" className="opacity-60">

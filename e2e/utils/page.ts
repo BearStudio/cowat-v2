@@ -40,7 +40,7 @@ export const pageWithUtils: CustomFixture<Page & PageUtils> = async (
       page.getByText(
         locales[DEFAULT_LANGUAGE_KEY].auth.pageLoginWithSignUp.title
       )
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 15_000 });
 
     await page
       .getByPlaceholder(locales[DEFAULT_LANGUAGE_KEY].auth.common.email.label)

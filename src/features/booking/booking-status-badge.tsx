@@ -8,11 +8,11 @@ import { UserBookingStatus } from '@/features/booking/status-colors';
 export const bookingStatusBadgeVariants = cva('', {
   variants: {
     status: {
-      DRIVER: 'secondary',
-      REQUESTED: 'default',
+      DRIVER: 'default',
+      REQUESTED: 'warning',
       ACCEPTED: 'positive',
       REFUSED: 'negative',
-      CANCELED: 'warning',
+      CANCELED: 'negative',
     } satisfies Record<
       NonNullable<Exclude<UserBookingStatus, 'OUTSIDER'>>,
       string

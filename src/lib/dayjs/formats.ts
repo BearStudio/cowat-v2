@@ -34,13 +34,12 @@ const dateFormats = {
   buildInfo: {
     fallbackDisplay: ISO_DATE,
   },
+  notification: 'dddd D MMMM',
 } as const satisfies FormatConfig;
 
 // ─── Types ───────────────────────────────────────────────────────────
 
 export type DateFormats = typeof dateFormats;
-
-export type DateFormatNamespace = keyof DateFormats;
 
 /** Union of all valid "namespace:key" strings, e.g. 'common:short' | 'dashboard:dayHeader' | ... */
 export type DateFormatKey = FormatKey<DateFormats>;

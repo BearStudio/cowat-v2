@@ -5,7 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
 export default {
-  title: 'ScrollArea',
+  title: 'UI/ScrollArea',
 } satisfies Meta<typeof ScrollArea>;
 
 const tags = Array.from({ length: 50 }).map(

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
+import { StatsSkeleton } from '@/components/loading/stats-skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +20,6 @@ import {
   DataListCell,
   DataListEmptyState,
   DataListErrorState,
-  DataListLoadingState,
   DataListRow,
   DataListText,
   DataListTextHeader,
@@ -92,11 +92,7 @@ export const PageStats = () => {
       </div>
       <PageLayoutContent className="pb-20">
         {ui
-          .match('pending', () => (
-            <DataList>
-              <DataListLoadingState />
-            </DataList>
-          ))
+          .match('pending', () => <StatsSkeleton />)
           .match('error', () => (
             <DataList>
               <DataListErrorState retry={() => statsQuery.refetch()} />

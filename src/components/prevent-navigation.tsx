@@ -5,14 +5,14 @@ export const PreventNavigation = (props: { shouldBlock: boolean }) => {
   const { t } = useTranslation(['components']);
   return (
     <Block
-      shouldBlockFn={() => {
+      shouldBlockFn={({ current, next }) => {
         if (!props.shouldBlock) return false;
+        if (current.pathname === next.pathname) return false;
         const shouldLeave = confirm(
           t('components:preventNavigation.confirmLabel')
         );
         return !shouldLeave;
       }}
-      withResolver
       enableBeforeUnload={props.shouldBlock}
     />
   );

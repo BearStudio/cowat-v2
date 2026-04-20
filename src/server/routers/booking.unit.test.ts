@@ -75,7 +75,11 @@ const mockBookingForDriverRaw = {
     order: 0,
     outwardTime: '08:00',
     inwardTime: '18:00',
-    location: { id: 'location-1', name: 'Downtown Office' },
+    location: {
+      id: 'location-1',
+      name: 'Downtown Office',
+      address: '123 Main St',
+    },
     commute: {
       id: 'commute-1',
       date: now,
@@ -93,7 +97,11 @@ const mockBookingForDriverExpected = {
     order: 0,
     outwardTime: '08:00',
     inwardTime: '18:00',
-    location: { id: 'location-1', name: 'Downtown Office' },
+    location: {
+      id: 'location-1',
+      name: 'Downtown Office',
+      address: '123 Main St',
+    },
     commute: {
       id: 'commute-1',
       date: now,
@@ -376,6 +384,99 @@ describe('booking router', () => {
         message: 'This commute is full',
       });
     });
+
+    describe('trip type validation', () => {
+      const mockRoundCommuteDriver = {
+        organizationId: mockOrganizationId,
+        autoAccept: false,
+        notificationPreferences: [],
+        user: { id: 'driver-user-1', name: 'Driver', email: 'driver@test.com' },
+      };
+
+      it('should allow ROUND booking from the first stop (non-regression)', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 0,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+        mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+        mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+        mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'ROUND' })
+        ).resolves.toBeDefined();
+      });
+
+      it('should reject RETURN booking from the first stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 0,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'RETURN' })
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message: 'Invalid trip type for this stop',
+        });
+      });
+
+      it('should reject ROUND booking from the last stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 1,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'ROUND' })
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message: 'Invalid trip type for this stop',
+        });
+      });
+
+      it('should allow RETURN booking from a non-first stop', async () => {
+        mockDb.stop.findUnique.mockResolvedValue({
+          order: 1,
+          commuteId: 'commute-1',
+          commute: {
+            driverMemberId: 'driver-member-1',
+            type: 'ROUND',
+            seats: 4,
+            stops: [{ order: 0 }, { order: 1 }],
+            driver: mockRoundCommuteDriver,
+          },
+        });
+        mockDb.passengersOnStops.findFirst.mockResolvedValue(null);
+        mockDb.passengersOnStops.findMany.mockResolvedValue([]);
+        mockDb.passengersOnStops.upsert.mockResolvedValue(mockBookingFromDb);
+
+        await expect(
+          call(bookingRouter.request, { stopId: 'stop-1', tripType: 'RETURN' })
+        ).resolves.toBeDefined();
+      });
+    });
   });
 
   describe('accept', () => {
@@ -610,9 +711,9 @@ describe('booking router', () => {
 
   describe('getRequestsForDriver', () => {
     it('should return paginated booking requests for the driver', async () => {
-      mockDb.passengersOnStops.count.mockResolvedValue(1);
-      mockDb.passengersOnStops.findMany.mockResolvedValue([
-        mockBookingForDriverRaw,
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        1,
+        [mockBookingForDriverRaw],
       ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {});
@@ -625,14 +726,14 @@ describe('booking router', () => {
     });
 
     it('should filter by driverMemberId', async () => {
-      mockDb.passengersOnStops.count.mockResolvedValue(1);
-      mockDb.passengersOnStops.findMany.mockResolvedValue([
-        mockBookingForDriverRaw,
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        1,
+        [mockBookingForDriverRaw],
       ]);
 
       await call(bookingRouter.getRequestsForDriver, {});
 
-      expect(mockDb.passengersOnStops.findMany).toHaveBeenCalledWith(
+      expect(mockDb.passengersOnStops.findManyPaginated).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             status: 'REQUESTED',
@@ -643,7 +744,8 @@ describe('booking router', () => {
               },
             },
           }),
-        })
+        }),
+        expect.any(Object)
       );
     });
 
@@ -662,8 +764,10 @@ describe('booking router', () => {
         ...mockBookingForDriverRaw,
         id: `booking-${i}`,
       }));
-      mockDb.passengersOnStops.count.mockResolvedValue(5);
-      mockDb.passengersOnStops.findMany.mockResolvedValue(bookings);
+      mockDb.passengersOnStops.findManyPaginated.mockResolvedValue([
+        5,
+        bookings,
+      ]);
 
       const result = await call(bookingRouter.getRequestsForDriver, {
         limit: 2,

@@ -1,4 +1,4 @@
-import { DrawerPreview as DrawerPrimitive } from '@base-ui/react/drawer';
+import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import * as React from 'react';
 
 import { cn } from '@/lib/tailwind/utils';
@@ -27,7 +27,7 @@ function DrawerOverlay({
     <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
       className={cn(
-        'fixed inset-0 z-50 bg-black/80 supports-backdrop-filter:backdrop-blur-xs',
+        'fixed inset-0 z-50 bg-black/20 supports-backdrop-filter:backdrop-blur-xs',
         'opacity-[calc(1-var(--drawer-swipe-progress,0))] transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]',
         'data-ending-style:opacity-0 data-starting-style:opacity-0',
         'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
@@ -59,12 +59,12 @@ function DrawerContent({
         <DrawerPrimitive.Popup
           data-slot="drawer-content"
           className={cn(
-            'group/drawer-content absolute flex h-auto flex-col bg-background',
+            'group/drawer-content absolute flex h-auto min-h-0 flex-col bg-background',
             'transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-ending-style:duration-[calc(var(--drawer-swipe-strength,1)*400ms)]',
             'data-swiping:duration-0 data-swiping:select-none',
             // Down
-            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh] data-[swipe-direction=down]:rounded-t-xl data-[swipe-direction=down]:border-t data-[swipe-direction=down]:pb-[calc(3*var(--spacing)+var(--spacing-safe-bottom))]',
+            'data-[swipe-direction=down]:inset-x-0 data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:mt-24 data-[swipe-direction=down]:max-h-[80vh]',
             'data-[swipe-direction=down]:transform-[translateY(calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y,0px)))]',
             'data-[swipe-direction=down]:data-starting-style:transform-[translateY(100%)]',
             'data-[swipe-direction=down]:data-ending-style:transform-[translateY(100%)]',
@@ -89,7 +89,10 @@ function DrawerContent({
           {...props}
         >
           <div className="mx-auto mt-4 hidden h-1.5 w-25 shrink-0 rounded-full bg-muted group-data-[swipe-direction=down]/drawer-content:block" />
-          <DrawerPrimitive.Content data-slot="drawer-inner-content pb-safe-bottom">
+          <DrawerPrimitive.Content
+            data-slot="drawer-inner-content"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden pb-safe-bottom group-data-[swipe-direction=up]/drawer-content:pb-0"
+          >
             {children}
           </DrawerPrimitive.Content>
         </DrawerPrimitive.Popup>
@@ -115,7 +118,7 @@ function DrawerBody({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="drawer-body"
-      className={cn('flex flex-col px-4', className)}
+      className={cn('flex flex-1 flex-col overflow-y-auto px-4', className)}
       {...props}
     />
   );
@@ -148,6 +151,7 @@ function DrawerDescription({
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
+      render={<div />}
       className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />

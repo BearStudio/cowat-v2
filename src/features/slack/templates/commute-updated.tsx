@@ -2,6 +2,7 @@
 import { Blocks, Button, Divider, Mrkdwn, Section } from 'jsx-slack';
 
 import i18n from '@/lib/i18n';
+import { routeUrl } from '@/lib/route-url';
 
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackHeader } from '@/features/slack/components/header';
@@ -15,7 +16,9 @@ type Props = {
 };
 
 export function CommuteUpdated({ event, baseUrl }: Props) {
-  const commutesUrl = `${baseUrl}/app/${event.payload.orgSlug}/commutes`;
+  const commutesUrl = routeUrl(baseUrl, '/app/$orgSlug/commutes', {
+    params: { orgSlug: event.payload.orgSlug },
+  });
   const { payload } = event;
 
   const previousDate = formatDate(payload.commuteDate);
@@ -25,7 +28,6 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
 
   const dateChanged = previousDate !== newDate;
   const typeChanged = payload.commuteType !== payload.newCommuteType;
-  const seatsChanged = payload.previousSeats !== payload.newSeats;
 
   const diffLines = [
     dateChanged
@@ -33,12 +35,6 @@ export function CommuteUpdated({ event, baseUrl }: Props) {
       : null,
     typeChanged
       ? i18n.t('notifications:commute.updatedType', { previousType, newType })
-      : null,
-    seatsChanged
-      ? i18n.t('notifications:commute.updatedSeats', {
-          previousSeats: String(payload.previousSeats),
-          newSeats: String(payload.newSeats),
-        })
       : null,
   ].filter(Boolean) as string[];
 

@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 
 export default {
-  title: 'Card',
+  title: 'UI/Card',
 } satisfies Meta<typeof Card>;
 
 export function Default() {

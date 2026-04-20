@@ -6,13 +6,12 @@ import { toast } from 'sonner';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
-import { useIsMobile } from '@/hooks/use-mobile';
 
-import { Button } from '@/components/ui/button';
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { CommentText } from '@/components/comment-text';
+import { ConfirmSummary } from '@/components/confirm-summary';
+import { LoadMoreButton } from '@/components/load-more-button';
+import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -20,8 +19,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { fabVariants } from '@/components/ui/floating-action-button';
-import { SpeedDial, SpeedDialItem } from '@/components/ui/speed-dial';
 
 import { authClient } from '@/features/auth/client';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
@@ -34,11 +31,11 @@ import {
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
-import { CommuteSummary } from '@/features/commute/commute-summary';
+import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import {
   OrgButtonLink,
-  OrgResponsiveIconButtonLink,
+  OrgFloatingActionButtonLink,
 } from '@/features/organization/org-button-link';
 import {
   PageLayout,
@@ -47,6 +44,16 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+export const myCommutesInfiniteOptions = () =>
+  orpc.commute.getMyCommutes.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageCommutes = () => {
   const { t } = useTranslation([
     'commute',
@@ -54,18 +61,8 @@ export const PageCommutes = () => {
     'location',
     'commuteTemplate',
   ]);
-  const isMobile = useIsMobile();
   const session = authClient.useSession();
-  const commutesQuery = useInfiniteQuery(
-    orpc.commute.getMyCommutes.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  const commutesQuery = useInfiniteQuery(myCommutesInfiniteOptions());
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({
@@ -91,71 +88,25 @@ export const PageCommutes = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          isMobile ? (
-            <SpeedDial icon={<PlusIcon />} label={t('commute:list.newAction')}>
-              <SpeedDialItem label={t('commute:list.speedDial.myLocations')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/account/locations"
-                >
-                  <featureIcons.Locations />
-                </OrgButtonLink>
-              </SpeedDialItem>
-              <SpeedDialItem label={t('commute:list.speedDial.myCommutes')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/account/commute-templates"
-                >
-                  <featureIcons.CommuteTemplates />
-                </OrgButtonLink>
-              </SpeedDialItem>
-              <SpeedDialItem label={t('commute:list.speedDial.createCommute')}>
-                <OrgButtonLink
-                  size="icon"
-                  className={fabVariants({ size: 'sm' })}
-                  to="/app/$orgSlug/commutes/new"
-                >
-                  <PlusIcon />
-                </OrgButtonLink>
-              </SpeedDialItem>
-            </SpeedDial>
-          ) : (
-            <>
-              <OrgResponsiveIconButtonLink
-                label={t('location:list.title')}
-                variant="ghost"
-                size="sm"
-                to="/app/$orgSlug/account/locations"
-              >
-                <featureIcons.Locations />
-              </OrgResponsiveIconButtonLink>
-              <OrgResponsiveIconButtonLink
-                label={t('commuteTemplate:list.title')}
-                variant="ghost"
-                size="sm"
-                to="/app/$orgSlug/account/commute-templates"
-              >
-                <featureIcons.CommuteTemplates />
-              </OrgResponsiveIconButtonLink>
-              <OrgResponsiveIconButtonLink
-                label={t('commute:list.newAction')}
-                variant="secondary"
-                size="sm"
-                to="/app/$orgSlug/commutes/new"
-              >
-                <PlusIcon />
-              </OrgResponsiveIconButtonLink>
-            </>
-          )
+          <>
+            <CommuteOptionsMenu />
+            <OrgFloatingActionButtonLink
+              label={t('commute:list.newAction')}
+              variant="secondary"
+              size="sm"
+              to="/app/$orgSlug/commutes/new"
+              viewTransition={{ types: ['slide-up'] }}
+            >
+              <PlusIcon />
+            </OrgFloatingActionButtonLink>
+          </>
         }
       >
         <PageLayoutTopBarTitle>{t('commute:list.title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <CardListSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => commutesQuery.refetch()} />
           ))
@@ -172,6 +123,7 @@ export const PageCommutes = () => {
                   variant="secondary"
                   size="sm"
                   to="/app/$orgSlug/commutes/new"
+                  viewTransition={{ types: ['slide-up'] }}
                 >
                   <PlusIcon />
                   {t('commute:list.newAction')}
@@ -197,11 +149,9 @@ export const PageCommutes = () => {
                         date={item.date}
                         type={item.type}
                         totalSeats={item.seats}
-                        outwardAvailable={item.seats - outwardCount}
-                        inwardAvailable={
-                          item.type === 'ROUND'
-                            ? item.seats - inwardCount
-                            : undefined
+                        outwardTaken={outwardCount}
+                        inwardTaken={
+                          item.type === 'ROUND' ? inwardCount : undefined
                         }
                         outwardDeparture={item.stops.at(0)?.outwardTime}
                         inwardDeparture={
@@ -212,11 +162,9 @@ export const PageCommutes = () => {
                       />
                     </CardCommuteTrigger>
                     <CardCommuteContent>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-3">
                         {item.comment && (
-                          <p className="text-sm text-muted-foreground">
-                            {item.comment}
-                          </p>
+                          <CommentText>{item.comment}</CommentText>
                         )}
                         <CardCommuteStopsList stops={item.stops} />
                         <CardCommuteActions
@@ -232,11 +180,11 @@ export const PageCommutes = () => {
                                     : 'commute:list.cancelConfirmDescription'
                                 )}
                               </span>
-                              <CommuteSummary
+                              <ConfirmSummary
+                                user={item.driver}
                                 date={item.date}
-                                type={item.type}
+                                typeLabel={t(`commute:list.type.${item.type}`)}
                                 stops={item.stops}
-                                driver={item.driver}
                               />
                             </div>
                           }
@@ -249,18 +197,10 @@ export const PageCommutes = () => {
                   </CardCommute>
                 );
               })}
-              {commutesQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => commutesQuery.fetchNextPage()}
-                    loading={commutesQuery.isFetchingNextPage}
-                  >
-                    {t('commute:list.loadMore')}
-                  </Button>
-                </div>
-              )}
+              <LoadMoreButton
+                query={commutesQuery}
+                label={t('commute:list.loadMore')}
+              />
             </div>
           ))
           .exhaustive()}

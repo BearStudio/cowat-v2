@@ -20,6 +20,11 @@
       "body": "*{{passengerName}}* a annulé sa réservation."
     },
     "canceledContext": "📅 {{date}} · {{tripType}}",
+    "canceledByDriver": {
+      "headline": "🚫 *Réservation annulée par le conducteur*",
+      "body": "*{{driverName}}* a réduit le nombre de places et votre réservation a été annulée."
+    },
+    "canceledByDriverContext": "📅 {{date}} · {{commuteType}}",
     "viewRequests": "Voir les demandes →",
     "viewCommutes": "Voir les trajets →",
     "findCommute": "Trouver un trajet →"
@@ -36,7 +41,6 @@
     },
     "updatedDate": "📅 ~{{previousDate}}~ → *{{newDate}}*",
     "updatedType": "🚗 ~{{previousType}}~ → *{{newType}}*",
-    "updatedSeats": "💺 ~{{previousSeats}}~ → *{{newSeats}}*",
     "canceled": {
       "headline": "❌ *Trajet annulé*",
       "body": "*{{driverName}}* a annulé le trajet *{{commuteType}}*."
@@ -51,11 +55,57 @@
     },
     "requestedContext": "📅 {{date}}",
     "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
+    "reminder": {
+      "headline": "🔔 *Rappel covoiturage !*",
+      "body": "Voici vos trajets pour aujourd'hui :",
+      "lineDriverWithPassengers": "🚗 *{{date}}* — Vous conduisez (passagers : {{passengers}})",
+      "lineDriverNoPassengers": "🚗 *{{date}}* — Vous conduisez (pas encore de passagers)",
+      "linePassenger": "💺 *{{date}}* — Passager avec *{{driverName}}*"
+    },
+    "reminderContext": "🚗 {{count}} trajet(s) aujourd'hui",
     "bookStop": "Réserver →",
     "offerRide": "Proposer un trajet →",
     "seeAllCommutes": "Voir tous les trajets →",
     "viewCommutes": "Voir les trajets →",
     "findCommute": "Trouver un trajet →"
+  },
+  "push": {
+    "booking": {
+      "requested": {
+        "title": "Nouvelle demande de covoiturage",
+        "body": "{{passengerName}} souhaite rejoindre votre trajet du {{date}}"
+      },
+      "accepted": {
+        "title": "Réservation acceptée",
+        "body": "{{driverName}} a accepté votre demande pour le {{date}}"
+      },
+      "refused": {
+        "title": "Réservation refusée",
+        "body": "{{driverName}} a refusé votre demande pour le {{date}}"
+      },
+      "canceled": {
+        "title": "Réservation annulée",
+        "body": "{{passengerName}} a annulé sa réservation pour le {{date}}"
+      },
+      "canceledByDriver": {
+        "title": "Réservation annulée par le conducteur",
+        "body": "{{driverName}} a réduit les places et votre réservation du {{date}} a été annulée"
+      }
+    },
+    "commute": {
+      "updated": {
+        "title": "Trajet modifié",
+        "body": "{{driverName}} a modifié son trajet du {{date}}"
+      },
+      "canceled": {
+        "title": "Trajet annulé",
+        "body": "{{driverName}} a annulé son trajet du {{date}}"
+      },
+      "reminder": {
+        "title": "Rappel covoiturage",
+        "body": "Vous avez {{count}} trajet(s) prévu(s) aujourd'hui."
+      }
+    }
   },
   "common": {
     "viewDashboard": "Voir le tableau de bord →"

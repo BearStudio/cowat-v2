@@ -33,8 +33,12 @@
   },
   "members": {
     "title": "Membres",
-    "invite": "Inviter un membre",
+    "invite": "Inviter",
     "email": "Adresse email",
+    "emails": "Adresses email",
+    "emailsPlaceholder": "Saisissez un email puis appuyez sur Entrée",
+    "emailsRequired": "Ajoutez au moins une adresse email",
+    "emailInvalid": "\"{{email}}\" n'est pas une adresse email valide",
     "role": "Rôle",
     "remove": "Retirer",
     "roles": {
@@ -46,6 +50,8 @@
   "invitations": {
     "title": "Invitations en attente",
     "cancel": "Annuler",
+    "cancelConfirm": "Êtes-vous sûr de vouloir annuler l'invitation pour {{email}} ?",
+    "cancelConfirmAction": "Annuler l'invitation",
     "empty": "Aucune invitation en attente"
   },
   "create": {
@@ -86,16 +92,21 @@
       "invitationCancelled": "Invitation annulée",
       "cancelInvitationError": "Impossible d'annuler l'invitation",
       "invitationSent": "Invitation envoyée",
+      "invitationsSent_one": "{{count}} invitation envoyée",
+      "invitationsSent_other": "{{count}} invitations envoyées",
       "invitationError": "Impossible d'envoyer l'invitation",
+      "invitationsPartialError": "Échec pour {{count}} email(s) : {{emails}}",
       "deleteOrganization": "Supprimer l'organisation",
       "deleteOrganizationTitle": "Supprimer cette organisation",
       "deleteOrganizationConfirm": "Êtes-vous sûr de vouloir supprimer cette organisation ? Cette action est irréversible.",
       "deleteOrganizationSuccess": "Organisation supprimée",
       "deleteOrganizationError": "Impossible de supprimer l'organisation",
       "removeMember": "Retirer le membre",
-      "removeMemberConfirm": "Êtes-vous sûr de vouloir retirer ce membre de l'organisation ?",
+      "removeMemberConfirm": "Vous êtes sur le point de retirer ce membre de l'organisation.",
       "removeMemberSuccess": "Membre retiré",
-      "removeMemberError": "Impossible de retirer le membre"
+      "removeMemberError": "Impossible de retirer le membre",
+      "updateMemberRoleSuccess": "Role mis à jour avec succès",
+      "updateMemberRoleError": "Erreur lors de la mise à jour du rôle"
     }
   }
 }

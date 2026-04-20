@@ -11,7 +11,7 @@ import { z, ZodObject, ZodType } from 'zod';
 
 type AnyZodObject = ZodObject<Record<string, ZodType>>;
 
-export type MultiStepFormStepConfig = {
+type MultiStepFormStepConfig = {
   schema?: AnyZodObject;
   defaultValues?: Record<string, unknown>;
 };

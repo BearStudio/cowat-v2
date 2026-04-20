@@ -1,10 +1,13 @@
 import { ReactNode, useLayoutEffect } from 'react';
 import { create } from 'zustand';
 
+import { usePushNotifications } from '@/features/push/use-push-notifications';
 import { MainNavDesktop } from '@/layout/app/main-nav-desktop';
 import { MainNavMobile } from '@/layout/app/main-nav-mobile';
 
 export const Layout = (props: { children?: ReactNode }) => {
+  usePushNotifications();
+
   const showMainNavDesktop = useShouldShowNavStore(
     (s) => s.mode === 'all' || s.mode === 'desktop-only'
   );
@@ -12,7 +15,12 @@ export const Layout = (props: { children?: ReactNode }) => {
   return (
     <div className="flex flex-1 flex-col" data-testid="layout-app">
       {showMainNavDesktop && <MainNavDesktop />}
-      <div className="flex flex-1 flex-col">{props.children}</div>
+      <div
+        data-page-content
+        className="flex flex-1 flex-col bg-neutral-50 [view-transition-name:page-content] dark:bg-neutral-950"
+      >
+        {props.children}
+      </div>
       {showMainNavMobile && <MainNavMobile />}
     </div>
   );

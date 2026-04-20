@@ -14,6 +14,6 @@ const link = new RPCLink({
       : `${window.location.origin}/api/rpc`,
 });
 
-const orpcClient: RouterClient<Router> = createORPCClient(link);
+export const orpcClient: RouterClient<Router> = createORPCClient(link);
 
 export const orpc = createORPCReactQueryUtils(orpcClient);

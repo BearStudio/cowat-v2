@@ -1,0 +1,15 @@
+{
+  "attribution": {
+    "commit": {
+      "trailers": [
+        {
+          "key": "Co-authored-by",
+          "value": "Claude <noreply@anthropic.com>"
+        }
+      ]
+    },
+    "pr": {
+      "description": "Generated with [Claude](https://claude.ai)"
+    }
+  }
+}

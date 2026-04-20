@@ -9,13 +9,11 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
-import { Button } from '@/components/ui/button';
+import { LoadMoreButton } from '@/components/load-more-button';
+import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -27,10 +25,8 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
 import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { CardCommuteTemplateHeader } from '@/features/commute-template/card-commute-template-header';
-import {
-  OrgButtonLink,
-  OrgFloatingActionButtonLink,
-} from '@/features/organization/org-button-link';
+import { OrgButtonLink } from '@/features/organization/org-button-link';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -38,20 +34,22 @@ import {
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
 
+export const commuteTemplatesInfiniteOptions = () =>
+  orpc.commuteTemplate.getAll.infiniteOptions({
+    input: (cursor: string | undefined) => ({
+      cursor,
+    }),
+    initialPageParam: undefined,
+    maxPages: 10,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
 export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   const { t } = useTranslation(['commuteTemplate', 'common']);
   const navigate = useNavigate();
 
-  const templatesQuery = useInfiniteQuery(
-    orpc.commuteTemplate.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  useShouldShowNav('desktop-only');
+  const templatesQuery = useInfiniteQuery(commuteTemplatesInfiniteOptions());
 
   const templateDelete = useMutation(
     orpc.commuteTemplate.delete.mutationOptions({
@@ -76,16 +74,17 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
   return (
     <PageLayout>
       <PageLayoutTopBar
-        startActions={<BackButton />}
+        className="[view-transition-name:none]"
+        startActions={<BackButton viewTransition={{ types: ['slide-down'] }} />}
         endActions={
-          <OrgFloatingActionButtonLink
-            label={t('commuteTemplate:list.newAction')}
+          <OrgButtonLink
             variant="secondary"
             size="sm"
             to="/app/$orgSlug/account/commute-templates/new"
           >
             <PlusIcon />
-          </OrgFloatingActionButtonLink>
+            {t('commuteTemplate:list.newAction')}
+          </OrgButtonLink>
         }
       >
         <PageLayoutTopBarTitle>
@@ -94,7 +93,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <CardListSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => templatesQuery.refetch()} />
           ))
@@ -140,11 +139,13 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                       actions={
                         <div onClick={(e) => e.stopPropagation()}>
                           <ConfirmResponsiveDrawer
+                            title={item.name}
                             description={t(
                               'commuteTemplate:list.deleteConfirmDescription'
                             )}
                             confirmText={t('common:actions.delete')}
                             confirmVariant="destructive"
+                            icon={<featureIcons.CommuteTemplates />}
                             onConfirm={() =>
                               templateDelete.mutateAsync({ id: item.id })
                             }
@@ -175,23 +176,16 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                           commuteId: '',
                           passengers: [],
                         }))}
+                        disableLinks
                       />
                     </div>
                   </CardContent>
                 </Card>
               ))}
-              {templatesQuery.hasNextPage && (
-                <div className="flex justify-center">
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    onClick={() => templatesQuery.fetchNextPage()}
-                    loading={templatesQuery.isFetchingNextPage}
-                  >
-                    {t('commuteTemplate:list.loadMore')}
-                  </Button>
-                </div>
-              )}
+              <LoadMoreButton
+                query={templatesQuery}
+                label={t('commuteTemplate:list.loadMore')}
+              />
             </div>
           ))
           .exhaustive()}

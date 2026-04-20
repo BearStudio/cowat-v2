@@ -32,11 +32,8 @@ export const createUserRepository = (db: AppDB) => ({
       ],
     } satisfies Prisma.UserWhereInput;
 
-    return Promise.all([
-      db.user.count({ where }),
-      db.user.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    return db.user.findManyPaginated(
+      {
         orderBy: { name: 'asc' },
         where,
         include: {
@@ -46,8 +43,9 @@ export const createUserRepository = (db: AppDB) => ({
             },
           },
         },
-      }),
-    ]);
+      },
+      opts
+    );
   },
 
   findById: (id: string) => db.user.findUnique({ where: { id } }),
@@ -69,13 +67,11 @@ export const createUserRepository = (db: AppDB) => ({
     userId: string,
     opts: { cursor?: string; limit: number }
   ) =>
-    Promise.all([
-      db.session.count({ where: { userId } }),
-      db.session.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    db.session.findManyPaginated(
+      {
         orderBy: { createdAt: 'desc' },
         where: { userId },
-      }),
-    ]),
+      },
+      opts
+    ),
 });

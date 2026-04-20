@@ -17,7 +17,7 @@ import {
 } from './combobox';
 
 export default {
-  title: 'Combobox',
+  title: 'UI/Combobox',
 } satisfies Meta<typeof Combobox>;
 
 const options = [

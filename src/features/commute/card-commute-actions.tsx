@@ -25,43 +25,48 @@ export function CardCommuteActions({
 }: CardCommuteActionsProps) {
   const { t } = useTranslation(['commute', 'common']);
 
+  const hasActions = isDriver || !!driverPhone;
+  if (!hasActions) return null;
+
   return (
-    <div className="ms-auto flex items-center gap-2">
-      {isDriver && (
-        <>
-          <OrgButtonLink
+    <div className="-mx-4 border-t px-4 pt-3">
+      <div className="flex items-center justify-between gap-2">
+        {isDriver && (
+          <>
+            <OrgButtonLink
+              size="sm"
+              variant="secondary"
+              to="/app/$orgSlug/commutes/$id/update"
+              params={{ id: commuteId }}
+            >
+              <PencilIcon />
+              {t('commute:list.editAction')}
+            </OrgButtonLink>
+            <ConfirmResponsiveDrawer
+              description={cancelConfirmDescription}
+              confirmText={t('common:actions.confirm')}
+              confirmVariant="destructive"
+              onConfirm={onCancel}
+            >
+              <Button size="sm" variant="destructive-secondary">
+                <Trash2 />
+                {t('commute:list.cancelAction')}
+              </Button>
+            </ConfirmResponsiveDrawer>
+          </>
+        )}
+        {!isDriver && driverPhone && (
+          <ResponsiveIconButton
             size="sm"
             variant="secondary"
-            to="/app/$orgSlug/commutes/$id/update"
-            params={{ id: commuteId }}
+            nativeButton={false}
+            label={t('commute:list.callDriver')}
+            render={<a href={`tel:${driverPhone}`} />}
           >
-            <PencilIcon />
-            {t('commute:list.editAction')}
-          </OrgButtonLink>
-          <ConfirmResponsiveDrawer
-            description={cancelConfirmDescription}
-            confirmText={t('common:actions.delete')}
-            confirmVariant="destructive"
-            onConfirm={onCancel}
-          >
-            <Button size="sm" variant="destructive-secondary">
-              <Trash2 />
-              {t('commute:list.cancelAction')}
-            </Button>
-          </ConfirmResponsiveDrawer>
-        </>
-      )}
-      {!isDriver && driverPhone && (
-        <ResponsiveIconButton
-          size="sm"
-          variant="secondary"
-          nativeButton={false}
-          label={t('commute:list.callDriver')}
-          render={<a href={`tel:${driverPhone}`} />}
-        >
-          <PhoneIcon />
-        </ResponsiveIconButton>
-      )}
+            <PhoneIcon />
+          </ResponsiveIconButton>
+        )}
+      </div>
     </div>
   );
 }

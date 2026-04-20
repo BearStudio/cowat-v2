@@ -27,7 +27,6 @@ export const zUser = () =>
     onboardedAt: z.date().nullish(),
   });
 
-export type Session = z.infer<ReturnType<typeof zSession>>;
 export const zSession = () =>
   z.object({
     id: z.string(),
@@ -44,3 +43,7 @@ export const zFormFieldsUser = () =>
     email: true,
     role: true,
   });
+
+export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
+export const zUserSummary = () =>
+  zUser().pick({ id: true, name: true, image: true, phone: true });

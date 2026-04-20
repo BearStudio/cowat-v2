@@ -1,4 +1,5 @@
 {
+  "or": "or",
   "languages": {
     "label": "Language",
     "values": {
@@ -24,6 +25,7 @@
     "confirm": "Confirm"
   },
   "errors": {
-    "required": "Required"
+    "required": "Required",
+    "phoneInvalid": "Invalid phone number"
   }
 }

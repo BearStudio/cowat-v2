@@ -11,11 +11,17 @@ import {
   countPassengersByDirection,
   isTripTypeFull,
 } from '@/features/commute/commute-passenger-rules';
+import { toRecipient } from '@/server/notifications/utils';
 import {
   organizationProcedure,
   type OrganizationProcedureArgs,
 } from '@/server/orpc';
 import { createBookingRepository } from '@/server/repositories/booking.repository';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['bookings'];
 
@@ -46,29 +52,40 @@ export default {
       }
 
       const orders = stop.commute.stops.map((s) => s.order);
+      const isFirstStop = stop.order === Math.min(...orders);
       const isLastStop = stop.order === Math.max(...orders);
       const allowOutward = !isLastStop;
-      const allowInward = stop.commute.type === 'ROUND';
+      const allowReturn = stop.commute.type === 'ROUND' && !isFirstStop;
+      const allowRound = stop.commute.type === 'ROUND' && !isLastStop;
 
       if (
         (input.tripType === 'ONEWAY' && !allowOutward) ||
-        (input.tripType === 'RETURN' && !allowInward) ||
-        (input.tripType === 'ROUND' && (!allowOutward || !allowInward))
+        (input.tripType === 'RETURN' && !allowReturn) ||
+        (input.tripType === 'ROUND' && !allowRound)
       ) {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Invalid trip type for this stop',
         });
       }
 
-      const existingBooking = await context.bookings.findExistingBooking(
+      const activeBooking = await context.bookings.findActiveBooking(
         context.memberId,
         stop.commuteId
       );
 
-      if (existingBooking) {
+      if (activeBooking) {
         throw new ORPCError('CONFLICT', {
           message: 'You already have a booking on this commute',
         });
+      }
+
+      const previousBooking = await context.bookings.findBookingOnStop(
+        context.memberId,
+        input.stopId
+      );
+
+      if (previousBooking) {
+        validateStatusTransition(previousBooking.status, 'REQUESTED');
       }
 
       const acceptedBookings = await context.bookings.findAcceptedBookings(
@@ -87,7 +104,6 @@ export default {
       }
 
       const driverMember = stop.commute.driver;
-      const driverUser = driverMember.user;
       const status = driverMember.autoAccept ? 'ACCEPTED' : 'REQUESTED';
 
       const booking = await context.bookings.upsertRequest({
@@ -98,26 +114,16 @@ export default {
         status,
       });
 
-      const organization = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-
-      context.notify(
+      await context.notify(
         {
           type: 'booking.requested',
-          recipient: {
-            userId: driverUser.id,
-            name: driverUser.name,
-            email: driverUser.email,
-            notificationPreferences: driverMember.notificationPreferences,
-          },
+          recipient: toRecipient(driverMember),
           payload: {
             passengerName: context.user.name,
             commuteDate: stop.commute.date,
             tripType: input.tripType,
             status,
-            orgSlug: organization?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -162,25 +168,15 @@ export default {
 
       await context.bookings.updateStatus(input.id, 'ACCEPTED');
 
-      const passengerUser = booking.passenger.user;
-      const acceptOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.accepted',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            notificationPreferences: booking.passenger.notificationPreferences,
-          },
+          recipient: toRecipient(booking.passenger),
           payload: {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: acceptOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -206,25 +202,15 @@ export default {
 
       await context.bookings.updateStatus(input.id, 'REFUSED');
 
-      const passengerUser = booking.passenger.user;
-      const refuseOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.refused',
-          recipient: {
-            userId: passengerUser.id,
-            name: passengerUser.name,
-            email: passengerUser.email,
-            notificationPreferences: booking.passenger.notificationPreferences,
-          },
+          recipient: toRecipient(booking.passenger),
           payload: {
             driverName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: refuseOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -251,25 +237,15 @@ export default {
       await context.bookings.updateStatus(input.id, 'CANCELED');
 
       const driverMember = booking.stop.commute.driver;
-      const driverUser = driverMember.user;
-      const cancelOrg = await context.db.organization.findUnique({
-        where: { id: context.organizationId },
-        select: { slug: true },
-      });
-      context.notify(
+      await context.notify(
         {
           type: 'booking.canceled',
-          recipient: {
-            userId: driverUser.id,
-            name: driverUser.name,
-            email: driverUser.email,
-            notificationPreferences: driverMember.notificationPreferences,
-          },
+          recipient: toRecipient(driverMember),
           payload: {
             passengerName: context.user.name,
             commuteDate: booking.stop.commute.date,
             tripType: booking.tripType,
-            orgSlug: cancelOrg?.slug ?? '',
+            orgSlug: context.orgSlug,
           },
         },
         { db: context.db, organizationId: context.organizationId }
@@ -289,36 +265,20 @@ export default {
 
   getRequestsForDriver: procedure({ permissions: { booking: ['read'] } })
     .route({ method: 'GET', path: '/bookings/driver-requests', tags })
-    .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-        })
-        .prefault({})
-    )
-    .output(
-      z.object({
-        items: z.array(zBookingForDriver()),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .input(zPaginationInput.prefault({}))
+    .output(zPaginatedOutput(zBookingForDriver()))
     .handler(async ({ context, input }) => {
-      const [total, rawItems] =
-        await context.bookings.findDriverRequestsPaginated(context.memberId, {
+      const [total, items] = await context.bookings.findDriverRequestsPaginated(
+        context.memberId,
+        {
           cursor: input.cursor,
           limit: input.limit,
-        });
+        }
+      );
 
-      let nextCursor: string | undefined;
-      if (rawItems.length > input.limit) nextCursor = rawItems.pop()?.id;
-
-      const items = rawItems.map((item) => ({
+      return paginateResult(total, items, input.limit, (item) => ({
         ...item,
         passenger: item.passenger.user,
       }));
-
-      return { items, nextCursor, total };
     }),
 };

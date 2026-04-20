@@ -1,0 +1,166 @@
+import type { LanguageKey } from '@/lib/i18n/constants';
+import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
+
+import { envClient } from '@/env/client';
+import { getPushContent } from '@/features/push/templates';
+import {
+  type FcmMessage,
+  getAccessToken,
+  isConfigured,
+  postMessage,
+} from '@/server/firebase';
+import { createFcmTokenRepository } from '@/server/repositories/fcm-token.repository';
+
+import type { NotificationChannel, Recipient } from '../types';
+import { getEventRecipients } from '../utils';
+
+async function sendEach(
+  accessToken: string,
+  messages: FcmMessage[]
+): Promise<{
+  failedTokens: string[];
+  invalidTokens: string[];
+}> {
+  const settled = await Promise.allSettled(
+    messages.map(async (message) => {
+      const result = await postMessage(accessToken, message);
+      return { token: message.token, result };
+    })
+  );
+
+  const failedTokens: string[] = [];
+  const invalidTokens: string[] = [];
+
+  for (const [index, entry] of settled.entries()) {
+    if (entry.status === 'rejected') {
+      failedTokens.push(messages[index]!.token);
+      continue;
+    }
+
+    const { token, result } = entry.value;
+    if (result.isOk()) continue;
+
+    const { status } = result.error;
+    if (status === 'NOT_FOUND' || status === 'UNREGISTERED') {
+      invalidTokens.push(token);
+    } else {
+      failedTokens.push(token);
+    }
+  }
+
+  return { failedTokens, invalidTokens };
+}
+
+export const pushChannel: NotificationChannel = {
+  name: 'PUSH',
+
+  canSend(event) {
+    if (!('recipient' in event) && !('recipients' in event)) return false;
+    return isConfigured();
+  },
+
+  async send(event, logger, orgContext) {
+    if (!orgContext) {
+      logger.warn('Push: send() called without orgContext, skipping');
+      return;
+    }
+
+    const orgChannel = await orgContext.db.orgNotificationChannel.findUnique({
+      where: {
+        orgId_type: { orgId: orgContext.organizationId, type: 'PUSH' },
+      },
+      select: { locale: true },
+    });
+    const locale =
+      (orgChannel?.locale as LanguageKey | null) ?? DEFAULT_LANGUAGE_KEY;
+
+    const fcmTokens = createFcmTokenRepository(orgContext.db);
+
+    const recipients = getEventRecipients(event);
+    if (recipients.length === 0) return;
+
+    await sendToRecipients(recipients, event, locale, fcmTokens, logger);
+  },
+};
+
+async function sendToRecipients(
+  recipients: Recipient[],
+  event: Parameters<NotificationChannel['send']>[0],
+  locale: LanguageKey,
+  fcmTokens: ReturnType<typeof createFcmTokenRepository>,
+  logger: Parameters<NotificationChannel['send']>[1]
+) {
+  // Fetch tokens for all recipients at once
+  const userIds = recipients.map((r) => r.userId);
+  const allTokens = await fcmTokens.getTokensForUsers(userIds);
+  if (allTokens.length === 0) return;
+
+  const accessTokenResult = await getAccessToken();
+  if (accessTokenResult.isErr()) {
+    logger.error(
+      { err: accessTokenResult.error },
+      'Push: failed to get access token'
+    );
+    return;
+  }
+
+  // Build per-recipient messages so personalized content (e.g. commute count) is correct
+  const tokensByUser = new Map<string, typeof allTokens>();
+  for (const t of allTokens) {
+    const arr = tokensByUser.get(t.userId) ?? [];
+    arr.push(t);
+    tokensByUser.set(t.userId, arr);
+  }
+  const messages: FcmMessage[] = recipients.flatMap((recipient) => {
+    const tokens = tokensByUser.get(recipient.userId) ?? [];
+    if (tokens.length === 0) return [];
+
+    const content = getPushContent(
+      event,
+      locale,
+      envClient.VITE_BASE_URL,
+      recipient.userId
+    );
+    if (!content) return [];
+
+    return tokens.map((t) => ({
+      token: t.token,
+      notification: { title: content.title, body: content.body },
+      webpush: {
+        notification: { icon: '/android-chrome-192x192.png' },
+        fcmOptions: content.link ? { link: content.link } : undefined,
+      },
+    }));
+  });
+
+  const { failedTokens, invalidTokens } = await sendEach(
+    accessTokenResult.value,
+    messages
+  );
+
+  // Clean up expired registrations
+  if (invalidTokens.length > 0) {
+    const tokenToId = new Map(allTokens.map((t) => [t.token, t.id]));
+    const invalidTokenIds = invalidTokens
+      .map((t) => tokenToId.get(t))
+      .filter((id): id is string => id !== undefined);
+
+    if (invalidTokenIds.length > 0) {
+      await fcmTokens.deleteByIds(invalidTokenIds);
+      logger.info(
+        { count: invalidTokenIds.length },
+        'Push: removed invalid FCM tokens'
+      );
+    }
+  }
+
+  if (failedTokens.length > 0) {
+    logger.warn(
+      {
+        failedCount: failedTokens.length,
+        successCount: messages.length - failedTokens.length,
+      },
+      'Push: some notifications failed to send'
+    );
+  }
+}

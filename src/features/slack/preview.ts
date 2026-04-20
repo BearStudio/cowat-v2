@@ -8,10 +8,11 @@ const LANGUAGE_KEYS = AVAILABLE_LANGUAGES.map((l) => l.key);
 
 import JSXSlack from 'jsx-slack';
 
+import type { CommuteReminderEvent } from '@/server/notifications/types';
+
 import type { BroadcastEvent, BroadcastOpts, PrivateEvent } from './templates';
 import {
   getBroadcastBlocks,
-  getFallbackText,
   getPrivateBlocks,
   type SlackBlock,
 } from './templates';
@@ -22,7 +23,45 @@ import {
 
 type TemplateFixture =
   | { event: BroadcastEvent; opts?: BroadcastOpts }
-  | { event: PrivateEvent; opts?: { locale?: LanguageKey } };
+  | {
+      event: PrivateEvent;
+      opts?: { locale?: LanguageKey; recipientUserId?: string };
+    };
+
+const COMMUTE_REMINDER_EVENT: CommuteReminderEvent = {
+  type: 'commute.reminder',
+  recipients: [
+    { userId: 'user-1', name: 'John Driver', email: 'john.driver@example.com' },
+    { userId: 'user-2', name: 'Alice Passenger', email: 'alice@example.com' },
+    { userId: 'user-3', name: 'Bob Rider', email: 'bob@example.com' },
+  ],
+  payload: {
+    commutes: [
+      {
+        date: new Date('2026-03-15T08:30:00'),
+        driverName: 'John Driver',
+        driverUserId: 'user-1',
+        passengers: [
+          { name: 'Alice Passenger', userId: 'user-2' },
+          { name: 'Bob Rider', userId: 'user-3' },
+        ],
+      },
+      {
+        date: new Date('2026-03-15T17:30:00'),
+        driverName: 'Alice Passenger',
+        driverUserId: 'user-2',
+        passengers: [{ name: 'John Driver', userId: 'user-1' }],
+      },
+      {
+        date: new Date('2026-03-15T09:00:00'),
+        driverName: 'Bob Rider',
+        driverUserId: 'user-3',
+        passengers: [],
+      },
+    ],
+    orgSlug: 'acme-corp',
+  },
+};
 
 const FIXTURES: Record<string, TemplateFixture> = {
   'booking-requested': {
@@ -90,6 +129,22 @@ const FIXTURES: Record<string, TemplateFixture> = {
       },
     },
   },
+  'booking-canceled-by-driver': {
+    event: {
+      type: 'booking.canceledByDriver',
+      recipient: {
+        userId: 'user-2',
+        name: 'Alice Passenger',
+        email: 'alice@example.com',
+      },
+      payload: {
+        commuteDate: new Date('2026-03-15'),
+        commuteType: 'ROUND',
+        driverName: 'John Driver',
+        orgSlug: 'acme-corp',
+      },
+    },
+  },
   'commute-created': {
     event: {
       type: 'commute.created',
@@ -140,8 +195,6 @@ const FIXTURES: Record<string, TemplateFixture> = {
         orgSlug: 'acme-corp',
         newCommuteDate: new Date('2026-03-22'),
         newCommuteType: 'ONEWAY',
-        previousSeats: 2,
-        newSeats: 4,
       },
     },
   },
@@ -170,11 +223,20 @@ const FIXTURES: Record<string, TemplateFixture> = {
         requesterEmail: 'alice@example.com',
         orgSlug: 'acme',
         locationName: 'Paris Office',
+        commuteRequestId: 'preview-request-id',
       },
     },
     opts: {
       baseUrl: 'https://app.example.com',
     },
+  },
+  'commute-reminder-driver': {
+    event: COMMUTE_REMINDER_EVENT,
+    opts: { recipientUserId: 'user-1' },
+  },
+  'commute-reminder-passenger': {
+    event: COMMUTE_REMINDER_EVENT,
+    opts: { recipientUserId: 'user-2' },
   },
 };
 
@@ -293,6 +355,10 @@ export function previewSlackRoute(
     : getPrivateBlocks(fixture.event as PrivateEvent, {
         locale,
         baseUrl: 'http://localhost:3000',
+        ...('recipientUserId' in (fixture.opts ?? {}) && {
+          recipientUserId: (fixture.opts as { recipientUserId: string })
+            .recipientUserId,
+        }),
       });
 
   const blocks = JSXSlack(element) as SlackBlock[];
@@ -303,5 +369,3 @@ export function previewSlackRoute(
     headers: { 'Content-Type': 'text/html' },
   });
 }
-
-export { getFallbackText };

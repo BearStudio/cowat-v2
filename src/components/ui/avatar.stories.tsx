@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/avatar';
 
 export default {
-  title: 'Avatar',
+  title: 'UI/Avatar',
 } satisfies Meta<typeof Avatar>;
 
 export function Default() {

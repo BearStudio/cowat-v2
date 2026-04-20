@@ -2,18 +2,17 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { cn } from '@/lib/tailwind/utils';
 
-import {
-  DataListErrorState,
-  DataListLoadingState,
-} from '@/components/ui/datalist';
+import { DashboardSkeleton } from '@/components/loading/dashboard-skeleton';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyHeader,
@@ -23,19 +22,17 @@ import {
 
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
+import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import {
   CommuteEnriched,
   type CommuteType,
   type StopEnriched,
-  type UserSummary,
 } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
-import {
-  OrgButtonLink,
-  OrgFloatingActionButtonLink,
-} from '@/features/organization/org-button-link';
+import { OrgFloatingActionButtonLink } from '@/features/organization/org-button-link';
 import { OrgLink } from '@/features/organization/org-link';
+import type { UserSummary } from '@/features/user/schema';
 import {
   PageLayout,
   PageLayoutContent,
@@ -48,10 +45,11 @@ export const PageDashboard = () => {
   const session = authClient.useSession();
   const currentUserId = session.data?.user.id ?? '';
 
-  const [
-    { bookingStop: bookingStopId, openCommutes: openCommuteIds },
-    setSearchParams,
-  ] = useDashboardSearchParams();
+  const [{ bookingStop: bookingStopId, openCommutes: initialOpenCommutes }] =
+    useDashboardSearchParams();
+  const [, setSearchParams] = useDashboardSearchParams();
+  const [openCommuteIds, setOpenCommuteIds] =
+    useState<string[]>(initialOpenCommutes);
 
   const today = dayjs().startOf('day');
   const rangeEnd = today.add(7, 'day');
@@ -139,21 +137,25 @@ export const PageDashboard = () => {
     <PageLayout>
       <PageLayoutTopBar
         endActions={
-          <OrgFloatingActionButtonLink
-            label={t('dashboard:newCommuteAction')}
-            variant="secondary"
-            size="sm"
-            to="/app/$orgSlug/commutes/new"
-          >
-            <PlusIcon />
-          </OrgFloatingActionButtonLink>
+          <>
+            <CommuteOptionsMenu />
+            <OrgFloatingActionButtonLink
+              label={t('dashboard:newCommuteAction')}
+              variant="secondary"
+              size="sm"
+              to="/app/$orgSlug/commutes/new"
+              viewTransition={{ types: ['slide-up'] }}
+            >
+              <PlusIcon />
+            </OrgFloatingActionButtonLink>
+          </>
         }
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
       <PageLayoutContent containerClassName="max-w-4xl">
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => <DashboardSkeleton />)
           .match('error', () => (
             <DataListErrorState retry={() => commutesQuery.refetch()} />
           ))
@@ -163,34 +165,35 @@ export const PageDashboard = () => {
                 const key = dayjs(day).f('common:iso');
                 const isToday = day.isToday();
                 const dayCommutes = commutesByDay.get(key) ?? [];
-
                 return (
                   <div key={key} className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-semibold">
+                      {isToday && (
+                        <span className="relative flex size-2.5">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75 [animation-duration:1.5s]" />
+                          <span className="relative inline-flex size-2.5 rounded-full bg-primary" />
+                        </span>
+                      )}
+                      <h2
+                        className={cn('font-semibold capitalize', {
+                          'text-lg text-primary': isToday,
+                          'text-base text-foreground': !isToday,
+                        })}
+                      >
                         {isToday
                           ? t('dashboard:today')
                           : dayjs(day).f('dashboard:dayHeader')}
                       </h2>
-
-                      <OrgButtonLink
-                        variant="ghost"
-                        size="sm"
-                        className="ml-auto"
-                        to="/app/$orgSlug/commutes/new"
-                        search={{ date: day.toDate() }}
-                      >
-                        <PlusIcon />
-                        {t('dashboard:newCommuteAction')}
-                      </OrgButtonLink>
                     </div>
 
                     {dayCommutes.length === 0 ? (
                       <OrgLink
                         to="/app/$orgSlug/commutes/new"
                         search={{ date: day.toDate() }}
+                        className="block"
+                        viewTransition={{ types: ['slide-up'] }}
                       >
-                        <Empty className="border p-4 transition-colors hover:bg-accent">
+                        <Empty className="cursor-pointer border p-4 transition-colors hover:bg-accent">
                           <EmptyHeader>
                             <EmptyMedia variant="icon">
                               <featureIcons.Commutes />
@@ -212,13 +215,11 @@ export const PageDashboard = () => {
                             bookingCancel={bookingCancel}
                             open={openCommuteIds.includes(item.id)}
                             onOpenChange={(open) =>
-                              setSearchParams({
-                                openCommutes: open
-                                  ? [...openCommuteIds, item.id]
-                                  : openCommuteIds.filter(
-                                      (id) => id !== item.id
-                                    ),
-                              })
+                              setOpenCommuteIds((prev) =>
+                                open
+                                  ? [...prev, item.id]
+                                  : prev.filter((id) => id !== item.id)
+                              )
                             }
                             onBookStop={(stopId) =>
                               setSearchParams({ bookingStop: stopId })

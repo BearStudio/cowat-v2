@@ -16,13 +16,14 @@
     "stops_one": "{{count}} stop",
     "stops_other": "{{count}} stops",
     "availableSeats": "{{available}}/{{total}} seats available",
-    "seatCount": "{{available}}/{{total}} seats",
+    "seatCount": "{{taken}}/{{total}} seats",
     "editAction": "Edit",
     "cancelAction": "Cancel",
     "callDriver": "Call",
     "speedDial": {
       "myLocations": "My Locations",
-      "myCommutes": "My Commutes",
+      "myCommutes": "My Templates",
+      "requestCommute": "Request a Ride",
       "createCommute": "New Commute"
     }
   },
@@ -30,24 +31,38 @@
     "title": "New Commute",
     "submitButton": "Create",
     "requestButton": "Request a commute",
+    "saveTemplateTitle": "Save as template?",
+    "saveTemplateDescription": "Save this commute as a template to reuse it next time.",
+    "saveTemplateConfirm": "Post and save template",
+    "saveTemplateSkip": "Continue without creating a template",
+    "templateSaved": "Template saved!",
     "requestDrawer": {
       "title": "Request a commute",
       "description": "Pick a date and notify the team that you need a ride.",
       "pickDate": "Date",
       "destination": "Destination",
       "destinationPlaceholder": "Optional destination...",
+      "comment": "Comment",
+      "commentPlaceholder": "Details about your request...",
       "submit": "Send request",
       "success": "Request sent!"
     }
   },
   "update": {
     "title": "Edit Commute",
-    "submitButton": "Save"
+    "submitButton": "Save",
+    "passengersWarning_one": "{{count}} passenger is currently booked on this commute and will be notified of the changes.",
+    "passengersWarning_other": "{{count}} passengers are currently booked on this commute and will be notified of the changes."
   },
   "templatePicker": {
     "title": "My templates",
     "emptyState": "Save time: create a template",
-    "fromScratch": "Create from scratch"
+    "fromScratch": "New commute",
+    "useTemplate": "Use a template",
+    "usingTemplate": "Created from template \"{{name}}\"",
+    "templateApplied": "Template applied",
+    "quickCreate": "Quick create from template \"{{name}}\"",
+    "selectTemplate": "Select a template"
   },
   "stepper": {
     "details": "Details",
@@ -55,7 +70,7 @@
     "inwardStops": "Return times",
     "recap": "Summary",
     "next": "Next",
-    "back": "Back",
+    "back": "Previous",
     "submit": "Create",
     "outboundTrip": "Outbound trip",
     "inboundTrip": "Inbound trip"
@@ -89,7 +104,8 @@
       "inwardInPast": "Inbound time must be in the future",
       "outwardInPast": "Outbound time must be in the future",
       "outwardNotIncreasing": "Must be after the previous stop's outbound time",
-      "inwardNotDecreasing": "Must be before the previous stop's inbound time"
+      "inwardNotDecreasing": "Must be before the previous stop's inbound time",
+      "datePast": "Date must be today or in the future"
     }
   }
 }

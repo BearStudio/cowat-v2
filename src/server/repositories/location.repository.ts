@@ -13,15 +13,13 @@ export const createLocationRepository = (db: AppDB) => ({
     memberId: string,
     opts: { cursor?: string; limit: number }
   ) =>
-    Promise.all([
-      db.location.count({ where: { memberId } }),
-      db.location.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    db.location.findManyPaginated(
+      {
         orderBy: { updatedAt: 'desc' },
         where: { memberId },
-      }),
-    ]),
+      },
+      opts
+    ),
 
   findByIdInOrg: (id: string, organizationId: string) =>
     db.location.findFirst({

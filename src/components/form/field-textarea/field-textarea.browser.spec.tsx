@@ -11,7 +11,7 @@ test('update value', async () => {
   const user = setupUser();
   const mockedSubmit = vi.fn();
 
-  render(
+  await render(
     <FormMocked
       schema={z.object({ name: z.string() })}
       useFormOptions={{ defaultValues: { name: '' } }}
@@ -40,7 +40,7 @@ test('update value', async () => {
 test('default value', async () => {
   const user = setupUser();
   const mockedSubmit = vi.fn();
-  render(
+  await render(
     <FormMocked
       schema={z.object({ name: z.string() })}
       useFormOptions={{

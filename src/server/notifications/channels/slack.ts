@@ -47,7 +47,7 @@ async function resolveSlackConfig(orgContext: NotifyOrgContext): Promise<{
 
 export function createSlackChannel(): NotificationChannel {
   return {
-    name: 'slack',
+    name: 'SLACK',
 
     async canSend(_event, orgContext) {
       if (!orgContext) return false;
@@ -61,10 +61,11 @@ export function createSlackChannel(): NotificationChannel {
         await resolveSlackConfig(orgContext);
 
       if (!app) return;
+      const slackApp = app;
 
       async function lookupUser(email: string) {
         const result = await Result.tryPromise(() =>
-          app!.client.users.lookupByEmail({ email })
+          slackApp.client.users.lookupByEmail({ email })
         );
         if (result.isErr()) {
           logger.warn(
@@ -80,7 +81,7 @@ export function createSlackChannel(): NotificationChannel {
         blocks: ReturnType<typeof JSXSlack>
       ) {
         const result = await Result.tryPromise(() =>
-          app!.client.chat.postMessage({
+          slackApp.client.chat.postMessage({
             channel,
             blocks,
             text: getFallbackText(blocks),
@@ -114,6 +115,33 @@ export function createSlackChannel(): NotificationChannel {
               locale,
             })
           )
+        );
+        return;
+      }
+
+      // commute.reminder — DM each recipient with personalized commute list (already filtered by notifier)
+      if (event.type === 'commute.reminder') {
+        await Promise.allSettled(
+          event.recipients.map(async (recipient) => {
+            const slackUser = await lookupUser(recipient.email);
+            if (!slackUser?.id) {
+              logger.warn(
+                { email: recipient.email },
+                'Slack: no Slack user found for email, skipping DM'
+              );
+              return;
+            }
+            await post(
+              slackUser.id,
+              JSXSlack(
+                getPrivateBlocks(event, {
+                  locale,
+                  baseUrl: envClient.VITE_BASE_URL,
+                  recipientUserId: recipient.userId,
+                })
+              )
+            );
+          })
         );
         return;
       }

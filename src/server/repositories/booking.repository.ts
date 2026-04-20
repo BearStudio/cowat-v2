@@ -1,14 +1,11 @@
+import { ACTIVE_BOOKING_STATUSES } from '@/features/booking/status-machine';
 import type { AppDB } from '@/server/db';
 import type { RequestStatus, TripType } from '@/server/db/generated/client';
 
+import { locationSummarySelect, memberNotificationInclude } from './helpers';
+
 const passengerWithNotifications = {
-  include: {
-    notificationPreferences: {
-      where: { enabled: false },
-      select: { channel: true },
-    },
-    user: { select: { id: true, name: true, email: true } },
-  },
+  include: memberNotificationInclude,
 } as const;
 
 const affectedPassengersInclude = {
@@ -38,11 +35,7 @@ export const createBookingRepository = (db: AppDB) => ({
               select: {
                 organizationId: true,
                 autoAccept: true,
-                notificationPreferences: {
-                  where: { enabled: false },
-                  select: { channel: true },
-                },
-                user: { select: { id: true, name: true, email: true } },
+                ...memberNotificationInclude,
               },
             },
           },
@@ -50,12 +43,19 @@ export const createBookingRepository = (db: AppDB) => ({
       },
     }),
 
-  findExistingBooking: (passengerMemberId: string, commuteId: string) =>
+  findActiveBooking: (passengerMemberId: string, commuteId: string) =>
     db.passengersOnStops.findFirst({
       where: {
         passengerMemberId,
-        status: { in: ['REQUESTED', 'ACCEPTED'] },
+        status: { in: ACTIVE_BOOKING_STATUSES },
         stop: { commuteId },
+      },
+    }),
+
+  findBookingOnStop: (passengerMemberId: string, stopId: string) =>
+    db.passengersOnStops.findUnique({
+      where: {
+        passengerMemberId_stopId: { passengerMemberId, stopId },
       },
     }),
 
@@ -110,15 +110,7 @@ export const createBookingRepository = (db: AppDB) => ({
           include: {
             commute: {
               include: {
-                driver: {
-                  include: {
-                    notificationPreferences: {
-                      where: { enabled: false },
-                      select: { channel: true },
-                    },
-                    user: { select: { id: true, name: true, email: true } },
-                  },
-                },
+                driver: { include: memberNotificationInclude },
               },
             },
           },
@@ -136,11 +128,17 @@ export const createBookingRepository = (db: AppDB) => ({
       },
     }),
 
+  cancelMany: (ids: string[]) =>
+    db.passengersOnStops.updateMany({
+      where: { id: { in: ids } },
+      data: { status: 'CANCELED' },
+    }),
+
   findAffectedPassengers: (commuteId: string) =>
     db.passengersOnStops.findMany({
       where: {
         stop: { commuteId },
-        status: { in: ['REQUESTED', 'ACCEPTED'] as RequestStatus[] },
+        status: { in: ACTIVE_BOOKING_STATUSES },
       },
       include: affectedPassengersInclude,
     }),
@@ -156,11 +154,8 @@ export const createBookingRepository = (db: AppDB) => ({
       },
     };
 
-    return Promise.all([
-      db.passengersOnStops.count({ where }),
-      db.passengersOnStops.findMany({
-        take: opts.limit + 1,
-        cursor: opts.cursor ? { id: opts.cursor } : undefined,
+    return db.passengersOnStops.findManyPaginated(
+      {
         orderBy: { createdAt: 'desc' },
         where,
         include: {
@@ -175,12 +170,13 @@ export const createBookingRepository = (db: AppDB) => ({
               order: true,
               outwardTime: true,
               inwardTime: true,
-              location: { select: { id: true, name: true } },
+              location: { select: locationSummarySelect },
               commute: { select: { id: true, date: true, type: true } },
             },
           },
         },
-      }),
-    ]);
+      },
+      opts
+    );
   },
 });

@@ -2,6 +2,7 @@
 import { Blocks, Button } from 'jsx-slack';
 
 import i18n from '@/lib/i18n';
+import { routeUrl } from '@/lib/route-url';
 
 import { SlackBody } from '@/features/slack/components/body';
 import { SlackFooter } from '@/features/slack/components/footer';
@@ -16,7 +17,9 @@ type Props = {
 };
 
 export function BookingRefused({ event, baseUrl }: Props) {
-  const dashboardUrl = `${baseUrl}/app/${event.payload.orgSlug}`;
+  const dashboardUrl = routeUrl(baseUrl, '/app/$orgSlug', {
+    params: { orgSlug: event.payload.orgSlug },
+  });
 
   return (
     <Blocks>

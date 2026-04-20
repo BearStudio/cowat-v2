@@ -1,6 +1,6 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
-import { ExternalLinkIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { PencilIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -9,16 +9,10 @@ import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 
 import { BackButton } from '@/components/back-button';
+import { LoadMoreButton } from '@/components/load-more-button';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
-import {
-  DataList,
-  DataListCell,
-  DataListErrorState,
-  DataListLoadingState,
-  DataListRow,
-  DataListText,
-} from '@/components/ui/datalist';
+import { DataListErrorState } from '@/components/ui/datalist';
 import {
   Empty,
   EmptyContent,
@@ -26,10 +20,15 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 
+import {
+  LocationCardSkeleton,
+  LocationMapPreview,
+} from '@/features/location/app/location-card';
 import { LocationDrawer } from '@/features/location/app/location-drawer';
+import { locationsInfiniteOptions } from '@/features/location/location-queries';
+import { useShouldShowNav } from '@/layout/app/layout';
 import {
   PageLayout,
   PageLayoutContent,
@@ -44,16 +43,8 @@ export const PageLocations = () => {
     null
   );
 
-  const locationsQuery = useInfiniteQuery(
-    orpc.location.getAll.infiniteOptions({
-      input: (cursor: string | undefined) => ({
-        cursor,
-      }),
-      initialPageParam: undefined,
-      maxPages: 10,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    })
-  );
+  useShouldShowNav('desktop-only');
+  const locationsQuery = useInfiniteQuery(locationsInfiniteOptions());
 
   const locationDelete = useMutation(
     orpc.location.delete.mutationOptions({
@@ -88,15 +79,13 @@ export const PageLocations = () => {
   return (
     <PageLayout>
       <PageLayoutTopBar
-        startActions={<BackButton />}
+        className="[view-transition-name:none]"
+        startActions={<BackButton viewTransition={{ types: ['slide-down'] }} />}
         endActions={
-          <FloatingActionButton
-            icon={<PlusIcon />}
-            label={t('location:list.newAction')}
-            variant="secondary"
-            size="sm"
-            onClick={openCreateDrawer}
-          />
+          <Button variant="secondary" size="sm" onClick={openCreateDrawer}>
+            <PlusIcon />
+            {t('location:list.newAction')}
+          </Button>
         }
       >
         <PageLayoutTopBarTitle>
@@ -105,7 +94,13 @@ export const PageLocations = () => {
       </PageLayoutTopBar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <DataListLoadingState />)
+          .match('pending', () => (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[1, 0.7, 0.4].map((opacity) => (
+                <LocationCardSkeleton key={opacity} opacity={opacity} />
+              ))}
+            </div>
+          ))
           .match('error', () => (
             <DataListErrorState retry={() => locationsQuery.refetch()} />
           ))
@@ -130,77 +125,78 @@ export const PageLocations = () => {
             </Empty>
           ))
           .match('default', ({ items }) => (
-            <DataList>
-              {items.map((item) => (
-                <DataListRow key={item.id} role="row" withHover>
-                  <DataListCell>
-                    <DataListText className="font-medium">
+            <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    data-testid="location-card"
+                    className="group relative flex flex-col overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md dark:bg-neutral-900"
+                  >
+                    {/* Map preview → opens in Google Maps */}
+                    <a
+                      href={`https://www.google.com/maps/search/${encodeURIComponent(item.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative block aspect-[16/9] overflow-hidden bg-neutral-100 dark:bg-neutral-800"
+                    >
+                      <LocationMapPreview address={item.address} />
+                    </a>
+
+                    {/* Card body */}
+                    <div className="flex items-start gap-2 p-3">
                       <button
                         type="button"
                         onClick={() => openEditDrawer(item.id)}
+                        className="flex min-w-0 flex-1 flex-col items-start text-left"
                       >
-                        {item.name}
-                        <span className="absolute inset-0" />
+                        <span className="w-full truncate text-sm font-medium">
+                          {item.name}
+                        </span>
+                        <span className="w-full truncate text-xs text-muted-foreground">
+                          {item.address}
+                        </span>
                       </button>
-                    </DataListText>
-                    <DataListText className="text-xs text-muted-foreground">
-                      {item.address}
-                    </DataListText>
-                  </DataListCell>
-                  <DataListCell className="flex-none">
-                    <ResponsiveIconButton
-                      variant="ghost"
-                      size="sm"
-                      nativeButton={false}
-                      className="relative z-10"
-                      label={t('location:list.mapsAction')}
-                      render={
-                        <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(item.address)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        />
-                      }
-                    >
-                      <ExternalLinkIcon className="size-4" />
-                    </ResponsiveIconButton>
-                  </DataListCell>
-                  <DataListCell className="flex-none">
-                    <ConfirmResponsiveDrawer
-                      description={t('location:list.deleteConfirmDescription')}
-                      confirmText={t('common:actions.delete')}
-                      confirmVariant="destructive"
-                      onConfirm={() =>
-                        locationDelete.mutateAsync({ id: item.id })
-                      }
-                    >
-                      <ResponsiveIconButton
-                        variant="ghost"
-                        size="sm"
-                        className="relative z-10"
-                        label={t('common:actions.delete')}
-                      >
-                        <Trash2 />
-                      </ResponsiveIconButton>
-                    </ConfirmResponsiveDrawer>
-                  </DataListCell>
-                </DataListRow>
-              ))}
-              {locationsQuery.hasNextPage && (
-                <DataListRow>
-                  <DataListCell className="flex-none">
-                    <Button
-                      size="xs"
-                      variant="secondary"
-                      onClick={() => locationsQuery.fetchNextPage()}
-                      loading={locationsQuery.isFetchingNextPage}
-                    >
-                      {t('location:list.loadMore')}
-                    </Button>
-                  </DataListCell>
-                </DataListRow>
-              )}
-            </DataList>
+
+                      <div className="flex shrink-0 items-center gap-0.5">
+                        <ResponsiveIconButton
+                          variant="ghost"
+                          size="sm"
+                          label={t('common:actions.edit')}
+                          onClick={() => openEditDrawer(item.id)}
+                        >
+                          <PencilIcon className="size-4" />
+                        </ResponsiveIconButton>
+                        <ConfirmResponsiveDrawer
+                          title={item.name}
+                          description={t(
+                            'location:list.deleteConfirmDescription'
+                          )}
+                          confirmText={t('common:actions.delete')}
+                          confirmVariant="destructive"
+                          icon={<featureIcons.Locations />}
+                          onConfirm={() =>
+                            locationDelete.mutateAsync({ id: item.id })
+                          }
+                        >
+                          <ResponsiveIconButton
+                            variant="ghost"
+                            size="sm"
+                            label={t('common:actions.delete')}
+                          >
+                            <Trash2 className="size-4" />
+                          </ResponsiveIconButton>
+                        </ConfirmResponsiveDrawer>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <LoadMoreButton
+                query={locationsQuery}
+                label={t('location:list.loadMore')}
+              />
+            </div>
           ))
           .exhaustive()}
       </PageLayoutContent>

@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { AccountCardRow } from '@/features/account/account-card-row';
+import { PushNotificationToggle } from '@/features/account/push-notification-toggle';
 
 export const NotificationPreferences = () => {
   const { t } = useTranslation(['account']);
@@ -55,6 +56,7 @@ export const NotificationPreferences = () => {
           </span>
         </Checkbox>
       </AccountCardRow>
+      <PushNotificationToggle prefsQuery={prefsQuery} />
     </Card>
   );
 };

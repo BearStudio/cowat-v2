@@ -2,8 +2,7 @@
   "title": "Tableau de bord",
   "newCommuteAction": "Nouveau trajet",
   "today": "Aujourd'hui",
-  "noCommutesForDay": "Aucun trajet pour ce jour",
-  "noCommutesForWeek": "Aucun trajet cette semaine",
+  "noCommutesForDay": "Aucun trajet",
   "booking": {
     "title": "Réserver un trajet",
     "selectStop": "Sélectionner un arrêt",

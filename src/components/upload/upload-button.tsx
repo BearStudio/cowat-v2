@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 
 import type { UploadRoutes } from '@/routes/api/upload';
 
-export type UploadButtonProps = {
+type UploadButtonProps = {
   uploadRoute: UploadRoutes;
   /**
    * Called only if the file was uploaded successfully.

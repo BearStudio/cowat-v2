@@ -33,8 +33,8 @@ describe('Calendar', () => {
     expect(page.getByRole('button').all().length).toBeLessThanOrEqual(3);
   });
 
-  it('should render date buttons when controlled', () => {
-    render(
+  it('should render date buttons when controlled', async () => {
+    await render(
       <Calendar mode="single" selected={new Date()} onSelect={() => {}} />
     );
 

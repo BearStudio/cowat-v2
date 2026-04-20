@@ -1,12 +1,12 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
+import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import {
@@ -41,8 +41,7 @@ export const PageCommuteTemplateUpdate = (props: {
   orgSlug: string;
 }) => {
   const { t } = useTranslation(['commuteTemplate']);
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
+  const { navigateBack } = useNavigateBack();
   useShouldShowNav('desktop-only');
 
   const templateQuery = useQuery(
@@ -66,16 +65,11 @@ export const PageCommuteTemplateUpdate = (props: {
           }),
         ]);
 
-        if (canGoBack) {
-          router.history.back({ ignoreBlocker: true });
-        } else {
-          router.navigate({
-            to: '/app/$orgSlug/account/commute-templates',
-            params: { orgSlug: props.orgSlug },
-            replace: true,
-            ignoreBlocker: true,
-          });
-        }
+        navigateBack({
+          ignoreBlocker: true,
+          to: '/app/$orgSlug/account/commute-templates',
+          params: { orgSlug: props.orgSlug },
+        });
       },
     })
   );

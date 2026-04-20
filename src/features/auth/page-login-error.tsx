@@ -5,14 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ButtonLink } from '@/components/ui/button-link';
 
-import { useMascot } from '@/features/auth/mascot';
-
 export default function PageLoginError({
   search,
 }: {
   search: { error?: string };
 }) {
-  useMascot({ initialState: 'error' });
   const { t } = useTranslation(['auth']);
   if (search.error === 'signup_disabled') {
     return (

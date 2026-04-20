@@ -16,13 +16,14 @@
     "stops_one": "{{count}} arrêt",
     "stops_other": "{{count}} arrêts",
     "availableSeats": "{{available}}/{{total}} places disponibles",
-    "seatCount": "{{available}}/{{total}} places",
+    "seatCount": "{{taken}}/{{total}} places",
     "editAction": "Modifier",
     "cancelAction": "Annuler",
     "callDriver": "Appeler",
     "speedDial": {
       "myLocations": "Mes Lieux",
-      "myCommutes": "Mes Trajets",
+      "myCommutes": "Mes Modèles",
+      "requestCommute": "Demander un trajet",
       "createCommute": "Nouveau Trajet"
     }
   },
@@ -30,24 +31,38 @@
     "title": "Nouveau trajet",
     "submitButton": "Créer",
     "requestButton": "Demander un trajet",
+    "saveTemplateTitle": "Enregistrer comme modèle ?",
+    "saveTemplateDescription": "Enregistrez ce trajet comme modèle pour le réutiliser la prochaine fois.",
+    "saveTemplateConfirm": "Poster et enregistrer le modèle",
+    "saveTemplateSkip": "Continuer sans créer de modèle",
+    "templateSaved": "Modèle enregistré !",
     "requestDrawer": {
       "title": "Demander un trajet",
       "description": "Choisissez une date pour notifier l'équipe que vous avez besoin d'un trajet.",
       "pickDate": "Date",
       "destination": "Destination",
       "destinationPlaceholder": "Destination optionnelle...",
+      "comment": "Commentaire",
+      "commentPlaceholder": "Précisions sur votre demande...",
       "submit": "Envoyer la demande",
       "success": "Demande envoyée !"
     }
   },
   "update": {
     "title": "Modifier le trajet",
-    "submitButton": "Enregistrer"
+    "submitButton": "Enregistrer",
+    "passengersWarning_one": "{{count}} passager est actuellement inscrit sur ce trajet et sera notifié des modifications.",
+    "passengersWarning_other": "{{count}} passagers sont actuellement inscrits sur ce trajet et seront notifiés des modifications."
   },
   "templatePicker": {
     "title": "Mes modèles",
     "emptyState": "Gagnez du temps : créez un modèle",
-    "fromScratch": "Créer de zéro"
+    "fromScratch": "Nouveau trajet",
+    "useTemplate": "Utiliser un modèle",
+    "usingTemplate": "Créé à partir du modèle « {{name}} »",
+    "templateApplied": "Modèle appliqué",
+    "quickCreate": "Création rapide depuis le modèle « {{name}} »",
+    "selectTemplate": "Sélectionner un modèle"
   },
   "stepper": {
     "details": "Détails",
@@ -55,7 +70,7 @@
     "inwardStops": "Heures retour",
     "recap": "Résumé",
     "next": "Suivant",
-    "back": "Retour",
+    "back": "Précédent",
     "submit": "Créer",
     "outboundTrip": "Aller",
     "inboundTrip": "Retour"
@@ -89,7 +104,8 @@
       "inwardInPast": "L'heure retour doit être dans le futur",
       "outwardInPast": "L'heure aller doit être dans le futur",
       "outwardNotIncreasing": "Doit être après l'heure aller de l'arrêt précédent",
-      "inwardNotDecreasing": "Doit être avant l'heure retour de l'arrêt précédent"
+      "inwardNotDecreasing": "Doit être avant l'heure retour de l'arrêt précédent",
+      "datePast": "La date doit être aujourd'hui ou dans le futur"
     }
   }
 }

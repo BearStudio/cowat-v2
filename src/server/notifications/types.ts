@@ -4,13 +4,16 @@ import type { RequestStatus, TripType } from '@/features/booking/schema';
 import type { Commute, CommuteType } from '@/features/commute/schema';
 import type { User } from '@/features/user/schema';
 import type { AppDB } from '@/server/db';
+import type { NotificationChannelType } from '@/server/db/generated/client';
 
 export type Recipient = {
   userId: User['id'];
   name: string;
   email: string;
   phone?: string | null;
-  notificationPreferences?: ReadonlyArray<{ channel: string }>;
+  notificationPreferences?: ReadonlyArray<{
+    channel: NotificationChannelType;
+  }>;
 };
 
 // Used by commute events (driver's commute type: ROUND | ONEWAY)
@@ -62,6 +65,15 @@ export type BookingCanceledEvent = {
   };
 };
 
+export type BookingCanceledByDriverEvent = {
+  type: 'booking.canceledByDriver';
+  recipient: Recipient;
+  payload: CommutePayload & {
+    driverName: string;
+    orgSlug: string;
+  };
+};
+
 export type CommuteCreatedStop = {
   stopId: string;
   locationName: string;
@@ -91,8 +103,6 @@ export type CommuteUpdatedEvent = {
     // New values after the update (CommutePayload fields hold the previous values)
     newCommuteDate: Commute['date'];
     newCommuteType: CommuteType;
-    previousSeats: number;
-    newSeats: number;
   };
 };
 
@@ -113,6 +123,34 @@ export type CommuteRequestedEvent = {
     commuteDate: Commute['date'];
     orgSlug: string;
     locationName?: string;
+    commuteRequestId: string;
+  };
+};
+
+export type ReminderCommute = {
+  date: Commute['date'];
+  driverName: string;
+  driverUserId: User['id'];
+  passengers: Array<{ name: string; userId: User['id'] }>;
+};
+
+export function getCommutesForRecipient(
+  commutes: ReminderCommute[],
+  recipientUserId: string
+): ReminderCommute[] {
+  return commutes.filter(
+    (c) =>
+      c.driverUserId === recipientUserId ||
+      c.passengers.some((p) => p.userId === recipientUserId)
+  );
+}
+
+export type CommuteReminderEvent = {
+  type: 'commute.reminder';
+  recipients: Recipient[];
+  payload: {
+    commutes: ReminderCommute[];
+    orgSlug: string;
   };
 };
 
@@ -121,18 +159,27 @@ export type NotificationEvent =
   | BookingAcceptedEvent
   | BookingRefusedEvent
   | BookingCanceledEvent
+  | BookingCanceledByDriverEvent
   | CommuteCreatedEvent
   | CommuteUpdatedEvent
   | CommuteCanceledEvent
-  | CommuteRequestedEvent;
+  | CommuteRequestedEvent
+  | CommuteReminderEvent;
+
+export type EventWithRecipient = Extract<
+  NotificationEvent,
+  { recipient: Recipient }
+>;
 
 export type NotifyOrgContext = {
   db: AppDB;
   organizationId: string;
 };
 
+export type AllowedNotificationChannels = NotificationChannelType | 'TERMINAL';
+
 export interface NotificationChannel {
-  name: string;
+  name: AllowedNotificationChannels;
   canSend(
     event: NotificationEvent,
     orgContext?: NotifyOrgContext

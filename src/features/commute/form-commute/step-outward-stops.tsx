@@ -8,6 +8,8 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import { useFocusFieldAt } from '@/hooks/use-focus-field-at';
+
 import {
   FormField,
   FormFieldController,
@@ -40,9 +42,10 @@ export const StepOutwardStops = ({
     control,
     name: 'stops',
   });
+  const { containerRef, focusFieldAt } = useFocusFieldAt();
 
   return (
-    <div className="flex flex-col gap-3 py-4">
+    <div ref={containerRef} className="flex flex-col gap-3">
       {fields.map((field, index) => {
         const isFirst = index === 0;
         const isLast = index === fields.length - 1;
@@ -52,7 +55,7 @@ export const StepOutwardStops = ({
 
         return (
           <Fragment key={field.id}>
-            <div className="flex flex-col gap-2 py-3">
+            <div data-field-index={index} className="flex flex-col gap-2 py-3">
               <span className="text-sm font-semibold">{stopLabel}</span>
 
               <FormFieldLocationSelect
@@ -65,7 +68,7 @@ export const StepOutwardStops = ({
                   .filter((id): id is string => !!id)}
               />
 
-              <div className="flex items-end gap-3">
+              <div className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
                   <FormField>
                     <FormFieldLabel required>
@@ -83,7 +86,7 @@ export const StepOutwardStops = ({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
+                    className="mt-7 shrink-0 text-muted-foreground opacity-50 hover:opacity-100"
                     onClick={() => remove(index)}
                   >
                     <Trash2Icon className="size-4" />
@@ -99,7 +102,10 @@ export const StepOutwardStops = ({
                 variant="ghost"
                 size="lg"
                 className="w-full border border-dashed"
-                onClick={() => insert(index + 1, defaultStop)}
+                onClick={() => {
+                  insert(index + 1, defaultStop);
+                  focusFieldAt(index + 1);
+                }}
               >
                 <PlusIcon className="size-3" />
                 {t(`${ns}:form.addStop`)}

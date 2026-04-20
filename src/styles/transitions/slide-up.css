@@ -1,0 +1,22 @@
+/* Slide up: opening a page from bottom (e.g. new commute) */
+html:active-view-transition-type(slide-up) {
+  &::view-transition-old(page-content) {
+    animation: none;
+  }
+  &::view-transition-new(page-content) {
+    animation: 250ms cubic-bezier(0.16, 1, 0.3, 1) both slide-in-up;
+    z-index: 1;
+  }
+  &::view-transition-group(page-content) {
+    z-index: 100;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

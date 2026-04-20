@@ -7,23 +7,25 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 import { Button } from '@/components/ui/button';
 
-export const fabVariants = cva('rounded-full shadow-lg', {
-  variants: {
-    size: {
-      default: "size-16 [&_svg:not([class*='size-'])]:size-6",
-      sm: "size-14 [&_svg:not([class*='size-'])]:size-5",
-      lg: "size-18 [&_svg:not([class*='size-'])]:size-7",
+export const fabVariants = cva(
+  'rounded-3xl shadow-lg transition-[color,box-shadow,transform] active:scale-[0.97]',
+  {
+    variants: {
+      size: {
+        default: "size-16 [&_svg:not([class*='size-'])]:size-6",
+        sm: "size-14 [&_svg:not([class*='size-'])]:size-5",
+        lg: "size-18 [&_svg:not([class*='size-'])]:size-7",
+      },
     },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
-
-export const fabContainerClasses =
-  'fixed z-30 flex flex-col items-center gap-3 bottom-[calc(64px+env(safe-area-inset-bottom)+1rem)] right-4';
+    defaultVariants: {
+      size: 'default',
+    },
+  }
+);
 
 export type FabVariantProps = VariantProps<typeof fabVariants>;
+
+const getFabPortalRoot = () => document.getElementById('fab-portal-root');
 
 export const FabPortal = ({
   children,
@@ -31,11 +33,11 @@ export const FabPortal = ({
 }: {
   children: ReactNode;
   className?: string;
-}) =>
-  createPortal(
-    <div className={cn(fabContainerClasses, className)}>{children}</div>,
-    document.body
-  );
+}) => {
+  const root = getFabPortalRoot();
+  if (!root) return null;
+  return createPortal(<div className={cn(className)}>{children}</div>, root);
+};
 
 export const ResponsiveFab = ({
   mobile,

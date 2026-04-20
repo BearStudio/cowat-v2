@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 
 import { authClient } from '@/features/auth/client';
 import { AUTH_SIGNUP_ENABLED } from '@/features/auth/config';
-import { useMascot } from '@/features/auth/mascot';
 import { FormFieldsLogin, zFormFieldsLogin } from '@/features/auth/schema';
 import { LoginEmailHint } from '@/features/devtools/login-hint';
 
@@ -36,9 +35,6 @@ export default function PageLogin({
       email: '',
     },
   });
-
-  const { isValid, isSubmitted } = form.formState;
-  useMascot({ isError: !isValid && isSubmitted });
 
   const submitHandler: SubmitHandler<FormFieldsLogin> = async ({ email }) => {
     try {

@@ -1,12 +1,13 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCanGoBack, useRouter } from '@tanstack/react-router';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, AlertTriangleIcon } from 'lucide-react';
+import { useMemo } from 'react';
 import { FieldPath, FormStateSubscribe, useForm, Watch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
+import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
 import {
@@ -17,15 +18,17 @@ import {
   MultiStepFormStep,
 } from '@/components/form';
 import { PreventNavigation } from '@/components/prevent-navigation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { StepDetailsCommuteUpdate } from '@/features/commute/form-commute/step-details-commute-update';
+import { StepCommuteBaseFields } from '@/features/commute/form-commute/step-commute-base-fields';
 import { StepInwardStops } from '@/features/commute/form-commute/step-inward-stops';
 import { StepOutwardStops } from '@/features/commute/form-commute/step-outward-stops';
 import { StepRecap } from '@/features/commute/form-commute/step-recap';
 import {
   asCommuteBase,
   FormFieldsCommuteUpdate,
+  type StopPassenger,
   zFormFieldsCommuteUpdate,
 } from '@/features/commute/schema';
 import { useShouldShowNav } from '@/layout/app/layout';
@@ -38,22 +41,45 @@ import {
 
 export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
   const { t } = useTranslation(['commute']);
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
+  const { navigateBack } = useNavigateBack();
   useShouldShowNav('desktop-only');
 
   const commuteQuery = useQuery(
-    orpc.commute.getById.queryOptions({
+    orpc.commute.getByIdEnriched.queryOptions({
       input: { id: props.id },
     })
   );
+
+  const passengersByLocationId = useMemo(() => {
+    const map = new Map<string, StopPassenger[]>();
+    if (!commuteQuery.data) return map;
+    for (const stop of commuteQuery.data.stops) {
+      const active = stop.passengers.filter(
+        (p) => p.status === 'REQUESTED' || p.status === 'ACCEPTED'
+      );
+      if (active.length > 0) {
+        map.set(stop.locationId, active);
+      }
+    }
+    return map;
+  }, [commuteQuery.data]);
+
+  const activePassengerCount = useMemo(() => {
+    const uniqueIds = new Set<string>();
+    for (const passengers of passengersByLocationId.values()) {
+      for (const p of passengers) {
+        uniqueIds.add(p.id);
+      }
+    }
+    return uniqueIds.size;
+  }, [passengersByLocationId]);
 
   const commuteUpdate = useMutation(
     orpc.commute.update.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
         await Promise.all([
           context.client.invalidateQueries({
-            queryKey: orpc.commute.getById.key({
+            queryKey: orpc.commute.getByIdEnriched.key({
               input: { id: props.id },
             }),
           }),
@@ -63,16 +89,11 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
           }),
         ]);
 
-        if (canGoBack) {
-          router.history.back({ ignoreBlocker: true });
-        } else {
-          router.navigate({
-            to: '/app/$orgSlug/commutes',
-            params: { orgSlug: props.orgSlug },
-            replace: true,
-            ignoreBlocker: true,
-          });
-        }
+        navigateBack({
+          ignoreBlocker: true,
+          to: '/app/$orgSlug/commutes',
+          params: { orgSlug: props.orgSlug },
+        });
       },
     })
   );
@@ -139,7 +160,7 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                 name={t('commute:stepper.details')}
                 onNext={() => form.trigger(['seats', 'type'])}
               >
-                <StepDetailsCommuteUpdate />
+                <StepCommuteBaseFields ns="commute" />
               </MultiStepFormStep>
               <MultiStepFormStep
                 name={t('commute:stepper.stops')}
@@ -186,7 +207,23 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                 }
               />
               <MultiStepFormStep name={t('commute:stepper.recap')}>
-                <StepRecap {...asCommuteBase(form)} ns="commute" />
+                <div className="flex flex-col gap-4 pt-3">
+                  {activePassengerCount > 0 && (
+                    <Alert variant="warning">
+                      <AlertTriangleIcon />
+                      <AlertDescription>
+                        {t('commute:update.passengersWarning', {
+                          count: activePassengerCount,
+                        })}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  <StepRecap
+                    {...asCommuteBase(form)}
+                    ns="commute"
+                    passengersByLocationId={passengersByLocationId}
+                  />
+                </div>
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation

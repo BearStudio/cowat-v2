@@ -1,9 +1,7 @@
 import { VariantProps } from 'class-variance-authority';
 import { ComponentProps, ReactNode } from 'react';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -34,40 +32,6 @@ function OrgButtonLink({
         {children}
       </span>
     </OrgLink>
-  );
-}
-
-type OrgResponsiveIconButtonLinkProps = Omit<
-  OrgButtonLinkProps,
-  'size' | 'children'
-> & {
-  children?: ReactNode;
-  label: ReactNode;
-  size?: 'xs' | 'sm' | 'default' | 'lg';
-  breakpoint?: number;
-};
-
-function OrgResponsiveIconButtonLink({
-  label,
-  size,
-  breakpoint,
-  children,
-  ...props
-}: OrgResponsiveIconButtonLinkProps) {
-  const isMobile = useIsMobile(breakpoint);
-  const buttonIconSize = match(size)
-    .with('default', undefined, () => 'icon' as const)
-    .with('xs', () => 'icon-xs' as const)
-    .with('sm', () => 'icon-sm' as const)
-    .with('lg', () => 'icon-lg' as const)
-    .exhaustive();
-  const buttonSize = isMobile ? buttonIconSize : size;
-
-  return (
-    <OrgButtonLink size={buttonSize} {...props}>
-      {children}
-      <span className={cn(isMobile && 'sr-only')}>{label}</span>
-    </OrgButtonLink>
   );
 }
 
@@ -114,8 +78,4 @@ function OrgFloatingActionButtonLink({
   );
 }
 
-export {
-  OrgButtonLink,
-  OrgFloatingActionButtonLink,
-  OrgResponsiveIconButtonLink,
-};
+export { OrgButtonLink, OrgFloatingActionButtonLink };

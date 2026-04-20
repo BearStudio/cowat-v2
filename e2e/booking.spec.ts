@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-
 import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, ORG_SLUG, USER_FILE } from 'e2e/utils/constants';
 
@@ -51,6 +50,9 @@ test.describe('[REGRESSION] Driver cannot open booking drawer for their own comm
     const stopId = createdCommute.stops[0]?.id;
     const commuteId = createdCommute.id;
     expect(stopId).toBeTruthy();
+
+    // Save template drawer appears — skip it
+    await commuteFormPage.skipSaveTemplate();
 
     // Navigate to the dashboard with URL params that would open the booking drawer
     await page.goto(

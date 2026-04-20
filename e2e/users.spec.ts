@@ -74,7 +74,7 @@ test.describe('User management as manager', () => {
     await expect(
       page.getByText('You are about to permanently delete this user.')
     ).toBeVisible();
-    await confirmDialog.confirm();
+    await confirmDialog.confirm('Delete');
 
     await usersPage.expectUserDeleted();
   });

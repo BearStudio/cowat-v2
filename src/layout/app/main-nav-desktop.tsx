@@ -5,13 +5,17 @@ import { Logo } from '@/components/brand/logo';
 
 import { OrgLink } from '@/features/organization/org-link';
 import { OrgSwitcher } from '@/features/organization/org-switcher';
-import { mainNavLinks, NavLinkItem } from '@/layout/app/main-nav-config';
+import {
+  getNavIndex,
+  mainNavLinks,
+  NavLinkItem,
+} from '@/layout/app/main-nav-config';
 
 export const MainNavDesktop = () => {
   const { t } = useTranslation(['layout']);
   const HEIGHT = 'calc(56px + env(safe-area-inset-top))';
   return (
-    <div className="hidden md:flex">
+    <div className="hidden [view-transition-name:main-nav] md:flex">
       <div
         style={{
           height: HEIGHT,
@@ -44,6 +48,7 @@ export const MainNavDesktop = () => {
 const Item = ({
   icon: Icon,
   iconActive,
+  navIndex,
   badge: Badge,
   children,
   ...linkProps
@@ -52,11 +57,20 @@ const Item = ({
   return (
     <Link
       {...linkProps}
-      className="flex items-center justify-center gap-2 rounded-md px-2.5 py-2 text-neutral-500 transition hover:bg-black/5 dark:text-neutral-400 dark:hover:bg-white/5 [&.active]:text-primary"
+      viewTransition={{
+        types: ({ fromLocation }) => {
+          const fromIndex = fromLocation
+            ? getNavIndex(fromLocation.pathname)
+            : navIndex;
+          if (fromIndex === navIndex) return [];
+          return fromIndex < navIndex ? ['slide-left'] : ['slide-right'];
+        },
+      }}
+      className="flex items-center justify-center gap-2 rounded-md px-2.5 py-2 text-neutral-500 transition-[transform,color,background-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-black/5 active:scale-95 dark:text-neutral-400 dark:hover:bg-white/5 [&.active]:scale-105 [&.active]:text-primary"
     >
       <span className="relative">
-        <Icon className="size-4 opacity-60 [.active_&]:hidden" />
-        <IconActive className="hidden size-4 [.active_&]:block" />
+        <Icon className="size-4 opacity-60 in-[.active]:hidden" />
+        <IconActive className="hidden size-4 in-[.active]:block" />
         {Badge && <Badge />}
       </span>
       <span className="text-sm font-medium">{children}</span>

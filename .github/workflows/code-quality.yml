@@ -4,12 +4,13 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches-ignore: [main, dev]
+    branches: [dev]
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   linter:
     name: 🧹 Linter
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -23,17 +24,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install deps
         run: pnpm install
 
-      - name: Run eslint
-        run: pnpm run lint:eslint --max-warnings 0
+      - name: Run oxlint
+        run: pnpm oxlint --deny-warnings .
 
   typescriptChecker:
     name: 🟦 TypeScript Checker
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -58,6 +60,7 @@ jobs:
 
   tests:
     name: 🔬 Tests
+    if: github.event.pull_request.draft == false
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
@@ -97,8 +100,8 @@ jobs:
       - name: Install deps
         run: pnpm install
 
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install chromium --with-deps
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
 
       - name: Run tests
         run: SKIP_ENV_VALIDATION=true pnpm run test:ci

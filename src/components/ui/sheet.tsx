@@ -28,7 +28,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        'fixed inset-0 z-50 bg-black/80 backdrop-blur-xs duration-300 data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0',
+        'fixed inset-0 z-50 bg-black/20 backdrop-blur-xs duration-300 data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0',
         className
       )}
       {...props}
@@ -75,7 +75,7 @@ function SheetContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-4 right-4"
+                className="hit-area-3 absolute top-4 right-4"
                 size="icon-sm"
               />
             }
@@ -139,8 +139,6 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
 };

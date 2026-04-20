@@ -10,7 +10,11 @@ import {
   type ProtectedProcedureArgs,
 } from '@/server/orpc';
 import { createOrganizationRepository } from '@/server/repositories/organization.repository';
-import { paginateResult } from '@/server/routers/utils';
+import {
+  paginateResult,
+  zPaginatedOutput,
+  zPaginationInput,
+} from '@/server/routers/utils';
 
 const tags = ['organizations'];
 
@@ -41,21 +45,11 @@ export default {
   getAll: adminProcedure({ permission: { organization: ['list'] } })
     .route({ method: 'GET', path: '/organizations/all', tags })
     .input(
-      z
-        .object({
-          cursor: z.string().optional(),
-          limit: z.coerce.number().int().min(1).max(100).prefault(20),
-          searchTerm: z.string().trim().optional().prefault(''),
-        })
+      zPaginationInput
+        .extend({ searchTerm: z.string().trim().optional().prefault('') })
         .prefault({})
     )
-    .output(
-      z.object({
-        items: z.array(zOrganizationListItem),
-        nextCursor: z.string().optional(),
-        total: z.number(),
-      })
-    )
+    .output(zPaginatedOutput(zOrganizationListItem))
     .handler(async ({ context, input }) => {
       const [total, items] = await context.organizations.findPaginated({
         searchTerm: input.searchTerm,
@@ -234,15 +228,48 @@ export default {
       });
     }),
 
-  inviteMember: orgProcedure({ permissions: { invitation: ['create'] } })
-    .route({ method: 'POST', path: '/organizations/invite', tags })
+  searchUsersToInvite: orgProcedure({
+    permissions: { invitation: ['create'] },
+  })
+    .route({ method: 'GET', path: '/organizations/search-users', tags })
     .input(
       z.object({
-        email: z.string().email(),
+        email: z.string().trim().min(2),
+        limit: z.coerce.number().int().min(1).max(20).prefault(5),
+      })
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+          image: z.string().nullable(),
+        })
+      )
+    )
+    .handler(async ({ context, input }) => {
+      return context.organizations.searchUsersByEmail({
+        email: input.email,
+        organizationId: context.organizationId,
+        limit: input.limit,
+      });
+    }),
+
+  inviteMembers: orgProcedure({ permissions: { invitation: ['create'] } })
+    .route({ method: 'POST', path: '/organizations/invite-bulk', tags })
+    .input(
+      z.object({
+        emails: z.array(z.string().email()).min(1),
         role: z.enum(['owner', 'member']).prefault('member'),
       })
     )
-    .output(z.void())
+    .output(
+      z.object({
+        succeeded: z.array(z.string()),
+        failed: z.array(z.object({ email: z.string(), error: z.string() })),
+      })
+    )
     .handler(async ({ context, input }) => {
       const membership = await context.organizations.findOwnerMembership(
         context.user.id,
@@ -255,14 +282,30 @@ export default {
         });
       }
 
-      await auth.api.createInvitation({
-        headers: getRequestHeaders(),
-        body: {
-          email: input.email,
-          role: input.role,
-          organizationId: context.organizationId,
-        },
-      });
+      const headers = getRequestHeaders();
+      const succeeded: string[] = [];
+      const failed: { email: string; error: string }[] = [];
+
+      for (const email of input.emails) {
+        try {
+          await auth.api.createInvitation({
+            headers,
+            body: {
+              email,
+              role: input.role,
+              organizationId: context.organizationId,
+            },
+          });
+          succeeded.push(email);
+        } catch (e) {
+          failed.push({
+            email,
+            error: e instanceof Error ? e.message : 'Unknown error',
+          });
+        }
+      }
+
+      return { succeeded, failed };
     }),
 
   removeMember: orgProcedure({ permissions: { member: ['delete'] } })
@@ -294,6 +337,19 @@ export default {
           organizationId: context.organizationId,
         },
       });
+    }),
+
+  updateMemberRole: orgProcedure({ permissions: { member: ['update'] } })
+    .route({ method: 'POST', path: '/organizations/update-member-role', tags })
+    .input(
+      z.object({
+        memberId: z.string(),
+        role: z.enum(['owner', 'member']),
+      })
+    )
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      await context.organizations.updateMemberRole(input.memberId, input.role);
     }),
 
   cancelInvitation: orgProcedure()

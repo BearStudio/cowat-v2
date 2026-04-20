@@ -37,19 +37,28 @@ function RouteComponent() {
   const isAdmin = userRole
     ? authClient.admin.checkRolePermission({
         role: userRole as Role,
-        permission: { apps: ['manager'] },
+        permissions: { apps: ['manager'] },
       })
     : false;
 
   if (isAdmin) {
-    return <Navigate to="/manager/users" replace />;
+    const activeOrg = orgs.find((org) => org.id === activeOrgId);
+    const targetOrg = activeOrg ?? orgs[0]!;
+
+    return (
+      <Navigate
+        to="/manager/$orgSlug"
+        replace
+        params={{ orgSlug: targetOrg.slug }}
+      />
+    );
   }
 
   // Non-admins: find orgs they own (can manage)
   const manageableOrgs = orgs.filter((org) =>
     authClient.organization.checkRolePermission({
       role: org.role as 'owner' | 'admin' | 'member',
-      permission: { organization: ['delete'] },
+      permissions: { organization: ['delete'] },
     })
   );
 

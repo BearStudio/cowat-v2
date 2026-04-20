@@ -1,21 +1,22 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
 import { zu } from '@/lib/zod/zod-utils';
 
+import { zRequestStatus, zTripType } from '@/features/booking/schema';
 import {
   createCommuteRules,
   createStopOrderRules,
 } from '@/features/commute/form-commute-rules';
-import { zLocation } from '@/features/location/schema';
-import { zUser } from '@/features/user/schema';
+import { zLocationSummary } from '@/features/location/schema';
+import { zUserSummary } from '@/features/user/schema';
 
 export const zCommuteType = () => z.enum(['ROUND', 'ONEWAY']);
 export type CommuteType = z.infer<ReturnType<typeof zCommuteType>>;
 
-export const zCommuteStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'DELAYED']);
-export type CommuteStatus = z.infer<ReturnType<typeof zCommuteStatus>>;
+const zCommuteStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'DELAYED']);
 
 export type Commute = z.infer<ReturnType<typeof zCommute>>;
 export const zCommute = () =>
@@ -32,7 +33,6 @@ export const zCommute = () =>
     updatedAt: z.date(),
   });
 
-export type Stop = z.infer<ReturnType<typeof zStop>>;
 export const zStop = () =>
   z.object({
     id: z.string(),
@@ -45,7 +45,6 @@ export const zStop = () =>
     updatedAt: z.date(),
   });
 
-export type StopInput = z.infer<ReturnType<typeof zStopInput>>;
 export const zStopInput = () =>
   z.object({
     order: z.number().int().min(0),
@@ -113,7 +112,15 @@ const zFormFieldsCommuteShared = () =>
 export type FormFieldsCommute = z.infer<ReturnType<typeof zFormFieldsCommute>>;
 export const zFormFieldsCommute = () =>
   zFormFieldsCommuteShared()
-    .extend({ date: z.date({ error: t('common:errors.required') }) })
+    .extend({
+      date: z
+        .date({
+          error: t('common:errors.required'),
+        })
+        .refine((date) => !dayjs(date).isBefore(dayjs(), 'day'), {
+          message: t('commute:form.errors.datePast'),
+        }),
+    })
     .superRefine((data, ctx) => {
       const rules = createCommuteRules(data);
 
@@ -194,20 +201,26 @@ export const zFormFieldsCommuteUpdate = () =>
     });
   });
 
-export type UserSummary = z.infer<ReturnType<typeof zUserSummary>>;
-export const zUserSummary = () =>
-  zUser().pick({ id: true, name: true, image: true, phone: true });
-
-export type LocationSummary = z.infer<ReturnType<typeof zLocationSummary>>;
-export const zLocationSummary = () =>
-  zLocation().pick({ id: true, name: true });
+export type FormFieldsCommuteRequest = z.infer<
+  ReturnType<typeof zFormFieldsCommuteRequest>
+>;
+export const zFormFieldsCommuteRequest = () =>
+  z.object({
+    date: z
+      .date({ error: t('common:errors.required') })
+      .refine((date) => !dayjs(date).isBefore(dayjs(), 'day'), {
+        message: t('commute:form.errors.datePast'),
+      }),
+    destination: zu.fieldText.nullish(),
+    comment: zu.fieldText.nullish(),
+  });
 
 export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
 export const zStopPassenger = () =>
   z.object({
     id: z.string(),
-    status: z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']),
-    tripType: z.enum(['ROUND', 'ONEWAY', 'RETURN']),
+    status: zRequestStatus(),
+    tripType: zTripType(),
     comment: z.string().nullish(),
     passenger: zUserSummary(),
   });

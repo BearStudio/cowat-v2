@@ -4,7 +4,7 @@ import { cn } from '@/lib/tailwind/utils';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const PageLayoutContainer = (props: {
+const PageLayoutContainer = (props: {
   children?: ReactNode;
   className?: string;
 }) => {
@@ -33,7 +33,7 @@ export const PageLayoutTopBar = (props: {
   return (
     <div
       className={cn(
-        'z-10 flex min-w-0 flex-col items-center justify-end overflow-hidden border-b border-b-neutral-200 bg-white pt-safe-top md:-mt-px md:[--page-layout-topbar-height:48px] dark:border-b-neutral-800 dark:bg-neutral-900',
+        'z-10 flex min-w-0 flex-col items-center justify-end overflow-hidden border-b border-b-neutral-200 bg-white pt-safe-top [view-transition-name:page-topbar] md:-mt-px md:[--page-layout-topbar-height:48px] dark:border-b-neutral-800 dark:bg-neutral-900',
         props.className
       )}
       style={{
@@ -83,7 +83,12 @@ export const PageLayoutContent = (props: {
     <div className="relative flex flex-1 flex-col">
       <div className="absolute inset-0">
         <ScrollArea className="h-full">
-          <div className={cn('flex flex-1 flex-col', props.className)}>
+          <div
+            className={cn(
+              'flex flex-1 flex-col pb-24 md:pb-0',
+              props.className
+            )}
+          >
             {props.noContainer ? (
               props.children
             ) : (
@@ -94,7 +99,6 @@ export const PageLayoutContent = (props: {
               </PageLayoutContainer>
             )}
           </div>
-          <div className="h-safe-bottom w-full" />
         </ScrollArea>
       </div>
     </div>

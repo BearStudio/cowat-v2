@@ -2,14 +2,16 @@ import type { PluginFunc } from 'dayjs';
 
 // ─── Types ───────────────────────────────────────────────────────────
 
-/** Shape of a date-format configuration object: namespaced string → string mappings. */
+/** Shape of a date-format configuration object: namespaced string → string mappings, or flat string values. */
 export type FormatConfig = {
-  readonly [ns: string]: { readonly [key: string]: string };
+  readonly [ns: string]: string | { readonly [key: string]: string };
 };
 
-/** Derives the union of `"namespace:key"` strings from a config object. */
+/** Derives the union of format keys from a config object. Nested entries produce `"namespace:key"`, flat strings produce `"namespace"`. */
 export type FormatKey<T extends FormatConfig> = {
-  [NS in Extract<keyof T, string>]: `${NS}:${Extract<keyof T[NS], string>}`;
+  [NS in Extract<keyof T, string>]: T[NS] extends string
+    ? NS
+    : `${NS}:${Extract<keyof T[NS], string>}`;
 }[Extract<keyof T, string>];
 
 // ─── Factory ─────────────────────────────────────────────────────────
@@ -28,8 +30,10 @@ export type FormatKey<T extends FormatConfig> = {
  */
 export function createFormatPlugin<const T extends FormatConfig>(config: T) {
   function getDateFormat(key: FormatKey<T>): string {
-    const [ns, name] = key.split(':') as [string, string];
-    return (config as FormatConfig)[ns]![name]!;
+    const [ns, name] = key.split(':') as [string, string | undefined];
+    const entry = (config as FormatConfig)[ns]!;
+    if (typeof entry === 'string') return entry;
+    return entry[name!]!;
   }
 
   const plugin: PluginFunc = (_option, dayjsClass) => {

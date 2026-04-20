@@ -1,19 +1,17 @@
 import { z } from 'zod';
 
-import { zCommuteType, zUserSummary } from '@/features/commute/schema';
+import { zLocationSummary } from '@/features/location/schema';
+import { zUserSummary } from '@/features/user/schema';
 
 export const zRequestStatus = () =>
   z.enum(['REQUESTED', 'ACCEPTED', 'REFUSED', 'CANCELED']);
 export type RequestStatus = z.infer<ReturnType<typeof zRequestStatus>>;
 
-export const zStopStatus = () =>
-  z.enum(['UNKNOWN', 'ON_TIME', 'AWAITING', 'DELAYED']);
-export type StopStatus = z.infer<ReturnType<typeof zStopStatus>>;
+const zStopStatus = () => z.enum(['UNKNOWN', 'ON_TIME', 'AWAITING', 'DELAYED']);
 
 export const zTripType = () => z.enum(['ROUND', 'ONEWAY', 'RETURN']);
 export type TripType = z.infer<ReturnType<typeof zTripType>>;
 
-export type Booking = z.infer<ReturnType<typeof zBooking>>;
 export const zBooking = () =>
   z.object({
     id: z.string(),
@@ -29,7 +27,6 @@ export const zBooking = () =>
     stopId: z.string(),
   });
 
-export type BookingRequest = z.infer<ReturnType<typeof zBookingRequest>>;
 export const zBookingRequest = () =>
   z.object({
     stopId: z.string(),
@@ -46,11 +43,11 @@ export const zBookingForDriver = () =>
       order: z.number(),
       outwardTime: z.string(),
       inwardTime: z.string().nullish(),
-      location: z.object({ id: z.string(), name: z.string() }),
+      location: zLocationSummary(),
       commute: z.object({
         id: z.string(),
         date: z.date(),
-        type: zCommuteType(),
+        type: z.enum(['ROUND', 'ONEWAY']),
       }),
     }),
   });

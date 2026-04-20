@@ -43,9 +43,7 @@ type FormFieldContextValue = {
   size?: FormFieldSize;
 };
 
-export const FormFieldContext = createContext<FormFieldContextValue | null>(
-  null
-);
+const FormFieldContext = createContext<FormFieldContextValue | null>(null);
 
 export const useFormField = () => {
   const fieldContext = use(FormFieldContext);

@@ -20,6 +20,11 @@
       "body": "*{{passengerName}}* canceled their booking."
     },
     "canceledContext": "📅 {{date}} · {{tripType}}",
+    "canceledByDriver": {
+      "headline": "🚫 *Booking canceled by driver*",
+      "body": "*{{driverName}}* reduced the number of seats and your booking was canceled."
+    },
+    "canceledByDriverContext": "📅 {{date}} · {{commuteType}}",
     "viewRequests": "View requests →",
     "viewCommutes": "View commutes →",
     "findCommute": "Find a commute →"
@@ -36,7 +41,6 @@
     },
     "updatedDate": "📅 ~{{previousDate}}~ → *{{newDate}}*",
     "updatedType": "🚗 ~{{previousType}}~ → *{{newType}}*",
-    "updatedSeats": "💺 ~{{previousSeats}}~ → *{{newSeats}}*",
     "canceled": {
       "headline": "❌ *Commute canceled*",
       "body": "*{{driverName}}* canceled the *{{commuteType}}* commute."
@@ -51,11 +55,57 @@
     },
     "requestedContext": "📅 {{date}}",
     "requestedContextWithLocation": "📅 {{date}}   ·   📍 {{locationName}}",
+    "reminder": {
+      "headline": "🔔 *Carpool reminder!*",
+      "body": "Here are your commutes for today:",
+      "lineDriverWithPassengers": "🚗 *{{date}}* — You're driving (passengers: {{passengers}})",
+      "lineDriverNoPassengers": "🚗 *{{date}}* — You're driving (no passengers yet)",
+      "linePassenger": "💺 *{{date}}* — Passenger with *{{driverName}}*"
+    },
+    "reminderContext": "🚗 {{count}} commute(s) today",
     "bookStop": "Book →",
     "offerRide": "Offer a ride →",
     "seeAllCommutes": "See all commutes →",
     "viewCommutes": "View commutes →",
     "findCommute": "Find a commute →"
+  },
+  "push": {
+    "booking": {
+      "requested": {
+        "title": "New carpool request",
+        "body": "{{passengerName}} wants to join your commute on {{date}}"
+      },
+      "accepted": {
+        "title": "Booking accepted",
+        "body": "{{driverName}} accepted your request for {{date}}"
+      },
+      "refused": {
+        "title": "Booking declined",
+        "body": "{{driverName}} declined your request for {{date}}"
+      },
+      "canceled": {
+        "title": "Booking canceled",
+        "body": "{{passengerName}} canceled their booking for {{date}}"
+      },
+      "canceledByDriver": {
+        "title": "Booking canceled by driver",
+        "body": "{{driverName}} reduced seats and your booking for {{date}} was canceled"
+      }
+    },
+    "commute": {
+      "updated": {
+        "title": "Commute updated",
+        "body": "{{driverName}} updated their commute on {{date}}"
+      },
+      "canceled": {
+        "title": "Commute canceled",
+        "body": "{{driverName}} canceled their commute on {{date}}"
+      },
+      "reminder": {
+        "title": "Carpool reminder",
+        "body": "You have {{count}} commute(s) scheduled today."
+      }
+    }
   },
   "common": {
     "viewDashboard": "Go to dashboard →"

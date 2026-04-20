@@ -5,8 +5,8 @@ import { zu } from '@/lib/zod/zod-utils';
 
 import { createStopOrderRules } from '@/features/commute/form-commute-rules';
 import { zCommuteType } from '@/features/commute/schema';
+import { zLocationSummary } from '@/features/location/schema';
 
-export type CommuteTemplate = z.infer<ReturnType<typeof zCommuteTemplate>>;
 export const zCommuteTemplate = () =>
   z.object({
     id: z.string(),
@@ -67,9 +67,6 @@ export const zFormFieldsCommuteTemplate = () =>
       });
     });
 
-export type FormFieldsTemplateStopInput = z.infer<
-  ReturnType<typeof zFormFieldsTemplateStopInput>
->;
 export const zFormFieldsTemplateStopInput = () =>
   z.object({
     locationId: zu.fieldText.required(),
@@ -77,7 +74,6 @@ export const zFormFieldsTemplateStopInput = () =>
     inwardTime: zu.fieldText.nullish(),
   });
 
-export type TemplateStop = z.infer<ReturnType<typeof zTemplateStop>>;
 export const zTemplateStop = () =>
   z.object({
     id: z.string(),
@@ -90,13 +86,7 @@ export const zTemplateStop = () =>
     updatedAt: z.date(),
   });
 
-export type TemplateStopWithLocation = z.infer<
-  ReturnType<typeof zTemplateStopWithLocation>
->;
 export const zTemplateStopWithLocation = () =>
   zTemplateStop().extend({
-    location: z.object({
-      id: z.string(),
-      name: z.string(),
-    }),
+    location: zLocationSummary(),
   });

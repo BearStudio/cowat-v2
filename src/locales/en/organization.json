@@ -33,8 +33,12 @@
   },
   "members": {
     "title": "Members",
-    "invite": "Invite member",
+    "invite": "Invite",
     "email": "Email address",
+    "emails": "Email addresses",
+    "emailsPlaceholder": "Type an email and press Enter",
+    "emailsRequired": "Add at least one email address",
+    "emailInvalid": "\"{{email}}\" is not a valid email address",
     "role": "Role",
     "remove": "Remove",
     "roles": {
@@ -46,6 +50,8 @@
   "invitations": {
     "title": "Pending invitations",
     "cancel": "Cancel",
+    "cancelConfirm": "Are you sure you want to cancel the invitation for {{email}}?",
+    "cancelConfirmAction": "Cancel invitation",
     "empty": "No pending invitations"
   },
   "create": {
@@ -86,16 +92,21 @@
       "invitationCancelled": "Invitation cancelled",
       "cancelInvitationError": "Failed to cancel invitation",
       "invitationSent": "Invitation sent",
+      "invitationsSent_one": "{{count}} invitation sent",
+      "invitationsSent_other": "{{count}} invitations sent",
       "invitationError": "Failed to send invitation",
+      "invitationsPartialError": "Failed to invite {{count}} email(s): {{emails}}",
       "deleteOrganization": "Delete organization",
       "deleteOrganizationTitle": "Delete this organization",
       "deleteOrganizationConfirm": "Are you sure you want to delete this organization? This action cannot be undone.",
       "deleteOrganizationSuccess": "Organization deleted",
       "deleteOrganizationError": "Failed to delete organization",
       "removeMember": "Remove member",
-      "removeMemberConfirm": "Are you sure you want to remove this member from the organization?",
+      "removeMemberConfirm": "You are about to remove this member from the organization.",
       "removeMemberSuccess": "Member removed",
-      "removeMemberError": "Failed to remove member"
+      "removeMemberError": "Failed to remove member",
+      "updateMemberRoleSuccess": "Role successfully updated",
+      "updateMemberRoleError": "Error updating the role"
     }
   }
 }

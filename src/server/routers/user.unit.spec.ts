@@ -62,8 +62,10 @@ const mockSessionFromDb = {
 describe('user router', () => {
   describe('getAll', () => {
     it('should return paginated users with total count', async () => {
-      mockDb.user.count.mockResolvedValue(1);
-      mockDb.user.findMany.mockResolvedValue([mockUserWithMembers]);
+      mockDb.user.findManyPaginated.mockResolvedValue([
+        1,
+        [mockUserWithMembers],
+      ]);
 
       const result = await call(userRouter.getAll, {});
 
@@ -79,8 +81,7 @@ describe('user router', () => {
         ...mockUserWithMembers,
         id: `user-${i + 1}`,
       }));
-      mockDb.user.count.mockResolvedValue(10);
-      mockDb.user.findMany.mockResolvedValue(usersFromDb);
+      mockDb.user.findManyPaginated.mockResolvedValue([10, usersFromDb]);
 
       const result = await call(userRouter.getAll, { limit: 3 });
 
@@ -90,8 +91,10 @@ describe('user router', () => {
     });
 
     it('should not return nextCursor when items fit within limit', async () => {
-      mockDb.user.count.mockResolvedValue(1);
-      mockDb.user.findMany.mockResolvedValue([mockUserWithMembers]);
+      mockDb.user.findManyPaginated.mockResolvedValue([
+        1,
+        [mockUserWithMembers],
+      ]);
 
       const result = await call(userRouter.getAll, { limit: 5 });
 
@@ -107,15 +110,14 @@ describe('user router', () => {
     });
 
     it('should require user list permission', async () => {
-      mockDb.user.count.mockResolvedValue(0);
-      mockDb.user.findMany.mockResolvedValue([]);
+      mockDb.user.findManyPaginated.mockResolvedValue([0, []]);
 
       await call(userRouter.getAll, {});
 
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['list'] },
+          permissions: { user: ['list'] },
         },
       });
     });
@@ -169,7 +171,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['list'] },
+          permissions: { user: ['list'] },
         },
       });
     });
@@ -246,7 +248,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['create'] },
+          permissions: { user: ['create'] },
         },
       });
     });
@@ -374,7 +376,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['set-role'] },
+          permissions: { user: ['set-role'] },
         },
       });
     });
@@ -438,7 +440,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { user: ['delete'] },
+          permissions: { user: ['delete'] },
         },
       });
     });
@@ -459,8 +461,10 @@ describe('user router', () => {
 
   describe('getUserSessions', () => {
     it('should return paginated sessions with total count', async () => {
-      mockDb.session.count.mockResolvedValue(1);
-      mockDb.session.findMany.mockResolvedValue([mockSessionFromDb]);
+      mockDb.session.findManyPaginated.mockResolvedValue([
+        1,
+        [mockSessionFromDb],
+      ]);
 
       const result = await call(userRouter.getUserSessions, {
         userId: 'target-user-1',
@@ -478,8 +482,7 @@ describe('user router', () => {
         ...mockSessionFromDb,
         id: `session-${i + 1}`,
       }));
-      mockDb.session.count.mockResolvedValue(10);
-      mockDb.session.findMany.mockResolvedValue(sessions);
+      mockDb.session.findManyPaginated.mockResolvedValue([10, sessions]);
 
       const result = await call(userRouter.getUserSessions, {
         userId: 'target-user-1',
@@ -502,15 +505,14 @@ describe('user router', () => {
     });
 
     it('should require session list permission', async () => {
-      mockDb.session.count.mockResolvedValue(0);
-      mockDb.session.findMany.mockResolvedValue([]);
+      mockDb.session.findManyPaginated.mockResolvedValue([0, []]);
 
       await call(userRouter.getUserSessions, { userId: 'target-user-1' });
 
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['list'] },
+          permissions: { session: ['list'] },
         },
       });
     });
@@ -574,7 +576,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['revoke'] },
+          permissions: { session: ['revoke'] },
         },
       });
     });
@@ -658,7 +660,7 @@ describe('user router', () => {
       expect(mockUserHasPermission).toHaveBeenCalledWith({
         body: {
           userId: mockUser.id,
-          permission: { session: ['revoke'] },
+          permissions: { session: ['revoke'] },
         },
       });
     });

@@ -5,50 +5,8 @@ import {
   type RequestStatus,
 } from '@/server/db/generated/client';
 
+import { enrichedCommuteInclude, flattenEnrichedCommute } from './helpers';
 import type { StopCreateInput } from './types';
-
-const enrichedCommuteInclude = {
-  driver: {
-    include: {
-      user: { select: { id: true, name: true, image: true, phone: true } },
-    },
-  },
-  stops: {
-    orderBy: { order: 'asc' as const },
-    include: {
-      location: { select: { id: true, name: true } },
-      passengers: {
-        include: {
-          passenger: {
-            include: {
-              user: {
-                select: { id: true, name: true, image: true, phone: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-} as const;
-
-type EnrichedCommute = Prisma.CommuteGetPayload<{
-  include: typeof enrichedCommuteInclude;
-}>;
-
-function flattenEnrichedCommute(c: EnrichedCommute) {
-  return {
-    ...c,
-    driver: c.driver.user,
-    stops: c.stops.map((s) => ({
-      ...s,
-      passengers: s.passengers.map((p) => ({
-        ...p,
-        passenger: p.passenger.user,
-      })),
-    })),
-  };
-}
 
 export const createCommuteRepository = (db: AppDB) => ({
   create: (data: {
@@ -74,6 +32,14 @@ export const createCommuteRepository = (db: AppDB) => ({
       where: { id, driver: { organizationId } },
       include: { stops: true },
     }),
+
+  findByIdEnriched: async (id: string, organizationId: string) => {
+    const commute = await db.commute.findFirst({
+      where: { id, driver: { organizationId } },
+      include: enrichedCommuteInclude,
+    });
+    return commute ? flattenEnrichedCommute(commute) : null;
+  },
 
   findByDateRange: async (params: {
     from: Date;
@@ -118,16 +84,14 @@ export const createCommuteRepository = (db: AppDB) => ({
       ],
     };
 
-    const [total, rawItems] = await Promise.all([
-      db.commute.count({ where }),
-      db.commute.findMany({
-        take: params.limit + 1,
-        cursor: params.cursor ? { id: params.cursor } : undefined,
+    const [total, rawItems] = await db.commute.findManyPaginated(
+      {
         orderBy: { date: 'asc' },
         where,
         include: enrichedCommuteInclude,
-      }),
-    ]);
+      },
+      params
+    );
 
     const items = rawItems.map(flattenEnrichedCommute);
 
@@ -140,15 +104,99 @@ export const createCommuteRepository = (db: AppDB) => ({
       where: { id, driver: { organizationId } },
     }),
 
-  update: (
+  update: async (
     id: string,
     data: {
       seats?: number;
       type?: CommuteType;
       comment?: string | null;
-      stops?: { deleteMany: object; create: StopCreateInput[] };
+      stops?: StopCreateInput[];
     }
-  ) => db.commute.update({ where: { id }, data, include: { stops: true } }),
+  ) => {
+    const { stops, ...fields } = data;
+
+    if (!stops) {
+      return db.commute.update({
+        where: { id },
+        data: fields,
+        include: { stops: true },
+      });
+    }
+
+    const existingStops = await db.stop.findMany({
+      where: { commuteId: id },
+      orderBy: { order: 'asc' },
+      select: { id: true },
+    });
+
+    const stopsToDelete = existingStops.slice(stops.length);
+
+    return db.commute.update({
+      where: { id },
+      data: {
+        ...fields,
+        stops: {
+          ...(stopsToDelete.length > 0 && {
+            deleteMany: { id: { in: stopsToDelete.map((s) => s.id) } },
+          }),
+          update: existingStops.slice(0, stops.length).map((existing, i) => {
+            const stopData = stops[i];
+            if (!stopData)
+              throw new Error('unreachable: stop index out of bounds');
+            return { where: { id: existing.id }, data: stopData };
+          }),
+          ...(stops.length > existingStops.length && {
+            create: stops.slice(existingStops.length),
+          }),
+        },
+      },
+      include: { stops: true },
+    });
+  },
 
   delete: (id: string) => db.commute.delete({ where: { id } }),
+
+  /**
+   * Returns all commutes in [from, to[ across every organization.
+   * For each commute, includes:
+   * - The driver (userId, name, email, org info)
+   * - Only ACCEPTED passengers on each stop (same fields as the driver)
+   * When `includePreferences` is true, notification preferences are pre-filtered
+   * to `{ enabled: true }` (enabled channels only).
+   */
+  findAllForRange: (
+    from: Date,
+    to: Date,
+    options?: { includePreferences?: boolean }
+  ) => {
+    const memberSelect = {
+      userId: true,
+      user: { select: { name: true, email: true } },
+      organizationId: true,
+      organization: { select: { slug: true } },
+      ...(options?.includePreferences && {
+        notificationPreferences: {
+          where: { enabled: true },
+          select: { channel: true },
+        },
+      }),
+    } satisfies Prisma.MemberSelect;
+
+    return db.commute.findMany({
+      where: { date: { gte: from, lt: to } },
+      select: {
+        id: true,
+        date: true,
+        driver: { select: memberSelect },
+        stops: {
+          select: {
+            passengers: {
+              where: { status: 'ACCEPTED' as RequestStatus },
+              select: { passenger: { select: memberSelect } },
+            },
+          },
+        },
+      },
+    });
+  },
 });

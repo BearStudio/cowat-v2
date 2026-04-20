@@ -18,10 +18,21 @@ export const BackButton = ({
     <ButtonLink
       variant="ghost"
       size="icon-sm"
+      className="hit-area-3"
       onClick={(e) => {
         if (canGoBack) {
           e.preventDefault();
-          router.history.back();
+          const vt = props.viewTransition;
+          const types =
+            typeof vt === 'object' && vt && 'types' in vt
+              ? vt.types
+              : undefined;
+          const back = () => router.history.back();
+          if (Array.isArray(types) && document.startViewTransition) {
+            document.startViewTransition({ update: back, types });
+          } else {
+            back();
+          }
         }
       }}
       to={to}
