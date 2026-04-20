@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router';
+import { Navigate } from '@tanstack/react-router';
 import { ReactNode } from 'react';
 
 import { PageError } from '@/components/errors/page-error';
@@ -16,7 +16,6 @@ export const GuardAuthenticated = ({
   permissionApps?: Permission['apps'];
 }) => {
   const session = authClient.useSession();
-  const router = useRouter();
 
   if (session.isPending) {
     return <Spinner full className="opacity-60" />;
@@ -27,14 +26,9 @@ export const GuardAuthenticated = ({
   }
 
   if (!session.data?.user) {
-    router.navigate({
-      to: '/login',
-      replace: true,
-      search: {
-        redirect: location.href,
-      },
-    });
-    return null;
+    return (
+      <Navigate to="/login" replace search={{ redirect: location.href }} />
+    );
   }
 
   // Check if onboarding is done

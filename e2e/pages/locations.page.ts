@@ -25,8 +25,10 @@ export class LocationsPage {
     return this.page.getByLabel('Address');
   }
 
-  locationRow(name: string) {
-    return this.page.getByRole('row').filter({ hasText: name });
+  locationCard(name: string) {
+    return this.page
+      .locator('[data-testid="location-card"]')
+      .filter({ hasText: name });
   }
 
   async clickCreate() {
@@ -38,11 +40,11 @@ export class LocationsPage {
   }
 
   async clickLocationName(name: string) {
-    await this.locationRow(name).getByText(name).first().click();
+    await this.locationCard(name).getByText(name).first().click();
   }
 
   async clickDeleteOnRow(locationName: string) {
-    await this.locationRow(locationName)
+    await this.locationCard(locationName)
       .getByRole('button', { name: 'Delete', exact: true })
       .click();
   }
@@ -60,6 +62,8 @@ export class LocationsPage {
   }
 
   async expectLocationNotVisible(name: string) {
-    await expect(this.page.getByText(name)).not.toBeVisible();
+    await expect(
+      this.page.getByTestId('layout-app').getByText(name)
+    ).not.toBeVisible();
   }
 }

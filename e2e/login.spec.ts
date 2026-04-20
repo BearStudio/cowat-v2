@@ -1,11 +1,24 @@
 import { test } from 'e2e/utils';
-import { ADMIN_EMAIL, USER_EMAIL } from 'e2e/utils/constants';
+import { ADMIN_EMAIL, OWNER_EMAIL, USER_EMAIL } from 'e2e/utils/constants';
 
 test.describe('Login flow', () => {
   test('Login as admin', async ({ page, loginPage }) => {
     await loginPage.goto();
     await page.login({ email: ADMIN_EMAIL });
     await loginPage.expectAppLayout();
+  });
+
+  test('Login as owner and access owner pages', async ({
+    page,
+    loginPage,
+    managerOrgPage,
+  }) => {
+    await loginPage.goto();
+    await page.login({ email: OWNER_EMAIL });
+    await loginPage.expectAppLayout();
+
+    await managerOrgPage.gotoOrgDashboard();
+    await managerOrgPage.expectMembersSectionVisible();
   });
 
   test('Login as user', async ({ page, loginPage }) => {

@@ -83,8 +83,7 @@ export async function createCommutes(organizationId: string) {
     if (locations.length === 0) continue;
 
     // If commutes already exist, refresh their dates so they always cover
-    // today → today+6. Without this, commutes created by a past seed run
-    // fall outside the dashboard's 7-day window and tests can't find them.
+    // today → today+(COMMUTE_DAYS-1).
     const existingCommutes = await db.commute.findMany({
       where: { driverMemberId: driverMember.id },
       select: { id: true },
@@ -94,7 +93,7 @@ export async function createCommutes(organizationId: string) {
       for (let i = 0; i < existingCommutes.length; i++) {
         await db.commute.update({
           where: { id: existingCommutes[i]!.id },
-          data: { date: addDays(today, i % 7) },
+          data: { date: addDays(today, i % COMMUTE_DAYS) },
         });
       }
       commutesCreated += existingCommutes.length;

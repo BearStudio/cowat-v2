@@ -29,14 +29,10 @@ function formatCommuteLineForRecipient(
   const passengerNames = commute.passengers.map((p) => p.name).join(', ');
 
   if (isDriver) {
-    return passengerNames.length > 0
-      ? i18n.t('notifications:commute.reminder.lineDriverWithPassengers', {
-          date,
-          passengers: passengerNames,
-        })
-      : i18n.t('notifications:commute.reminder.lineDriverNoPassengers', {
-          date,
-        });
+    return i18n.t('notifications:commute.reminder.lineDriverWithPassengers', {
+      date,
+      passengers: passengerNames,
+    });
   }
 
   return i18n.t('notifications:commute.reminder.linePassenger', {

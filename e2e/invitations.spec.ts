@@ -44,8 +44,8 @@ async function ensureInvitation(browser: Browser): Promise<string> {
     }
 
     // 4. Create a new invitation
-    await adminContext.request.post('/api/rest/organizations/invite', {
-      data: { email: INVITED_EMAIL, role: 'member' },
+    await adminContext.request.post('/api/rest/organizations/invite-bulk', {
+      data: { emails: [INVITED_EMAIL], role: 'member' },
     });
 
     // 5. Get the new invitation ID

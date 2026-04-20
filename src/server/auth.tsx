@@ -33,6 +33,8 @@ export const auth = betterAuth({
       // In dev, allow local network access (e.g. testing from mobile devices)
       ...(import.meta.env.DEV ? ['192.168.*:*', '10.*:*', '172.*:*'] : []),
     ],
+    // Fallback for server-side system calls (auth.api.xxx without request headers)
+    fallback: envClient.VITE_BASE_URL,
   },
   session: {
     expiresIn: envServer.AUTH_SESSION_EXPIRATION_IN_SECONDS,

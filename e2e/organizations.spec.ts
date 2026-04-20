@@ -5,6 +5,8 @@ import { randomString } from 'remeda';
 test.describe.serial('Manager organization', () => {
   test.use({ storageState: ADMIN_FILE });
 
+  const testOrg = `orgTest-${randomString(6)}`;
+
   test.beforeAll(async ({ browser }) => {
     // Restore the org name in case a previous run left it in a corrupted state.
     const ctx = await browser.newContext({ storageState: ADMIN_FILE });
@@ -47,5 +49,49 @@ test.describe.serial('Manager organization', () => {
     await managerOrgPage.nameInput.fill('Default Organization');
     await managerOrgPage.saveButton.click();
     await expect(page.getByText('Organization updated').first()).toBeVisible();
+  });
+
+  test('Create organization', async ({ page, managerOrgPage }) => {
+    await managerOrgPage.gotoOrganizationsList();
+
+    await page.getByRole('link', { name: 'New organization' }).click();
+    await page.waitForURL('/manager/organizations/new');
+
+    await page.getByLabel('Name').fill(testOrg);
+    await expect(page.getByLabel('Slug')).toHaveValue(/.+/);
+
+    await managerOrgPage.selectOwnerByEmail(ADMIN_EMAIL);
+
+    const createButton = page.getByRole('button', { name: 'Create' });
+    await expect(createButton).toBeEnabled();
+    await createButton.click();
+
+    await page.waitForURL('**/manager/organizations', { timeout: 15_000 });
+
+    await expect(page.getByText(testOrg).first()).toBeVisible({
+      timeout: 15_000,
+    });
+  });
+
+  test('Remove organization', async ({ page, managerOrgPage }) => {
+    await managerOrgPage.gotoOrganizationsList();
+
+    await page.getByText(testOrg).first().click();
+    await page.getByTestId('layout-manager').waitFor({ timeout: 15_000 });
+
+    await managerOrgPage.openDeleteOrgDrawer();
+
+    const confirmInput = page.getByRole('textbox');
+    await confirmInput.fill(await confirmInput.getAttribute('placeholder')!);
+
+    await page.getByRole('button', { name: 'Confirm' }).click();
+
+    await page.waitForURL('**/manager/organizations', {
+      timeout: 15_000,
+    });
+
+    await expect(page.getByRole('link', { name: testOrg })).not.toBeVisible({
+      timeout: 15_000,
+    });
   });
 });

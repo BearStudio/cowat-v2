@@ -54,7 +54,10 @@ test.describe('Commute template management', () => {
     await commuteTemplatesPage.expectTemplateVisible(name);
   });
 
-  test('Edit a commute template', async ({ page: _page, commuteTemplatesPage }) => {
+  test('Edit a commute template', async ({
+    page: _page,
+    commuteTemplatesPage,
+  }) => {
     // This test creates a template then edits it — double the form interactions.
     test.setTimeout(60_000);
     const originalName = `Edit Me ${randomString(6)}`;
@@ -162,7 +165,7 @@ test.describe('Commute template management', () => {
     await expect(
       page.getByText('You are about to delete this template.').first()
     ).toBeVisible();
-    await confirmDialog.confirm();
+    await confirmDialog.confirm('Delete');
 
     await expect(page.getByText('Template deleted').first()).toBeVisible({
       timeout: 10_000,

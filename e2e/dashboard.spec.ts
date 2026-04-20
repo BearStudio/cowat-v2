@@ -29,7 +29,6 @@ test.describe('Dashboard — Commute Discovery', () => {
     await expect(dashboard.cardContent(firstCard)).toBeVisible();
 
     // Collapse the card
-    await firstCard.locator('[data-slot="card-commute-trigger"]').click();
-    await expect(dashboard.cardContent(firstCard)).not.toBeVisible();
+    await dashboard.collapseCard(firstCard);
   });
 });

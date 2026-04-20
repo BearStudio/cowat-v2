@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/empty';
 
 export default {
-  title: 'Empty',
+  title: 'UI/Empty',
 } satisfies Meta;
 
 export const Default = () => {

@@ -9,15 +9,17 @@ export class CommuteFormPage {
     await this.page.getByTestId('layout-app').waitFor({ timeout: 15_000 });
   }
 
-  // ─── Template picker screen ───────────────────────────────────────────
+  // ─── Template drawer ──────────────────────────────────────────────────
 
-  get fromScratchButton() {
-    return this.page.getByRole('button', { name: 'Create from scratch' });
+  get useTemplateButton() {
+    return this.page.getByRole('button', { name: 'Use a template' });
   }
 
-  /** Click a template card by its name to start from a template. */
-  async selectTemplate(templateName: string) {
+  /** Open the template drawer and click a template card by its name. */
+  async selectTemplateFromDrawer(templateName: string) {
+    await this.useTemplateButton.click();
     await this.page
+      .getByRole('dialog')
       .locator('[data-slot="card"]')
       .filter({ has: this.page.getByText(templateName) })
       .first()
@@ -60,6 +62,22 @@ export class CommuteFormPage {
 
   async clickCreate() {
     await this.page.getByRole('button', { name: 'Create' }).click();
+  }
+
+  async clickSave() {
+    await this.page.getByRole('button', { name: 'Save' }).click();
+  }
+
+  /** Dismiss the save-template drawer that appears after creating from scratch. */
+  async skipSaveTemplate() {
+    await this.page
+      .getByRole('button', { name: 'Continue without creating a template' })
+      .click({ timeout: 10_000 });
+  }
+
+  async gotoEdit(commuteId: string) {
+    await this.page.goto(`/app/${ORG_SLUG}/commutes/${commuteId}/update`);
+    await this.page.getByTestId('layout-app').waitFor({ timeout: 15_000 });
   }
 
   // ─── Commutes list assertions ─────────────────────────────────────────

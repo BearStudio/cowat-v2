@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/floating-action-button';
 
 export default {
-  title: 'FloatingActionButton',
+  title: 'UI/FloatingActionButton',
 } satisfies Meta;
 
 export const Default = () => {

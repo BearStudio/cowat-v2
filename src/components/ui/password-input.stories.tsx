@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 import { PasswordInput } from '@/components/ui/password-input';
 
 export default {
-  title: 'PasswordInput',
+  title: 'UI/PasswordInput',
 } satisfies Meta;
 
 export const Default = () => {

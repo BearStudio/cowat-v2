@@ -114,20 +114,51 @@ export default {
         status,
       });
 
-      await context.notify(
-        {
-          type: 'booking.requested',
-          recipient: toRecipient(driverMember),
-          payload: {
-            passengerName: context.user.name,
-            commuteDate: stop.commute.date,
-            tripType: input.tripType,
-            status,
-            orgSlug: context.orgSlug,
+      const sharedPayload = {
+        commuteDate: stop.commute.date,
+        tripType: input.tripType,
+        orgSlug: context.orgSlug,
+      };
+
+      if (driverMember.autoAccept) {
+        await context.notify(
+          {
+            type: 'booking.accepted',
+            recipient: toRecipient({ user: context.user }),
+            payload: {
+              ...sharedPayload,
+              driverName: driverMember.user.name,
+            },
           },
-        },
-        { db: context.db, organizationId: context.organizationId }
-      );
+          { db: context.db, organizationId: context.organizationId }
+        );
+
+        await context.notify(
+          {
+            type: 'booking.requested',
+            recipient: toRecipient(driverMember),
+            payload: {
+              ...sharedPayload,
+              passengerName: context.user.name,
+              status: 'ACCEPTED',
+            },
+          },
+          { db: context.db, organizationId: context.organizationId }
+        );
+      } else {
+        await context.notify(
+          {
+            type: 'booking.requested',
+            recipient: toRecipient(driverMember),
+            payload: {
+              ...sharedPayload,
+              passengerName: context.user.name,
+              status,
+            },
+          },
+          { db: context.db, organizationId: context.organizationId }
+        );
+      }
 
       return booking;
     }),

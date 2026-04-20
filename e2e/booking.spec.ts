@@ -15,7 +15,6 @@ test.describe('[REGRESSION] Driver cannot open booking drawer for their own comm
     );
 
     await commuteFormPage.goto();
-    await commuteFormPage.fromScratchButton.click();
 
     // Use a date within the dashboard's 7-day range so getByDate returns it
     const futureDate = dayjs().add(3, 'day').format('DD/MM/YYYY');
@@ -77,7 +76,7 @@ test.describe('[REGRESSION] Driver cannot open booking drawer for their own comm
 test.describe.serial('Booking flow', () => {
   test.use({ storageState: USER_FILE });
 
-  test('book a ride on a commute stop', async ({
+  test('book a round trip on a commute stop', async ({
     page,
     dashboard,
     bookingDrawer,
@@ -102,15 +101,79 @@ test.describe.serial('Booking flow', () => {
     // Expect booking drawer to open
     await bookingDrawer.expectOpen();
 
-    // Expect comment textarea; trip type selector only rendered when multiple
-    // options exist (ROUND commute on a non-terminal stop)
-    const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('textbox')).toBeVisible();
-    if ((await dialog.getByRole('radio').count()) > 0) {
-      await expect(dialog.getByRole('radio').first()).toBeVisible();
+    // Explicitly select the ROUND trip type
+    await bookingDrawer.selectTripType('ROUND');
+
+    await bookingDrawer.submit();
+
+    await expect(page.getByText('Booking request sent').first()).toBeVisible();
+    await expect(dashboard.cancelButton(adminCard)).toBeVisible();
+    await expect(
+      page.getByText('Failed to send booking request')
+    ).not.toBeVisible();
+  });
+
+  test('book a one way trip on a commute stop', async ({
+    page,
+    dashboard,
+    bookingDrawer,
+    confirmDialog,
+  }) => {
+    await page.to('/app');
+
+    const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
+    await dashboard.expandCard(adminCard);
+
+    // Cancel any existing booking
+    const existingCancel = dashboard.cancelButton(adminCard);
+    if ((await existingCancel.count()) > 0) {
+      await existingCancel.click();
+      await confirmDialog.confirm();
+      await expect(dashboard.bookButtons(adminCard).first()).toBeVisible();
     }
 
-    // Submit the booking
+    // Click the first stop's "Book" button
+    await dashboard.bookButtons(adminCard).first().click();
+    await bookingDrawer.expectOpen();
+
+    // Select the ONEWAY trip type
+    await bookingDrawer.selectTripType('ONEWAY');
+
+    await bookingDrawer.submit();
+
+    await expect(page.getByText('Booking request sent').first()).toBeVisible();
+    await expect(dashboard.cancelButton(adminCard)).toBeVisible();
+    await expect(
+      page.getByText('Failed to send booking request')
+    ).not.toBeVisible();
+  });
+
+  test('book a return trip on a commute stop', async ({
+    page,
+    dashboard,
+    bookingDrawer,
+    confirmDialog,
+  }) => {
+    await page.to('/app');
+
+    const adminCard = dashboard.commuteCard({ hasText: 'Admin' });
+    await dashboard.expandCard(adminCard);
+
+    // Cancel any existing booking
+    const existingCancel = dashboard.cancelButton(adminCard);
+    if ((await existingCancel.count()) > 0) {
+      await existingCancel.click();
+      await confirmDialog.confirm();
+      await expect(dashboard.bookButtons(adminCard).first()).toBeVisible();
+    }
+
+    // Click the second stop's "Book" button
+    await dashboard.bookButtons(adminCard).nth(1).click();
+    await bookingDrawer.expectOpen();
+
+    // Select the RETURN trip type
+    await bookingDrawer.selectTripType('RETURN');
+
     await bookingDrawer.submit();
 
     // Expect success toast and cancel button
