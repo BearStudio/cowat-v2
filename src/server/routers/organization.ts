@@ -179,7 +179,6 @@ export default {
     .output(z.object({ id: z.string(), name: z.string(), slug: z.string() }))
     .handler(async ({ context, input }) => {
       const result = await auth.api.createOrganization({
-        headers: getRequestHeaders(),
         body: {
           name: input.name,
           slug: input.slug,

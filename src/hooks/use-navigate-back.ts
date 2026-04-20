@@ -9,8 +9,8 @@ export const useNavigateBack = () => {
   const router = useRouter();
 
   const navigateBack = (options?: NavigateOptions) => {
-    if (canGoBack) {
-      router.history.back({ ignoreBlocker: options?.ignoreBlocker });
+    if (canGoBack && !options?.ignoreBlocker) {
+      router.history.back();
     } else {
       router.navigate({
         to: '..',
