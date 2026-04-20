@@ -270,6 +270,7 @@ function CardCommuteHeader({
       {!!stops?.length && (
         <HeaderStopsTimeline
           stops={stops}
+          departureReference={referenceTime}
           renderStopActions={renderStopActions}
         />
       )}
