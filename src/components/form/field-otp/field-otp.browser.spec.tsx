@@ -28,7 +28,7 @@ test('update value', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
       )}
@@ -65,7 +65,7 @@ test('default value', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
           />
         </FormField>
       )}
@@ -92,7 +92,7 @@ test('auto submit', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             autoSubmit
           />
         </FormField>
@@ -124,7 +124,7 @@ test('disabled', async () => {
             type="otp"
             control={form.control}
             name="code"
-            maxLength={6}
+            length={6}
             disabled
           />
         </FormField>
