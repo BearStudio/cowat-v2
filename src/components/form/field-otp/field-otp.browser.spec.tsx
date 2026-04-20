@@ -35,7 +35,7 @@ test('update value', async () => {
     </FormMocked>
   );
 
-  const input = page.getByLabelText('Code');
+  const input = page.getByLabelText('Code').first();
   await user.click(input);
   // Add the code to the user clipboard
   await navigator.clipboard.writeText('000000');
@@ -99,7 +99,7 @@ test('auto submit', async () => {
       )}
     </FormMocked>
   );
-  const input = page.getByLabelText('Code');
+  const input = page.getByLabelText('Code').first();
   await user.click(input);
   // Add the code to the user clipboard
   await navigator.clipboard.writeText('000000');
