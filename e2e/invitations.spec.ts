@@ -3,6 +3,7 @@ import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, INVITED_EMAIL, INVITED_FILE } from 'e2e/utils/constants';
 
 import { OWNER_FILE } from './utils/constants';
+import { expireInvitation } from './utils/db';
 
 type Invitation = { id: string; email: string; status: string };
 type Member = { user: { email: string } };
@@ -139,14 +140,7 @@ test.describe('Invitation flow', () => {
 
     test('Expiration organization invitation', async ({ browser, page }) => {
       const invitationId = await ensureInvitation(browser);
-      const adminContext = await browser.newContext({
-        storageState: ADMIN_FILE,
-      });
-
-      await adminContext.request.post('/api/rest/expire-invitation', {
-        data: { invitationId },
-      });
-      await adminContext.close();
+      await expireInvitation(invitationId);
 
       await page.goto(`/invitations/${invitationId}`);
       await expect(
