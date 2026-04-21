@@ -1,9 +1,18 @@
 import { PrismaClient } from '@/server/db/generated/client';
 
-const prisma = new PrismaClient();
+let prisma: PrismaClient;
+
+function getPrisma() {
+  if (!prisma) {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
 
 export async function expireInvitation(invitationId: string): Promise<void> {
-  await prisma.invitation.update({
+  const db = getPrisma();
+
+  await db.invitation.update({
     where: { id: invitationId },
     data: { expiresAt: new Date(Date.now() - 1000 * 60) },
   });

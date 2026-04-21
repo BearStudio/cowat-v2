@@ -1,4 +1,3 @@
-/* eslint-disable no-process-env */
 import { InferRouterInputs, InferRouterOutputs } from '@orpc/server';
 
 import accountRouter from './routers/account';
