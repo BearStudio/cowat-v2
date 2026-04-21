@@ -14,7 +14,7 @@ function daysFromNow(n: number): Date {
 }
 
 type CreateCommuteParams = {
-  page: any;
+  commuteRecapPage: any;
   commuteFormPage: any;
   date: string;
   seats: string;
@@ -22,7 +22,7 @@ type CreateCommuteParams = {
 };
 
 async function createCommute({
-  page,
+  commuteRecapPage,
   commuteFormPage,
   date,
   seats,
@@ -68,11 +68,14 @@ async function createCommute({
 
   // Step 4 — Recap
   if (roundTrip) {
-    await expect(page.getByText('Round trip')).toBeVisible();
+    await expect(commuteRecapPage.getByText('Round trip')).toBeVisible();
   } else {
-    await expect(page.getByText('One way')).toBeVisible();
+    await expect(commuteRecapPage.getByText('One way')).toBeVisible();
   }
-  await expect(page.getByText(`${seats} seats`).first()).toBeVisible();
+
+  await expect(
+    commuteRecapPage.getByText(`${seats} seats`).first()
+  ).toBeVisible();
 
   await commuteFormPage.clickCreate();
   await commuteFormPage.skipSaveTemplate();
@@ -97,7 +100,7 @@ test.describe('Commute creation', () => {
     const dateStr = formatDate(date);
 
     await createCommute({
-      page,
+      commuteRecapPage: page,
       commuteFormPage,
       date: dateStr,
       seats: '2',
@@ -116,7 +119,7 @@ test.describe('Commute creation', () => {
     const dateStr = formatDate(date);
 
     await createCommute({
-      page,
+      commuteRecapPage: page,
       commuteFormPage,
       date: dateStr,
       seats: '3',
@@ -261,7 +264,7 @@ test.describe('Commute creation', () => {
     const dateStr = formatDate(date);
 
     await createCommute({
-      page,
+      commuteRecapPage: page,
       commuteFormPage,
       date: dateStr,
       seats: '2',
@@ -303,7 +306,7 @@ test.describe('Commute creation', () => {
     const dateStr = formatDate(date);
 
     await createCommute({
-      page,
+      commuteRecapPage: page,
       commuteFormPage,
       date: dateStr,
       seats: '2',
