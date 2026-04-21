@@ -13,78 +13,6 @@ function daysFromNow(n: number): Date {
   return dayjs().add(n, 'day').toDate();
 }
 
-type CreateCommuteParams = {
-  commuteRecapPage: any;
-  commuteFormPage: any;
-  date: string;
-  seats: string;
-  roundTrip?: boolean;
-};
-
-async function createCommute({
-  commuteRecapPage,
-  commuteFormPage,
-  date,
-  seats,
-  roundTrip = false,
-}: CreateCommuteParams) {
-  await commuteFormPage.goto();
-
-  // Step 1 — Details
-  await commuteFormPage.dateInput.fill(date);
-  await commuteFormPage.dateInput.blur();
-
-  const roundTripCheckbox = commuteFormPage.roundTripCheckbox;
-
-  if (roundTrip) {
-    if (!(await roundTripCheckbox.isChecked())) {
-      await roundTripCheckbox.click();
-    }
-  } else {
-    if (await roundTripCheckbox.isChecked()) {
-      await roundTripCheckbox.click();
-    }
-  }
-
-  await commuteFormPage.seatsInput.clear();
-  await commuteFormPage.seatsInput.fill(seats);
-
-  await commuteFormPage.clickNext();
-
-  // Step 2 — Outward stops
-  await commuteFormPage.selectLocation(0, 'Home');
-  await commuteFormPage.fillOutwardTime(0, '08:00');
-  await commuteFormPage.selectLocation(1, 'Office');
-  await commuteFormPage.fillOutwardTime(1, '08:30');
-
-  await commuteFormPage.clickNext();
-
-  // Step 3 — Inward only for round-trip
-  if (roundTrip) {
-    await commuteFormPage.fillInwardTime(0, '18:30');
-    await commuteFormPage.fillInwardTime(1, '19:00');
-    await commuteFormPage.clickNext();
-  }
-
-  // Step 4 — Recap
-  if (roundTrip) {
-    await expect(commuteRecapPage.getByText('Round trip')).toBeVisible();
-  } else {
-    await expect(commuteRecapPage.getByText('One way')).toBeVisible();
-  }
-
-  await expect(
-    commuteRecapPage.getByText(`${seats} seats`).first()
-  ).toBeVisible();
-
-  await commuteFormPage.clickCreate();
-  await commuteFormPage.skipSaveTemplate();
-
-  await expect(commuteFormPage.commutesListHeading).toBeVisible({
-    timeout: 10_000,
-  });
-}
-
 test.describe('Commute creation', () => {
   test.use({ storageState: USER_FILE });
 
@@ -92,20 +20,11 @@ test.describe('Commute creation', () => {
     await commuteFormPage.goto();
   });
 
-  test('Create a one-way commute from scratch', async ({
-    page,
-    commuteFormPage,
-  }) => {
+  test('Create a one-way commute from scratch', async ({ commuteFormPage }) => {
     const date = daysFromNow(14);
     const dateStr = formatDate(date);
 
-    await createCommute({
-      commuteRecapPage: page,
-      commuteFormPage,
-      date: dateStr,
-      seats: '2',
-      roundTrip: false,
-    });
+    await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
     await expect(commuteFormPage.commutesListHeading).toBeVisible();
     await commuteFormPage.expectCommuteInList();
@@ -118,9 +37,7 @@ test.describe('Commute creation', () => {
     const date = daysFromNow(15);
     const dateStr = formatDate(date);
 
-    await createCommute({
-      commuteRecapPage: page,
-      commuteFormPage,
+    await commuteFormPage.createFromScratch({
       date: dateStr,
       seats: '3',
       roundTrip: true,
@@ -263,13 +180,7 @@ test.describe('Commute creation', () => {
     const date = daysFromNow(18);
     const dateStr = formatDate(date);
 
-    await createCommute({
-      commuteRecapPage: page,
-      commuteFormPage,
-      date: dateStr,
-      seats: '2',
-      roundTrip: false,
-    });
+    await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
     const commuteItem = page
       .locator('div', {
@@ -305,13 +216,7 @@ test.describe('Commute creation', () => {
     const date = daysFromNow(19);
     const dateStr = formatDate(date);
 
-    await createCommute({
-      commuteRecapPage: page,
-      commuteFormPage,
-      date: dateStr,
-      seats: '2',
-      roundTrip: false,
-    });
+    await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
     const commuteItem = page
       .locator('div', {
