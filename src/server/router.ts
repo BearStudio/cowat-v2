@@ -17,11 +17,6 @@ export type Router = typeof router;
 export type Inputs = InferRouterInputs<typeof router>;
 export type Outputs = InferRouterOutputs<typeof router>;
 
-const testRouters =
-  process.env.NODE_ENV === 'test'
-    ? { test: (await import('./routers/test.router')).default }
-    : ({} as Record<string, never>);
-
 export const router = {
   account: accountRouter,
   booking: bookingRouter,
@@ -34,5 +29,4 @@ export const router = {
   stats: statsRouter,
   user: userRouter,
   config: configRouter,
-  ...testRouters,
 };
