@@ -189,7 +189,12 @@ test.describe('Commute creation', () => {
       .first();
     await commuteItem.click();
 
-    await page.getByRole('link', { name: 'Edit' }).click();
+    const editLink = page.getByRole('link', { name: 'Edit' });
+
+    await expect(editLink).toBeVisible({ timeout: 10000 });
+    await expect(editLink).toBeEnabled();
+
+    await editLink.click();
 
     // Step 1 — change seats
     await commuteFormPage.seatsInput.clear();
