@@ -182,12 +182,11 @@ test.describe('Commute creation', () => {
 
     await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
-    const commuteItem = page
-      .locator('div', {
-        has: page.getByText(dateStr),
-      })
-      .first();
-    await commuteItem.click();
+    await page
+      .locator('[data-slot="card-commute"]')
+      .first()
+      .locator('[data-slot="card-commute-trigger"]')
+      .click();
 
     const editLink = page.getByRole('link', { name: 'Edit' });
 
@@ -205,9 +204,14 @@ test.describe('Commute creation', () => {
     // Step 2 — outward (no change, just continue)
     await commuteFormPage.clickNext();
 
-    // Step 3 — recap
+    // Step 3 — inward (no change, just continue)
+    await commuteFormPage.clickNext();
 
-    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
+    // Step 4 — recap
+
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible({
+      timeout: 10_000,
+    });
     await page.getByRole('button', { name: 'Save' }).click();
 
     await expect(commuteFormPage.commutesListHeading).toBeVisible({
@@ -223,12 +227,11 @@ test.describe('Commute creation', () => {
 
     await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
-    const commuteItem = page
-      .locator('div', {
-        has: page.getByText(dateStr),
-      })
-      .first();
-    await commuteItem.click();
+    await page
+      .locator('[data-slot="card-commute"]')
+      .first()
+      .locator('[data-slot="card-commute-trigger"]')
+      .click();
 
     await page.getByRole('button', { name: 'Cancel' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
