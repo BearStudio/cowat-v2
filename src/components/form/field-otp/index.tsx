@@ -33,8 +33,8 @@ export const FieldOtp = (
         id={ctx.id}
         aria-invalid={fieldState.invalid ? true : undefined}
         aria-describedby={ctx.describedBy(fieldState.invalid)}
-        onComplete={(v) => {
-          rest.onComplete?.(v);
+        onValueComplete={(v) => {
+          rest.onValueComplete?.(v, {} as never);
           // Only auto submit on first try
           if (!formState.isSubmitted && autoSubmit) {
             const button = document.createElement('button');
@@ -46,20 +46,22 @@ export const FieldOtp = (
           }
         }}
         {...rest}
-        {...field}
-        onChange={(e) => {
-          field.onChange(e);
-          rest.onChange?.(e);
+        value={field.value}
+        onValueChange={(value) => {
+          field.onChange(value);
+          rest.onValueChange?.(value, {} as never);
         }}
         onBlur={(e) => {
-          field.onBlur();
+          if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+            field.onBlur();
+          }
           rest.onBlur?.(e);
         }}
       >
         <InputOTPGroup>
-          {Array.from({ length: rest.maxLength }).map((_, index) => (
+          {Array.from({ length: rest.length }).map((_, index) => (
             // eslint-disable-next-line @eslint-react/no-array-index-key
-            <InputOTPSlot index={index} key={index} />
+            <InputOTPSlot key={index} />
           ))}
         </InputOTPGroup>
       </InputOTP>

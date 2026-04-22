@@ -11,6 +11,12 @@ export class BookingDrawer {
     ).toBeVisible();
   }
 
+  async selectTripType(type: 'ROUND' | 'ONEWAY' | 'RETURN') {
+    const radio = this.dialog.locator(`input[type="radio"][value="${type}"]`);
+    if ((await radio.count()) === 0) return;
+    await radio.evaluate((element) => (element as HTMLElement).click());
+  }
+
   async submit() {
     await this.dialog.getByRole('button', { name: 'Book' }).click();
   }

@@ -13,14 +13,14 @@ export default {
 
 export const Default = () => {
   return (
-    <InputOTP maxLength={6} onComplete={onSubmit}>
+    <InputOTP length={6} onValueComplete={onSubmit}>
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
       </InputOTPGroup>
     </InputOTP>
   );
@@ -28,14 +28,14 @@ export const Default = () => {
 
 export const Invalid = () => {
   return (
-    <InputOTP aria-invalid maxLength={6} onComplete={onSubmit}>
+    <InputOTP aria-invalid length={6} onValueComplete={onSubmit}>
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
       </InputOTPGroup>
     </InputOTP>
   );
@@ -43,14 +43,14 @@ export const Invalid = () => {
 
 export const Disabled = () => {
   return (
-    <InputOTP disabled maxLength={6} onComplete={onSubmit}>
+    <InputOTP disabled length={6} onValueComplete={onSubmit}>
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
+        <InputOTPSlot />
       </InputOTPGroup>
     </InputOTP>
   );
@@ -59,34 +59,34 @@ export const Disabled = () => {
 export const Sizes = () => {
   return (
     <div className="flex flex-col gap-4">
-      <InputOTP size="sm" maxLength={6} onComplete={onSubmit}>
+      <InputOTP size="sm" length={6} onValueComplete={onSubmit}>
         <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
-          <InputOTPSlot index={4} />
-          <InputOTPSlot index={5} />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
         </InputOTPGroup>
       </InputOTP>
-      <InputOTP maxLength={6} onComplete={onSubmit}>
+      <InputOTP length={6} onValueComplete={onSubmit}>
         <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
-          <InputOTPSlot index={4} />
-          <InputOTPSlot index={5} />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
         </InputOTPGroup>
       </InputOTP>
-      <InputOTP size="lg" maxLength={6} onComplete={onSubmit}>
+      <InputOTP size="lg" length={6} onValueComplete={onSubmit}>
         <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
-          <InputOTPSlot index={4} />
-          <InputOTPSlot index={5} />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
+          <InputOTPSlot />
         </InputOTPGroup>
       </InputOTP>
     </div>

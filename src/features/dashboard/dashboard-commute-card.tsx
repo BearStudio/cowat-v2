@@ -17,7 +17,6 @@ import {
   CardCommuteTrigger,
 } from '@/features/commute/card-commute';
 import { CardCommuteActions } from '@/features/commute/card-commute-actions';
-import { CardCommuteStopsList } from '@/features/commute/card-commute-stops-list';
 import { getCommutePassengerStats } from '@/features/commute/commute-passenger-rules';
 import { CommuteEnriched } from '@/features/commute/schema';
 
@@ -48,6 +47,7 @@ export const DashboardCommuteCard = ({
   const isDriver = currentUserId === commute.driver.id;
   const bookingStatus = getUserBookingStatus(commute, currentUserId);
   const hasPassengers = acceptedPassengers.size > 0;
+
   const hasBookingOnCommute = commute.stops.some((s) =>
     s.passengers.some(
       (p) =>
@@ -71,15 +71,86 @@ export const DashboardCommuteCard = ({
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={commute.driver}
-          date={commute.date}
           type={commute.type}
           totalSeats={commute.seats}
           outwardTaken={outwardCount}
           inwardTaken={commute.type === 'ROUND' ? inwardCount : undefined}
           outwardDeparture={commute.stops.at(0)?.outwardTime}
           inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
+          stops={commute.stops}
           passengers={[...acceptedPassengers.values()]}
           badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}
+          renderStopActions={
+            isDriver
+              ? undefined
+              : (stopId, { isLast }) => {
+                  const stop = commute.stops.find((s) => s.id === stopId);
+                  if (!stop) return null;
+
+                  const userBooking = stop.passengers?.find(
+                    (p) =>
+                      p.passenger.id === currentUserId &&
+                      (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
+                  );
+
+                  if (userBooking) {
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <ConfirmResponsiveDrawer
+                          description={
+                            <div className="flex flex-col gap-3">
+                              <span>
+                                {t(
+                                  'dashboard:cancelBooking.confirmDescription'
+                                )}
+                              </span>
+                              <ConfirmSummary
+                                user={commute.driver}
+                                date={commute.date}
+                                typeLabel={t(
+                                  `commute:list.type.${commute.type}`
+                                )}
+                                stops={[stop]}
+                              />
+                            </div>
+                          }
+                          confirmText={t('common:actions.confirm')}
+                          confirmVariant="destructive"
+                          onConfirm={() =>
+                            bookingCancel.mutateAsync({ id: userBooking.id })
+                          }
+                        >
+                          <Button
+                            variant="destructive-secondary"
+                            size="sm"
+                            className="mt-2 w-full font-normal tracking-[0.15em] uppercase"
+                          >
+                            {t('common:actions.cancel')}
+                          </Button>
+                        </ConfirmResponsiveDrawer>
+                      </div>
+                    );
+                  }
+
+                  if (hasBookingOnCommute) return null;
+                  if (isFull) return null;
+                  if (commute.type === 'ONEWAY' && isLast) return null;
+
+                  return (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="mt-2 w-full font-normal tracking-[0.15em] uppercase"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onBookStop(stop.id);
+                      }}
+                    >
+                      {t('dashboard:booking.submitButton')}
+                    </Button>
+                  );
+                }
+          }
         />
       </CardCommuteTrigger>
       <CardCommuteContent>
@@ -93,64 +164,6 @@ export const DashboardCommuteCard = ({
               </AlertDescription>
             </Alert>
           )}
-          <CardCommuteStopsList
-            stops={commute.stops}
-            renderActions={(stop, { isLast }) => {
-              if (isDriver) return null;
-
-              const userBooking = stop.passengers?.find(
-                (p) =>
-                  p.passenger.id === currentUserId &&
-                  (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
-              );
-              if (userBooking) {
-                return (
-                  <ConfirmResponsiveDrawer
-                    description={
-                      <div className="flex flex-col gap-3">
-                        <span>
-                          {t('dashboard:cancelBooking.confirmDescription')}
-                        </span>
-                        <ConfirmSummary
-                          user={commute.driver}
-                          date={commute.date}
-                          typeLabel={t(`commute:list.type.${commute.type}`)}
-                          stops={[stop]}
-                        />
-                      </div>
-                    }
-                    confirmText={t('common:actions.confirm')}
-                    confirmVariant="destructive"
-                    onConfirm={() =>
-                      bookingCancel.mutateAsync({ id: userBooking.id })
-                    }
-                  >
-                    <Button
-                      variant="destructive-secondary"
-                      size="sm"
-                      className="w-full font-normal tracking-[0.15em] uppercase"
-                    >
-                      {t('common:actions.cancel')}
-                    </Button>
-                  </ConfirmResponsiveDrawer>
-                );
-              }
-              if (hasBookingOnCommute) return null;
-              if (isFull) return null;
-              // Last stop of a one-way commute has no valid trip type
-              if (commute.type === 'ONEWAY' && isLast) return null;
-              return (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full font-normal tracking-[0.15em] uppercase"
-                  onClick={() => onBookStop(stop.id)}
-                >
-                  {t('dashboard:booking.submitButton')}
-                </Button>
-              );
-            }}
-          />
           <CardCommuteActions
             isDriver={isDriver}
             commuteId={commute.id}

@@ -1,5 +1,5 @@
 import { expect, test } from 'e2e/utils';
-import { ADMIN_FILE, USER_FILE } from 'e2e/utils/constants';
+import { ADMIN_FILE, USER_EMAIL, USER_FILE } from 'e2e/utils/constants';
 import { randomString } from 'remeda';
 
 test.describe('User management as user', () => {
@@ -65,6 +65,31 @@ test.describe('User management as manager', () => {
     await usersPage.clickSave();
 
     await expect(page.getByText(newAdminName).first()).toBeVisible();
+  });
+
+  test('Revoke a user session', async ({
+    usersPage,
+    page: adminPage,
+    browser,
+  }) => {
+    const userContext = await browser.newContext({ storageState: USER_FILE });
+    const userPage = await userContext.newPage();
+
+    await userPage.goto('/app');
+    await expect(userPage.getByTestId('layout-app')).toBeVisible();
+
+    await usersPage.searchInput.fill(USER_EMAIL);
+    await usersPage.expectUserVisible(USER_EMAIL);
+    await usersPage.clickUser(USER_EMAIL);
+    await adminPage.waitForURL('**/manager/users/**');
+
+    await adminPage.getByRole('button', { name: 'Revoke all' }).click();
+
+    await userPage.reload();
+    await userPage.waitForURL('**/login**', { timeout: 10_000 });
+    await expect(userPage.getByTestId('layout-app')).not.toBeVisible();
+
+    await userContext.close();
   });
 
   test('Delete a user', async ({ page, usersPage, confirmDialog }) => {

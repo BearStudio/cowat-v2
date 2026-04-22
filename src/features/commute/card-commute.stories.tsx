@@ -21,7 +21,6 @@ export const Default = () => {
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={{ name: 'Alice Martin', image: null }}
-          date={new Date('2026-02-14')}
           type="ROUND"
           totalSeats={4}
           outwardTaken={2}
@@ -46,7 +45,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Alice Martin', image: null }}
-            date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
             outwardTaken={2}
@@ -61,7 +59,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Bob Dupont', image: null }}
-            date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
             outwardTaken={3}
@@ -79,7 +76,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Claire Petit', image: null }}
-            date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={4}
             outwardTaken={3}
@@ -97,7 +93,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Charlie Durand', image: null }}
-            date={new Date('2026-02-14')}
             type="ONEWAY"
             totalSeats={3}
             outwardTaken={1}
@@ -115,7 +110,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Diana Moreau', image: null }}
-            date={new Date('2026-02-15')}
             type="ROUND"
             totalSeats={4}
             outwardTaken={2}
@@ -131,7 +125,6 @@ export const LeftBorderByStatus = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Eve Lambert', image: null }}
-            date={new Date('2026-02-15')}
             type="ONEWAY"
             totalSeats={2}
             outwardTaken={0}
@@ -164,7 +157,6 @@ export const WithManyPassengers = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Alice Martin', image: null }}
-            date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={8}
             outwardTaken={1}
@@ -185,7 +177,6 @@ export const WithManyPassengers = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Alice Martin', image: null }}
-            date={new Date('2026-02-14')}
             type="ONEWAY"
             totalSeats={4}
             outwardTaken={1}
@@ -204,7 +195,6 @@ export const WithManyPassengers = () => {
         <CardCommuteTrigger>
           <CardCommuteHeader
             driver={{ name: 'Alice Martin', image: null }}
-            date={new Date('2026-02-14')}
             type="ROUND"
             totalSeats={2}
             outwardTaken={1}
@@ -229,7 +219,6 @@ export const WithActions = () => {
       <CardCommuteTrigger>
         <CardCommuteHeader
           driver={{ name: 'Alice Martin', image: null }}
-          date={new Date('2026-02-14')}
           type="ROUND"
           totalSeats={4}
           outwardTaken={2}

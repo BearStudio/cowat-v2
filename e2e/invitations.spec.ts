@@ -92,9 +92,6 @@ test.describe('Invitation flow', () => {
     // land on a "no organization" page, so we handle several outcomes.
     await invitationPage.goToApp();
 
-    // Wait for the page to settle after the client-side navigation.
-    await page.waitForLoadState('load');
-
     // Happy path: user is onboarded and has an org → OrgRedirect fires → layout-app.
     // Onboarding path: user was re-created without onboardedAt → "Welcome" heading.
     const layoutApp = page.getByTestId('layout-app');

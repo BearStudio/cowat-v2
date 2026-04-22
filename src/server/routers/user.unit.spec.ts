@@ -59,6 +59,17 @@ const mockSessionFromDb = {
   expiresAt: new Date(Date.now() + 86400000),
 };
 
+function expectUserHasPermissionBody(body: {
+  userId: string;
+  permissions: Record<string, string[]>;
+}) {
+  expect(mockUserHasPermission).toHaveBeenCalledWith(
+    expect.objectContaining({
+      body,
+    })
+  );
+}
+
 describe('user router', () => {
   describe('getAll', () => {
     it('should return paginated users with total count', async () => {
@@ -114,11 +125,9 @@ describe('user router', () => {
 
       await call(userRouter.getAll, {});
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { user: ['list'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { user: ['list'] },
       });
     });
 
@@ -168,11 +177,9 @@ describe('user router', () => {
 
       await call(userRouter.getById, { id: 'target-user-1' });
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { user: ['list'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { user: ['list'] },
       });
     });
 
@@ -245,11 +252,9 @@ describe('user router', () => {
 
       await call(userRouter.create, createInput);
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { user: ['create'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { user: ['create'] },
       });
     });
 
@@ -373,11 +378,9 @@ describe('user router', () => {
 
       await call(userRouter.updateById, updateInput);
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { user: ['set-role'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { user: ['set-role'] },
       });
     });
 
@@ -437,11 +440,9 @@ describe('user router', () => {
 
       await call(userRouter.deleteById, { id: 'target-user-1' });
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { user: ['delete'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { user: ['delete'] },
       });
     });
 
@@ -509,11 +510,9 @@ describe('user router', () => {
 
       await call(userRouter.getUserSessions, { userId: 'target-user-1' });
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { session: ['list'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { session: ['list'] },
       });
     });
 
@@ -573,11 +572,9 @@ describe('user router', () => {
 
       await call(userRouter.revokeUserSessions, { id: 'target-user-1' });
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { session: ['revoke'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { session: ['revoke'] },
       });
     });
 
@@ -657,11 +654,9 @@ describe('user router', () => {
         sessionToken: 'other-token',
       });
 
-      expect(mockUserHasPermission).toHaveBeenCalledWith({
-        body: {
-          userId: mockUser.id,
-          permissions: { session: ['revoke'] },
-        },
+      expectUserHasPermissionBody({
+        userId: mockUser.id,
+        permissions: { session: ['revoke'] },
       });
     });
 

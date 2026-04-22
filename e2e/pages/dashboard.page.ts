@@ -11,7 +11,7 @@ export class DashboardPage {
   }
 
   async expandCard(card: Locator) {
-    await card.locator('[data-slot="card-commute-trigger"]').click();
+    await this.toggleCard(card);
     const content = card.locator('[data-slot="card-commute-content"]');
     await expect(content).toBeVisible();
     // Wait for the collapsible open animation to finish so that child
@@ -19,15 +19,28 @@ export class DashboardPage {
     await expect(content).not.toHaveAttribute('data-starting-style', /.*/);
   }
 
+  async collapseCard(card: Locator) {
+    await this.toggleCard(card);
+    await expect(this.cardContent(card)).not.toBeVisible();
+  }
+
+  async toggleCard(card: Locator) {
+    await card.locator('[data-slot="card-commute-toggle"]').click();
+  }
+
   cardContent(card: Locator) {
     return card.locator('[data-slot="card-commute-content"]');
   }
 
   bookButtons(card: Locator) {
-    return this.cardContent(card).getByRole('button', { name: 'Book' });
+    return card
+      .locator('[data-slot="card-commute-trigger"]')
+      .getByRole('button', { name: 'Book' });
   }
 
   cancelButton(card: Locator) {
-    return this.cardContent(card).getByRole('button', { name: 'Cancel' });
+    return card
+      .locator('[data-slot="card-commute-trigger"]')
+      .getByRole('button', { name: 'Cancel' });
   }
 }
