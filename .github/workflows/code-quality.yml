@@ -1,14 +1,12 @@
 name: 🔎 Code Quality
 
 on:
-  push:
-    branches: [main, dev]
   pull_request:
     branches: [main, dev]
     types: [opened, synchronize, reopened, ready_for_review]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
