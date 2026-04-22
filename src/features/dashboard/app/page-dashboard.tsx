@@ -52,7 +52,7 @@ export const PageDashboard = () => {
     useState<string[]>(initialOpenCommutes);
 
   const today = dayjs().startOf('day');
-  const rangeEnd = today.add(7, 'day');
+  const rangeEnd = today.add(7, 'day').endOf('day');
 
   const commutesQuery = useQuery(
     orpc.commute.getByDate.queryOptions({
