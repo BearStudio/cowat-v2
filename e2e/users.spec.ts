@@ -67,18 +67,6 @@ test.describe('User management as manager', () => {
     await expect(page.getByText(newAdminName).first()).toBeVisible();
   });
 
-  test('Delete a user', async ({ page, usersPage, confirmDialog }) => {
-    await usersPage.clickUser('user', { exact: true });
-    await usersPage.clickDelete();
-
-    await expect(
-      page.getByText('You are about to permanently delete this user.')
-    ).toBeVisible();
-    await confirmDialog.confirm('Delete');
-
-    await usersPage.expectUserDeleted();
-  });
-
   test('Revoke a user session', async ({
     usersPage,
     page: adminPage,
@@ -100,5 +88,17 @@ test.describe('User management as manager', () => {
     await expect(userPage.getByTestId('layout-app')).not.toBeVisible();
 
     await userContext.close();
+  });
+
+  test('Delete a user', async ({ page, usersPage, confirmDialog }) => {
+    await usersPage.clickUser('user', { exact: true });
+    await usersPage.clickDelete();
+
+    await expect(
+      page.getByText('You are about to permanently delete this user.')
+    ).toBeVisible();
+    await confirmDialog.confirm('Delete');
+
+    await usersPage.expectUserDeleted();
   });
 });
