@@ -1,10 +1,13 @@
+import { envServer } from '@/env/server';
 import { PrismaClient } from '@/server/db/generated/client';
 
 let prisma: PrismaClient;
 
 function getPrisma() {
   if (!prisma) {
-    prisma = new PrismaClient();
+    prisma = new PrismaClient({
+      datasourceUrl: envServer.DATABASE_URL,
+    });
   }
   return prisma;
 }
