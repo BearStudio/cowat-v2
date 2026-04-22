@@ -2,7 +2,7 @@ name: 🏷️ PR Title
 
 on:
   pull_request:
-    branches: [dev, main]
+    branches: [dev]
     types: [opened, edited]
 
 jobs:
