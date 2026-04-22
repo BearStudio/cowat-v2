@@ -78,6 +78,8 @@ test.describe('User management as manager', () => {
     await userPage.goto('/app');
     await expect(userPage.getByTestId('layout-app')).toBeVisible();
 
+    await usersPage.searchInput.fill(USER_EMAIL);
+    await usersPage.expectUserVisible(USER_EMAIL);
     await usersPage.clickUser(USER_EMAIL);
     await adminPage.waitForURL('**/manager/users/**');
 
