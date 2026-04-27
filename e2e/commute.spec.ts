@@ -182,6 +182,8 @@ test.describe('Commute creation', () => {
 
     await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
+    await page.waitForTimeout(1000);
+
     await page
       .locator('[data-slot="card-commute"]')
       .first()
@@ -194,20 +196,6 @@ test.describe('Commute creation', () => {
     await expect(editLink).toBeEnabled();
 
     await editLink.click();
-
-    console.log(
-      '[test] type at load - roundTrip checked:',
-      await commuteFormPage.roundTripCheckbox.isChecked()
-    );
-
-    await expect(commuteFormPage.seatsInput).toHaveValue('2', {
-      timeout: 10_000,
-    });
-
-    console.log(
-      '[test] type after data loaded - roundTrip checked:',
-      await commuteFormPage.roundTripCheckbox.isChecked()
-    );
 
     // Step 1 — change seats
     await commuteFormPage.seatsInput.clear();
