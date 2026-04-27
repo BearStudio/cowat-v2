@@ -204,11 +204,7 @@ test.describe('Commute creation', () => {
     // Step 2 — outward (no change, just continue)
     await commuteFormPage.clickNext();
 
-    // Step 3 — inward (no change, just continue)
-    await commuteFormPage.clickNext();
-
-    // Step 4 — recap
-
+    // Step 3 — recap
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible({
       timeout: 10_000,
     });
