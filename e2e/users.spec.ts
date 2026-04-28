@@ -80,8 +80,10 @@ test.describe('User management as manager', () => {
 
     await usersPage.searchInput.fill(USER_EMAIL);
     await usersPage.expectUserVisible(USER_EMAIL);
-    await usersPage.clickUser(USER_EMAIL);
-    await adminPage.waitForURL('**/manager/users/**');
+    await Promise.all([
+      usersPage.clickUser(USER_EMAIL),
+      adminPage.waitForURL('**/manager/users/**'),
+    ]);
 
     await adminPage.getByRole('button', { name: 'Revoke all' }).click();
 
