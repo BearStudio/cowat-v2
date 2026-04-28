@@ -145,8 +145,11 @@ function groupParticipantsByOrg(todayCommutes: RangeCommute[]) {
   for (const commute of todayCommutes) {
     const orgData = getOrCreateOrgData(orgDataByOrgId, commute.driver);
 
-    registerRecipient(orgData.recipients, commute.driver);
     const passengers = collectPassengers(commute, orgData.recipients);
+
+    if (passengers.length > 0) {
+      registerRecipient(orgData.recipients, commute.driver);
+    }
 
     orgData.commutes.push({
       date: commute.date,
