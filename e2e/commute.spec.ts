@@ -180,40 +180,29 @@ test.describe('Commute creation', () => {
     const date = daysFromNow(18);
     const dateStr = formatDate(date);
 
-    await commuteFormPage.createFromScratch({
-      date: dateStr,
-      seats: '2',
-      roundTrip: true,
-    });
+    await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
 
-    await page.waitForTimeout(1000);
+    const lastCard = page.locator('[data-slot="card-commute"]').last();
 
-    await page
-      .locator('[data-slot="card-commute"]')
-      .first()
-      .locator('[data-slot="card-commute-trigger"]')
-      .click();
+    await expect(lastCard).toBeVisible({ timeout: 10_000 });
 
-    const editLink = page.getByRole('link', { name: 'Edit' });
+    await lastCard.locator('[data-slot="card-commute-trigger"]').click();
 
-    await expect(editLink).toBeVisible({ timeout: 10000 });
+    const editLink = lastCard.getByRole('link', { name: 'Edit' });
+
+    await expect(editLink).toBeVisible({ timeout: 10_000 });
     await expect(editLink).toBeEnabled();
-
     await editLink.click();
 
     // Step 1 — change seats
     await commuteFormPage.seatsInput.clear();
     await commuteFormPage.seatsInput.fill('4');
-
     await commuteFormPage.clickNext();
 
     // Step 2 — outward (no change, just continue)
     await commuteFormPage.clickNext();
 
-    // Step 3 — inward (no change, just continue)
-    await commuteFormPage.clickNext();
-
-    // Step 4 — recap
+    // Step 3 — recap
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible({
       timeout: 10_000,
     });
@@ -222,7 +211,6 @@ test.describe('Commute creation', () => {
     await expect(commuteFormPage.commutesListHeading).toBeVisible({
       timeout: 10_000,
     });
-
     await expect(page.getByText('4 seats').first()).toBeVisible();
   });
 
