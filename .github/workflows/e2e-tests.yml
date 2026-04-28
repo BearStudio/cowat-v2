@@ -20,15 +20,6 @@ jobs:
       AUTH_SECRET: fyXjLxjXJowjicI2BAjxOaUsQd1QafdegZDciJE/xM8=
       EMAIL_SERVER: smtp://username:password@localhost:1025
       EMAIL_FROM: Cowat <noreply@example.com>
-      S3_HOST: localhost:9000
-      S3_BUCKET_NAME: default
-      S3_ACCESS_KEY_ID: cowat-access-key
-      S3_SECRET_ACCESS_KEY: cowat-secret-key
-      S3_SECURE: false
-      S3_FORCE_PATH_STYLE: true
-      DOCKER_MINIO_USERNAME: minioadmin
-      DOCKER_MINIO_PASSWORD: minioadmin
-      VITE_S3_BUCKET_PUBLIC_URL: http://localhost:9000/default
     services:
       postgres:
         image: postgres:16.1
@@ -75,31 +66,6 @@ jobs:
 
       - name: Install deps
         run: pnpm install
-
-      - name: Start MinIO server
-        run: |
-          curl -sSL https://dl.min.io/server/minio/release/linux-amd64/minio -o /usr/local/bin/minio
-          chmod +x /usr/local/bin/minio
-          MINIO_ROOT_USER=minioadmin MINIO_ROOT_PASSWORD=minioadmin \
-            minio server /tmp/minio-data --console-address :9001 &
-          until curl -sf http://localhost:9000/minio/health/live; do
-            echo "Waiting for MinIO..."
-            sleep 2
-          done
-          echo "MinIO is ready"
-
-      - name: Setup MinIO bucket
-        run: |
-          curl -sSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc
-          chmod +x /usr/local/bin/mc
-
-          mc alias set minio http://localhost:9000 minioadmin minioadmin
-
-          mc admin user add minio $S3_ACCESS_KEY_ID $S3_SECRET_ACCESS_KEY
-          mc admin policy attach minio readwrite --user $S3_ACCESS_KEY_ID
-
-          mc mb --ignore-existing minio/$S3_BUCKET_NAME
-          mc anonymous set download minio/$S3_BUCKET_NAME
 
       - name: Migrate database
         run: pnpm db:push
