@@ -349,14 +349,51 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      await context.organizations.updateMemberRole(input.memberId, input.role);
+      const membership = await context.organizations.findOwnerMembership(
+        context.user.id,
+        context.organizationId
+      );
+
+      if (!membership) {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Only org owners and admins can update member roles',
+        });
+      }
+
+      const targetMember = await context.organizations.findMemberById(
+        input.memberId,
+        context.organizationId
+      );
+
+      if (!targetMember) {
+        throw new ORPCError('NOT_FOUND', {
+          message: 'Member not found in this organization',
+        });
+      }
+
+      await context.organizations.updateMemberRole(
+        input.memberId,
+        context.organizationId,
+        input.role
+      );
     }),
 
   cancelInvitation: orgProcedure()
     .route({ method: 'POST', path: '/organizations/cancel-invitation', tags })
     .input(z.object({ invitationId: z.string() }))
     .output(z.void())
-    .handler(async ({ input }) => {
+    .handler(async ({ context, input }) => {
+      const invitation = await context.organizations.findInvitationById(
+        input.invitationId,
+        context.organizationId
+      );
+
+      if (!invitation) {
+        throw new ORPCError('NOT_FOUND', {
+          message: 'Invitation not found in this organization',
+        });
+      }
+
       await auth.api.cancelInvitation({
         headers: getRequestHeaders(),
         body: { invitationId: input.invitationId },
