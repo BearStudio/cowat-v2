@@ -13,7 +13,7 @@ export const terminalChannel: NotificationChannel = {
     const [first] = recipients;
     const recipientLabel = first
       ? recipients.length > 1
-        ? `${recipients.length} recipients`
+        ? `${recipients.length} recipients (${recipients.map((r) => r.name).join(', ')})`
         : `${first.name} (${first.email})`
       : 'broadcast';
 
