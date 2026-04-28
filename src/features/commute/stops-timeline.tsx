@@ -125,11 +125,11 @@ const StopAddress = ({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground',
+        'flex min-w-0 items-center gap-1 text-sm text-muted-foreground hover:text-foreground',
         className
       )}
     >
-      <span className="truncate">{address}</span>
+      <span className="min-w-0 truncate">{address}</span>
       <ExternalLinkIcon className="size-3 shrink-0" />
     </a>
   );
