@@ -65,14 +65,6 @@ export async function sendDailyReminders(
   }
 
   const orgDataByOrgId = groupParticipantsByOrg(todayCommutes);
-  for (const [orgId, orgData] of orgDataByOrgId.entries()) {
-    const hasPassengerCommute = orgData.commutes.some(
-      (commute) => commute.passengers.length > 0
-    );
-    if (!hasPassengerCommute) {
-      orgDataByOrgId.delete(orgId);
-    }
-  }
 
   await notifyEachOrg(orgDataByOrgId, db, notifier, logger);
 
@@ -147,9 +139,9 @@ function groupParticipantsByOrg(todayCommutes: RangeCommute[]) {
 
     const passengers = collectPassengers(commute, orgData.recipients);
 
-    if (passengers.length > 0) {
-      registerRecipient(orgData.recipients, commute.driver);
-    }
+    if (passengers.length === 0) continue;
+
+    registerRecipient(orgData.recipients, commute.driver);
 
     orgData.commutes.push({
       date: commute.date,
