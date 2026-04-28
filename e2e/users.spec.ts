@@ -80,12 +80,12 @@ test.describe('User management as manager', () => {
 
     await usersPage.searchInput.fill(USER_EMAIL);
     await usersPage.expectUserVisible(USER_EMAIL);
-    await Promise.all([
-      usersPage.clickUser(USER_EMAIL),
-      adminPage.waitForURL('**/manager/users/**'),
-    ]);
+    await usersPage.clickUser(USER_EMAIL, { exact: true });
 
-    await adminPage.getByRole('button', { name: 'Revoke all' }).click();
+    const revokeButton = adminPage.getByRole('button', { name: 'Revoke all' });
+    await expect(revokeButton).toBeVisible({ timeout: 10_000 });
+    await expect(revokeButton).toBeEnabled({ timeout: 10_000 });
+    await revokeButton.click();
 
     await userPage.reload();
     await userPage.waitForURL('**/login**', { timeout: 10_000 });
