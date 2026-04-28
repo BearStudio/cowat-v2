@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/BearStudio/cowat-v2/compare/v1.3.0...v1.3.1) (2026-04-28)
+
+
+### Bug Fixes
+
+* **notification:** skip driver with no passengers instead of filtering by org ([#314](https://github.com/BearStudio/cowat-v2/issues/314)) ([a5f3098](https://github.com/BearStudio/cowat-v2/commit/a5f30983d6a573e84e5e4b67f3c63ebb732a2149))
+
 # [1.3.0](https://github.com/BearStudio/cowat-v2/compare/v1.2.0...v1.3.0) (2026-04-22)
 
 
