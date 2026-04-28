@@ -37,7 +37,6 @@ export const envClient = createEnv({
       .string()
       .optional()
       .transform((value) => value ?? (isDev ? 'gold' : 'plum')),
-    VITE_S3_BUCKET_PUBLIC_URL: z.url(),
   },
   runtimeEnv: {
     ...envMetaOrProcess,
