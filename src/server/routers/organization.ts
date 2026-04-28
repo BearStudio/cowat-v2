@@ -360,6 +360,12 @@ export default {
         });
       }
 
+      if (input.role === 'owner' && membership.role !== 'owner') {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Only org owners can assign the owner role',
+        });
+      }
+
       const targetMember = await context.organizations.findMemberById(
         input.memberId,
         context.organizationId
@@ -383,6 +389,17 @@ export default {
     .input(z.object({ invitationId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
+      const membership = await context.organizations.findOwnerMembership(
+        context.user.id,
+        context.organizationId
+      );
+
+      if (!membership) {
+        throw new ORPCError('FORBIDDEN', {
+          message: 'Only org owners and admins can cancel invitations',
+        });
+      }
+
       const invitation = await context.organizations.findInvitationById(
         input.invitationId,
         context.organizationId
