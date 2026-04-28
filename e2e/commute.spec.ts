@@ -180,7 +180,11 @@ test.describe('Commute creation', () => {
     const date = daysFromNow(18);
     const dateStr = formatDate(date);
 
-    await commuteFormPage.createFromScratch({ date: dateStr, seats: '2' });
+    await commuteFormPage.createFromScratch({
+      date: dateStr,
+      seats: '2',
+      roundTrip: true,
+    });
 
     await page.waitForTimeout(1000);
 
@@ -206,7 +210,10 @@ test.describe('Commute creation', () => {
     // Step 2 — outward (no change, just continue)
     await commuteFormPage.clickNext();
 
-    // Step 3 — recap
+    // Step 3 — inward (no change, just continue)
+    await commuteFormPage.clickNext();
+
+    // Step 4 — recap
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible({
       timeout: 10_000,
     });
