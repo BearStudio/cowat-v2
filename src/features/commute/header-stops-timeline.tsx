@@ -48,14 +48,14 @@ const COLLAPSE_CLS =
 
 function StopNameRow({ stop }: { stop: StopForTimeline }) {
   return (
-    <div className="-mb-1 flex items-center gap-1.5">
-      <span className="truncate text-sm leading-5 font-medium">
+    <div className="-mb-1 flex min-w-0 items-center gap-1.5">
+      <span className="min-w-0 truncate text-sm leading-5 font-medium">
         {stop.location.name}
       </span>
       {/* Horizontal grid-cols trick: collapse times to 0fr when closed so they
           reveal fluidly on open, instead of display-swapping. */}
       <div className="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-cols-[1fr] group-data-[panel-open]:opacity-100 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]">
-        <div className="flex min-w-0 items-center gap-1.5 overflow-hidden text-sm whitespace-nowrap text-muted-foreground">
+        <div className="flex shrink-0 items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground">
           <span className="text-muted-foreground/50">·</span>
           <TripTime type="ONEWAY" time={stop.outwardTime} />
           {stop.inwardTime && (
