@@ -30,6 +30,9 @@ import {
 } from '@/features/commute/schema';
 import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import { useDashboardSearchParams } from '@/features/dashboard/dashboard-search-params';
+import { UpcomingCommuteBanner } from '@/features/dashboard/upcoming-commute-banner';
+import { UpcomingCommuteDialog } from '@/features/dashboard/upcoming-commute-dialog';
+import { useUpcomingCommute } from '@/features/dashboard/use-upcoming-commute';
 import { OrgFloatingActionButtonLink } from '@/features/organization/org-button-link';
 import { OrgLink } from '@/features/organization/org-link';
 import type { UserSummary } from '@/features/user/schema';
@@ -133,6 +136,11 @@ export const PageDashboard = () => {
     return set('default');
   });
 
+  const [isUpcomingCommuteModalOpen, setIsUpcomingCommuteModalOpen] =
+    useState(false);
+
+  const upcomingCommute = useUpcomingCommute(commutesQuery.data);
+
   return (
     <PageLayout>
       <PageLayoutTopBar
@@ -153,6 +161,23 @@ export const PageDashboard = () => {
       >
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
+
+      {upcomingCommute && (
+        <UpcomingCommuteBanner
+          commute={upcomingCommute}
+          onOpen={() => setIsUpcomingCommuteModalOpen(true)}
+        />
+      )}
+
+      {upcomingCommute && (
+        <UpcomingCommuteDialog
+          commute={upcomingCommute}
+          currentUserId={currentUserId}
+          open={isUpcomingCommuteModalOpen}
+          onOpenChange={setIsUpcomingCommuteModalOpen}
+        />
+      )}
+
       <PageLayoutContent containerClassName="max-w-4xl">
         {ui
           .match('pending', () => <DashboardSkeleton />)
