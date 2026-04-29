@@ -37,14 +37,6 @@ export const envServer = createEnv({
       .enum(['true', 'false'])
       .prefault(isProd ? 'false' : 'true')
       .transform((value) => value === 'true'),
-    S3_ACCESS_KEY_ID: z.string(),
-    S3_SECRET_ACCESS_KEY: z.string(),
-    S3_BUCKET_NAME: z.string().default('default'),
-    S3_REGION: z.string().default('auto'),
-    S3_HOST: z.string(),
-    S3_SECURE: z.stringbool().default(true),
-    S3_FORCE_PATH_STYLE: z.stringbool().default(false),
-
     FIREBASE_API_KEY: zRequiredInProd(),
     FIREBASE_AUTH_DOMAIN: zRequiredInProd(),
     FIREBASE_PROJECT_ID: zRequiredInProd(),
