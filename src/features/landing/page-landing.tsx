@@ -10,7 +10,9 @@ import {
 } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button-link';
+import { LocalSwitcher } from '@/components/ui/local-switcher';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
 export function PageLanding() {
   return (
@@ -21,6 +23,8 @@ export function PageLanding() {
             <img src="/Logo.png" alt="Cowat" className="h-8" />
           </Link>
           <nav className="flex items-center gap-3">
+            <ThemeSwitcher iconOnly />
+            <LocalSwitcher />
             <ButtonLink variant="ghost" size="sm" to="/login">
               Se connecter
             </ButtonLink>
