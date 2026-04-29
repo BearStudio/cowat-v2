@@ -248,7 +248,7 @@ function PhoneMockup() {
       <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-to-br from-brand-300/40 via-brand-200/20 to-transparent blur-2xl dark:from-brand-700/30 dark:via-brand-900/20" />
 
       {/* Phone frame */}
-      <div className="relative flex h-[640px] w-[320px] flex-col overflow-hidden rounded-[2.75rem] border-[10px] border-neutral-900 bg-background shadow-[0_30px_60px_-15px_rgba(0,0,0,0.35)] dark:border-neutral-800 dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)]">
+      <div className="relative flex h-[640px] w-[320px] flex-col overflow-hidden rounded-[2.75rem] border-[10px] border-neutral-900 bg-background shadow-[0_30px_60px_-15px_rgba(0,0,0,0.35)] dark:border-neutral-800 dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] [&_[data-slot=scroll-area-scrollbar]]:hidden">
         {/* iOS Status bar */}
         <div className="relative z-20 flex h-10 shrink-0 items-center justify-between bg-background px-6 text-[11px] font-semibold tabular-nums">
           <span>9:41</span>
