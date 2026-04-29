@@ -150,7 +150,7 @@ type CardCommuteHeaderProps = {
   ) => React.ReactNode;
 };
 
-const MAX_VISIBLE_PASSENGERS = 4;
+const MAX_VISIBLE_PASSENGERS = 3;
 
 function TripInfo({
   type,
@@ -176,24 +176,24 @@ function TripInfo({
   );
 }
 
-function HeaderPassengersRow({
+function PassengersAvatarGroup({
   passengers,
+  className,
 }: {
   passengers: PassengerSummary[];
+  className?: string;
 }) {
   const overflow = passengers.length - MAX_VISIBLE_PASSENGERS;
   return (
-    <div className="col-span-full flex items-center gap-2">
-      <AvatarGroup className="ml-auto">
-        {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
-          <Avatar key={p.id} size="sm">
-            <AvatarImage src={p.image ?? undefined} />
-            <AvatarFallback variant="boring" name={p.name ?? '?'} />
-          </Avatar>
-        ))}
-        {overflow > 0 && <AvatarGroupCount>+{overflow}</AvatarGroupCount>}
-      </AvatarGroup>
-    </div>
+    <AvatarGroup className={className}>
+      {passengers.slice(0, MAX_VISIBLE_PASSENGERS).map((p) => (
+        <Avatar key={p.id} size="sm">
+          <AvatarImage src={p.image ?? undefined} />
+          <AvatarFallback variant="boring" name={p.name ?? '?'} />
+        </Avatar>
+      ))}
+      {overflow > 0 && <AvatarGroupCount>+{overflow}</AvatarGroupCount>}
+    </AvatarGroup>
   );
 }
 
@@ -222,13 +222,19 @@ function CardCommuteHeader({
           <AvatarImage src={driver.image ?? undefined} className="rounded-md" />
           <AvatarFallback variant="boring" name={driver.name ?? '?'} />
         </Avatar>
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <CardTitle className="truncate capitalize">{driver.name}</CardTitle>
           <div className="flex items-center gap-1">
             <Badge variant="secondary" size="sm">
               {t(`commute:list.type.${type}`)}
             </Badge>
             {badge}
+            {!!passengers?.length && (
+              <PassengersAvatarGroup
+                className="ml-auto"
+                passengers={passengers}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -241,8 +247,6 @@ function CardCommuteHeader({
           />
         </div>
       </CardAction>
-
-      {!!passengers?.length && <HeaderPassengersRow passengers={passengers} />}
 
       <div className="col-span-full flex flex-wrap items-center gap-x-4 gap-y-1">
         <TripInfo
