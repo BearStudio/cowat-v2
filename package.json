@@ -49,8 +49,6 @@
     "@base-ui/react": "1.4.0",
     "@bearstudio/ui-state": "1.1.0",
     "@better-auth/expo": "1.6.3",
-    "@better-upload/client": "3.0.17",
-    "@better-upload/server": "3.0.17",
     "@fontsource-variable/outfit": "5.2.8",
     "@hookform/resolvers": "5.2.2",
     "@orpc/client": "1.13.14",
