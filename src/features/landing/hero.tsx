@@ -18,19 +18,151 @@ import {
 import { Button } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 
-import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
-import {
-  CardCommute,
-  CardCommuteContent,
-  CardCommuteHeader,
-  CardCommuteTrigger,
-} from '@/features/commute/card-commute';
+import type { CommuteEnriched } from '@/features/commute/schema';
+import { DashboardCommuteCard } from '@/features/dashboard/dashboard-commute-card';
 import {
   PageLayout,
   PageLayoutContent,
   PageLayoutTopBar,
   PageLayoutTopBarTitle,
 } from '@/layout/app/page-layout';
+
+const NOW = new Date();
+const CURRENT_USER_ID = 'user-current';
+
+const noop = () => Promise.resolve();
+const noopMutation = { mutateAsync: noop } as unknown as React.ComponentProps<
+  typeof DashboardCommuteCard
+>['commuteCancel'];
+
+const mockStop = (
+  id: string,
+  order: number,
+  locationName: string,
+  outwardTime: string,
+  inwardTime: string,
+  passengers: CommuteEnriched['stops'][number]['passengers'] = []
+): CommuteEnriched['stops'][number] => ({
+  id,
+  order,
+  outwardTime,
+  inwardTime,
+  locationId: `loc-${id}`,
+  commuteId: id.split('-')[0]!,
+  createdAt: NOW,
+  updatedAt: NOW,
+  location: { id: `loc-${id}`, name: locationName, address: '' },
+  passengers,
+});
+
+// Sophie's commute — current user is an ACCEPTED passenger
+const COMMUTE_SOPHIE: CommuteEnriched = {
+  id: 'sophie',
+  date: NOW,
+  seats: 4,
+  type: 'ROUND',
+  status: 'UNKNOWN',
+  delay: null,
+  comment: null,
+  driverMemberId: 'm-sophie',
+  createdAt: NOW,
+  updatedAt: NOW,
+  driver: { id: 'u-sophie', name: 'Sophie Bernard', image: null, phone: null },
+  stops: [
+    mockStop('sophie-1', 0, 'Lyon Part-Dieu', '08:15', '17:30', [
+      {
+        id: 'b-sophie-1',
+        status: 'ACCEPTED',
+        tripType: 'ROUND',
+        comment: null,
+        passenger: {
+          id: CURRENT_USER_ID,
+          name: 'Vous',
+          image: null,
+          phone: null,
+        },
+      },
+      {
+        id: 'b-sophie-2',
+        status: 'ACCEPTED',
+        tripType: 'ROUND',
+        comment: null,
+        passenger: {
+          id: 'u-emma',
+          name: 'Emma Roux',
+          image: null,
+          phone: null,
+        },
+      },
+    ]),
+    mockStop('sophie-2', 1, 'BearStudio', '08:45', '17:00'),
+  ],
+};
+
+// Driver commute — current user is the driver
+const COMMUTE_DRIVER: CommuteEnriched = {
+  id: 'self',
+  date: NOW,
+  seats: 4,
+  type: 'ROUND',
+  status: 'UNKNOWN',
+  delay: null,
+  comment: null,
+  driverMemberId: 'm-current',
+  createdAt: NOW,
+  updatedAt: NOW,
+  driver: { id: CURRENT_USER_ID, name: 'Vous', image: null, phone: null },
+  stops: [
+    mockStop('self-1', 0, 'Villeurbanne', '08:30', '18:00', [
+      {
+        id: 'b-self-1',
+        status: 'ACCEPTED',
+        tripType: 'ROUND',
+        comment: null,
+        passenger: {
+          id: 'u-thomas',
+          name: 'Thomas Petit',
+          image: null,
+          phone: null,
+        },
+      },
+    ]),
+    mockStop('self-2', 1, 'BearStudio', '09:00', '17:30'),
+  ],
+};
+
+// Tomorrow's commute — current user has a REQUESTED booking
+const TOMORROW = new Date(NOW.getTime() + 24 * 60 * 60 * 1000);
+const COMMUTE_MARC: CommuteEnriched = {
+  id: 'marc',
+  date: TOMORROW,
+  seats: 3,
+  type: 'ONEWAY',
+  status: 'UNKNOWN',
+  delay: null,
+  comment: null,
+  driverMemberId: 'm-marc',
+  createdAt: NOW,
+  updatedAt: NOW,
+  driver: { id: 'u-marc', name: 'Marc Leroy', image: null, phone: null },
+  stops: [
+    mockStop('marc-1', 0, 'Gerland', '08:30', '', [
+      {
+        id: 'b-marc-1',
+        status: 'REQUESTED',
+        tripType: 'ONEWAY',
+        comment: null,
+        passenger: {
+          id: CURRENT_USER_ID,
+          name: 'Vous',
+          image: null,
+          phone: null,
+        },
+      },
+    ]),
+    mockStop('marc-2', 1, 'BearStudio', '09:00', ''),
+  ],
+};
 
 const TRUST_SIGNALS = [
   { icon: Zap, label: 'Zéro friction' },
@@ -160,41 +292,20 @@ function PhoneMockup() {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <CardCommute bookingStatus="ACCEPTED">
-                      <CardCommuteTrigger>
-                        <CardCommuteHeader
-                          driver={{ name: 'Sophie Bernard', image: null }}
-                          type="ROUND"
-                          totalSeats={4}
-                          outwardTaken={3}
-                          inwardTaken={2}
-                          outwardDeparture="08:15"
-                          inwardDeparture="17:30"
-                          badge={<BookingStatusBadge status="ACCEPTED" />}
-                        />
-                      </CardCommuteTrigger>
-                      <CardCommuteContent>
-                        <span />
-                      </CardCommuteContent>
-                    </CardCommute>
-
-                    <CardCommute bookingStatus="DRIVER">
-                      <CardCommuteTrigger>
-                        <CardCommuteHeader
-                          driver={{ name: 'Vous', image: null }}
-                          type="ROUND"
-                          totalSeats={4}
-                          outwardTaken={2}
-                          inwardTaken={3}
-                          outwardDeparture="08:30"
-                          inwardDeparture="18:00"
-                          badge={<BookingStatusBadge status="DRIVER" />}
-                        />
-                      </CardCommuteTrigger>
-                      <CardCommuteContent>
-                        <span />
-                      </CardCommuteContent>
-                    </CardCommute>
+                    <DashboardCommuteCard
+                      commute={COMMUTE_SOPHIE}
+                      currentUserId={CURRENT_USER_ID}
+                      commuteCancel={noopMutation}
+                      bookingCancel={noopMutation}
+                      onBookStop={noop}
+                    />
+                    <DashboardCommuteCard
+                      commute={COMMUTE_DRIVER}
+                      currentUserId={CURRENT_USER_ID}
+                      commuteCancel={noopMutation}
+                      bookingCancel={noopMutation}
+                      onBookStop={noop}
+                    />
                   </div>
                 </div>
 
@@ -204,21 +315,13 @@ function PhoneMockup() {
                     Demain
                   </h2>
 
-                  <CardCommute bookingStatus="REQUESTED">
-                    <CardCommuteTrigger>
-                      <CardCommuteHeader
-                        driver={{ name: 'Marc Leroy', image: null }}
-                        type="ONEWAY"
-                        totalSeats={3}
-                        outwardTaken={1}
-                        outwardDeparture="08:30"
-                        badge={<BookingStatusBadge status="REQUESTED" />}
-                      />
-                    </CardCommuteTrigger>
-                    <CardCommuteContent>
-                      <span />
-                    </CardCommuteContent>
-                  </CardCommute>
+                  <DashboardCommuteCard
+                    commute={COMMUTE_MARC}
+                    currentUserId={CURRENT_USER_ID}
+                    commuteCancel={noopMutation}
+                    bookingCancel={noopMutation}
+                    onBookStop={noop}
+                  />
                 </div>
               </div>
             </PageLayoutContent>
