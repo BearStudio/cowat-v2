@@ -16,6 +16,7 @@ import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ManagerIndexRouteImport } from './routes/manager/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as LandingIndexRouteImport } from './routes/landing/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as InvitationsIdRouteImport } from './routes/invitations/$id'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
@@ -93,6 +94,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LoginRouteRoute,
+} as any)
+const LandingIndexRoute = LandingIndexRouteImport.update({
+  id: '/landing/',
+  path: '/landing/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
+  '/landing/': typeof LandingIndexRoute
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -378,6 +385,7 @@ export interface FileRoutesByTo {
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app': typeof AppIndexRoute
+  '/landing': typeof LandingIndexRoute
   '/login': typeof LoginIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -430,6 +438,7 @@ export interface FileRoutesById {
   '/api/upload': typeof ApiUploadRoute
   '/invitations/$id': typeof InvitationsIdRoute
   '/app/': typeof AppIndexRoute
+  '/landing/': typeof LandingIndexRoute
   '/login/': typeof LoginIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -483,6 +492,7 @@ export interface FileRouteTypes {
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
+    | '/landing/'
     | '/login/'
     | '/manager/'
     | '/api/auth/$'
@@ -527,6 +537,7 @@ export interface FileRouteTypes {
     | '/api/upload'
     | '/invitations/$id'
     | '/app'
+    | '/landing'
     | '/login'
     | '/manager'
     | '/api/auth/$'
@@ -578,6 +589,7 @@ export interface FileRouteTypes {
     | '/api/upload'
     | '/invitations/$id'
     | '/app/'
+    | '/landing/'
     | '/login/'
     | '/manager/'
     | '/api/auth/$'
@@ -625,6 +637,7 @@ export interface RootRouteChildren {
   LogoutRoute: typeof LogoutRoute
   ApiUploadRoute: typeof ApiUploadRoute
   InvitationsIdRoute: typeof InvitationsIdRoute
+  LandingIndexRoute: typeof LandingIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCronDailyReminderRoute: typeof ApiCronDailyReminderRoute
   ApiOpenapiAppRoute: typeof ApiOpenapiAppRouteWithChildren
@@ -685,6 +698,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login/'
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof LoginRouteRoute
+    }
+    '/landing/': {
+      id: '/landing/'
+      path: '/landing'
+      fullPath: '/landing/'
+      preLoaderRoute: typeof LandingIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/': {
       id: '/app/'
@@ -1152,6 +1172,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogoutRoute: LogoutRoute,
   ApiUploadRoute: ApiUploadRoute,
   InvitationsIdRoute: InvitationsIdRoute,
+  LandingIndexRoute: LandingIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCronDailyReminderRoute: ApiCronDailyReminderRoute,
   ApiOpenapiAppRoute: ApiOpenapiAppRouteWithChildren,

@@ -20,7 +20,7 @@ export const PageLogout = () => {
     },
     onSuccess: () => {
       navigate({
-        to: '/',
+        to: '/landing',
       });
     },
   });
