@@ -236,12 +236,32 @@
 }
 
 @layer base {
+
+  /* Pretty scrollbars */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+
+
   * {
     @apply border-border outline-ring/50;
     interpolate-size: allow-keywords;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
