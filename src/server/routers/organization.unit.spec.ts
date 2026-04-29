@@ -35,6 +35,7 @@ const defaultMember = {
 };
 
 const ownerMembership = { ...defaultMember, role: 'owner' };
+const adminMembership = { ...defaultMember, role: 'admin' };
 
 const targetMember = {
   id: 'target-member-1',
@@ -92,6 +93,34 @@ describe('organization router', () => {
       ).rejects.toMatchObject({ code: 'NOT_FOUND' });
     });
 
+    it('should throw FORBIDDEN when admin tries to assign owner role', async () => {
+      mockDb.member.findFirst
+        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
+        .mockResolvedValueOnce(adminMembership); // handler: findOwnerMembership (throws before findMemberById)
+
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'owner',
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    });
+
+    it('should allow admin to assign member role', async () => {
+      mockDb.member.findFirst
+        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
+        .mockResolvedValueOnce(adminMembership) // handler: findOwnerMembership (admin)
+        .mockResolvedValueOnce(targetMember); // handler: findMemberById
+      mockDb.member.update.mockResolvedValue(undefined);
+
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'member',
+        })
+      ).resolves.toBeUndefined();
+    });
+
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
@@ -104,7 +133,10 @@ describe('organization router', () => {
   describe('cancelInvitation', () => {
     const input = { invitationId: 'invitation-1' };
 
-    it('should cancel invitation when it belongs to the active org', async () => {
+    it('should cancel invitation when caller is owner and invitation belongs to org', async () => {
+      mockDb.member.findFirst
+        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
+        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
       mockDb.invitation.findFirst.mockResolvedValue(mockInvitation);
       mockCancelInvitation.mockResolvedValue(undefined);
 
@@ -113,7 +145,22 @@ describe('organization router', () => {
       ).resolves.toBeUndefined();
     });
 
+    it('should throw FORBIDDEN when caller is a regular member', async () => {
+      mockDb.member.findFirst
+        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
+        .mockResolvedValueOnce(null); // handler: findOwnerMembership → FORBIDDEN
+
+      await expect(
+        call(organizationRouter.cancelInvitation, input)
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+
+      expect(mockCancelInvitation).not.toHaveBeenCalled();
+    });
+
     it('should throw NOT_FOUND when invitation does not belong to org', async () => {
+      mockDb.member.findFirst
+        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
+        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
       mockDb.invitation.findFirst.mockResolvedValue(null);
 
       await expect(
