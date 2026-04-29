@@ -10,22 +10,16 @@ jobs:
     if: github.event.pull_request.draft == false
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user root
     env:
       VITE_BASE_URL: http://localhost:3000
       VITE_ENV_NAME: tests
-      DATABASE_URL: postgres://cowat:cowat@localhost:5432/cowat
+      DATABASE_URL: postgres://cowat:cowat@postgres:5432/cowat
       AUTH_SECRET: fyXjLxjXJowjicI2BAjxOaUsQd1QafdegZDciJE/xM8=
       EMAIL_SERVER: smtp://username:password@localhost:1025
       EMAIL_FROM: Cowat <noreply@example.com>
-      S3_HOST: localhost:9000
-      S3_BUCKET_NAME: default
-      S3_ACCESS_KEY_ID: cowat-access-key
-      S3_SECRET_ACCESS_KEY: cowat-secret-key
-      S3_SECURE: false
-      S3_FORCE_PATH_STYLE: true
-      DOCKER_MINIO_USERNAME: minioadmin
-      DOCKER_MINIO_PASSWORD: minioadmin
-      VITE_S3_BUCKET_PUBLIC_URL: http://localhost:9000/default
     services:
       postgres:
         image: postgres:16.1
@@ -40,22 +34,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
 
       - name: Get pnpm store directory
         shell: bash
@@ -76,44 +66,6 @@ jobs:
 
       - name: Install deps
         run: pnpm install
-
-      - name: Start MinIO server
-        run: |
-          docker run -d \
-            --name minio \
-            -p 9000:9000 \
-            -p 9001:9001 \
-            -e MINIO_ROOT_USER=minioadmin \
-            -e MINIO_ROOT_PASSWORD=minioadmin \
-            minio/minio:RELEASE.2025-07-23T15-54-02Z-cpuv1 \
-            server /data --console-address :9001
-
-          # Wait for MinIO to be ready
-          until curl -sf http://localhost:9000/minio/health/live; do
-            echo "Waiting for MinIO..."
-            sleep 2
-          done
-          echo "MinIO is ready"
-
-      - name: Setup MinIO bucket
-        run: |
-          # Install MinIO client
-          curl -sSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc
-          chmod +x /usr/local/bin/mc
-
-          # Configure MinIO client
-          mc alias set minio http://localhost:9000 minioadmin minioadmin
-
-          # Create user with access key
-          mc admin user add minio $S3_ACCESS_KEY_ID $S3_SECRET_ACCESS_KEY
-          mc admin policy attach minio readwrite --user $S3_ACCESS_KEY_ID
-
-          # Create bucket and set permissions
-          mc mb --ignore-existing minio/$S3_BUCKET_NAME
-          mc anonymous set download minio/$S3_BUCKET_NAME
-
-      - name: Setup Playwright
-        uses: ./.github/actions/setup-playwright
 
       - name: Migrate database
         run: pnpm db:push
