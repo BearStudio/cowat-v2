@@ -4,14 +4,18 @@ import {
   Car,
   Clock,
   Leaf,
+  LogIn,
   MapPin,
+  Menu,
   Shield,
   Users,
 } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 import { LocalSwitcher } from '@/components/ui/local-switcher';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 
 export function PageLanding() {
@@ -22,7 +26,9 @@ export function PageLanding() {
           <Link to="/" className="flex items-center gap-2">
             <img src="/Logo.png" alt="Cowat" className="h-8" />
           </Link>
-          <nav className="flex items-center gap-3">
+
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-3 sm:flex">
             <ThemeSwitcher iconOnly />
             <LocalSwitcher />
             <ButtonLink variant="ghost" size="sm" to="/login">
@@ -32,6 +38,46 @@ export function PageLanding() {
               Commencer
             </ButtonLink>
           </nav>
+
+          {/* Mobile nav */}
+          <div className="flex items-center gap-2 sm:hidden">
+            <ThemeSwitcher iconOnly />
+            <LocalSwitcher />
+            <Sheet>
+              <SheetTrigger
+                render={
+                  <Button variant="ghost" size="icon-sm" aria-label="Menu" />
+                }
+              >
+                <Menu />
+              </SheetTrigger>
+              <SheetContent
+                side="top"
+                showCloseButton={false}
+                className="px-6 pt-4 pb-6"
+              >
+                <div className="flex flex-col gap-3">
+                  <ButtonLink
+                    variant="secondary"
+                    size="sm"
+                    to="/login"
+                    className="w-full justify-center"
+                  >
+                    <LogIn />
+                    Se connecter
+                  </ButtonLink>
+                  <ButtonLink
+                    size="sm"
+                    to="/login"
+                    className="w-full justify-center"
+                  >
+                    <ArrowRight />
+                    Commencer
+                  </ButtonLink>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
