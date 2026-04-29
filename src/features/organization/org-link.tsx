@@ -9,7 +9,13 @@ export function OrgLink(props: OrgLinkProps) {
   const { orgSlug } = useParams({ strict: false });
 
   if (!orgSlug) {
-    throw new Error('OrgLink must be used inside an organization route.');
+    // Fallback: render a non-navigable span when used outside an org route
+    // (e.g. landing page mockup, storybook). Keeps DOM and styling identical.
+    const children =
+      typeof props.children === 'function'
+        ? props.children({ isActive: false, isTransitioning: false })
+        : props.children;
+    return <span className={props.className}>{children}</span>;
   }
 
   const { params, ...rest } = props;
