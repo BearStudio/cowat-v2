@@ -238,8 +238,7 @@ function PhoneMockup() {
   return (
     <div
       aria-hidden
-      className="relative hidden lg:block"
-      style={{ rotate: '-2deg' }}
+      className="relative -my-[100px] -mr-[40px] hidden origin-center scale-75 rotate-3 lg:block"
     >
       {/* Soft brand glow behind phone */}
       <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-to-br from-brand-300/40 via-brand-200/20 to-transparent blur-2xl dark:from-brand-700/30 dark:via-brand-900/20" />
