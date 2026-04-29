@@ -11,6 +11,7 @@ import {
   Users,
 } from 'lucide-react';
 
+import { Logo } from '@/components/brand/logo';
 import { Button } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 import { LocalSwitcher } from '@/components/ui/local-switcher';
@@ -24,7 +25,7 @@ export function PageLanding() {
       <header className="z-10 border-b border-border/50 bg-white/80 backdrop-blur dark:bg-neutral-900/80">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/Logo.png" alt="Cowat" className="h-8" />
+            <Logo className="h-8 w-auto" />
           </Link>
 
           {/* Desktop nav */}
