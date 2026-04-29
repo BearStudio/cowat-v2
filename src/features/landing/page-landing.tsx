@@ -1,12 +1,12 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-import { LandingCta } from './landing-cta';
-import { LandingFeatures } from './landing-features';
-import { LandingFooter } from './landing-footer';
-import { LandingHeader } from './landing-header';
-import { LandingHero } from './landing-hero';
-import { LandingMission } from './landing-mission';
-import { LandingSlack } from './landing-slack';
+import { LandingCta } from './cta';
+import { LandingFeatures } from './features';
+import { LandingFooter } from './footer';
+import { LandingHeader } from './header';
+import { LandingHero } from './hero';
+import { LandingMission } from './mission';
+import { LandingSlack } from './slack';
 
 export function PageLanding() {
   return (
