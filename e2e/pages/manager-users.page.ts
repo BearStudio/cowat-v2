@@ -55,7 +55,7 @@ export class ManagerUsersPage {
   }
 
   async expectUserVisible(email: string) {
-    await expect(this.page.getByText(email)).toBeVisible();
+    await expect(this.page.getByText(email, { exact: true })).toBeVisible();
   }
 
   async expectNoAccess() {
