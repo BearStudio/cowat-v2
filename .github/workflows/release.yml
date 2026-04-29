@@ -12,7 +12,7 @@ permissions:
 jobs:
   release:
     name: 📦 Semantic Release
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,16 +24,22 @@ jobs:
         with:
           version: 10
 
+      - name: Configure pnpm store
+        run: pnpm config set store-dir ~/.pnpm-store
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
 
       - name: Install deps
-        run: pnpm install
+        run: pnpm install --prefer-offline
 
       - name: Run semantic-release
         run: pnpm exec semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup workspace
+        if: always()
+        run: git clean -ffdx

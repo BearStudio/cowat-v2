@@ -8,7 +8,7 @@ on:
 jobs:
   check-pr-title:
     name: 🏷️ PR Title
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Check PR title
         run: |
