@@ -148,6 +148,6 @@ const globalForPrisma = globalThis as unknown as {
 
 export const db = globalForPrisma.prisma ?? createPrisma();
 
-if (import.meta.env.DEV) globalForPrisma.prisma = db;
+if (import.meta.env?.DEV) globalForPrisma.prisma = db;
 
 export type AppDB = typeof db;

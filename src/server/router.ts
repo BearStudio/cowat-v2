@@ -15,6 +15,7 @@ import userRouter from './routers/user';
 export type Router = typeof router;
 export type Inputs = InferRouterInputs<typeof router>;
 export type Outputs = InferRouterOutputs<typeof router>;
+
 export const router = {
   account: accountRouter,
   booking: bookingRouter,
