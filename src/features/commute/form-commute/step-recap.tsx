@@ -86,6 +86,8 @@ export const StepRecap = ({
     .filter((s) => s.inwardTime)
     .map((s) => toTimelineStop(s.locationId, s.inwardTime ?? ''));
 
+  const departureReference = stops?.[0]?.outwardTime;
+
   return (
     <div className="flex flex-col gap-4">
       {/* Meta info */}
@@ -131,6 +133,7 @@ export const StepRecap = ({
                 stop={stop}
                 isFirst={index === 0}
                 isLast={index === outwardStops.length - 1}
+                departureReference={departureReference}
               />
             ))}
           </div>
@@ -150,6 +153,7 @@ export const StepRecap = ({
                   stop={stop}
                   isFirst={index === 0}
                   isLast={index === inwardStops.length - 1}
+                  departureReference={departureReference}
                 />
               ))}
             </div>

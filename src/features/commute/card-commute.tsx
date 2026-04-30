@@ -139,7 +139,8 @@ type CardCommuteHeaderProps = {
   outwardTaken: number;
   inwardTaken?: number;
   outwardDeparture?: string;
-  inwardDeparture?: string;
+  inwardDeparture?: string | React.ReactNode;
+  referenceTime?: string;
   stops?: StopEnriched[];
   passengers?: PassengerSummary[];
   badge?: React.ReactNode;
@@ -156,20 +157,24 @@ function TripInfo({
   type,
   time,
   seatLabel,
+  referenceTime,
 }: {
   type: 'ONEWAY' | 'RETURN';
-  time?: string;
+  time?: string | React.ReactNode;
   seatLabel: string;
+  referenceTime?: string;
 }) {
   return (
     <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-      {time && (
+      {time && typeof time === 'string' && (
         <TripTime
           type={type}
           time={time}
+          referenceTime={referenceTime}
           timeClassName="font-medium text-foreground"
         />
       )}
+      {time && typeof time !== 'string' && time}
       <span className="text-muted-foreground/50">·</span>
       <span className="text-xs">{seatLabel}</span>
     </span>
@@ -210,6 +215,7 @@ function CardCommuteHeader({
   badge,
   actions,
   renderStopActions,
+  referenceTime,
 }: CardCommuteHeaderProps) {
   const { t } = useTranslation(['commute']);
   const seatLabel = (taken: number) =>
@@ -253,12 +259,14 @@ function CardCommuteHeader({
           type="ONEWAY"
           time={outwardDeparture}
           seatLabel={seatLabel(outwardTaken)}
+          referenceTime={referenceTime}
         />
         {type === 'ROUND' && (
           <TripInfo
             type="RETURN"
             time={inwardDeparture}
             seatLabel={seatLabel(inwardTaken ?? outwardTaken)}
+            referenceTime={referenceTime}
           />
         )}
       </div>
@@ -266,6 +274,7 @@ function CardCommuteHeader({
       {!!stops?.length && (
         <HeaderStopsTimeline
           stops={stops}
+          departureReference={referenceTime}
           renderStopActions={renderStopActions}
         />
       )}

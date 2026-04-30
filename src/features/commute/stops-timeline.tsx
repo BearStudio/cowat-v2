@@ -12,17 +12,21 @@ import { StopEnriched, StopPassenger } from '@/features/commute/schema';
 export const TripTime = ({
   type,
   time,
+  referenceTime,
   timeClassName,
 }: {
   type: 'ONEWAY' | 'RETURN';
-  time: string;
+  time?: string;
+  referenceTime?: string;
   timeClassName?: string;
 }) => {
   const Icon = tripTypeIcons[type];
+  const isNextDay = time && referenceTime && time < referenceTime;
   return (
     <span className="flex items-center gap-1">
       <Icon className="size-3.5 shrink-0" />
       <span className={cn('tabular-nums', timeClassName)}>{time}</span>
+      {isNextDay && <span className="text-xs text-muted-foreground">+1</span>}
     </span>
   );
 };
@@ -142,6 +146,7 @@ type StopsTimelineItemProps = {
   index?: number;
   actions?: ReactNode;
   disableLinks?: boolean;
+  departureReference?: string;
 };
 
 export const StopsTimelineItem = ({
@@ -151,44 +156,58 @@ export const StopsTimelineItem = ({
   index,
   actions,
   disableLinks,
-}: StopsTimelineItemProps) => (
-  <div
-    className="relative flex items-start gap-3"
-    data-slot="stop-item"
-    style={{ '--stop-index': index ?? 0 } as CSSProperties}
-  >
-    <TimelineDot />
-    {!isLast && <TimelineLine from={isFirst ? 'dot' : 'top'} to="bottom" />}
-    {isLast && !isFirst && <TimelineLine from="top" to="dot" />}
+  departureReference,
+}: StopsTimelineItemProps) => {
+  return (
     <div
-      className={cn('flex min-w-0 flex-1 flex-col gap-1.5', !isLast && 'pb-4')}
+      className="relative flex items-start gap-3"
+      data-slot="stop-item"
+      style={{ '--stop-index': index ?? 0 } as CSSProperties}
     >
-      <div className="-mb-1 flex items-center gap-1.5">
-        <span className="truncate text-sm leading-5 font-medium">
-          {stop.location.name}
-        </span>
-        <span className="text-muted-foreground/50">·</span>
-        <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
-          <TripTime type="ONEWAY" time={stop.outwardTime} />
-          {stop.inwardTime && (
-            <>
-              <span className="text-muted-foreground/50">·</span>
-              <TripTime type="RETURN" time={stop.inwardTime} />
-            </>
-          )}
+      <TimelineDot />
+      {!isLast && <TimelineLine from={isFirst ? 'dot' : 'top'} to="bottom" />}
+      {isLast && !isFirst && <TimelineLine from="top" to="dot" />}
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 flex-col gap-1.5',
+          !isLast && 'pb-4'
+        )}
+      >
+        <div className="-mb-1 flex items-center gap-1.5">
+          <span className="truncate text-sm leading-5 font-medium">
+            {stop.location.name}
+          </span>
+          <span className="text-muted-foreground/50">·</span>
+          <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
+            <TripTime
+              type="ONEWAY"
+              time={stop.outwardTime}
+              referenceTime={departureReference}
+            />
+            {stop.inwardTime && (
+              <>
+                <span className="text-muted-foreground/50">·</span>
+                <TripTime
+                  type="RETURN"
+                  time={stop.inwardTime}
+                  referenceTime={departureReference}
+                />
+              </>
+            )}
+          </div>
         </div>
+        {stop.location.address && (
+          <StopAddress
+            address={stop.location.address}
+            disableLink={disableLinks}
+          />
+        )}
+        <ActivePassengersBadges passengers={stop.passengers} />
+        {actions && <div className="min-w-0">{actions}</div>}
       </div>
-      {stop.location.address && (
-        <StopAddress
-          address={stop.location.address}
-          disableLink={disableLinks}
-        />
-      )}
-      <ActivePassengersBadges passengers={stop.passengers} />
-      {actions && <div className="min-w-0">{actions}</div>}
     </div>
-  </div>
-);
+  );
+};
 
 type StopsTimelineProps = {
   stops: Array<StopEnriched>;
@@ -205,22 +224,27 @@ export const StopsTimeline = ({
   renderActions,
   className,
   disableLinks,
-}: StopsTimelineProps) => (
-  <div className={cn('flex flex-col', className)}>
-    {stops.map((stop, index) => {
-      const isFirst = index === 0;
-      const isLast = index === stops.length - 1;
-      return (
-        <StopsTimelineItem
-          key={stop.id}
-          stop={stop}
-          index={index}
-          isFirst={isFirst}
-          isLast={isLast}
-          disableLinks={disableLinks}
-          actions={renderActions?.(stop, { isFirst, isLast })}
-        />
-      );
-    })}
-  </div>
-);
+}: StopsTimelineProps) => {
+  const departureReference = stops[0]?.outwardTime;
+
+  return (
+    <div className={cn('flex flex-col', className)}>
+      {stops.map((stop, index) => {
+        const isFirst = index === 0;
+        const isLast = index === stops.length - 1;
+        return (
+          <StopsTimelineItem
+            key={stop.id}
+            stop={stop}
+            index={index}
+            isFirst={isFirst}
+            isLast={isLast}
+            departureReference={departureReference}
+            disableLinks={disableLinks}
+            actions={renderActions?.(stop, { isFirst, isLast })}
+          />
+        );
+      })}
+    </div>
+  );
+};

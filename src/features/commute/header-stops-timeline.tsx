@@ -33,6 +33,7 @@ type StopActionsRenderer = (
 
 type HeaderStopsTimelineProps = {
   stops: HeaderStop[];
+  departureReference?: string;
   renderStopActions?: StopActionsRenderer;
 };
 
@@ -46,7 +47,13 @@ const EXPAND_CLS =
 const COLLAPSE_CLS =
   'grid grid-rows-[1fr] overflow-hidden opacity-100 transition-[grid-template-rows,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-rows-[0fr] group-data-[panel-open]:opacity-0 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]';
 
-function StopNameRow({ stop }: { stop: StopForTimeline }) {
+function StopNameRow({
+  stop,
+  departureReference,
+}: {
+  stop: StopForTimeline;
+  departureReference?: string;
+}) {
   return (
     <div className="-mb-1 flex min-w-0 items-center gap-1.5">
       <span className="min-w-0 truncate text-sm leading-5 font-medium">
@@ -57,11 +64,19 @@ function StopNameRow({ stop }: { stop: StopForTimeline }) {
       <div className="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity] duration-100 ease-[cubic-bezier(0.32,0.72,0,1)] group-data-[panel-open]:grid-cols-[1fr] group-data-[panel-open]:opacity-100 group-data-[panel-open]:duration-200 group-data-[panel-open]:ease-[cubic-bezier(0.2,0,0,1)]">
         <div className="flex shrink-0 items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground">
           <span className="text-muted-foreground/50">·</span>
-          <TripTime type="ONEWAY" time={stop.outwardTime} />
+          <TripTime
+            type="ONEWAY"
+            time={stop.outwardTime}
+            referenceTime={departureReference}
+          />
           {stop.inwardTime && (
             <>
               <span className="text-muted-foreground/50">·</span>
-              <TripTime type="RETURN" time={stop.inwardTime} />
+              <TripTime
+                type="RETURN"
+                time={stop.inwardTime}
+                referenceTime={departureReference}
+              />
             </>
           )}
         </div>
@@ -90,11 +105,13 @@ function TimelineStopRow({
   position,
   isOnly = false,
   renderStopActions,
+  departureReference,
 }: {
   stop: HeaderStop;
   position: StopRowPosition;
   isOnly?: boolean;
   renderStopActions?: StopActionsRenderer;
+  departureReference?: string;
 }) {
   const isFirst = position === 'first' || isOnly;
   const isLast = position === 'last' || isOnly;
@@ -121,7 +138,7 @@ function TimelineStopRow({
       )}
       <TimelineDot />
       <div className="flex min-w-0 flex-1 flex-col">
-        <StopNameRow stop={stop} />
+        <StopNameRow stop={stop} departureReference={departureReference} />
         {position === 'intermediate' ? (
           details
         ) : (
@@ -135,6 +152,7 @@ function TimelineStopRow({
 export function HeaderStopsTimeline({
   stops,
   renderStopActions,
+  departureReference,
 }: HeaderStopsTimelineProps) {
   const { t } = useTranslation(['commute']);
 
@@ -158,6 +176,7 @@ export function HeaderStopsTimeline({
         stop={firstStop}
         position="first"
         isOnly={isOnlyStop}
+        departureReference={departureReference}
         renderStopActions={renderStopActions}
       />
 
@@ -188,6 +207,7 @@ export function HeaderStopsTimeline({
                 <TimelineStopRow
                   stop={stop}
                   position="intermediate"
+                  departureReference={departureReference}
                   renderStopActions={renderStopActions}
                 />
               </div>
@@ -197,6 +217,7 @@ export function HeaderStopsTimeline({
           <TimelineStopRow
             stop={lastStop}
             position="last"
+            departureReference={departureReference}
             renderStopActions={renderStopActions}
           />
         </>

@@ -149,19 +149,18 @@ export const zFormFieldsCommute = () =>
           });
         }
 
-        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
-          ctx.addIssue({
-            code: 'custom',
-            message: t('commute:form.errors.outwardNotIncreasing'),
-            path: ['stops', index, 'outwardTime'],
-          });
-        }
-
         if (!rules.shouldInwardBeDecreasing(stop, index)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.inwardNotDecreasing'),
             path: ['stops', index, 'inwardTime'],
+          });
+        }
+        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: t('commute:form.errors.outwardNotIncreasing'),
+            path: ['stops', index, 'outwardTime'],
           });
         }
       });

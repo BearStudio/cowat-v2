@@ -17,17 +17,28 @@ type StopOrderRulesData = {
 
 export const createStopOrderRules = (data: StopOrderRulesData) => {
   const isRound = data.type === 'ROUND';
+  const timeToMinutes = (time: string): number => {
+    const [hours = 0, minutes = 0] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
 
   return {
     isRound,
 
+    // allows inward < outward only if the time difference is greater than 12 hours
+    // to handle trips that cross midnight
     shouldInwardBeAfterOutward: (
       stop: Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>
-    ) =>
-      !isRound ||
-      !stop.inwardTime ||
-      !stop.outwardTime ||
-      stop.inwardTime > stop.outwardTime,
+    ) => {
+      if (!isRound || !stop.inwardTime || !stop.outwardTime) return true;
+
+      const inward = timeToMinutes(stop.inwardTime);
+      const outward = timeToMinutes(stop.outwardTime);
+
+      if (inward >= outward) return true;
+
+      return outward - inward > 12 * 60;
+    },
 
     shouldOutwardBeIncreasing: (
       stop: Pick<FormFieldsStopInput, 'outwardTime'>,
@@ -35,11 +46,15 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
     ) => {
       if (index === 0) return true;
       const prevStop = data.stops[index - 1];
-      return (
-        !stop.outwardTime ||
-        !prevStop?.outwardTime ||
-        stop.outwardTime > prevStop.outwardTime
-      );
+      if (!stop.outwardTime || !prevStop?.outwardTime) return true;
+
+      const curr = timeToMinutes(stop.outwardTime);
+      const prev = timeToMinutes(prevStop.outwardTime);
+
+      if (curr > prev) return true;
+
+      const forwardDistance = curr + 24 * 60 - prev;
+      return forwardDistance > 0 && forwardDistance < 12 * 60;
     },
 
     shouldInwardBeDecreasing: (
