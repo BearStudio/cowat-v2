@@ -159,7 +159,8 @@ export type CommuteAlertEvent = {
   recipient: Recipient;
   payload: {
     senderName: string;
-    alertType: 'late' | 'arrived';
+    alertType: 'late' | 'arrived' | 'custom';
+    customMessage?: string;
     lateMinutes?: number;
     commuteDate: Commute['date'];
     orgSlug: string;

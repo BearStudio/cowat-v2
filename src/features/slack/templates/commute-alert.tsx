@@ -20,7 +20,9 @@ export function CommuteAlert({ event, baseUrl }: Props) {
   const message =
     alertType === 'late'
       ? '{{name}} sera en retard de {{minutes}} minutes.'
-      : '{{name}} est arrivé au point de rendez-vous.';
+      : alertType === 'arrived'
+        ? '{{name}} est arrivé au point de rendez-vous.'
+        : '{{name}} a envoyé un message personnalisé.';
 
   return (
     <Blocks>
