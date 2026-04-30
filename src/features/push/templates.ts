@@ -119,6 +119,7 @@ export function getPushContent(
     }),
     Match.when({ type: 'commute.created' }, () => null),
     Match.when({ type: 'commute.requested' }, () => null),
+    Match.when({ type: 'commute.alert' }, () => null),
     Match.exhaustive
   );
 }

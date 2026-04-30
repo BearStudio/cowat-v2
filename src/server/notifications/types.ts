@@ -154,6 +154,18 @@ export type CommuteReminderEvent = {
   };
 };
 
+export type CommuteAlertEvent = {
+  type: 'commute.alert';
+  recipient: Recipient;
+  payload: {
+    senderName: string;
+    alertType: 'late' | 'arrived';
+    lateMinutes?: number;
+    commuteDate: Commute['date'];
+    orgSlug: string;
+  };
+};
+
 export type NotificationEvent =
   | BookingRequestedEvent
   | BookingAcceptedEvent
@@ -164,7 +176,8 @@ export type NotificationEvent =
   | CommuteUpdatedEvent
   | CommuteCanceledEvent
   | CommuteRequestedEvent
-  | CommuteReminderEvent;
+  | CommuteReminderEvent
+  | CommuteAlertEvent;
 
 export type EventWithRecipient = Extract<
   NotificationEvent,
