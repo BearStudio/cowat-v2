@@ -1,9 +1,13 @@
+import { useMutation } from '@tanstack/react-query';
 import {
   MapPinIcon,
   MessageCircleIcon,
   NavigationIcon,
   PhoneIcon,
 } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { orpc } from '@/lib/orpc/client';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +38,13 @@ export const UpcomingCommuteDialog = ({
   const isDriver = commute.driver?.id === currentUserId;
   const passengerStop = stops.find((stop) =>
     stop.passengers?.some((p) => p.passenger?.id === currentUserId)
+  );
+
+  const sendAlert = useMutation(
+    orpc.commute.sendAlert.mutationOptions({
+      onSuccess: () => toast.success('Message envoyé'),
+      onError: () => toast.error("Erreur lors de l'envoi"),
+    })
   );
 
   return (
@@ -94,7 +105,13 @@ export const UpcomingCommuteDialog = ({
                       key={min}
                       className="flex-1"
                       size="sm"
-                      onClick={() => {}}
+                      onClick={() =>
+                        sendAlert.mutate({
+                          id: commute.id,
+                          alertType: 'late',
+                          lateMinutes: min,
+                        })
+                      }
                     >
                       +{min} min
                     </Button>
@@ -102,7 +119,12 @@ export const UpcomingCommuteDialog = ({
                 </div>
               </div>
 
-              <Button className="justify-start gap-2" onClick={() => {}}>
+              <Button
+                className="justify-start gap-2"
+                onClick={() =>
+                  sendAlert.mutate({ id: commute.id, alertType: 'arrived' })
+                }
+              >
                 <MapPinIcon className="size-4 shrink-0" />
                 Je suis arrivé au point de rendez-vous
               </Button>

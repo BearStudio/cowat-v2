@@ -271,4 +271,83 @@ export default {
         );
       }
     }),
+
+  sendAlert: procedure({ permissions: { commute: ['read'] } })
+    .route({ method: 'POST', path: '/commutes/{id}/alert', tags })
+    .input(
+      z.object({
+        id: z.string(),
+        alertType: z.enum(['late', 'arrived']),
+        lateMinutes: z.number().int().min(1).optional(),
+      })
+    )
+    .output(z.void())
+    .handler(async ({ context, input }) => {
+      const commute = await context.commutes.findByIdEnriched(
+        input.id,
+        context.organizationId
+      );
+
+      if (!commute) throw new ORPCError('NOT_FOUND');
+
+      const isDriver = commute.driver.id === context.user.id;
+      const orgContext = {
+        db: context.db,
+        organizationId: context.organizationId,
+      };
+
+      const alertPayload = {
+        senderName: context.user.name,
+        alertType: input.alertType,
+        lateMinutes: input.lateMinutes,
+        commuteDate: commute.date,
+        orgSlug: context.orgSlug,
+      };
+
+      if (isDriver) {
+        const passengerIds = commute.stops.flatMap((s) =>
+          s.passengers
+            .filter((p) => p.status === 'ACCEPTED')
+            .map((p) => p.passenger.id)
+        );
+
+        const passengerMembers = await context.db.member.findMany({
+          where: {
+            userId: { in: passengerIds },
+            organizationId: context.organizationId,
+          },
+          include: { user: true, notificationPreferences: true },
+        });
+
+        for (const member of passengerMembers) {
+          await context.notify(
+            {
+              type: 'commute.alert',
+              recipient: toRecipient(member),
+              payload: alertPayload,
+            },
+            orgContext
+          );
+        }
+      } else {
+        const driverMember = await context.db.member.findFirst({
+          where: {
+            userId: commute.driver.id,
+            organizationId: context.organizationId,
+          },
+          include: { user: true, notificationPreferences: true },
+        });
+
+        if (driverMember) {
+          await context.notify(
+            {
+              type: 'commute.alert',
+              recipient: toRecipient(driverMember),
+              payload: alertPayload,
+            },
+            orgContext
+          );
+        }
+      }
+    }),
 };

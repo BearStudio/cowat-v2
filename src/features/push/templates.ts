@@ -119,5 +119,6 @@ export function getPushContent(
     })
     .with({ type: 'commute.created' }, () => null)
     .with({ type: 'commute.requested' }, () => null)
+    .with({ type: 'commute.alert' }, () => null)
     .exhaustive();
 }
