@@ -2,9 +2,12 @@
   "booking": {
     "requested": {
       "headline": "🙋 *Nouvelle demande de réservation !*",
-      "body": "*{{passengerName}}* souhaite rejoindre votre trajet."
+      "body": "👤 *{{passengerName}}* souhaite rejoindre votre trajet."
     },
-    "requestedContext": "📅 {{date}} · {{tripType}}",
+    "requestedContext": {
+      "date": "📅 {{date}}",
+      "tripType": "*{{tripType}}*"
+    },
     "accepted": {
       "headline": "✅ *Réservation confirmée !*",
       "body": "*{{driverName}}* a accepté votre réservation."
@@ -17,7 +20,7 @@
     "refusedContext": "📅 {{date}} · {{tripType}}",
     "canceled": {
       "headline": "🙅 *Réservation annulée*",
-      "body": "*{{passengerName}}* a annulé sa réservation."
+      "body": "👤 *{{passengerName}}* a annulé sa réservation."
     },
     "canceledContext": "📅 {{date}} · {{tripType}}",
     "canceledByDriver": {

@@ -8,6 +8,7 @@ import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { routeUrl } from '@/lib/route-url';
 
+import { getTripTypeIcon } from '@/features/slack/utils';
 import {
   getCommutesForRecipient,
   type NotificationEvent,
@@ -35,13 +36,13 @@ export function getPushContent(
   return match(event)
     .with({ type: 'booking.requested' }, (e) => ({
       title: t('notifications:push.booking.requested.title'),
-      body: t('notifications:push.booking.requested.body', {
-        passengerName: e.payload.passengerName,
-        date: formatDate(e.payload.commuteDate),
-      }),
-      link: routeUrl(baseUrl, '/app/$orgSlug', {
-        params: { orgSlug: e.payload.orgSlug },
-      }),
+      body: `${getTripTypeIcon(e.payload.tripType)} ${t(
+        'notifications:push.booking.requested.body',
+        {
+          passengerName: e.payload.passengerName,
+          date: formatDate(e.payload.commuteDate),
+        }
+      )}`,
     }))
     .with({ type: 'booking.accepted' }, (e) => ({
       title: t('notifications:push.booking.accepted.title'),
@@ -65,10 +66,13 @@ export function getPushContent(
     }))
     .with({ type: 'booking.canceled' }, (e) => ({
       title: t('notifications:push.booking.canceled.title'),
-      body: t('notifications:push.booking.canceled.body', {
-        passengerName: e.payload.passengerName,
-        date: formatDate(e.payload.commuteDate),
-      }),
+      body: `${getTripTypeIcon(e.payload.tripType)} ${t(
+        'notifications:push.booking.canceled.body',
+        {
+          passengerName: e.payload.passengerName,
+          date: formatDate(e.payload.commuteDate),
+        }
+      )}`,
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
