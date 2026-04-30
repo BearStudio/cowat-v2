@@ -52,19 +52,32 @@ export async function getClientMessaging(): Promise<Messaging | null> {
   }
 }
 
+let swRegistrationPromise: Promise<ServiceWorkerRegistration> | null = null;
+
+async function getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration> {
+  if (!swRegistrationPromise) {
+    swRegistrationPromise = (async () => {
+      await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+        scope: '/',
+      });
+      return navigator.serviceWorker.ready;
+    })().catch((err) => {
+      swRegistrationPromise = null;
+      throw err;
+    });
+  }
+
+  return swRegistrationPromise;
+}
+
 export async function getFcmToken(): Promise<string | null> {
   const config = await getFirebaseConfig();
   const messaging = await getClientMessaging();
   if (!messaging) return null;
 
   try {
-    await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-      scope: '/',
-    });
-    // Use the active registration resolved by the browser for this scope rather
-    // than the registration handle returned by register(), which may still be
-    // installing if this is a first-time install or an update.
-    const activeRegistration = await navigator.serviceWorker.ready;
+    const activeRegistration = await getServiceWorkerRegistration();
+
     return await getToken(messaging, {
       vapidKey: config.vapidPublicKey,
       serviceWorkerRegistration: activeRegistration,
