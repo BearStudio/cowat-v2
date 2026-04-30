@@ -163,6 +163,7 @@ export type CommuteAlertEvent = {
     customMessage?: string;
     lateMinutes?: number;
     commuteDate: Commute['date'];
+    tripType: TripType;
     orgSlug: string;
   };
 };
