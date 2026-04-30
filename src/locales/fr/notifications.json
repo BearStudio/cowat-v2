@@ -103,7 +103,9 @@
       "reminder": {
         "title": "Rappel covoiturage",
         "body": "Vous avez {{count}} trajet(s) prévu(s) aujourd'hui."
-      }
+      },
+      "headline": "🔔 *Alerte trajet !*",
+      "footer": "📅 {{date}} · {{tripType}}"
     }
   },
   "common": {

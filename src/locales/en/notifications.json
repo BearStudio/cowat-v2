@@ -103,7 +103,9 @@
       "reminder": {
         "title": "Carpool reminder",
         "body": "You have {{count}} commute(s) scheduled today."
-      }
+      },
+      "headline": "🔔 *Commute alert !*",
+      "footer": "📅 {{date}} · {{tripType}}"
     }
   },
   "common": {

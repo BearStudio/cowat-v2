@@ -301,6 +301,8 @@ export default {
         senderName: context.user.name,
         alertType: input.alertType,
         lateMinutes: input.lateMinutes,
+        customMessage: input.customMessage,
+        tripType: commute.type,
         commuteDate: commute.date,
         orgSlug: context.orgSlug,
       };

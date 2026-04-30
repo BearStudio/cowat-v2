@@ -1,11 +1,13 @@
 /** @jsxImportSource jsx-slack */
-import { Blocks, Divider, Section } from 'jsx-slack';
+import { Blocks, Section } from 'jsx-slack';
+
+import i18n from '@/lib/i18n';
 
 import { SlackFooter } from '@/features/slack/components/footer';
 import { SlackHeader } from '@/features/slack/components/header';
 import type { CommuteAlertEvent } from '@/server/notifications/types';
 
-import { formatDate } from '../utils';
+import { formatDate, localizeTripType } from '../utils';
 
 type Props = {
   event: CommuteAlertEvent;
@@ -14,24 +16,34 @@ type Props = {
 
 // eslint-disable-next-line no-unused-vars
 export function CommuteAlert({ event, baseUrl }: Props) {
-  // eslint-disable-next-line no-unused-vars
-  const { senderName, alertType, lateMinutes, commuteDate } = event.payload;
+  const {
+    senderName,
+    alertType,
+    lateMinutes,
+    commuteDate,
+    customMessage,
+    tripType,
+  } = event.payload;
 
   const message =
     alertType === 'late'
-      ? '{{name}} sera en retard de {{minutes}} minutes.'
+      ? `*${senderName}*  sera en retard de *${lateMinutes} minutes*.`
       : alertType === 'arrived'
-        ? '{{name}} est arrivé au point de rendez-vous.'
-        : '{{name}} a envoyé un message personnalisé.';
+        ? `*${senderName}* est arrivé au point de rendez-vous.`
+        : `*${senderName}* a envoyé un message personnalisé : ${customMessage}`;
 
   return (
     <Blocks>
-      <SlackHeader>Alerte trajet</SlackHeader>
+      <SlackHeader>{i18n.t('notifications:push.commute.headline')}</SlackHeader>
       <Section>
         <>{message}</>
       </Section>
-      <Divider />
-      <SlackFooter>{formatDate(commuteDate)}</SlackFooter>
+      <SlackFooter>
+        {i18n.t('notifications:push.commute.footer', {
+          date: formatDate(commuteDate),
+          tripType: localizeTripType(tripType),
+        })}
+      </SlackFooter>
     </Blocks>
   );
 }
