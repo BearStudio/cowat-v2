@@ -26,6 +26,67 @@ export class CommuteFormPage {
       .click();
   }
 
+  // ─── Create a commute from scratch ──────────────────────────────────────────────────
+
+  async createFromScratch({
+    date,
+    seats,
+    roundTrip = false,
+  }: {
+    date: string;
+    seats: string;
+    roundTrip?: boolean;
+  }) {
+    await this.goto();
+
+    // Step 1 — Details
+    await this.dateInput.fill(date);
+    await this.dateInput.blur();
+
+    const roundTripCheckbox = this.roundTripCheckbox;
+    if (roundTrip) {
+      if (!(await roundTripCheckbox.isChecked())) {
+        await roundTripCheckbox.click();
+      }
+    } else {
+      if (await roundTripCheckbox.isChecked()) {
+        await roundTripCheckbox.click();
+      }
+    }
+
+    await this.seatsInput.clear();
+    await this.seatsInput.fill(seats);
+    await this.clickNext();
+
+    // Step 2 — Outward stops
+    await this.selectLocation(0, 'Home');
+    await this.fillOutwardTime(0, '08:00');
+    await this.selectLocation(1, 'Office');
+    await this.fillOutwardTime(1, '08:30');
+    await this.clickNext();
+
+    // Step 3 — Inward only for round-trip
+    if (roundTrip) {
+      await this.fillInwardTime(0, '18:30');
+      await this.fillInwardTime(1, '19:00');
+      await this.clickNext();
+    }
+
+    // Step 4 — Recap
+    if (roundTrip) {
+      await expect(this.page.getByText('Round trip')).toBeVisible();
+    } else {
+      await expect(this.page.getByText('One way')).toBeVisible();
+    }
+
+    await expect(this.page.getByText(`${seats} seats`).first()).toBeVisible();
+
+    await this.clickCreate();
+    await this.skipSaveTemplate();
+
+    await expect(this.commutesListHeading).toBeVisible({ timeout: 10_000 });
+  }
+
   // ─── Multi-step form ──────────────────────────────────────────────────
 
   get dateInput() {
@@ -61,7 +122,7 @@ export class CommuteFormPage {
   }
 
   async clickCreate() {
-    await this.page.getByRole('button', { name: 'Create' }).click();
+    await this.page.getByRole('button', { name: 'Create' }).last().click();
   }
 
   async clickSave() {
