@@ -5,6 +5,7 @@ import {
   NavigationIcon,
   PhoneIcon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
@@ -46,6 +47,8 @@ export const UpcomingCommuteDialog = ({
       onError: () => toast.error("Erreur lors de l'envoi"),
     })
   );
+
+  const [customMessage, setCustomMessage] = useState('');
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -159,10 +162,37 @@ export const UpcomingCommuteDialog = ({
                 </>
               )}
 
-              <Button className="justify-start gap-2" onClick={() => {}}>
-                <MessageCircleIcon className="size-4 shrink-0" />
-                Message personnalisé
-              </Button>
+              <div className="flex flex-col gap-1.5">
+                <p className="text-xs text-muted-foreground">
+                  Message personnalisé
+                </p>
+                <div className="flex gap-2">
+                  <textarea
+                    className="min-h-[72px] w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+                    placeholder="Écrivez votre message…"
+                    value={customMessage}
+                    onChange={(e) => setCustomMessage(e.target.value)}
+                  />
+                </div>
+                <Button
+                  className="gap-2 self-end"
+                  size="sm"
+                  disabled={!customMessage.trim() || sendAlert.isPending}
+                  onClick={() => {
+                    sendAlert.mutate(
+                      {
+                        id: commute.id,
+                        alertType: 'custom',
+                        customMessage: customMessage.trim(),
+                      },
+                      { onSuccess: () => setCustomMessage('') }
+                    );
+                  }}
+                >
+                  <MessageCircleIcon className="size-4 shrink-0" />
+                  Envoyer
+                </Button>
+              </div>
             </div>
           </div>
         </div>

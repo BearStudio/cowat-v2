@@ -277,7 +277,8 @@ export default {
     .input(
       z.object({
         id: z.string(),
-        alertType: z.enum(['late', 'arrived']),
+        alertType: z.enum(['late', 'arrived', 'custom']),
+        customMessage: z.string().min(1).optional(),
         lateMinutes: z.number().int().min(1).optional(),
       })
     )
