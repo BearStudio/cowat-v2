@@ -117,8 +117,6 @@ export function getPrivateBlocks(
         recipientUserId={opts?.recipientUserId ?? ''}
       />
     ))
-    .with({ type: 'commute.alert' }, (e) => (
-      <CommuteAlert event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
+    .with({ type: 'commute.alert' }, (e) => <CommuteAlert event={e} />)
     .exhaustive();
 }
