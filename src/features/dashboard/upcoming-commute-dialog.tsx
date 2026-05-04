@@ -93,7 +93,7 @@ export const UpcomingCommuteDialog = ({
                     <span className="shrink-0 text-muted-foreground">
                       {t('upcomingCommute:dialog.info.address')}
                     </span>
-                    <span className="min-w-0 text-right font-medium break-words">
+                    <span className="min-w-0 text-right font-medium wrap-break-word">
                       {passengerStop.location?.address}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export const UpcomingCommuteDialog = ({
                       {t('upcomingCommute:dialog.message.button.adress')}
                     </Button>
                   )}
-                  {commute.driver?.phone ? (
+                  {commute.driver?.phone ?? (
                     <Button
                       className="justify-start gap-2"
                       onClick={() => window.open(`tel:${commute.driver.phone}`)}
@@ -169,7 +169,7 @@ export const UpcomingCommuteDialog = ({
                       <PhoneIcon className="size-4 shrink-0" />
                       {t('upcomingCommute:dialog.message.button.call')}
                     </Button>
-                  ) : null}
+                  )}
                 </>
               )}
 
@@ -179,7 +179,7 @@ export const UpcomingCommuteDialog = ({
                 </p>
                 <div className="flex gap-2">
                   <textarea
-                    className="min-h-[72px] w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                     placeholder={t('upcomingCommute:dialog.message.customArea')}
                     value={customMessage}
                     onChange={(e) => setCustomMessage(e.target.value)}
