@@ -118,9 +118,7 @@ export function getPrivateBlocks(
         recipientUserId={opts?.recipientUserId ?? ''}
       />
     )),
-    Match.when({ type: 'commute.alert' }, (e) => (
-      <CommuteAlert event={e} baseUrl={opts?.baseUrl ?? ''} />
-    )),
+    Match.when({ type: 'commute.alert' }, (e) => <CommuteAlert event={e} />),
     Match.exhaustive
   );
 }
