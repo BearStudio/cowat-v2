@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { t } from 'i18next';
 import {
   MapPinIcon,
   MessageCircleIcon,
@@ -43,8 +44,10 @@ export const UpcomingCommuteDialog = ({
 
   const sendAlert = useMutation(
     orpc.commute.sendAlert.mutationOptions({
-      onSuccess: () => toast.success('Message envoyé'),
-      onError: () => toast.error("Erreur lors de l'envoi"),
+      onSuccess: () =>
+        toast.success(t('upcomingCommute:dialog.message.toast.success')),
+      onError: () =>
+        toast.error(t('upcomingCommute:dialog.message.toast.error')),
     })
   );
 
@@ -54,20 +57,24 @@ export const UpcomingCommuteDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Trajet à venir</DialogTitle>
+          <DialogTitle>{t('upcomingCommute:dialog.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border bg-muted/40 p-4">
             <div className="flex flex-col gap-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Départ</span>
+                <span className="text-muted-foreground">
+                  {t('upcomingCommute:dialog.info.outward')}
+                </span>
                 <span className="font-medium">
                   {firstStop?.outwardTime} · {firstStop?.location?.name}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Retour</span>
+                <span className="text-muted-foreground">
+                  {t('upcomingCommute:dialog.info.inward')}
+                </span>
                 <span className="font-medium">
                   {lastStop?.inwardTime} · {lastStop?.location?.name}
                 </span>
@@ -75,14 +82,16 @@ export const UpcomingCommuteDialog = ({
               {!isDriver && passengerStop && (
                 <>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Votre arrêt</span>
+                    <span className="text-muted-foreground">
+                      {t('upcomingCommute:dialog.info.yourStop')}
+                    </span>
                     <span className="font-medium">
                       {passengerStop.location?.name}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="shrink-0 text-muted-foreground">
-                      Adresse
+                      {t('upcomingCommute:dialog.info.address')}
                     </span>
                     <span className="min-w-0 text-right font-medium break-words">
                       {passengerStop.location?.address}
@@ -95,12 +104,14 @@ export const UpcomingCommuteDialog = ({
 
           <div className="flex flex-col gap-2">
             <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-              {isDriver ? 'Prévenir les passagers' : 'Prévenir le conducteur'}
+              {isDriver
+                ? t('upcomingCommute:dialog.message.passenger')
+                : t('upcomingCommute:dialog.message.driver')}
             </p>
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-1">
                 <p className="text-xs text-muted-foreground">
-                  Je suis en retard…
+                  {t('upcomingCommute:dialog.message.late')}
                 </p>
                 <div className="flex gap-2">
                   {[5, 10, 15].map((min) => (
@@ -129,7 +140,7 @@ export const UpcomingCommuteDialog = ({
                 }
               >
                 <MapPinIcon className="size-4 shrink-0" />
-                Je suis arrivé au point de rendez-vous
+                {t('upcomingCommute:dialog.message.button.arrived')}
               </Button>
 
               {!isDriver && (
@@ -147,7 +158,7 @@ export const UpcomingCommuteDialog = ({
                       }
                     >
                       <NavigationIcon className="size-4 shrink-0" />
-                      Voir l'adresse du rendez-vous
+                      {t('upcomingCommute:dialog.message.button.adress')}
                     </Button>
                   )}
                   {commute.driver?.phone ? (
@@ -156,7 +167,7 @@ export const UpcomingCommuteDialog = ({
                       onClick={() => window.open(`tel:${commute.driver.phone}`)}
                     >
                       <PhoneIcon className="size-4 shrink-0" />
-                      Appeler le conducteur
+                      {t('upcomingCommute:dialog.message.button.call')}
                     </Button>
                   ) : null}
                 </>
@@ -164,12 +175,12 @@ export const UpcomingCommuteDialog = ({
 
               <div className="flex flex-col gap-1.5">
                 <p className="text-xs text-muted-foreground">
-                  Message personnalisé
+                  {t('upcomingCommute:dialog.message.custom')}
                 </p>
                 <div className="flex gap-2">
                   <textarea
                     className="min-h-[72px] w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
-                    placeholder="Écrivez votre message…"
+                    placeholder={t('upcomingCommute:dialog.message.customArea')}
                     value={customMessage}
                     onChange={(e) => setCustomMessage(e.target.value)}
                   />
@@ -190,7 +201,7 @@ export const UpcomingCommuteDialog = ({
                   }}
                 >
                   <MessageCircleIcon className="size-4 shrink-0" />
-                  Envoyer
+                  {t('upcomingCommute:dialog.message.button.send')}
                 </Button>
               </div>
             </div>

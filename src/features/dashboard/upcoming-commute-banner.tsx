@@ -1,3 +1,5 @@
+import { t } from 'i18next';
+
 import { tripTypeIcons } from '@/lib/feature-icons';
 
 import { Button } from '@/components/ui/button';
@@ -31,7 +33,7 @@ export const UpcomingCommuteBanner = ({ commute, onOpen }: Props) => {
           <span className="text-sm">{lastStop?.location?.name}</span>
         </div>
         <Button size="sm" onClick={onOpen}>
-          Voir
+          {t('upcomingCommute:banner.display')}
         </Button>
       </div>
     </div>
