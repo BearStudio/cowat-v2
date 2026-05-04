@@ -161,7 +161,7 @@ export const UpcomingCommuteDialog = ({
                       {t('upcomingCommute:dialog.message.button.adress')}
                     </Button>
                   )}
-                  {commute.driver?.phone ?? (
+                  {commute.driver?.phone ? (
                     <Button
                       className="justify-start gap-2"
                       onClick={() => window.open(`tel:${commute.driver.phone}`)}
@@ -169,7 +169,7 @@ export const UpcomingCommuteDialog = ({
                       <PhoneIcon className="size-4 shrink-0" />
                       {t('upcomingCommute:dialog.message.button.call')}
                     </Button>
-                  )}
+                  ) : null}
                 </>
               )}
 
