@@ -1,0 +1,31 @@
+{
+  "banner": {
+    "display": "View the route"
+  },
+  "dialog": {
+    "title": "Upcoming commute",
+    "info": {
+      "outward": "Outward",
+      "inward": "Inward",
+      "yourStop": "Your stop",
+      "address": "Address"
+    },
+    "message": {
+      "driver": "Notify the driver",
+      "passenger": "Notify the passengers",
+      "late": "I'm late...",
+      "custom": "Custom message",
+      "customArea": "Write your message...",
+      "button": {
+        "arrived": "I have arrived at the meeting point",
+        "adress": "View the meeting point address",
+        "call": "Call the driver",
+        "send": "Send"
+      },
+      "toast": {
+        "success": "Message sent",
+        "error": "Error while sending message"
+      }
+    }
+  }
+}

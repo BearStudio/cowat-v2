@@ -1,0 +1,31 @@
+{
+  "banner": {
+    "display": "Afficher le trajet"
+  },
+  "dialog": {
+    "title": "Prochain trajet",
+    "info": {
+      "outward": "Départ",
+      "inward": "Retour",
+      "yourStop": "Votre arrêt",
+      "address": "Adresse"
+    },
+    "message": {
+      "driver": "Prévenir le conducteur",
+      "passenger": "Prévenir les passagers",
+      "late": "Je suis en retard...",
+      "custom": "Message personnalisé",
+      "customArea": "Écrivez votre message...",
+      "button": {
+        "arrived": "Je suis arrivé(é) au point de rendez-vous",
+        "adress": "Voir l'adresse du rendez-vous",
+        "call": "Appeler le conducteur",
+        "send": "Envoyer"
+      },
+      "toast": {
+        "success": "Message envoyé",
+        "error": "Erreur lors de l'envoi"
+      }
+    }
+  }
+}

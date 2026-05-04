@@ -16,6 +16,7 @@ import location from './location.json' with { type: 'json' };
 import notifications from './notifications.json' with { type: 'json' };
 import organization from './organization.json' with { type: 'json' };
 import stats from './stats.json' with { type: 'json' };
+import upcomingCommute from './upcoming-commute.json' with { type: 'json' };
 import user from './user.json' with { type: 'json' };
 
 export default {
@@ -27,6 +28,7 @@ export default {
   commuteRequest,
   commuteTemplate,
   common,
+  upcomingCommute,
   components,
   dashboard,
   emails,

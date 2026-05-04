@@ -104,6 +104,11 @@
         "title": "Carpool reminder",
         "body": "You have {{count}} commute(s) scheduled today."
       },
+      "alert": {
+        "late": "*{{senderName}}* will be *{{lateMinutes}}* minutes late.",
+        "arrived": "*{{senderName}}* has arrived at the meeting point.",
+        "custom": "*{{senderName}}* sent a custom message: {{customMessage}}"
+      },
       "headline": "🔔 *Commute alert !*",
       "footer": "📅 {{date}} · {{tripType}}"
     }
