@@ -64,44 +64,43 @@ export const UpcomingCommuteDialog = ({
           <div className="rounded-lg border bg-muted/40 p-4">
             <div className="flex flex-col gap-2 text-sm">
               {firstStop?.outwardTime && (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
-                      {t('upcomingCommute:dialog.info.outward')}
-                    </span>
-                    <span className="font-medium">
-                      {firstStop?.outwardTime} · {firstStop?.location?.name}
-                    </span>
-                  </div>
-                </>
+                <div className="flex items-start justify-between gap-3">
+                  <span className="shrink-0 text-muted-foreground">
+                    {t('upcomingCommute:dialog.info.outward')}
+                  </span>
+                  <span className="max-w-[60%] text-right font-medium wrap-break-word">
+                    {firstStop?.outwardTime} · {firstStop?.location?.name}
+                  </span>
+                </div>
               )}
+
               {lastStop?.inwardTime && (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
-                      {t('upcomingCommute:dialog.info.inward')}
-                    </span>
-                    <span className="font-medium">
-                      {lastStop?.inwardTime} · {lastStop?.location?.name}
-                    </span>
-                  </div>
-                </>
+                <div className="flex items-start justify-between gap-3">
+                  <span className="shrink-0 text-muted-foreground">
+                    {t('upcomingCommute:dialog.info.inward')}
+                  </span>
+                  <span className="max-w-[60%] text-right font-medium wrap-break-word">
+                    {lastStop?.inwardTime} · {lastStop?.location?.name}
+                  </span>
+                </div>
               )}
+
               {!isDriver && passengerStop && (
                 <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="shrink-0 text-muted-foreground">
                       {t('upcomingCommute:dialog.info.yourStop')}
                     </span>
-                    <span className="font-medium">
+                    <span className="max-w-[60%] text-right font-medium wrap-break-word">
                       {passengerStop.location?.name}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-2">
+
+                  <div className="flex items-start justify-between gap-3">
                     <span className="shrink-0 text-muted-foreground">
                       {t('upcomingCommute:dialog.info.address')}
                     </span>
-                    <span className="min-w-0 text-right font-medium wrap-break-word">
+                    <span className="max-w-[60%] text-right font-medium wrap-break-word">
                       {passengerStop.location?.address}
                     </span>
                   </div>
