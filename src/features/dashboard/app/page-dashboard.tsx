@@ -141,6 +141,18 @@ export const PageDashboard = () => {
 
   const upcomingCommute = useUpcomingCommute(commutesQuery.data);
 
+  const isUserInCommute = (commute: CommuteEnriched, userId: string) => {
+    if (commute.driver?.id === userId) return true;
+    return commute.stops.some((stop) =>
+      stop.passengers?.some(
+        (p) => p.passenger?.id === userId && p.status === 'ACCEPTED'
+      )
+    );
+  };
+
+  const shouldShowUpcoming =
+    upcomingCommute && isUserInCommute(upcomingCommute, currentUserId);
+
   return (
     <PageLayout>
       <PageLayoutTopBar
@@ -162,14 +174,14 @@ export const PageDashboard = () => {
         <PageLayoutTopBarTitle>{t('dashboard:title')}</PageLayoutTopBarTitle>
       </PageLayoutTopBar>
 
-      {upcomingCommute && (
+      {shouldShowUpcoming && (
         <UpcomingCommuteBanner
           commute={upcomingCommute}
           onOpen={() => setIsUpcomingCommuteModalOpen(true)}
         />
       )}
 
-      {upcomingCommute && (
+      {shouldShowUpcoming && (
         <UpcomingCommuteDialog
           commute={upcomingCommute}
           currentUserId={currentUserId}
