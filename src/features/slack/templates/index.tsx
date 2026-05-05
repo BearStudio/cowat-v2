@@ -6,12 +6,14 @@ import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
+import { CommuteAlert } from '@/features/slack/templates/commute-alert';
 import type {
   BookingAcceptedEvent,
   BookingCanceledByDriverEvent,
   BookingCanceledEvent,
   BookingRefusedEvent,
   BookingRequestedEvent,
+  CommuteAlertEvent,
   CommuteCanceledEvent,
   CommuteCreatedEvent,
   CommuteReminderEvent,
@@ -44,7 +46,8 @@ export type PrivateEvent =
   | BookingCanceledByDriverEvent
   | CommuteUpdatedEvent
   | CommuteCanceledEvent
-  | CommuteReminderEvent;
+  | CommuteReminderEvent
+  | CommuteAlertEvent;
 
 export type BroadcastOpts = {
   driverSlackId?: string;
@@ -114,5 +117,6 @@ export function getPrivateBlocks(
         recipientUserId={opts?.recipientUserId ?? ''}
       />
     ))
+    .with({ type: 'commute.alert' }, (e) => <CommuteAlert event={e} />)
     .exhaustive();
 }

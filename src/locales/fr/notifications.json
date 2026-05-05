@@ -103,7 +103,14 @@
       "reminder": {
         "title": "Rappel covoiturage",
         "body": "Vous avez {{count}} trajet(s) prévu(s) aujourd'hui."
-      }
+      },
+      "alert": {
+        "late": "*{{senderName}}* sera en retard de *{{lateMinutes}} minutes*.",
+        "arrived": "*{{senderName}}* est arrivé au point de rendez-vous.",
+        "custom": "*{{senderName}}* a envoyé un message personnalisé : {{customMessage}}"
+      },
+      "headline": "🔔 *Alerte trajet !*",
+      "footer": "📅 {{date}} · {{tripType}}"
     }
   },
   "common": {
