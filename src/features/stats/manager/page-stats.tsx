@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/datalist';
 import { SearchButton } from '@/components/ui/search-button';
 import { SearchInput } from '@/components/ui/search-input';
-import { StatCard } from '@/components/ui/stat-card';
-import { UserCard } from '@/components/ui/user-card';
 
 import { RankingCard } from '@/features/stats/manager/ranking-card';
+import { StatCard } from '@/features/stats/manager/stat-card';
+import { UserCard } from '@/features/stats/manager/user-card';
 import {
   PageLayout,
   PageLayoutContent,
