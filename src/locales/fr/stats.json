@@ -23,7 +23,11 @@
       "commutes": "Trajets",
       "bookings": "Réservations",
       "templates": "Modèles",
-      "stops": "Arrêts"
+      "stops": "Arrêts",
+      "activeUsers": "Utilisateurs actifs",
+      "allUsers": "Tous les utilisateurs",
+      "active": "Actif",
+      "inactive": "Inactif"
     }
   }
 }

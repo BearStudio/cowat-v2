@@ -23,7 +23,11 @@
       "commutes": "Commutes",
       "bookings": "Bookings",
       "templates": "Templates",
-      "stops": "Stops"
+      "stops": "Stops",
+      "activeUsers": "Active Users",
+      "allUsers": "All Users",
+      "active": "Active",
+      "inactive": "Inactive"
     }
   }
 }

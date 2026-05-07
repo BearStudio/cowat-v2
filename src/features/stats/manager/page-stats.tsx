@@ -1,30 +1,22 @@
 import { getUiState } from '@bearstudio/ui-state';
 import { useQuery } from '@tanstack/react-query';
+import { Calendar, Car, MapPin, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { StatsSkeleton } from '@/components/loading/stats-skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   DataList,
-  DataListCell,
   DataListEmptyState,
   DataListErrorState,
-  DataListRow,
-  DataListText,
-  DataListTextHeader,
 } from '@/components/ui/datalist';
-import { DatePicker } from '@/components/ui/date-picker';
+import { SearchButton } from '@/components/ui/search-button';
+import { SearchInput } from '@/components/ui/search-input';
+import { StatCard } from '@/components/ui/stat-card';
+import { UserCard } from '@/components/ui/user-card';
 
 import { RankingCard } from '@/features/stats/manager/ranking-card';
 import {
@@ -35,19 +27,12 @@ import {
 } from '@/layout/manager/page-layout';
 
 export const PageStats = () => {
-  const { t } = useTranslation(['stats']);
+  const { t } = useTranslation(['stats', 'components']);
 
-  const [from, setFrom] = useState<Date | null>(null);
-  const [to, setTo] = useState<Date | null>(null);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'all' | 'active'>('all');
 
-  const statsQuery = useQuery(
-    orpc.stats.getAll.queryOptions({
-      input:
-        from || to
-          ? { from: from ?? undefined, to: to ?? undefined }
-          : undefined,
-    })
-  );
+  const statsQuery = useQuery(orpc.stats.getAll.queryOptions());
 
   const ui = getUiState((set) => {
     if (statsQuery.status === 'pending') return set('pending');
@@ -63,33 +48,37 @@ export const PageStats = () => {
         <PageLayoutTopBarTitle>
           {t('stats:manager.title')}
         </PageLayoutTopBarTitle>
+        <div className="flex flex-1 items-center justify-between">
+          <SearchButton
+            value={search}
+            onChange={(value) => setSearch(value ?? '')}
+            className="-mx-2 md:hidden"
+            size="icon-sm"
+          />
+          <SearchInput
+            value={search}
+            onChange={(value) => setSearch(value ?? '')}
+            size="sm"
+            className="max-w-xs max-md:hidden"
+          />
+          <div className="ml-2 flex items-center gap-2">
+            <Button
+              size="xs"
+              onClick={() => setFilter('active')}
+              variant={filter === 'active' ? 'default' : 'secondary'}
+            >
+              {t('stats:manager.table.active')}
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => setFilter('all')}
+              variant={filter === 'all' ? 'default' : 'secondary'}
+            >
+              {t('stats:manager.table.allUsers')}
+            </Button>
+          </div>
+        </div>
       </PageLayoutTopBar>
-      <div className="flex flex-wrap items-center gap-3 px-4 py-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">
-            {t('stats:manager.filters.from')}
-          </span>
-          <DatePicker value={from} onChange={setFrom} noCalendar={false} />
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">
-            {t('stats:manager.filters.to')}
-          </span>
-          <DatePicker value={to} onChange={setTo} noCalendar={false} />
-        </div>
-        {(from || to) && (
-          <Button
-            variant="ghost"
-            size="xs"
-            onClick={() => {
-              setFrom(null);
-              setTo(null);
-            }}
-          >
-            {t('stats:manager.filters.reset')}
-          </Button>
-        )}
-      </div>
       <PageLayoutContent className="pb-20">
         {ui
           .match('pending', () => <StatsSkeleton />)
@@ -103,110 +92,94 @@ export const PageStats = () => {
               <DataListEmptyState />
             </DataList>
           ))
-          .match('default', ({ users }) => (
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <RankingCard
-                  title={t('stats:manager.rankings.bestDrivers')}
-                  description={t(
-                    'stats:manager.rankings.bestDriversDescription'
-                  )}
-                  users={users}
-                  metricKey="commuteCount"
-                />
-                <RankingCard
-                  title={t('stats:manager.rankings.bestPassengers')}
-                  description={t(
-                    'stats:manager.rankings.bestPassengersDescription'
-                  )}
-                  users={users}
-                  metricKey="bookingCount"
-                />
-                <RankingCard
-                  title={t('stats:manager.rankings.mostTemplates')}
-                  description={t(
-                    'stats:manager.rankings.mostTemplatesDescription'
-                  )}
-                  users={users}
-                  metricKey="templateCount"
-                />
-                <RankingCard
-                  title={t('stats:manager.rankings.mostStops')}
-                  description={t('stats:manager.rankings.mostStopsDescription')}
-                  users={users}
-                  metricKey="stopCount"
-                />
-              </div>
+          .match('default', ({ users }) => {
+            const totals = {
+              commutes: users.reduce((acc, u) => acc + u.commuteCount, 0),
+              bookings: users.reduce((acc, u) => acc + u.bookingCount, 0),
+              stops: users.reduce((acc, u) => acc + u.stopCount, 0),
+            };
+            const activeUsers = users.filter(
+              (u) => u.commuteCount > 0 || u.bookingCount > 0 || u.stopCount > 0
+            ).length;
+            const filteredUsers = users.filter((u) => {
+              const isActive =
+                u.commuteCount > 0 || u.bookingCount > 0 || u.stopCount > 0;
+              const matchesSearch = u.name
+                .toLowerCase()
+                .includes(search.toLowerCase());
+              if (!matchesSearch) return false;
+              if (filter === 'active') return isActive;
+              return true;
+            });
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('stats:manager.table.title')}</CardTitle>
-                  <CardDescription>
-                    {t('stats:manager.table.description')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <DataList>
-                    <DataListRow>
-                      <DataListCell className="flex-[2]">
-                        <DataListTextHeader>
-                          {t('stats:manager.table.user')}
-                        </DataListTextHeader>
-                      </DataListCell>
-                      <DataListCell>
-                        <DataListTextHeader>
-                          {t('stats:manager.table.commutes')}
-                        </DataListTextHeader>
-                      </DataListCell>
-                      <DataListCell>
-                        <DataListTextHeader>
-                          {t('stats:manager.table.bookings')}
-                        </DataListTextHeader>
-                      </DataListCell>
-                      <DataListCell>
-                        <DataListTextHeader>
-                          {t('stats:manager.table.templates')}
-                        </DataListTextHeader>
-                      </DataListCell>
-                      <DataListCell>
-                        <DataListTextHeader>
-                          {t('stats:manager.table.stops')}
-                        </DataListTextHeader>
-                      </DataListCell>
-                    </DataListRow>
-                    {users.map((user) => (
-                      <DataListRow key={user.id}>
-                        <DataListCell className="flex-[2]">
-                          <Avatar className="size-8">
-                            <AvatarImage
-                              src={user.image ?? undefined}
-                              alt={user.name}
-                            />
-                            <AvatarFallback variant="boring" name={user.name} />
-                          </Avatar>
-                          <DataListText className="font-medium">
-                            {user.name}
-                          </DataListText>
-                        </DataListCell>
-                        <DataListCell>
-                          <DataListText>{user.commuteCount}</DataListText>
-                        </DataListCell>
-                        <DataListCell>
-                          <DataListText>{user.bookingCount}</DataListText>
-                        </DataListCell>
-                        <DataListCell>
-                          <DataListText>{user.templateCount}</DataListText>
-                        </DataListCell>
-                        <DataListCell>
-                          <DataListText>{user.stopCount}</DataListText>
-                        </DataListCell>
-                      </DataListRow>
-                    ))}
-                  </DataList>
-                </CardContent>
-              </Card>
-            </div>
-          ))
+            return (
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <StatCard
+                    title={t('stats:manager.table.commutes')}
+                    value={totals.commutes}
+                    icon={Car}
+                  />
+                  <StatCard
+                    title={t('stats:manager.table.bookings')}
+                    value={totals.bookings}
+                    icon={Calendar}
+                  />
+                  <StatCard
+                    title={t('stats:manager.table.activeUsers')}
+                    value={activeUsers}
+                    icon={Users}
+                  />
+                  <StatCard
+                    title={t('stats:manager.table.stops')}
+                    value={totals.stops}
+                    icon={MapPin}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <RankingCard
+                    title={t('stats:manager.rankings.bestDrivers')}
+                    description={t(
+                      'stats:manager.rankings.bestDriversDescription'
+                    )}
+                    users={users}
+                    metricKey="commuteCount"
+                  />
+                  <RankingCard
+                    title={t('stats:manager.rankings.bestPassengers')}
+                    description={t(
+                      'stats:manager.rankings.bestPassengersDescription'
+                    )}
+                    users={users}
+                    metricKey="bookingCount"
+                  />
+                  <RankingCard
+                    title={t('stats:manager.rankings.mostTemplates')}
+                    description={t(
+                      'stats:manager.rankings.mostTemplatesDescription'
+                    )}
+                    users={users}
+                    metricKey="templateCount"
+                  />
+                  <RankingCard
+                    title={t('stats:manager.rankings.mostStops')}
+                    description={t(
+                      'stats:manager.rankings.mostStopsDescription'
+                    )}
+                    users={users}
+                    metricKey="stopCount"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredUsers.map((user) => (
+                    <UserCard key={user.id} user={user} />
+                  ))}
+                </div>
+              </div>
+            );
+          })
           .exhaustive()}
       </PageLayoutContent>
     </PageLayout>
