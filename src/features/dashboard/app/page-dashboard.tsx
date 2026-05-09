@@ -2,10 +2,12 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
+
+const FALLBACK_DATE = new Date(0);
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
@@ -63,7 +65,7 @@ export const PageDashboard = () => {
     })
   );
 
-  const bookingInfo =
+  const rawBookingInfo =
     commutesQuery.data
       ?.flatMap((commute) => {
         const orders = commute.stops.map((s) => s.order);
@@ -79,9 +81,16 @@ export const PageDashboard = () => {
           isLastStop: stop.order === maxOrder,
         }));
       })
-      .find(
-        (s) => s.stopId === bookingStopId && s.driver?.id !== currentUserId
-      ) ?? null;
+      .find((s) => s.stopId === bookingStopId) ?? null;
+
+  const isDriverBooking = rawBookingInfo?.driver?.id === currentUserId;
+  const bookingInfo = isDriverBooking ? null : rawBookingInfo;
+
+  useEffect(() => {
+    if (isDriverBooking) {
+      setSearchParams({ bookingStop: null });
+    }
+  }, [isDriverBooking, setSearchParams]);
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({
@@ -232,7 +241,7 @@ export const PageDashboard = () => {
         <BookingDrawer
           stopId={bookingInfo?.stopId ?? ''}
           commuteType={bookingInfo?.commuteType ?? 'ROUND'}
-          commuteDate={bookingInfo?.commuteDate ?? new Date()}
+          commuteDate={bookingInfo?.commuteDate ?? FALLBACK_DATE}
           stop={bookingInfo?.stop ?? null}
           driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}

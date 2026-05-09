@@ -74,6 +74,7 @@ export const FormInvite = () => {
           );
         }
         form.reset();
+        clearTimeout(debounceTimerRef.current);
         setDebouncedSearch('');
       },
       onError: () => {
