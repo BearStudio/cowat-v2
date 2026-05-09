@@ -2,7 +2,7 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -83,14 +83,8 @@ export const PageDashboard = () => {
       })
       .find((s) => s.stopId === bookingStopId) ?? null;
 
-  const isDriverBooking = rawBookingInfo?.driver?.id === currentUserId;
-  const bookingInfo = isDriverBooking ? null : rawBookingInfo;
-
-  useEffect(() => {
-    if (isDriverBooking) {
-      setSearchParams({ bookingStop: null });
-    }
-  }, [isDriverBooking, setSearchParams]);
+  const bookingInfo =
+    rawBookingInfo?.driver?.id !== currentUserId ? rawBookingInfo : null;
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({
