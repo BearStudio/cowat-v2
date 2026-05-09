@@ -1,6 +1,9 @@
 import { expect, test } from 'e2e/utils';
 import { ADMIN_EMAIL, ADMIN_FILE, ORG_SLUG } from 'e2e/utils/constants';
-import { randomString } from 'remeda';
+const randomString = (length: number) =>
+  Math.random()
+    .toString(36)
+    .slice(2, 2 + length);
 
 test.describe.serial('Manager organization', () => {
   test.use({ storageState: ADMIN_FILE });

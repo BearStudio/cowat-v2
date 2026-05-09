@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
 import { expect, test } from 'e2e/utils';
 import { USER_FILE } from 'e2e/utils/constants';
-import { randomString } from 'remeda';
+const randomString = (length: number) =>
+  Math.random()
+    .toString(36)
+    .slice(2, 2 + length);
 
 /** Format a date for the DateInput (DD/MM/YYYY). */
 function formatDate(date: Date): string {
