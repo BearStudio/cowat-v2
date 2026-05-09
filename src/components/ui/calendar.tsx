@@ -33,7 +33,7 @@ const ChevronWrapper = ({ orientation }: ChevronProps) => {
     .exhaustive();
 
   // eslint-disable-next-line react-hooks/static-components
-  return <Icon className="h-4 w-4" />;
+  return <Icon className="size-4" />;
 };
 
 /**
@@ -210,24 +210,24 @@ function Nav({ className }: NavProps) {
     <nav className={cn('flex items-center', className)}>
       <Button
         variant="secondary"
-        className="absolute left-0 h-7 w-7 bg-transparent p-0 opacity-80 hover:opacity-100"
+        className="absolute left-0 size-7 bg-transparent p-0 opacity-80 hover:opacity-100"
         tabIndex={isPreviousDisabled ? undefined : -1}
         disabled={isPreviousDisabled}
         aria-label={labelPrevious(previousMonth)}
         onClick={handlePreviousClick}
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="size-4" />
       </Button>
 
       <Button
         variant="secondary"
-        className="absolute right-0 h-7 w-7 bg-transparent p-0 opacity-80 hover:opacity-100"
+        className="absolute right-0 size-7 bg-transparent p-0 opacity-80 hover:opacity-100"
         tabIndex={isNextDisabled ? undefined : -1}
         disabled={isNextDisabled}
         aria-label={labelNext(nextMonth)}
         onClick={handleNextClick}
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="size-4" />
       </Button>
     </nav>
   );

@@ -62,7 +62,7 @@ export const Default = () => {
 
         <MultiStepFormStep name="Review">
           <div className="px-4 pb-2 text-sm text-muted-foreground">
-            All looks good — ready to submit!
+            All looks good, ready to submit!
           </div>
         </MultiStepFormStep>
 
@@ -138,7 +138,7 @@ export const WithValidation = () => {
 
           <MultiStepFormStep name="Review">
             <div className="px-4 pb-2 text-sm text-muted-foreground">
-              All looks good — ready to submit!
+              All looks good, ready to submit!
             </div>
           </MultiStepFormStep>
 
@@ -180,7 +180,7 @@ export const VisitedState = () => {
   return (
     <div className="flex flex-col gap-6">
       <p className="text-sm text-muted-foreground">
-        Navigate through the steps — the progress bar tracks which steps have
+        Navigate through the steps: the progress bar tracks which steps have
         been visited. Visited steps are clickable.
       </p>
       <div className="flex max-w-md flex-col overflow-hidden rounded-lg border border-border">

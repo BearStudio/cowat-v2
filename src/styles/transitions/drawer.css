@@ -9,19 +9,22 @@
   --stack-peek-offset: calc(var(--nested-drawers, 0) * var(--peek));
   --stack-height: max(
     0px,
-    calc(var(--drawer-frontmost-height, var(--drawer-height, 0px)) - var(--bleed))
+    calc(
+      var(--drawer-frontmost-height, var(--drawer-height, 0px)) - var(--bleed)
+    )
   );
   --stack-shrink: calc(1 - var(--stack-scale));
   --stack-translate: calc(
-    (-1 * var(--stack-peek-offset)) - (var(--stack-shrink) * var(--stack-height))
+    (-1 * var(--stack-peek-offset)) -
+      (var(--stack-shrink) * var(--stack-height))
   );
 
   /* Override Tailwind's transform-[translateY(...)] to add scale + stacking offset */
   transform-origin: 50% calc(100% - var(--bleed));
   transform: translateY(
       calc(
-        var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px) +
-          var(--stack-translate)
+        var(--drawer-snap-point-offset, 0px) +
+          var(--drawer-swipe-movement-y, 0px) + var(--stack-translate)
       )
     )
     scale(var(--stack-scale));
@@ -61,7 +64,8 @@
 [data-slot='drawer-inner-content'] {
   transition: opacity 300ms cubic-bezier(0.45, 1.005, 0, 1.005);
 }
-[data-slot='drawer-content'][data-nested-drawer-open] [data-slot='drawer-inner-content'] {
+[data-slot='drawer-content'][data-nested-drawer-open]
+  [data-slot='drawer-inner-content'] {
   opacity: 0;
 }
 [data-slot='drawer-content'][data-nested-drawer-open][data-nested-drawer-swiping]

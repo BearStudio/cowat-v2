@@ -17,6 +17,8 @@ const zFormSchema = () =>
     date: z.date({ error: 'Required' }),
   });
 
+const today = new Date();
+
 const formOptions = {
   mode: 'onBlur',
   resolver: zodResolver(zFormSchema()),
@@ -42,7 +44,7 @@ export const Default = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -63,13 +65,13 @@ export const CalendarCustomization = () => {
             name="date"
             placeholder="DD/MM/YYYY"
             calendarProps={{
-              startMonth: new Date(),
+              startMonth: today,
             }}
           />
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

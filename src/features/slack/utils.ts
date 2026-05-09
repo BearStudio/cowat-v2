@@ -8,16 +8,26 @@ export type SlackBlock = {
   [key: string]: unknown;
 };
 
+const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+};
+
+const dateFormatters: Record<LanguageKey, Intl.DateTimeFormat> = {
+  en: new Intl.DateTimeFormat('en', DATE_FORMAT_OPTIONS),
+  fr: new Intl.DateTimeFormat('fr', DATE_FORMAT_OPTIONS),
+};
+
+const getDateFormatter = (locale: string): Intl.DateTimeFormat =>
+  dateFormatters[locale as LanguageKey] ?? dateFormatters.en;
+
 export function formatDate(commuteDate: Date): string {
   const date =
     commuteDate instanceof Date ? commuteDate : new Date(String(commuteDate));
 
-  return new Intl.DateTimeFormat(i18n.language as LanguageKey, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
+  return getDateFormatter(i18n.language).format(date);
 }
 
 export function localizeCommuteType(type: CommuteType): string {

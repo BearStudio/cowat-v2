@@ -198,41 +198,40 @@ export default {
         organizationId: context.organizationId,
       };
 
-      for (const booking of affectedPassengers) {
-        const recipient = toRecipient(booking.passenger);
-
-        if (seatsReduced) {
-          await context.notify(
-            {
-              type: 'booking.canceledByDriver',
-              recipient,
-              payload: {
-                driverName: context.user.name,
-                commuteDate: existing.date,
-                commuteType: existing.type,
-                orgSlug: context.orgSlug,
-              },
-            },
-            orgContext
-          );
-        } else {
-          await context.notify(
-            {
-              type: 'commute.updated',
-              recipient,
-              payload: {
-                driverName: context.user.name,
-                commuteDate: existing.date,
-                commuteType: existing.type,
-                orgSlug: context.orgSlug,
-                newCommuteDate: commute.date,
-                newCommuteType: commute.type,
-              },
-            },
-            orgContext
-          );
-        }
-      }
+      await Promise.all(
+        affectedPassengers.map((booking) => {
+          const recipient = toRecipient(booking.passenger);
+          return seatsReduced
+            ? context.notify(
+                {
+                  type: 'booking.canceledByDriver',
+                  recipient,
+                  payload: {
+                    driverName: context.user.name,
+                    commuteDate: existing.date,
+                    commuteType: existing.type,
+                    orgSlug: context.orgSlug,
+                  },
+                },
+                orgContext
+              )
+            : context.notify(
+                {
+                  type: 'commute.updated',
+                  recipient,
+                  payload: {
+                    driverName: context.user.name,
+                    commuteDate: existing.date,
+                    commuteType: existing.type,
+                    orgSlug: context.orgSlug,
+                    newCommuteDate: commute.date,
+                    newCommuteType: commute.type,
+                  },
+                },
+                orgContext
+              );
+        })
+      );
 
       return commute;
     }),
@@ -242,33 +241,31 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const existing = await context.commutes.findForMutation(
-        input.id,
-        context.organizationId
-      );
+      const [existing, affectedPassengers] = await Promise.all([
+        context.commutes.findForMutation(input.id, context.organizationId),
+        context.bookings.findAffectedPassengers(input.id),
+      ]);
 
       assertDriverOwnership(existing, context.memberId);
 
-      const affectedPassengers = await context.bookings.findAffectedPassengers(
-        input.id
-      );
-
       await context.commutes.delete(input.id);
 
-      for (const booking of affectedPassengers) {
-        await context.notify(
-          {
-            type: 'commute.canceled',
-            recipient: toRecipient(booking.passenger),
-            payload: {
-              driverName: context.user.name,
-              commuteDate: existing.date,
-              commuteType: existing.type,
-              orgSlug: context.orgSlug,
+      await Promise.all(
+        affectedPassengers.map((booking) =>
+          context.notify(
+            {
+              type: 'commute.canceled',
+              recipient: toRecipient(booking.passenger),
+              payload: {
+                driverName: context.user.name,
+                commuteDate: existing.date,
+                commuteType: existing.type,
+                orgSlug: context.orgSlug,
+              },
             },
-          },
-          { db: context.db, organizationId: context.organizationId }
-        );
-      }
+            { db: context.db, organizationId: context.organizationId }
+          )
+        )
+      );
     }),
 };

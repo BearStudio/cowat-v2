@@ -216,7 +216,6 @@
 @import './transitions/stop-reveal.css';
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -276,7 +275,6 @@
 
 @layer components {
   @keyframes caret-blink {
-
     0%,
     70%,
     100% {
@@ -296,7 +294,6 @@
 
 @layer components {
   @keyframes float-in-space {
-
     0%,
     100% {
       transform: translate(-10px, 10px) rotate(-2deg);

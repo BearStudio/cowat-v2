@@ -59,12 +59,14 @@ export const FieldSelectEmails = (
     [suggestions, emails]
   );
 
+  const emailItems = useMemo(
+    (): EmailItem[] => emails.map((e) => ({ value: e, label: e })),
+    [emails]
+  );
+
   const items = useMemo(
-    (): EmailItem[] => [
-      ...emails.map((e) => ({ value: e, label: e })),
-      ...availableSuggestions,
-    ],
-    [emails, availableSuggestions]
+    (): EmailItem[] => [...emailItems, ...availableSuggestions],
+    [emailItems, availableSuggestions]
   );
 
   const addEmail = (raw: string) => {
@@ -104,7 +106,7 @@ export const FieldSelectEmails = (
           setInputValue(value);
           onInputValueChangeProp?.(value);
         }}
-        value={items.filter((item) => emails.includes(item.value))}
+        value={emailItems}
         isItemEqualToValue={(a, b) =>
           (a as EmailItem).value === (b as EmailItem).value
         }

@@ -3,15 +3,14 @@ import { db } from '@/server/db';
 import { createCommutes } from './commute';
 import { createCommuteTemplates } from './commute-template';
 import { createLocations } from './location';
-import { createOrganization } from './organization';
+import { addOrgMembers, createOrg } from './organization';
 import { createUsers } from './user';
 
 async function main() {
-  await createUsers();
-  const orgId = await createOrganization();
+  const [, orgId] = await Promise.all([createUsers(), createOrg()]);
+  await addOrgMembers(orgId);
   await createLocations(orgId);
-  await createCommutes(orgId);
-  await createCommuteTemplates(orgId);
+  await Promise.all([createCommutes(orgId), createCommuteTemplates(orgId)]);
 }
 
 main()

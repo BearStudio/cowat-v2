@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -20,13 +20,13 @@ import { zInviteForm } from '@/features/organization/schema';
 
 export const FormInvite = () => {
   const { t } = useTranslation(['organization']);
-  const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  const updateSearch = (value: string) => {
+    clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => setDebouncedSearch(value), 300);
+  };
 
   const form = useForm<z.infer<ReturnType<typeof zInviteForm>>>({
     resolver: zodResolver(zInviteForm()),
@@ -74,7 +74,7 @@ export const FormInvite = () => {
           );
         }
         form.reset();
-        setSearchTerm('');
+        clearTimeout(debounceTimerRef.current);
         setDebouncedSearch('');
       },
       onError: () => {
@@ -101,7 +101,7 @@ export const FormInvite = () => {
             displayError={false}
             placeholder={t('organization:members.emailsPlaceholder')}
             suggestions={suggestions}
-            onInputValueChange={setSearchTerm}
+            onInputValueChange={updateSearch}
           />
         </FormField>
         <FormField className="sm:w-36">

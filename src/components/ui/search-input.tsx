@@ -69,7 +69,7 @@ export const SearchInput = ({
     setSearch(value ?? '');
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
 
@@ -109,7 +109,7 @@ export const SearchInput = ({
       <InputGroupInput
         {...rest}
         ref={inputRef}
-        onChange={handleChange}
+        onChange={updateSearch}
         value={search || ''}
         placeholder={placeholder ?? t('components:searchInput.placeholder')}
         onKeyDown={handleEscape}

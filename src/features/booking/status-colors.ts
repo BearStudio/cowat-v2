@@ -18,9 +18,9 @@ export function getUserBookingStatus(
 ): UserBookingStatus {
   if (currentUserId === commute.driver.id) return 'DRIVER';
 
-  const userBookings = commute.stops
-    .flatMap((s) => s.passengers)
-    .filter((p) => p.passenger.id === currentUserId);
+  const userBookings = commute.stops.flatMap((s) =>
+    s.passengers.filter((p) => p.passenger.id === currentUserId)
+  );
 
   if (userBookings.length === 0) return 'OUTSIDER';
 

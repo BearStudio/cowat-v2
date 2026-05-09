@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const STORY_DATE = new Date('2025-01-15');
+
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -32,8 +34,8 @@ export const CalendarCustomization = () => {
       onChange={(value) => setDate(value)}
       value={date}
       calendarProps={{
-        startMonth: new Date(),
-        endMonth: new Date(),
+        startMonth: STORY_DATE,
+        endMonth: STORY_DATE,
       }}
     />
   );

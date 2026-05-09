@@ -34,27 +34,29 @@ export const pageWithUtils: CustomFixture<Page & PageUtils> = async (
   page.login = async function login(input: { email: string; code?: string }) {
     const routeLogin = '/login' satisfies FileRouteTypes['to'];
     const routeLoginVerify = '/login/verify' satisfies FileRouteTypes['to'];
-    await page.waitForURL(`**${routeLogin}**`);
+    await Promise.all([
+      page.waitForURL(`**${routeLogin}**`),
+      expect(
+        page.getByText(
+          locales[DEFAULT_LANGUAGE_KEY].auth.pageLoginWithSignUp.title
+        )
+      ).toBeVisible({ timeout: 15_000 }),
+      page
+        .getByPlaceholder(locales[DEFAULT_LANGUAGE_KEY].auth.common.email.label)
+        .fill(input.email),
+    ]);
 
-    await expect(
-      page.getByText(
-        locales[DEFAULT_LANGUAGE_KEY].auth.pageLoginWithSignUp.title
-      )
-    ).toBeVisible({ timeout: 15_000 });
+    await Promise.all([
+      page
+        .getByRole('button', {
+          name: locales[DEFAULT_LANGUAGE_KEY].auth[
+            AUTH_SIGNUP_ENABLED ? 'pageLoginWithSignUp' : 'pageLogin'
+          ].loginWithEmail,
+        })
+        .click(),
+      page.waitForURL(`**${routeLoginVerify}**`),
+    ]);
 
-    await page
-      .getByPlaceholder(locales[DEFAULT_LANGUAGE_KEY].auth.common.email.label)
-      .fill(input.email);
-
-    await page
-      .getByRole('button', {
-        name: locales[DEFAULT_LANGUAGE_KEY].auth[
-          AUTH_SIGNUP_ENABLED ? 'pageLoginWithSignUp' : 'pageLogin'
-        ].loginWithEmail,
-      })
-      .click();
-
-    await page.waitForURL(`**${routeLoginVerify}**`);
     await page
       .getByText(locales[DEFAULT_LANGUAGE_KEY].auth.common.otp.label)
       .fill(input.code ?? AUTH_EMAIL_OTP_MOCKED);

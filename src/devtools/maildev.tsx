@@ -2,6 +2,7 @@ export function MailDevDevtoolPanel() {
   return (
     <div className="h-full">
       <iframe
+        title="MailDev"
         className="h-full w-full"
         src="http://localhost:1080/#/"
         // eslint-disable-next-line @eslint-react/dom/no-unsafe-iframe-sandbox

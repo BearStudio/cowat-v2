@@ -286,24 +286,26 @@ export default {
       const succeeded: string[] = [];
       const failed: { email: string; error: string }[] = [];
 
-      for (const email of input.emails) {
-        try {
-          await auth.api.createInvitation({
-            headers,
-            body: {
+      await Promise.all(
+        input.emails.map(async (email) => {
+          try {
+            await auth.api.createInvitation({
+              headers,
+              body: {
+                email,
+                role: input.role,
+                organizationId: context.organizationId,
+              },
+            });
+            succeeded.push(email);
+          } catch (e) {
+            failed.push({
               email,
-              role: input.role,
-              organizationId: context.organizationId,
-            },
-          });
-          succeeded.push(email);
-        } catch (e) {
-          failed.push({
-            email,
-            error: e instanceof Error ? e.message : 'Unknown error',
-          });
-        }
-      }
+              error: e instanceof Error ? e.message : 'Unknown error',
+            });
+          }
+        })
+      );
 
       return { succeeded, failed };
     }),

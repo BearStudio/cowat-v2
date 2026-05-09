@@ -3,7 +3,6 @@ import {
   ChangeEvent,
   ChangeEventHandler,
   ComponentProps,
-  useEffect,
   useState,
 } from 'react';
 
@@ -31,17 +30,14 @@ const useDatePickerInputManagement = (
   const [inputValue, setInputValue] = useState<string>(
     dateValue ? dayjs(dateValue).format(dateFormat) : ''
   );
+  const [prevDateValue, setPrevDateValue] = useState(dateValue);
+  const [prevDateFormat, setPrevDateFormat] = useState(dateFormat);
 
-  // To update the state if the value of the format change
-  useEffect(() => {
-    if (dateValue) {
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect, react-hooks/set-state-in-effect
-      setInputValue(dayjs(dateValue).format(dateFormat));
-    } else {
-      // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-      setInputValue('');
-    }
-  }, [dateFormat, dateValue]);
+  if (prevDateValue !== dateValue || prevDateFormat !== dateFormat) {
+    setPrevDateValue(dateValue);
+    setPrevDateFormat(dateFormat);
+    setInputValue(dateValue ? dayjs(dateValue).format(dateFormat) : '');
+  }
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInputValue(e.currentTarget.value);

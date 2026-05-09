@@ -53,9 +53,10 @@ export async function getClientMessaging(): Promise<Messaging | null> {
 }
 
 export async function getFcmToken(): Promise<string | null> {
-  const config = await getFirebaseConfig();
   const messaging = await getClientMessaging();
   if (!messaging) return null;
+
+  const config = await getFirebaseConfig();
 
   try {
     await navigator.serviceWorker.register('/firebase-messaging-sw.js', {

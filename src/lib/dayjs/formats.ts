@@ -39,7 +39,7 @@ const dateFormats = {
 
 // ─── Types ───────────────────────────────────────────────────────────
 
-export type DateFormats = typeof dateFormats;
+type DateFormats = typeof dateFormats;
 
 /** Union of all valid "namespace:key" strings, e.g. 'common:short' | 'dashboard:dayHeader' | ... */
 export type DateFormatKey = FormatKey<DateFormats>;

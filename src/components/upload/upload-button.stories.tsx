@@ -21,7 +21,7 @@ export const Default = () => {
 
 export const WithChildren = () => {
   return (
-    <div className="flex space-x-2">
+    <div className="flex gap-x-2">
       <UploadButton
         uploadRoute="example"
         onSuccess={(file) => console.log('uploaded file', file)}
@@ -50,7 +50,7 @@ export const WithChildren = () => {
 
 export const Disabled = () => {
   return (
-    <div className="flex space-x-2">
+    <div className="flex gap-x-2">
       <UploadButton
         disabled
         uploadRoute="example"

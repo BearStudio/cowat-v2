@@ -5,6 +5,7 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,

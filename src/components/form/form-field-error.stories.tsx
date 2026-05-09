@@ -71,7 +71,7 @@ export const CustomField = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -100,7 +100,7 @@ export const Standalone = () => {
         {/* Error displayed outside of FormFieldController */}
         <FormFieldError control={form.control} name="website" />
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

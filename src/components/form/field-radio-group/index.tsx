@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 import { useFormField } from '@/components/form/form-field';
 import { FormFieldContainer } from '@/components/form/form-field-container';
 import { useFormFieldController } from '@/components/form/form-field-controller/context';
@@ -10,6 +8,14 @@ import { Radio, RadioGroup, RadioProps } from '@/components/ui/radio-group';
 type RadioOption = Omit<RadioProps, 'children' | 'render'> & {
   label: string;
 };
+
+const RenderedOption = ({
+  renderOption,
+  optionProps,
+}: {
+  renderOption: (props: RadioOption) => React.JSX.Element;
+  optionProps: RadioOption;
+}) => renderOption(optionProps);
 
 export const FieldRadioGroup = (
   props: FieldProps<
@@ -42,15 +48,17 @@ export const FieldRadioGroup = (
 
           if (renderOption) {
             return (
-              <Fragment key={radioId}>
-                {renderOption({
+              <RenderedOption
+                key={radioId}
+                renderOption={renderOption}
+                optionProps={{
                   label,
                   'aria-invalid': fieldState.invalid,
                   size: ctx.size,
                   ...field,
                   ...option,
-                })}
-              </Fragment>
+                }}
+              />
             );
           }
 

@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import { describe, expect, it, vi } from 'vitest';
 
+const FIXED_DATE = new Date('2025-01-15');
+
 import { page, render } from '@/tests/utils';
 
 import { Calendar } from './calendar';
@@ -27,7 +29,7 @@ describe('Calendar', () => {
 
   it('should render date buttons when controlled', async () => {
     await render(
-      <Calendar mode="single" selected={new Date()} onSelect={() => {}} />
+      <Calendar mode="single" selected={FIXED_DATE} onSelect={() => {}} />
     );
 
     // 3 are the previous, next and year select buttons
@@ -40,7 +42,7 @@ describe('Calendar', () => {
     render(
       <Calendar
         mode="single"
-        selected={new Date()}
+        selected={FIXED_DATE}
         onSelect={(v) => {
           // Start of day is easier to expect
           onSelect(dayjs(v).startOf('day').toDate());

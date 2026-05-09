@@ -95,7 +95,11 @@ export const DashboardCommuteCard = ({
 
                   if (userBooking) {
                     return (
-                      <div onClick={(e) => e.stopPropagation()}>
+                      <div
+                        role="none"
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      >
                         <ConfirmResponsiveDrawer
                           description={
                             <div className="flex flex-col gap-3">

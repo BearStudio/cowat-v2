@@ -47,9 +47,9 @@ export const StepInwardStops = ({
   );
 
   const locationsMap = new Map(
-    locationsQuery.data?.pages
-      .flatMap((p) => p.items)
-      .map((loc) => [loc.id, loc.name]) ?? []
+    locationsQuery.data?.pages.flatMap((p) =>
+      p.items.map((loc) => [loc.id, loc.name] as const)
+    ) ?? []
   );
 
   // Reverse order so stops are chronological for the return trip
@@ -72,7 +72,7 @@ export const StepInwardStops = ({
         else if (isInboundArrival) stopLabel = t(`${ns}:form.arrival`);
 
         return (
-          <div key={index} className="flex flex-col gap-2 py-3">
+          <div key={stop.locationId} className="flex flex-col gap-2 py-3">
             <span className="truncate text-sm font-semibold">{stopLabel}</span>
             {(isInboundDeparture || isInboundArrival) && (
               <span className="truncate text-xs text-muted-foreground">

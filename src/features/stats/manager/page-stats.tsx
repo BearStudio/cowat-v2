@@ -64,7 +64,7 @@ export const PageStats = () => {
           {t('stats:manager.title')}
         </PageLayoutTopBarTitle>
       </PageLayoutTopBar>
-      <div className="flex flex-wrap items-center gap-3 px-4 py-4">
+      <div className="flex flex-wrap items-center gap-3 p-4">
         <div className="flex flex-col gap-1">
           <span className="text-sm text-muted-foreground">
             {t('stats:manager.filters.from')}

@@ -141,9 +141,10 @@ async function sendToRecipients(
   // Clean up expired registrations
   if (invalidTokens.length > 0) {
     const tokenToId = new Map(allTokens.map((t) => [t.token, t.id]));
-    const invalidTokenIds = invalidTokens
-      .map((t) => tokenToId.get(t))
-      .filter((id): id is string => id !== undefined);
+    const invalidTokenIds = invalidTokens.flatMap((t) => {
+      const id = tokenToId.get(t);
+      return id !== undefined ? [id] : [];
+    });
 
     if (invalidTokenIds.length > 0) {
       await fcmTokens.deleteByIds(invalidTokenIds);
