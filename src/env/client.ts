@@ -5,7 +5,7 @@ import {
   optionalWithDevDefault,
   vercelAwareBaseUrl,
   withEnvDefault,
-} from './config-helpers';
+} from './helpers';
 
 const envMetaOrProcess: Record<string, unknown> =
   import.meta.env ?? process.env;

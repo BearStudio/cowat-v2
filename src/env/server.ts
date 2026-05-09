@@ -7,7 +7,7 @@ import {
   logLevelConfig,
   optionalWithReplaceMe,
   requiredInProd,
-} from './config-helpers';
+} from './helpers';
 
 const serverConfig = Effect.gen(function* () {
   return {
