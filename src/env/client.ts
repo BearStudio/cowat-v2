@@ -1,48 +1,27 @@
-/* eslint-disable no-process-env */
-import { createEnv } from '@t3-oss/env-core';
-import { z } from 'zod';
+import { Config, Effect } from 'effect';
 
-const envMetaOrProcess: Record<string, string> = import.meta.env ?? process.env;
+import {
+  optionalWithDevDefault,
+  vercelAwareBaseUrl,
+  withEnvDefault,
+} from './helpers';
+import { SKIP_ENV_VALIDATION, ViteConfigProvider } from './provider';
 
-const isDev = process.env.NODE_ENV
-  ? process.env.NODE_ENV === 'development'
-  : import.meta.env?.DEV;
-
-const getBaseUrl = () => {
-  const vercelUrlPreviewUrl =
-    envMetaOrProcess.VITE_VERCEL_ENV === 'preview'
-      ? envMetaOrProcess.VITE_VERCEL_BRANCH_URL
-      : null;
-
-  if (vercelUrlPreviewUrl) {
-    return `https://${vercelUrlPreviewUrl}`;
-  }
-
-  return envMetaOrProcess.VITE_BASE_URL;
-};
-
-export const envClient = createEnv({
-  clientPrefix: 'VITE_',
-  client: {
-    VITE_BASE_URL: z.url(),
-    VITE_ENV_NAME: z
-      .string()
-      .optional()
-      .transform((value) => value ?? (isDev ? 'LOCAL' : undefined)),
-    VITE_ENV_EMOJI: z
-      .emoji()
-      .optional()
-      .transform((value) => value ?? (isDev ? '🚧' : undefined)),
-    VITE_ENV_COLOR: z
-      .string()
-      .optional()
-      .transform((value) => value ?? (isDev ? 'gold' : 'plum')),
-    VITE_S3_BUCKET_PUBLIC_URL: z.url(),
-  },
-  runtimeEnv: {
-    ...envMetaOrProcess,
-    VITE_BASE_URL: getBaseUrl(),
-  },
-  emptyStringAsUndefined: true,
-  skipValidation: !!envMetaOrProcess.SKIP_ENV_VALIDATION,
+const clientConfig = Effect.gen(function* () {
+  return {
+    VITE_BASE_URL: yield* vercelAwareBaseUrl,
+    VITE_ENV_NAME: yield* optionalWithDevDefault('VITE_ENV_NAME', 'LOCAL'),
+    VITE_ENV_EMOJI: yield* optionalWithDevDefault('VITE_ENV_EMOJI', '🚧'),
+    VITE_ENV_COLOR: yield* withEnvDefault('VITE_ENV_COLOR', 'gold', 'plum'),
+    VITE_S3_BUCKET_PUBLIC_URL: yield* Config.url(
+      'VITE_S3_BUCKET_PUBLIC_URL'
+    ).pipe(Config.map((u) => u.href)),
+  };
 });
+
+const loadConfig = () =>
+  Effect.runSync(Effect.withConfigProvider(clientConfig, ViteConfigProvider));
+
+export const envClient = SKIP_ENV_VALIDATION
+  ? ({} as ReturnType<typeof loadConfig>)
+  : loadConfig();

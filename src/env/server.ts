@@ -1,81 +1,85 @@
 /* eslint-disable no-process-env */
-import { createEnv } from '@t3-oss/env-core';
-import { z } from 'zod';
+import { Config, Effect, Option } from 'effect';
 
-const isProd = process.env.NODE_ENV
-  ? process.env.NODE_ENV === 'production'
-  : import.meta.env?.PROD;
+import {
+  emailServerConfig,
+  isProd,
+  logLevelConfig,
+  optionalWithReplaceMe,
+  requiredInProd,
+} from './helpers';
 
-export const envServer = createEnv({
-  server: {
-    DATABASE_URL: z.url(),
-    AUTH_SECRET: z.string(),
-    AUTH_SESSION_EXPIRATION_IN_SECONDS: z.coerce
-      .number()
-      .int()
-      .prefault(2592000), // 30 days by default
-    AUTH_SESSION_UPDATE_AGE_IN_SECONDS: z.coerce.number().int().prefault(86400), // 1 day by default
-    AUTH_TRUSTED_ORIGINS: z
-      .string()
-      .optional()
-      .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
-    AUTH_ALLOWED_HOSTS: z
-      .string()
-      .optional()
-      .transform((stringValue) => stringValue?.split(',').map((v) => v.trim())),
-    VERCEL_URL: z.string().optional(),
-    VERCEL_BRANCH_URL: z.string().optional(),
-
-    EMAIL_SERVER: isProd ? z.url().optional() : z.url(),
-    EMAIL_FROM: z.string(),
-    RESEND_API_KEY: zOptionalWithReplaceMe(),
-
-    LOGGER_LEVEL: z
-      .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
-      .prefault(isProd ? 'error' : 'info'),
-    LOGGER_PRETTY: z
-      .enum(['true', 'false'])
-      .prefault(isProd ? 'false' : 'true')
-      .transform((value) => value === 'true'),
-    S3_ACCESS_KEY_ID: z.string(),
-    S3_SECRET_ACCESS_KEY: z.string(),
-    S3_BUCKET_NAME: z.string().default('default'),
-    S3_REGION: z.string().default('auto'),
-    S3_HOST: z.string(),
-    S3_SECURE: z.stringbool().default(true),
-    S3_FORCE_PATH_STYLE: z.stringbool().default(false),
-
-    FIREBASE_API_KEY: zRequiredInProd(),
-    FIREBASE_AUTH_DOMAIN: zRequiredInProd(),
-    FIREBASE_PROJECT_ID: zRequiredInProd(),
-    FIREBASE_STORAGE_BUCKET: zRequiredInProd(),
-    FIREBASE_MESSAGING_SENDER_ID: zRequiredInProd(),
-    FIREBASE_APP_ID: zRequiredInProd(),
-    FIREBASE_VAPID_PUBLIC_KEY: zRequiredInProd(),
-    FIREBASE_SERVICE_ACCOUNT: zRequiredInProd(),
-
-    CRON_SECRET: zRequiredInProd(),
-  },
-  runtimeEnv: process.env,
-  emptyStringAsUndefined: true,
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+const serverConfig = Effect.gen(function* () {
+  return {
+    DATABASE_URL: yield* Config.url('DATABASE_URL').pipe(
+      Config.map((u) => u.href)
+    ),
+    AUTH_SECRET: yield* Config.string('AUTH_SECRET'),
+    AUTH_SESSION_EXPIRATION_IN_SECONDS: yield* Config.integer(
+      'AUTH_SESSION_EXPIRATION_IN_SECONDS'
+    ).pipe(Config.withDefault(2592000)),
+    AUTH_SESSION_UPDATE_AGE_IN_SECONDS: yield* Config.integer(
+      'AUTH_SESSION_UPDATE_AGE_IN_SECONDS'
+    ).pipe(Config.withDefault(86400)),
+    AUTH_TRUSTED_ORIGINS: yield* Config.option(
+      Config.array(Config.string(), 'AUTH_TRUSTED_ORIGINS')
+    ).pipe(Config.map(Option.getOrUndefined)),
+    AUTH_ALLOWED_HOSTS: yield* Config.option(
+      Config.array(Config.string(), 'AUTH_ALLOWED_HOSTS')
+    ).pipe(Config.map(Option.getOrUndefined)),
+    VERCEL_URL: yield* Config.option(Config.string('VERCEL_URL')).pipe(
+      Config.map(Option.getOrUndefined)
+    ),
+    VERCEL_BRANCH_URL: yield* Config.option(
+      Config.string('VERCEL_BRANCH_URL')
+    ).pipe(Config.map(Option.getOrUndefined)),
+    EMAIL_SERVER: yield* emailServerConfig,
+    EMAIL_FROM: yield* Config.string('EMAIL_FROM'),
+    RESEND_API_KEY: yield* optionalWithReplaceMe('RESEND_API_KEY'),
+    LOGGER_LEVEL: yield* logLevelConfig,
+    LOGGER_PRETTY: yield* Config.boolean('LOGGER_PRETTY').pipe(
+      Config.withDefault(!isProd)
+    ),
+    S3_ACCESS_KEY_ID: yield* Config.string('S3_ACCESS_KEY_ID'),
+    S3_SECRET_ACCESS_KEY: yield* Config.string('S3_SECRET_ACCESS_KEY'),
+    S3_BUCKET_NAME: yield* Config.string('S3_BUCKET_NAME').pipe(
+      Config.withDefault('default')
+    ),
+    S3_REGION: yield* Config.string('S3_REGION').pipe(
+      Config.withDefault('auto')
+    ),
+    S3_HOST: yield* Config.string('S3_HOST'),
+    S3_SECURE: yield* Config.boolean('S3_SECURE').pipe(
+      Config.withDefault(true)
+    ),
+    S3_FORCE_PATH_STYLE: yield* Config.boolean('S3_FORCE_PATH_STYLE').pipe(
+      Config.withDefault(false)
+    ),
+    FIREBASE_API_KEY: yield* requiredInProd('FIREBASE_API_KEY'),
+    FIREBASE_AUTH_DOMAIN: yield* requiredInProd('FIREBASE_AUTH_DOMAIN'),
+    FIREBASE_PROJECT_ID: yield* requiredInProd('FIREBASE_PROJECT_ID'),
+    FIREBASE_STORAGE_BUCKET: yield* requiredInProd('FIREBASE_STORAGE_BUCKET'),
+    FIREBASE_MESSAGING_SENDER_ID: yield* requiredInProd(
+      'FIREBASE_MESSAGING_SENDER_ID'
+    ),
+    FIREBASE_APP_ID: yield* requiredInProd('FIREBASE_APP_ID'),
+    FIREBASE_VAPID_PUBLIC_KEY: yield* requiredInProd(
+      'FIREBASE_VAPID_PUBLIC_KEY'
+    ),
+    FIREBASE_SERVICE_ACCOUNT: yield* requiredInProd('FIREBASE_SERVICE_ACCOUNT'),
+    CRON_SECRET: yield* requiredInProd('CRON_SECRET'),
+  };
 });
 
-function zRequiredInProd() {
-  return isProd ? z.string() : z.string().optional();
-}
+const loadConfig = () => Effect.runSync(serverConfig);
 
-function zOptionalWithReplaceMe() {
-  return z
-    .string()
-    .optional()
-    .refine(
-      (value) =>
-        // Check in prodution if the value is not REPLACE ME
-        !isProd || value !== 'REPLACE ME',
-      {
-        error: 'Update the value "REPLACE ME" or remove the variable',
-      }
-    )
-    .transform((value) => (value === 'REPLACE ME' ? undefined : value));
-}
+export const envServer = process.env.SKIP_ENV_VALIDATION
+  ? ({} as ReturnType<typeof loadConfig>)
+  : loadConfig();
+
+export class ServerConfig extends Effect.Service<ServerConfig>()(
+  'ServerConfig',
+  {
+    succeed: envServer,
+  }
+) {}
