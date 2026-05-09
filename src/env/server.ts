@@ -2,7 +2,6 @@
 import { Config, Effect, Option } from 'effect';
 
 import {
-  commaSeparated,
   emailServerConfig,
   isProd,
   logLevelConfig,
@@ -22,8 +21,12 @@ const serverConfig = Effect.gen(function* () {
     AUTH_SESSION_UPDATE_AGE_IN_SECONDS: yield* Config.integer(
       'AUTH_SESSION_UPDATE_AGE_IN_SECONDS'
     ).pipe(Config.withDefault(86400)),
-    AUTH_TRUSTED_ORIGINS: yield* commaSeparated('AUTH_TRUSTED_ORIGINS'),
-    AUTH_ALLOWED_HOSTS: yield* commaSeparated('AUTH_ALLOWED_HOSTS'),
+    AUTH_TRUSTED_ORIGINS: yield* Config.option(
+      Config.array(Config.string(), 'AUTH_TRUSTED_ORIGINS')
+    ).pipe(Config.map(Option.getOrUndefined)),
+    AUTH_ALLOWED_HOSTS: yield* Config.option(
+      Config.array(Config.string(), 'AUTH_ALLOWED_HOSTS')
+    ).pipe(Config.map(Option.getOrUndefined)),
     VERCEL_URL: yield* Config.option(Config.string('VERCEL_URL')).pipe(
       Config.map(Option.getOrUndefined)
     ),

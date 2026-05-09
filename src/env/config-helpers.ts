@@ -10,16 +10,6 @@ export const isDev =
     ? process.env.NODE_ENV === 'development'
     : (import.meta.env?.DEV as boolean | undefined) === true;
 
-// ─── Generic ──────────────────────────────────────────────────────────────────
-
-// Config.array() handles comma-splitting natively
-export const commaSeparated = (
-  name: string
-): Config.Config<string[] | undefined> =>
-  Config.option(Config.array(Config.string(), name)).pipe(
-    Config.map(Option.getOrUndefined)
-  );
-
 // ─── Prod-aware ───────────────────────────────────────────────────────────────
 
 export const requiredInProd = (
