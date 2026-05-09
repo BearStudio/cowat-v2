@@ -1,6 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 
 import { envServer } from '@/env/server';
+import { LogLevel } from '@/server/log-level';
 import { timingStore } from '@/server/timing-store';
 
 import { Prisma, PrismaClient } from './generated/client';
@@ -12,7 +13,7 @@ const levels = {
   warn: ['error', 'warn'],
   error: ['error'],
   fatal: ['error'],
-} satisfies Record<string, ('query' | 'error' | 'warn' | 'info')[]>;
+} satisfies Record<LogLevel, ('query' | 'error' | 'warn' | 'info')[]>;
 
 const SOFT_DELETE_MODELS = ['Location', 'Commute', 'CommuteTemplate'] as const;
 
