@@ -1,6 +1,6 @@
 /** @jsxImportSource jsx-slack */
+import { Match } from 'effect';
 import type JSXSlack from 'jsx-slack';
-import { match } from 'ts-pattern';
 
 import i18n from '@/lib/i18n';
 import type { LanguageKey } from '@/lib/i18n/constants';
@@ -60,23 +60,24 @@ export function getBroadcastBlocks(
 ): JSXSlack.JSX.Element {
   i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
-  return match(event)
-    .with({ type: 'commute.created' }, (e) => (
+  return Match.value(event).pipe(
+    Match.when({ type: 'commute.created' }, (e) => (
       <CommuteCreated
         event={e}
         baseUrl={opts?.baseUrl ?? ''}
         driverSlackId={opts?.driverSlackId}
         driverAvatarUrl={opts?.driverAvatarUrl}
       />
-    ))
-    .with({ type: 'commute.requested' }, (e) => (
+    )),
+    Match.when({ type: 'commute.requested' }, (e) => (
       <CommuteRequested
         event={e}
         baseUrl={opts?.baseUrl ?? ''}
         requesterSlackId={opts?.requesterSlackId}
       />
-    ))
-    .exhaustive();
+    )),
+    Match.exhaustive
+  );
 }
 
 export function getPrivateBlocks(
@@ -85,34 +86,35 @@ export function getPrivateBlocks(
 ): JSXSlack.JSX.Element {
   i18n.changeLanguage(opts?.locale ?? DEFAULT_LANGUAGE_KEY);
 
-  return match(event)
-    .with({ type: 'booking.requested' }, (e) => (
+  return Match.value(event).pipe(
+    Match.when({ type: 'booking.requested' }, (e) => (
       <BookingRequested event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'booking.accepted' }, (e) => (
+    )),
+    Match.when({ type: 'booking.accepted' }, (e) => (
       <BookingAccepted event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'booking.refused' }, (e) => (
+    )),
+    Match.when({ type: 'booking.refused' }, (e) => (
       <BookingRefused event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'booking.canceled' }, (e) => (
+    )),
+    Match.when({ type: 'booking.canceled' }, (e) => (
       <BookingCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'booking.canceledByDriver' }, (e) => (
+    )),
+    Match.when({ type: 'booking.canceledByDriver' }, (e) => (
       <BookingCanceledByDriver event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'commute.updated' }, (e) => (
+    )),
+    Match.when({ type: 'commute.updated' }, (e) => (
       <CommuteUpdated event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'commute.canceled' }, (e) => (
+    )),
+    Match.when({ type: 'commute.canceled' }, (e) => (
       <CommuteCanceled event={e} baseUrl={opts?.baseUrl ?? ''} />
-    ))
-    .with({ type: 'commute.reminder' }, (e) => (
+    )),
+    Match.when({ type: 'commute.reminder' }, (e) => (
       <CommuteReminder
         event={e}
         baseUrl={opts?.baseUrl ?? ''}
         recipientUserId={opts?.recipientUserId ?? ''}
       />
-    ))
-    .exhaustive();
+    )),
+    Match.exhaustive
+  );
 }

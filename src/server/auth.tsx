@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin, emailOTP, openAPI, organization } from 'better-auth/plugins';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
-import { match } from 'ts-pattern';
+import { Match } from 'effect';
 
 import i18n from '@/lib/i18n';
 
@@ -115,8 +115,8 @@ export const auth = betterAuth({
         ? { generateOTP: () => AUTH_EMAIL_OTP_MOCKED }
         : undefined),
       async sendVerificationOTP({ email, otp, type }) {
-        await match(type)
-          .with('sign-in', async () => {
+        await Match.value(type).pipe(
+          Match.when('sign-in', async () => {
             await sendEmail({
               to: email,
               subject: i18n.t('emails:loginCode.subject', {
@@ -126,23 +126,24 @@ export const auth = betterAuth({
                 <TemplateLoginCode language={getUserLanguage()} code={otp} />
               ),
             });
-          })
-          .with('email-verification', async () => {
+          }),
+          Match.when('email-verification', async () => {
             throw new Error(
               'email-verification email not implemented, update the /app/server/auth.tsx file'
             );
-          })
-          .with('forget-password', async () => {
+          }),
+          Match.when('forget-password', async () => {
             throw new Error(
               'forget-password email not implemented, update the /app/server/auth.tsx file'
             );
-          })
-          .with('change-email', async () => {
+          }),
+          Match.when('change-email', async () => {
             throw new Error(
               'change-email email not implemented, update the /app/server/auth.tsx file'
             );
-          })
-          .exhaustive();
+          }),
+          Match.exhaustive
+        );
       },
     }),
     tanstackStartCookies(),

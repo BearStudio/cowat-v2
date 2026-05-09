@@ -1,8 +1,8 @@
 import { DateRange } from '@daypicker/react';
 import dayjs from 'dayjs';
+import { Predicate } from 'effect';
 import { useState } from 'react';
 import { useDisclosure } from 'react-use-disclosure';
-import { isNullish } from 'remeda';
 import '@/lib/dayjs/config';
 
 import { Calendar } from '@/components/ui/calendar';
@@ -70,11 +70,11 @@ export const UsageWithPopoverRange = () => {
   const [date, setDate] = useState<DateRange | undefined>(undefined);
 
   const format = () => {
-    if (isNullish(date?.from)) {
+    if (Predicate.isNullable(date?.from)) {
       return null;
     }
 
-    if (isNullish(date?.to)) {
+    if (Predicate.isNullable(date?.to)) {
       return dayjs(date.from).f('common:short');
     }
 

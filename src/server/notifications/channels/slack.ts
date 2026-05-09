@@ -1,5 +1,5 @@
 import { App } from '@slack/bolt';
-import { Result } from 'better-result';
+import { Effect, Either } from 'effect';
 import JSXSlack from 'jsx-slack';
 
 import type { LanguageKey } from '@/lib/i18n/constants';
@@ -64,32 +64,40 @@ export function createSlackChannel(): NotificationChannel {
       const slackApp = app;
 
       async function lookupUser(email: string) {
-        const result = await Result.tryPromise(() =>
-          slackApp.client.users.lookupByEmail({ email })
+        const result = await Effect.runPromise(
+          Effect.either(
+            Effect.tryPromise(() =>
+              slackApp.client.users.lookupByEmail({ email })
+            )
+          )
         );
-        if (result.isErr()) {
+        if (Either.isLeft(result)) {
           logger.warn(
-            { email, error: result.error },
+            { email, error: result.left },
             'Slack: could not resolve user, falling back to name'
           );
         }
-        return result.isOk() ? result.value.user : undefined;
+        return Either.isRight(result) ? result.right.user : undefined;
       }
 
       async function post(
         channel: string,
         blocks: ReturnType<typeof JSXSlack>
       ) {
-        const result = await Result.tryPromise(() =>
-          slackApp.client.chat.postMessage({
-            channel,
-            blocks,
-            text: getFallbackText(blocks),
-          })
+        const result = await Effect.runPromise(
+          Effect.either(
+            Effect.tryPromise(() =>
+              slackApp.client.chat.postMessage({
+                channel,
+                blocks,
+                text: getFallbackText(blocks),
+              })
+            )
+          )
         );
-        if (result.isErr()) {
+        if (Either.isLeft(result)) {
           logger.error(
-            { channel, eventType: event.type, error: result.error },
+            { channel, eventType: event.type, error: result.left },
             'Slack: failed to post message'
           );
         }

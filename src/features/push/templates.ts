@@ -1,5 +1,5 @@
 import dayjsBase from 'dayjs';
-import { match } from 'ts-pattern';
+import { Match } from 'effect';
 import 'dayjs/locale/en.js';
 import 'dayjs/locale/fr.js';
 
@@ -32,8 +32,8 @@ export function getPushContent(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (i18n.t as any)(key, { ...options, lng: locale });
 
-  return match(event)
-    .with({ type: 'booking.requested' }, (e) => ({
+  return Match.value(event).pipe(
+    Match.when({ type: 'booking.requested' }, (e) => ({
       title: t('notifications:push.booking.requested.title'),
       body: t('notifications:push.booking.requested.body', {
         passengerName: e.payload.passengerName,
@@ -42,8 +42,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'booking.accepted' }, (e) => ({
+    })),
+    Match.when({ type: 'booking.accepted' }, (e) => ({
       title: t('notifications:push.booking.accepted.title'),
       body: t('notifications:push.booking.accepted.body', {
         driverName: e.payload.driverName,
@@ -52,8 +52,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'booking.refused' }, (e) => ({
+    })),
+    Match.when({ type: 'booking.refused' }, (e) => ({
       title: t('notifications:push.booking.refused.title'),
       body: t('notifications:push.booking.refused.body', {
         driverName: e.payload.driverName,
@@ -62,8 +62,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'booking.canceled' }, (e) => ({
+    })),
+    Match.when({ type: 'booking.canceled' }, (e) => ({
       title: t('notifications:push.booking.canceled.title'),
       body: t('notifications:push.booking.canceled.body', {
         passengerName: e.payload.passengerName,
@@ -72,8 +72,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'booking.canceledByDriver' }, (e) => ({
+    })),
+    Match.when({ type: 'booking.canceledByDriver' }, (e) => ({
       title: t('notifications:push.booking.canceledByDriver.title'),
       body: t('notifications:push.booking.canceledByDriver.body', {
         driverName: e.payload.driverName,
@@ -82,8 +82,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'commute.updated' }, (e) => ({
+    })),
+    Match.when({ type: 'commute.updated' }, (e) => ({
       title: t('notifications:push.commute.updated.title'),
       body: t('notifications:push.commute.updated.body', {
         driverName: e.payload.driverName,
@@ -92,8 +92,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'commute.canceled' }, (e) => ({
+    })),
+    Match.when({ type: 'commute.canceled' }, (e) => ({
       title: t('notifications:push.commute.canceled.title'),
       body: t('notifications:push.commute.canceled.body', {
         driverName: e.payload.driverName,
@@ -102,8 +102,8 @@ export function getPushContent(
       link: routeUrl(baseUrl, '/app/$orgSlug', {
         params: { orgSlug: e.payload.orgSlug },
       }),
-    }))
-    .with({ type: 'commute.reminder' }, (e) => {
+    })),
+    Match.when({ type: 'commute.reminder' }, (e) => {
       const commutes = recipientUserId
         ? getCommutesForRecipient(e.payload.commutes, recipientUserId)
         : e.payload.commutes;
@@ -116,8 +116,9 @@ export function getPushContent(
           params: { orgSlug: e.payload.orgSlug },
         }),
       };
-    })
-    .with({ type: 'commute.created' }, () => null)
-    .with({ type: 'commute.requested' }, () => null)
-    .exhaustive();
+    }),
+    Match.when({ type: 'commute.created' }, () => null),
+    Match.when({ type: 'commute.requested' }, () => null),
+    Match.exhaustive
+  );
 }

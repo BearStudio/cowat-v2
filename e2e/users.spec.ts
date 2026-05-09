@@ -1,6 +1,9 @@
 import { expect, test } from 'e2e/utils';
 import { ADMIN_FILE, USER_EMAIL, USER_FILE } from 'e2e/utils/constants';
-import { randomString } from 'remeda';
+const randomString = (length: number) =>
+  Math.random()
+    .toString(36)
+    .slice(2, 2 + length);
 
 test.describe('User management as user', () => {
   test.use({ storageState: USER_FILE });

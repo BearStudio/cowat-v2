@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createServerFn } from '@tanstack/react-start';
-import { Result } from 'better-result';
+import { Effect } from 'effect';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -15,30 +15,33 @@ import {
 import { db } from '@/server/db';
 
 const clearDb = createServerFn({ method: 'POST' }).handler(async () => {
-  const result = await Result.tryPromise(() =>
-    db.$executeRawUnsafe(`
-      TRUNCATE TABLE
-        "passengers_on_stops",
-        "template_stop",
-        "stop",
-        "commute_template",
-        "commute",
-        "location",
-        "verification",
-        "account",
-        "session",
-        "user"
-      CASCADE
-    `)
+  return await Effect.runPromise(
+    Effect.match(
+      Effect.tryPromise(() =>
+        db.$executeRawUnsafe(`
+          TRUNCATE TABLE
+            "passengers_on_stops",
+            "template_stop",
+            "stop",
+            "commute_template",
+            "commute",
+            "location",
+            "verification",
+            "account",
+            "session",
+            "user"
+          CASCADE
+        `)
+      ),
+      {
+        onSuccess: () => ({ success: true, output: 'Database cleared' }),
+        onFailure: (error) => ({
+          success: false,
+          output: error instanceof Error ? error.message : String(error),
+        }),
+      }
+    )
   );
-
-  return result.match({
-    ok: () => ({ success: true, output: 'Database cleared' }),
-    err: (error) => ({
-      success: false,
-      output: error instanceof Error ? error.message : String(error),
-    }),
-  });
 });
 
 export function ClearDbAction() {

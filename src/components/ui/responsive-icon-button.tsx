@@ -1,5 +1,5 @@
+import { Match } from 'effect';
 import { ComponentProps, ReactNode } from 'react';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -18,12 +18,13 @@ export const ResponsiveIconButton = ({
   breakpoint?: number;
 }) => {
   const isMobile = useIsMobile(breakpoint);
-  const buttonIconSize = match(size)
-    .with('default', () => 'icon' as const)
-    .with('xs', () => 'icon-xs' as const)
-    .with('sm', () => 'icon-sm' as const)
-    .with('lg', () => 'icon-lg' as const)
-    .exhaustive();
+  const buttonIconSize = Match.value(size).pipe(
+    Match.when('default', () => 'icon' as const),
+    Match.when('xs', () => 'icon-xs' as const),
+    Match.when('sm', () => 'icon-sm' as const),
+    Match.when('lg', () => 'icon-lg' as const),
+    Match.exhaustive
+  );
   const buttonSize = isMobile ? buttonIconSize : size;
 
   return (

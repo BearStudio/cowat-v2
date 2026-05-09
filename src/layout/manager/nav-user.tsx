@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Match } from 'effect';
 import {
   BookOpenIcon,
   ChevronsUpDownIcon,
@@ -11,7 +12,6 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
-import { match } from 'ts-pattern';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -117,17 +117,18 @@ export function NavUser(props: { orgSlug: string }) {
                 <DropdownMenuRadioItem
                   key={item}
                   value={item}
-                  icon={match(theme as (typeof themes)[number])
-                    .with('system', () => (
+                  icon={Match.value(theme as (typeof themes)[number]).pipe(
+                    Match.when('system', () => (
                       <SunMoonIcon className="text-muted-foreground" />
-                    ))
-                    .with('light', () => (
+                    )),
+                    Match.when('light', () => (
                       <SunIcon className="text-muted-foreground" />
-                    ))
-                    .with('dark', () => (
+                    )),
+                    Match.when('dark', () => (
                       <MoonIcon className="text-muted-foreground" />
-                    ))
-                    .exhaustive()}
+                    )),
+                    Match.exhaustive
+                  )}
                 >
                   {t(`common:themes.values.${item}`)}
                 </DropdownMenuRadioItem>
