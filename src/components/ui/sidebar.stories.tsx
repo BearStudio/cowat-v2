@@ -63,7 +63,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 className="h-auto"
                 render={
-                  <a href="#">
+                  <a href="/">
                     <span>
                       <Logo className="w-24" />
                     </span>
