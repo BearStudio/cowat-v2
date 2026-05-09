@@ -8,12 +8,13 @@ import {
   logLevelConfig,
   optionalWithReplaceMe,
   requiredInProd,
-  urlConfig,
 } from './config-helpers';
 
 const serverConfig = Effect.gen(function* () {
   return {
-    DATABASE_URL: yield* urlConfig('DATABASE_URL'),
+    DATABASE_URL: yield* Config.url('DATABASE_URL').pipe(
+      Config.map((u) => u.href)
+    ),
     AUTH_SECRET: yield* Config.string('AUTH_SECRET'),
     AUTH_SESSION_EXPIRATION_IN_SECONDS: yield* Config.integer(
       'AUTH_SESSION_EXPIRATION_IN_SECONDS'

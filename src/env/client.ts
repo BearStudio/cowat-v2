@@ -1,9 +1,8 @@
 /* eslint-disable no-process-env */
-import { ConfigProvider, Effect, Layer } from 'effect';
+import { Config, ConfigProvider, Effect, Layer } from 'effect';
 
 import {
   optionalWithDevDefault,
-  urlConfig,
   vercelAwareBaseUrl,
   withEnvDefault,
 } from './config-helpers';
@@ -25,7 +24,9 @@ const clientConfig = Effect.gen(function* () {
     VITE_ENV_NAME: yield* optionalWithDevDefault('VITE_ENV_NAME', 'LOCAL'),
     VITE_ENV_EMOJI: yield* optionalWithDevDefault('VITE_ENV_EMOJI', '🚧'),
     VITE_ENV_COLOR: yield* withEnvDefault('VITE_ENV_COLOR', 'gold', 'plum'),
-    VITE_S3_BUCKET_PUBLIC_URL: yield* urlConfig('VITE_S3_BUCKET_PUBLIC_URL'),
+    VITE_S3_BUCKET_PUBLIC_URL: yield* Config.url(
+      'VITE_S3_BUCKET_PUBLIC_URL'
+    ).pipe(Config.map((u) => u.href)),
   };
 });
 

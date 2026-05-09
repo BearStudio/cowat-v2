@@ -12,10 +12,6 @@ export const isDev =
 
 // ─── Generic ──────────────────────────────────────────────────────────────────
 
-// Config.url() returns Config<URL> — map to href for string compatibility
-export const urlConfig = (name: string) =>
-  Config.url(name).pipe(Config.map((u) => u.href));
-
 // Config.array() handles comma-splitting natively
 export const commaSeparated = (
   name: string
@@ -70,10 +66,13 @@ export const logLevelConfig: Config.Config<LogLevel> = Config.string(
 );
 
 export const emailServerConfig: Config.Config<string | undefined> = isProd
-  ? Config.option(urlConfig('EMAIL_SERVER')).pipe(
+  ? Config.option(Config.url('EMAIL_SERVER')).pipe(
+      Config.map((opt) => Option.map(opt, (u) => u.href)),
       Config.map(Option.getOrUndefined)
     )
-  : (urlConfig('EMAIL_SERVER') as Config.Config<string | undefined>);
+  : (Config.url('EMAIL_SERVER').pipe(
+      Config.map((u) => u.href)
+    ) as Config.Config<string | undefined>);
 
 // ─── Dev-aware ────────────────────────────────────────────────────────────────
 
@@ -113,5 +112,5 @@ export const vercelAwareBaseUrl = Effect.gen(function* () {
     return `https://${vercelBranchUrl}`;
   }
 
-  return yield* urlConfig('VITE_BASE_URL');
+  return yield* Config.url('VITE_BASE_URL').pipe(Config.map((u) => u.href));
 });
