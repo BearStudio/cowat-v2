@@ -38,7 +38,11 @@ const SearchButtonComponent = ({
       swipeDirection="up"
       open={open}
       onOpenChange={(o) => {
-        onChange?.(internalValue ?? '');
+        if (o) {
+          setInternalValue(value);
+        } else {
+          onChange?.(internalValue ?? '');
+        }
         setOpen(o);
       }}
     >
