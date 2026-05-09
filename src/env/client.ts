@@ -1,22 +1,11 @@
-/* eslint-disable no-process-env */
-import { Config, ConfigProvider, Effect, Layer } from 'effect';
+import { Config, Effect } from 'effect';
 
 import {
   optionalWithDevDefault,
   vercelAwareBaseUrl,
   withEnvDefault,
 } from './helpers';
-
-const envMetaOrProcess: Record<string, unknown> =
-  import.meta.env ?? process.env;
-
-const provider = ConfigProvider.fromMap(
-  new Map(
-    Object.entries(envMetaOrProcess as Record<string, string>).filter(
-      ([, v]) => v
-    )
-  )
-);
+import { SKIP_ENV_VALIDATION, ViteConfigProvider } from './provider';
 
 const clientConfig = Effect.gen(function* () {
   return {
@@ -31,18 +20,8 @@ const clientConfig = Effect.gen(function* () {
 });
 
 const loadConfig = () =>
-  Effect.runSync(
-    clientConfig.pipe(Effect.provide(Layer.setConfigProvider(provider)))
-  );
+  Effect.runSync(Effect.withConfigProvider(clientConfig, ViteConfigProvider));
 
-export const envClient = (envMetaOrProcess as Record<string, string>)
-  .SKIP_ENV_VALIDATION
+export const envClient = SKIP_ENV_VALIDATION
   ? ({} as ReturnType<typeof loadConfig>)
   : loadConfig();
-
-export class ClientConfig extends Effect.Service<ClientConfig>()(
-  'ClientConfig',
-  {
-    succeed: envClient,
-  }
-) {}
