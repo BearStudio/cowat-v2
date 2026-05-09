@@ -1,25 +1,13 @@
 /* eslint-disable no-process-env */
-import {
-  Config,
-  ConfigError,
-  ConfigProvider,
-  Effect,
-  Either,
-  Layer,
-  Option,
-} from 'effect';
+import { Config, ConfigError, Effect, Either, Option } from 'effect';
+
+import { LOG_LEVELS, LogLevel } from '@/server/log-level';
+
+import { urlConfig } from './config-helpers';
 
 const isProd = process.env.NODE_ENV === 'production';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const urlConfig = (name: string) =>
-  Config.string(name).pipe(
-    Config.validate({
-      message: `${name} must be a valid URL`,
-      validation: (s) => URL.canParse(s),
-    })
-  );
 
 const requiredInProd = (name: string): Config.Config<string | undefined> =>
   isProd
@@ -55,16 +43,6 @@ const commaSeparated = (name: string): Config.Config<string[] | undefined> =>
       })
     )
   );
-
-const LOG_LEVELS = [
-  'trace',
-  'debug',
-  'info',
-  'warn',
-  'error',
-  'fatal',
-] as const;
-type LogLevel = (typeof LOG_LEVELS)[number];
 
 const logLevelConfig = Config.string('LOGGER_LEVEL').pipe(
   Config.withDefault(isProd ? 'error' : 'info'),
@@ -144,23 +122,10 @@ const serverConfig = Effect.gen(function* () {
   };
 });
 
-// ─── Provider (strips empty strings, matching t3-env's emptyStringAsUndefined) ─
-
-const provider = ConfigProvider.fromMap(
-  new Map(
-    Object.entries(process.env).filter(
-      (entry): entry is [string, string] =>
-        entry[1] !== undefined && entry[1] !== ''
-    )
-  )
-);
-
 // ─── Export ──────────────────────────────────────────────────────────────────
 
-const loadConfig = () =>
-  Effect.runSync(
-    serverConfig.pipe(Effect.provide(Layer.setConfigProvider(provider)))
-  );
+// Default ConfigProvider reads from process.env — no override needed
+const loadConfig = () => Effect.runSync(serverConfig);
 
 export const envServer = process.env.SKIP_ENV_VALIDATION
   ? ({} as ReturnType<typeof loadConfig>)
