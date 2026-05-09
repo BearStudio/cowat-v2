@@ -9,11 +9,11 @@ import { StoryContext } from 'storybook/internal/csf';
 import '@/styles/app.css';
 import './preview.css';
 
+import i18nGlobal from '../src/lib/i18n';
 import {
   AVAILABLE_LANGUAGES,
   DEFAULT_LANGUAGE_KEY,
 } from '../src/lib/i18n/constants';
-import i18nGlobal from '../src/lib/i18n/index';
 import { Providers } from '../src/providers';
 
 const DocumentationWrapper = ({
