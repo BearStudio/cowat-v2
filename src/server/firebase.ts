@@ -1,4 +1,4 @@
-import { Result } from 'better-result';
+import { Effect, Either } from 'effect';
 import { GoogleAuth } from 'google-auth-library';
 
 import { envServer } from '@/env/server';
@@ -58,41 +58,45 @@ function getAuth(): GoogleAuth | null {
 }
 
 export async function getAccessToken(): Promise<
-  Result<string, FcmErrorResponse>
+  Either.Either<string, FcmErrorResponse>
 > {
   const auth = getAuth();
   if (!auth) {
-    return Result.err({
+    return Either.left({
       code: 'auth/not-configured',
       message: 'Firebase is not configured',
     });
   }
 
-  const tokenResult = await Result.tryPromise(async () => {
-    const client = await auth.getClient();
-    const { token } = await client.getAccessToken();
-    return token;
-  });
+  const tokenResult = await Effect.runPromise(
+    Effect.either(
+      Effect.tryPromise(async () => {
+        const client = await auth.getClient();
+        const { token } = await client.getAccessToken();
+        return token;
+      })
+    )
+  );
 
-  if (tokenResult.isErr()) {
-    logger.error({ err: tokenResult.error }, 'FCM: failed to get access token');
-    return Result.err({
+  if (Either.isLeft(tokenResult)) {
+    logger.error({ err: tokenResult.left }, 'FCM: failed to get access token');
+    return Either.left({
       code: 'auth/failed',
       message:
-        tokenResult.error instanceof Error
-          ? tokenResult.error.message
+        tokenResult.left instanceof Error
+          ? tokenResult.left.message
           : 'Failed to get access token',
     });
   }
 
-  if (!tokenResult.value) {
-    return Result.err({
+  if (!tokenResult.right) {
+    return Either.left({
       code: 'auth/empty-token',
       message: 'Access token was empty',
     });
   }
 
-  return Result.ok(tokenResult.value);
+  return Either.right(tokenResult.right);
 }
 
 // ── Send ─────────────────────────────────────────────────────────────────────
@@ -100,10 +104,10 @@ export async function getAccessToken(): Promise<
 export async function postMessage(
   accessToken: string,
   message: FcmMessage
-): Promise<Result<FcmSuccessResponse, FcmErrorResponse>> {
+): Promise<Either.Either<FcmSuccessResponse, FcmErrorResponse>> {
   const config = getServerConfig();
   if (!config) {
-    return Result.err({
+    return Either.left({
       code: 'messaging/not-configured',
       message: 'Firebase is not configured',
     });
@@ -120,14 +124,14 @@ export async function postMessage(
 
   if (response.ok) {
     const data = (await response.json()) as { name: string };
-    return Result.ok({ messageId: data.name });
+    return Either.right({ messageId: data.name });
   }
 
   const body = (await response.json().catch(() => ({}))) as {
     error?: { code?: number; message?: string; status?: string };
   };
 
-  return Result.err({
+  return Either.left({
     code: `messaging/${response.status}`,
     message: body.error?.message ?? response.statusText,
     status: body.error?.status,

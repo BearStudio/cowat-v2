@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
-import { Result } from 'better-result';
+import { Effect } from 'effect';
 
 import { sendDailyReminders } from '@/server/cron/daily-reminder';
 import { db } from '@/server/db';
@@ -8,16 +8,14 @@ import { notifier } from '@/server/notifications';
 
 export const triggerDailyReminder = createServerFn({ method: 'POST' }).handler(
   async () => {
-    const result = await Result.tryPromise(() =>
-      sendDailyReminders(db, notifier, logger)
+    await Effect.runPromise(
+      Effect.tryPromise(() => sendDailyReminders(db, notifier, logger)).pipe(
+        Effect.tapError((err) =>
+          Effect.sync(() =>
+            logger.error({ err }, '[DEV] Daily reminder trigger failed')
+          )
+        )
+      )
     );
-
-    if (result.isErr()) {
-      logger.error(
-        { err: result.error },
-        '[DEV] Daily reminder trigger failed'
-      );
-      throw result.error;
-    }
   }
 );

@@ -8,6 +8,7 @@ import {
   useDayPicker,
 } from '@daypicker/react';
 import { enUS } from '@daypicker/react/locale';
+import { Match } from 'effect';
 import {
   ChevronDown,
   ChevronLeft,
@@ -15,7 +16,6 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
 
@@ -24,13 +24,14 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { REACT_DAY_PICKER_LOCALE_MAP } from '@/locales/react-day-picker';
 
 const ChevronWrapper = ({ orientation }: ChevronProps) => {
-  const Icon = match(orientation)
-    .with('left', () => ChevronLeft)
-    .with('right', () => ChevronRight)
-    .with('down', () => ChevronDown)
-    .with('up', () => ChevronUp)
-    .with(undefined, () => ChevronDown)
-    .exhaustive();
+  const Icon = Match.value(orientation).pipe(
+    Match.when('left', () => ChevronLeft),
+    Match.when('right', () => ChevronRight),
+    Match.when('down', () => ChevronDown),
+    Match.when('up', () => ChevronUp),
+    Match.when(undefined, () => ChevronDown),
+    Match.exhaustive
+  );
 
   // eslint-disable-next-line react-hooks/static-components
   return <Icon className="size-4" />;

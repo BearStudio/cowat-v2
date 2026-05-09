@@ -1,9 +1,9 @@
 import { ORPCError, os } from '@orpc/server';
 import { type ResponseHeadersPluginContext } from '@orpc/server/plugins';
 import { getRequestHeaders } from '@tanstack/react-start/server';
+import { Match } from 'effect';
 import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
-import { match } from 'ts-pattern';
 
 import { organizationPermissions } from '@/features/auth/organization-permissions';
 import {
@@ -177,8 +177,8 @@ const base = os
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         const prismaError = error as Prisma.PrismaClientKnownRequestError;
-        throw match(prismaError.code)
-          .with('P2002', () => {
+        throw Match.value(prismaError.code).pipe(
+          Match.when('P2002', () => {
             context.logger.warn(
               prismaError.meta,
               `Prisma Error: ${prismaError.code} ${prismaError.message}`
@@ -187,8 +187,8 @@ const base = os
               message: 'Unique constraint violation',
               data: { target: prismaError.meta?.target },
             });
-          })
-          .with('P2025', () => {
+          }),
+          Match.when('P2025', () => {
             context.logger.warn(
               prismaError.meta,
               `Prisma Error ${prismaError.code}: ${prismaError.message}`
@@ -196,8 +196,8 @@ const base = os
             return new ORPCError('NOT_FOUND', {
               message: 'Record not found',
             });
-          })
-          .with('P2003', () => {
+          }),
+          Match.when('P2003', () => {
             context.logger.error(
               prismaError.meta,
               `Prisma Error ${prismaError.code}: ${prismaError.message}`
@@ -205,8 +205,8 @@ const base = os
             return new ORPCError('BAD_REQUEST', {
               message: 'Foreign key constraint violation',
             });
-          })
-          .otherwise(() => {
+          }),
+          Match.orElse(() => {
             context.logger.error(
               prismaError.meta,
               `Prisma Error ${prismaError.code}: ${prismaError.message}`
@@ -214,7 +214,8 @@ const base = os
             return new ORPCError('INTERNAL_SERVER_ERROR', {
               message: 'Database error',
             });
-          });
+          })
+        );
       }
 
       if (error instanceof Prisma.PrismaClientValidationError) {

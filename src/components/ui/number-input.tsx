@@ -1,9 +1,9 @@
 import { NumberField } from '@base-ui/react/number-field';
+import { Match } from 'effect';
 import { ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
 import { ComponentProps, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeRefs } from 'react-merge-refs';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
 
@@ -41,11 +41,14 @@ export const NumberInput = ({
 }: NumberInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { i18n } = useTranslation();
-  const buttonSize = match(size)
-    .with('default', undefined, null, () => 'icon' as const)
-    .with('sm', () => 'icon-sm' as const)
-    .with('lg', () => 'icon-lg' as const)
-    .exhaustive();
+  const buttonSize = Match.value(size).pipe(
+    Match.when('default', () => 'icon' as const),
+    Match.when(undefined, () => 'icon' as const),
+    Match.when(null, () => 'icon' as const),
+    Match.when('sm', () => 'icon-sm' as const),
+    Match.when('lg', () => 'icon-lg' as const),
+    Match.exhaustive
+  );
 
   const _locale = locale ?? i18n.language;
 

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Result } from 'better-result';
+import { Effect } from 'effect';
 
 import { envServer } from '@/env/server';
 import { sendDailyReminders } from '@/server/cron/daily-reminder';
@@ -14,16 +14,21 @@ async function handle({ request }: { request: Request }) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const result = await Result.tryPromise(() =>
-    sendDailyReminders(db, notifier, logger)
+  return await Effect.runPromise(
+    Effect.match(
+      Effect.tryPromise(() => sendDailyReminders(db, notifier, logger)),
+      {
+        onFailure: (err) => {
+          logger.error({ err }, '[CRON] Daily reminder failed');
+          return Response.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+          );
+        },
+        onSuccess: () => Response.json({ ok: true }),
+      }
+    )
   );
-
-  if (result.isErr()) {
-    logger.error({ err: result.error }, '[CRON] Daily reminder failed');
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
-  }
-
-  return Response.json({ ok: true });
 }
 
 export const Route = createFileRoute('/api/cron/daily-reminder')({

@@ -1,4 +1,4 @@
-import { isNullish } from 'remeda';
+import { Predicate } from 'effect';
 
 import { useFormField } from '@/components/form/form-field';
 import { FormFieldContainer } from '@/components/form/form-field-container';
@@ -23,7 +23,7 @@ export const FieldNumber = (
     value: number | undefined | null,
     type: 'to-cents' | 'from-cents'
   ) => {
-    if (isNullish(value)) return null;
+    if (Predicate.isNullable(value)) return null;
     if (inCents !== true) return value ?? null;
     if (type === 'to-cents') return Math.round(value * 100);
     if (type === 'from-cents') return value / 100;

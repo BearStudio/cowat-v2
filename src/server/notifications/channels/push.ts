@@ -1,3 +1,5 @@
+import { Either } from 'effect';
+
 import type { LanguageKey } from '@/lib/i18n/constants';
 import { DEFAULT_LANGUAGE_KEY } from '@/lib/i18n/constants';
 
@@ -38,9 +40,9 @@ async function sendEach(
     }
 
     const { token, result } = entry.value;
-    if (result.isOk()) continue;
+    if (Either.isRight(result)) continue;
 
-    const { status } = result.error;
+    const { status } = result.left;
     if (status === 'NOT_FOUND' || status === 'UNREGISTERED') {
       invalidTokens.push(token);
     } else {
@@ -96,9 +98,9 @@ async function sendToRecipients(
   if (allTokens.length === 0) return;
 
   const accessTokenResult = await getAccessToken();
-  if (accessTokenResult.isErr()) {
+  if (Either.isLeft(accessTokenResult)) {
     logger.error(
-      { err: accessTokenResult.error },
+      { err: accessTokenResult.left },
       'Push: failed to get access token'
     );
     return;
@@ -134,7 +136,7 @@ async function sendToRecipients(
   });
 
   const { failedTokens, invalidTokens } = await sendEach(
-    accessTokenResult.value,
+    accessTokenResult.right,
     messages
   );
 

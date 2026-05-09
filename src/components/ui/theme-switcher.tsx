@@ -1,3 +1,4 @@
+import { Match } from 'effect';
 import {
   CheckIcon,
   ChevronsUpDownIcon,
@@ -7,7 +8,6 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
-import { match } from 'ts-pattern';
 
 import { cn } from '@/lib/tailwind/utils';
 import { useIsHydrated } from '@/hooks/use-is-hydrated';
@@ -47,17 +47,19 @@ export const ThemeSwitcher = (props: { iconOnly?: boolean }) => {
           />
         }
       >
-        {match(currentTheme)
-          .with('system', () => <SunMoonIcon className="opacity-50" />)
-          .with('light', () => <SunIcon className="opacity-50" />)
-          .with('dark', () => <MoonIcon className="opacity-50" />)
-          .exhaustive()}
+        {Match.value(currentTheme).pipe(
+          Match.when('system', () => <SunMoonIcon className="opacity-50" />),
+          Match.when('light', () => <SunIcon className="opacity-50" />),
+          Match.when('dark', () => <MoonIcon className="opacity-50" />),
+          Match.exhaustive
+        )}
         <span className={cn(props.iconOnly && 'sr-only')}>
-          {match(currentTheme)
-            .with('system', () => t('common:themes.values.system'))
-            .with('light', () => t('common:themes.values.light'))
-            .with('dark', () => t('common:themes.values.dark'))
-            .exhaustive()}
+          {Match.value(currentTheme).pipe(
+            Match.when('system', () => t('common:themes.values.system')),
+            Match.when('light', () => t('common:themes.values.light')),
+            Match.when('dark', () => t('common:themes.values.dark')),
+            Match.exhaustive
+          )}
         </span>
         {!props.iconOnly && <ChevronsUpDownIcon className="opacity-50" />}
       </DropdownMenuTrigger>
