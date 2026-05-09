@@ -8,7 +8,8 @@ import { createUsers } from './user';
 
 async function main() {
   const [, orgId] = await Promise.all([createUsers(), createOrg()]);
-  await Promise.all([addOrgMembers(orgId), createLocations(orgId)]);
+  await addOrgMembers(orgId);
+  await createLocations(orgId);
   await Promise.all([createCommutes(orgId), createCommuteTemplates(orgId)]);
 }
 
