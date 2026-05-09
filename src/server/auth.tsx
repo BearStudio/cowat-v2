@@ -1,7 +1,7 @@
-import { expo } from '@better-auth/expo';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin, emailOTP, openAPI, organization } from 'better-auth/plugins';
+import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { match } from 'ts-pattern';
 
 import i18n from '@/lib/i18n';
@@ -23,19 +23,9 @@ import { sendEmail } from '@/server/email';
 import { getUserLanguage } from '@/server/utils';
 
 export type Auth = typeof auth;
+
 export const auth = betterAuth({
-  baseURL: {
-    allowedHosts: [
-      new URL(envClient.VITE_BASE_URL).host,
-      ...(envServer.AUTH_ALLOWED_HOSTS ?? []),
-      ...(envServer.VERCEL_URL ? [envServer.VERCEL_URL] : []),
-      ...(envServer.VERCEL_BRANCH_URL ? [envServer.VERCEL_BRANCH_URL] : []),
-      // In dev, allow local network access (e.g. testing from mobile devices)
-      ...(import.meta.env.DEV ? ['192.168.*:*', '10.*:*', '172.*:*'] : []),
-    ],
-    // Fallback for server-side system calls (auth.api.xxx without request headers)
-    fallback: envClient.VITE_BASE_URL,
-  },
+  baseURL: envClient.VITE_BASE_URL,
   session: {
     expiresIn: envServer.AUTH_SESSION_EXPIRATION_IN_SECONDS,
     updateAge: envServer.AUTH_SESSION_UPDATE_AGE_IN_SECONDS,
@@ -79,13 +69,9 @@ export const auth = betterAuth({
     },
   },
   onAPIError: {
-    throw: true,
     errorURL: '/login/error',
   },
   plugins: [
-    // Allows an Expo native app to use auth, can be delete if no needed
-    // disableOriginOverride: true is needed to prevent a crash, see https://github.com/better-auth/better-auth/issues/2398
-    expo({ disableOriginOverride: true }),
     openAPI({
       disableDefaultReference: true, // Use custom exposition in /routes/api/openapi folder
     }),
@@ -159,5 +145,6 @@ export const auth = betterAuth({
           .exhaustive();
       },
     }),
+    tanstackStartCookies(),
   ],
 });

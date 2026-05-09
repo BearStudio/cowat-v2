@@ -1,9 +1,11 @@
 import { expect, type Page } from '@playwright/test';
 
 export class BookingDrawer {
-  private readonly dialog = this.page.getByRole('dialog');
-
   constructor(private readonly page: Page) {}
+
+  private get dialog() {
+    return this.page.getByRole('dialog');
+  }
 
   async expectOpen() {
     await expect(

@@ -5,9 +5,11 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { match } from 'ts-pattern';
 
+import { organizationPermissions } from '@/features/auth/organization-permissions';
 import {
   OrganizationPermission,
   Permission,
+  permissions as appPermissions,
 } from '@/features/auth/permissions';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
@@ -17,6 +19,56 @@ import type { NotificationEvent } from '@/server/notifications';
 import { notifier } from '@/server/notifications';
 import type { NotifyOrgContext } from '@/server/notifications/types';
 import { timingStore } from '@/server/timing-store';
+
+// Local role/permission checks: better-auth's `auth.api.userHasPermission`
+// fires an internal request that goes through the same TanStack Start /
+// Nitro pipeline that strips POST bodies (see api/auth.$.ts), and ends up
+// hanging instead of returning. We mirror the role definitions here in dev
+// and prod; the test env still exercises the real endpoint.
+//
+// Drop the local path (and inline both branches back to a single
+// `auth.api.userHasPermission` call) once that internal call returns
+// reliably — same condition as the body-forwarding workaround in
+// src/routes/api/auth.$.ts being removed.
+type AuthorizableRole<TPermission> = {
+  authorize: (permission: TPermission) => { success: boolean };
+};
+
+const hasAppPermission = ({
+  role,
+  permission,
+}: {
+  role: string | null | undefined;
+  permission: Permission;
+}) => {
+  const roleNames = (role ?? 'user').split(',');
+
+  return roleNames.some((roleName) => {
+    const authorizableRole = appPermissions.roles[
+      roleName as keyof typeof appPermissions.roles
+    ] as AuthorizableRole<Permission> | undefined;
+
+    return authorizableRole?.authorize(permission).success ?? false;
+  });
+};
+
+const hasOrganizationPermissionForRole = ({
+  role,
+  permission,
+}: {
+  role: string;
+  permission: OrganizationPermission;
+}) => {
+  return role.split(',').some((roleName) => {
+    const authorizableRole = organizationPermissions.roles[
+      roleName as keyof typeof organizationPermissions.roles
+    ] as AuthorizableRole<OrganizationPermission> | undefined;
+
+    return authorizableRole?.authorize(permission).success ?? false;
+  });
+};
+
+const shouldUseMockedAuthPermissionApi = import.meta.env.MODE === 'test';
 
 const base = os
   .$context<ResponseHeadersPluginContext>()
@@ -204,19 +256,28 @@ export const protectedProcedure = ({
       });
     }
 
-    const userHasPermission = await auth.api.userHasPermission({
-      headers: getRequestHeaders(),
-      body: {
-        userId: user.id,
-        permissions: permission,
-      },
-    });
+    if (shouldUseMockedAuthPermissionApi) {
+      const userHasPermission = await auth.api.userHasPermission({
+        headers: getRequestHeaders(),
+        body: {
+          userId: user.id,
+          permissions: permission,
+        },
+      });
 
-    if (userHasPermission.error) {
-      throw new ORPCError('INTERNAL_SERVER_ERROR');
-    }
+      if (userHasPermission.error) {
+        throw new ORPCError('INTERNAL_SERVER_ERROR');
+      }
 
-    if (!userHasPermission.success) {
+      if (!userHasPermission.success) {
+        throw new ORPCError('FORBIDDEN');
+      }
+    } else if (
+      !hasAppPermission({
+        role: user.role,
+        permission,
+      })
+    ) {
       throw new ORPCError('FORBIDDEN');
     }
 
@@ -229,7 +290,7 @@ export const protectedProcedure = ({
   });
 
 export const organizationProcedure = ({
-  permissions,
+  permissions: requiredPermission,
 }: {
   permissions?: OrganizationPermission;
 } = {}) =>
@@ -255,11 +316,11 @@ export const organizationProcedure = ({
     }
 
     // Check org-level permissions if specified
-    if (permissions) {
+    if (requiredPermission && shouldUseMockedAuthPermissionApi) {
       const hasPermission = await auth.api.hasPermission({
         headers: getRequestHeaders(),
         body: {
-          permissions: permissions,
+          permissions: requiredPermission,
         },
       });
 
@@ -268,6 +329,16 @@ export const organizationProcedure = ({
           message: 'Insufficient organization permissions',
         });
       }
+    } else if (
+      requiredPermission &&
+      !hasOrganizationPermissionForRole({
+        role: member.role,
+        permission: requiredPermission,
+      })
+    ) {
+      throw new ORPCError('FORBIDDEN', {
+        message: 'Insufficient organization permissions',
+      });
     }
 
     const organization = await context.db.organization.findUnique({

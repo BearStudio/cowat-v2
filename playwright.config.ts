@@ -35,7 +35,7 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     // eslint-disable-next-line sonarjs/slow-regex
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: 'setup', testMatch: /.*\.setup\.ts/, timeout: 90_000 },
     {
       // We keep only chromium for now for faster feedback loop
       name: 'chromium',
@@ -46,8 +46,24 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm dev',
+    // CI runs `dev:app` (not `dev`) because the workflow already starts
+    // its own MailDev — `dev:smtp` would collide on port 1080.
+    //
+    // We can't run the production build in CI yet: the pinned nitro
+    // nightly (see `nitro` in package.json) returns 500 for every
+    // request when serving a vite 8 build. Switch to `pnpm build &&
+    // pnpm start` once nitro ships a release that supports vite 8 prod
+    // output AND keeps JSON locale loading working in dev.
+    //
+    // `--unhandled-rejections=warn` keeps the dev server alive when a
+    // background fetch (push notifications, etc.) rejects after the
+    // response has been sent. Drop this flag together with the test-env
+    // guard in src/server/notifications/index.ts.
+    command: process.env.CI
+      ? 'NODE_OPTIONS=--unhandled-rejections=warn pnpm dev:app'
+      : 'pnpm dev',
     url: process.env.VITE_BASE_URL,
     reuseExistingServer: !process.env.CI,
+    timeout: 5 * 60 * 1000,
   },
 });

@@ -1,6 +1,6 @@
-import { enUS, fr, Locale } from 'react-day-picker/locale';
+import { DayPickerLocale, enUS, fr } from '@daypicker/react/locale';
 
-export const REACT_DAY_PICKER_LOCALE_MAP: Record<string, Locale> = {
+export const REACT_DAY_PICKER_LOCALE_MAP: Record<string, DayPickerLocale> = {
   en: enUS,
   fr,
 };

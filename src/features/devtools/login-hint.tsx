@@ -17,11 +17,14 @@ const LoginEmailButton = ({
     <button
       type="button"
       className="cursor-pointer font-medium text-neutral-900 underline underline-offset-4 hover:no-underline dark:text-white"
-      onClick={() =>
+      onClick={() => {
         form.setValue('email', email, {
           shouldValidate: true,
-        })
-      }
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+        void form.trigger('email');
+      }}
     >
       {label}
     </button>
@@ -65,11 +68,14 @@ export const LoginEmailOtpHint = () => {
         <button
           type="button"
           className="cursor-pointer font-medium text-neutral-900 underline underline-offset-4 hover:no-underline dark:text-white"
-          onClick={() =>
+          onClick={() => {
             form.setValue('otp', AUTH_EMAIL_OTP_MOCKED, {
               shouldValidate: true,
-            })
-          }
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+            void form.trigger('otp');
+          }}
         >
           {AUTH_EMAIL_OTP_MOCKED}
         </button>
