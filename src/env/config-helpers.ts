@@ -12,24 +12,16 @@ export const isDev =
 
 // ─── Generic ──────────────────────────────────────────────────────────────────
 
+// Config.url() returns Config<URL> — map to href for string compatibility
 export const urlConfig = (name: string) =>
-  Config.string(name).pipe(
-    Config.validate({
-      message: `${name} must be a valid URL`,
-      validation: (s) => URL.canParse(s),
-    })
-  );
+  Config.url(name).pipe(Config.map((u) => u.href));
 
+// Config.array() handles comma-splitting natively
 export const commaSeparated = (
   name: string
 ): Config.Config<string[] | undefined> =>
-  Config.option(Config.string(name)).pipe(
-    Config.map((opt) =>
-      Option.match(opt, {
-        onNone: () => undefined,
-        onSome: (s) => s.split(',').map((v) => v.trim()),
-      })
-    )
+  Config.option(Config.array(Config.string(), name)).pipe(
+    Config.map(Option.getOrUndefined)
   );
 
 // ─── Prod-aware ───────────────────────────────────────────────────────────────
