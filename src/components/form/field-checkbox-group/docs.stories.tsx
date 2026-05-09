@@ -50,7 +50,7 @@ export const Default = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -79,7 +79,7 @@ export const DefaultValue = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -109,7 +109,7 @@ export const Disabled = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -134,7 +134,7 @@ export const Row = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -164,7 +164,7 @@ export const WithDisabledOption = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

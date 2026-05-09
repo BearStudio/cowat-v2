@@ -14,14 +14,18 @@ async function main() {
 
   // Use raw SQL to hard-delete commutes (bypassing the soft-delete middleware
   // that would otherwise only set isDeleted = true).
-  await db.$executeRaw`DELETE FROM "commute_request"`;
-  await db.$executeRaw`DELETE FROM "passengers_on_stops"`;
+  await Promise.all([
+    db.$executeRaw`DELETE FROM "commute_request"`,
+    db.$executeRaw`DELETE FROM "passengers_on_stops"`,
+  ]);
   await db.$executeRaw`DELETE FROM "stop"`;
-  await db.$executeRaw`DELETE FROM "commute"`;
 
   console.log('✅ Cleared');
 
-  const orgId = await getDefaultOrgId();
+  const [, orgId] = await Promise.all([
+    db.$executeRaw`DELETE FROM "commute"`,
+    getDefaultOrgId(),
+  ]);
   await createCommutes(orgId);
 }
 

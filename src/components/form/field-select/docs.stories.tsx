@@ -79,7 +79,7 @@ export const Default = () => {
             }))}
           />
         </FormField>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Save</Button>
       </div>
     </Form>
   );
@@ -120,7 +120,7 @@ export const CustomOptions = () => {
             </SelectGroup>
           </FormFieldController>
         </FormField>
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Save</Button>
       </div>
     </Form>
   );
@@ -152,7 +152,7 @@ export const DefaultValue = () => {
           />
         </FormField>
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Save</Button>
       </div>
     </Form>
   );
@@ -185,7 +185,7 @@ export const Disabled = () => {
           />
         </FormField>
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Save</Button>
       </div>
     </Form>
   );

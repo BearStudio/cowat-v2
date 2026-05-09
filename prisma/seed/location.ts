@@ -24,26 +24,27 @@ const LOCATIONS = [
 export async function createLocations(organizationId: string) {
   console.log(`⏳ Seeding locations`);
 
-  let createdCounter = 0;
-
   const members = await db.member.findMany({
     where: { organizationId },
     select: { id: true },
   });
 
-  for (const member of members) {
-    const existingCount = await db.location.count({
-      where: { memberId: member.id },
-    });
-    if (existingCount > 0) continue;
-
-    for (const loc of LOCATIONS) {
-      await db.location.create({
-        data: { ...loc, memberId: member.id },
+  const counts = await Promise.all(
+    members.map(async (member) => {
+      const existingCount = await db.location.count({
+        where: { memberId: member.id },
       });
-      createdCounter += 1;
-    }
-  }
+      if (existingCount > 0) return 0;
+
+      await Promise.all(
+        LOCATIONS.map((loc) =>
+          db.location.create({ data: { ...loc, memberId: member.id } })
+        )
+      );
+      return LOCATIONS.length;
+    })
+  );
+  const createdCounter = counts.reduce((sum, n) => sum + n, 0);
 
   console.log(`✅ ${createdCounter} locations created`);
 }

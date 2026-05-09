@@ -52,7 +52,7 @@ export const Default = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Verify code</Button>
         </div>
       </div>
     </Form>
@@ -80,7 +80,7 @@ export const DefaultValue = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Verify code</Button>
         </div>
       </div>
     </Form>
@@ -104,7 +104,7 @@ export const Disabled = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Verify code</Button>
         </div>
       </div>
     </Form>
@@ -130,7 +130,7 @@ export const CustomLength = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Verify code</Button>
         </div>
       </div>
     </Form>
@@ -154,7 +154,7 @@ export const AutoSubmit = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Verify code</Button>
         </div>
       </div>
     </Form>

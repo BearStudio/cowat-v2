@@ -96,6 +96,7 @@ export const DashboardCommuteCard = ({
                   if (userBooking) {
                     return (
                       <div
+                        role="none"
                         onClick={(e) => e.stopPropagation()}
                         onKeyDown={(e) => e.stopPropagation()}
                       >

@@ -1,6 +1,8 @@
 import type { Meta } from '@storybook/react-vite';
 import { useState } from 'react';
 
+const STORY_DATE = new Date('2025-01-15');
+
 import { Button } from '@/components/ui/button';
 
 import { BookingDrawer } from '@/features/booking/booking-drawer';
@@ -14,11 +16,11 @@ export const RoundMiddleStop = () => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Round commute — middle stop</Button>
+      <Button onClick={() => setOpen(true)}>Round commute: middle stop</Button>
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
-        commuteDate={new Date()}
+        commuteDate={STORY_DATE}
         stop={null}
         driver={null}
         isFirstStop={false}
@@ -35,11 +37,11 @@ export const RoundFirstStop = () => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Round commute — first stop</Button>
+      <Button onClick={() => setOpen(true)}>Round commute: first stop</Button>
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
-        commuteDate={new Date()}
+        commuteDate={STORY_DATE}
         stop={null}
         driver={null}
         isFirstStop={true}
@@ -56,11 +58,11 @@ export const RoundLastStop = () => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Round commute — last stop</Button>
+      <Button onClick={() => setOpen(true)}>Round commute: last stop</Button>
       <BookingDrawer
         stopId="stop-1"
         commuteType="ROUND"
-        commuteDate={new Date()}
+        commuteDate={STORY_DATE}
         stop={null}
         driver={null}
         isFirstStop={false}
@@ -81,7 +83,7 @@ export const OneWayCommute = () => {
       <BookingDrawer
         stopId="stop-1"
         commuteType="ONEWAY"
-        commuteDate={new Date()}
+        commuteDate={STORY_DATE}
         stop={null}
         driver={null}
         isFirstStop={false}

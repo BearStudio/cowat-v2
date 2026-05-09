@@ -70,7 +70,7 @@ export const Default = () => {
           <FormFieldHelper>Enter your website URL</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -114,7 +114,7 @@ export const DefaultValue = () => {
           <FormFieldHelper>Enter your website URL</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -160,7 +160,7 @@ export const Disabled = () => {
           <FormFieldHelper>Enter your website URL</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -205,7 +205,7 @@ export const ReadOnly = () => {
           <FormFieldHelper>Enter your website URL</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

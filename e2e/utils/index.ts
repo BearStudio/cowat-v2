@@ -35,41 +35,41 @@ const testWithPage = base.extend<ExtendedPage>({
 });
 
 const test = testWithPage.extend<PageFixtures>({
-  accountPage: async ({ page }, use) => {
-    await use(new AccountPage(page));
+  accountPage: async ({ page }, apply) => {
+    await apply(new AccountPage(page));
   },
-  loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page));
+  loginPage: async ({ page }, apply) => {
+    await apply(new LoginPage(page));
   },
-  dashboard: async ({ page }, use) => {
-    await use(new DashboardPage(page));
+  dashboard: async ({ page }, apply) => {
+    await apply(new DashboardPage(page));
   },
-  bookingDrawer: async ({ page }, use) => {
-    await use(new BookingDrawer(page));
+  bookingDrawer: async ({ page }, apply) => {
+    await apply(new BookingDrawer(page));
   },
-  confirmDialog: async ({ page }, use) => {
-    await use(new ConfirmDialog(page));
+  confirmDialog: async ({ page }, apply) => {
+    await apply(new ConfirmDialog(page));
   },
-  commuteFormPage: async ({ page }, use) => {
-    await use(new CommuteFormPage(page));
+  commuteFormPage: async ({ page }, apply) => {
+    await apply(new CommuteFormPage(page));
   },
-  commuteTemplatesPage: async ({ page }, use) => {
-    await use(new CommuteTemplatesPage(page));
+  commuteTemplatesPage: async ({ page }, apply) => {
+    await apply(new CommuteTemplatesPage(page));
   },
-  invitationPage: async ({ page }, use) => {
-    await use(new InvitationPage(page));
+  invitationPage: async ({ page }, apply) => {
+    await apply(new InvitationPage(page));
   },
-  locationsPage: async ({ page }, use) => {
-    await use(new LocationsPage(page));
+  locationsPage: async ({ page }, apply) => {
+    await apply(new LocationsPage(page));
   },
-  managerOrgPage: async ({ page }, use) => {
-    await use(new ManagerOrgPage(page));
+  managerOrgPage: async ({ page }, apply) => {
+    await apply(new ManagerOrgPage(page));
   },
-  usersPage: async ({ page }, use) => {
-    await use(new ManagerUsersPage(page));
+  usersPage: async ({ page }, apply) => {
+    await apply(new ManagerUsersPage(page));
   },
-  requestsPage: async ({ page }, use) => {
-    await use(new RequestsPage(page));
+  requestsPage: async ({ page }, apply) => {
+    await apply(new RequestsPage(page));
   },
 });
 

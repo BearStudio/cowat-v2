@@ -53,7 +53,7 @@ export const Default = () => {
           <FormFieldHelper>There is only one possible answer.</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -82,7 +82,7 @@ export const DefaultValue = () => {
           <FormFieldHelper>There is only one possible answer.</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -112,7 +112,7 @@ export const Disabled = () => {
           <FormFieldHelper>There is only one possible answer.</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -158,7 +158,7 @@ export const CustomCheckbox = () => {
           />
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

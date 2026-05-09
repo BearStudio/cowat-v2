@@ -111,7 +111,7 @@ export const WithForm = () => {
               <FormFieldHelper>Help</FormFieldHelper>
             </FormField>
             <div>
-              <Button type="submit">Submit</Button>
+              <Button type="submit">Save</Button>
             </div>
           </div>
         </Form>

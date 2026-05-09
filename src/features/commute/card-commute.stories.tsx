@@ -86,7 +86,7 @@ export const LeftBorderByStatus = () => {
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
-          <p className="text-sm text-muted-foreground">Passenger — Requested</p>
+          <p className="text-sm text-muted-foreground">Passenger: Requested</p>
         </CardCommuteContent>
       </CardCommute>
       <CardCommute bookingStatus="ACCEPTED">
@@ -102,7 +102,7 @@ export const LeftBorderByStatus = () => {
         </CardCommuteTrigger>
         <CardCommuteContent>
           <p className="text-sm text-muted-foreground">
-            Passenger — Accepted (one way)
+            Passenger: Accepted (one way)
           </p>
         </CardCommuteContent>
       </CardCommute>
@@ -118,7 +118,7 @@ export const LeftBorderByStatus = () => {
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
-          <p className="text-sm text-muted-foreground">Passenger — Refused</p>
+          <p className="text-sm text-muted-foreground">Passenger: Refused</p>
         </CardCommuteContent>
       </CardCommute>
       <CardCommute bookingStatus="CANCELED">
@@ -133,7 +133,7 @@ export const LeftBorderByStatus = () => {
           />
         </CardCommuteTrigger>
         <CardCommuteContent>
-          <p className="text-sm text-muted-foreground">Passenger — Canceled</p>
+          <p className="text-sm text-muted-foreground">Passenger: Canceled</p>
         </CardCommuteContent>
       </CardCommute>
     </div>
@@ -169,7 +169,7 @@ export const WithManyPassengers = () => {
         </CardCommuteTrigger>
         <CardCommuteContent>
           <p className="text-sm text-muted-foreground">
-            7 passengers — overflow after 4
+            7 passengers, overflow after 4
           </p>
         </CardCommuteContent>
       </CardCommute>
@@ -187,7 +187,7 @@ export const WithManyPassengers = () => {
         </CardCommuteTrigger>
         <CardCommuteContent>
           <p className="text-sm text-muted-foreground">
-            3 passengers — no overflow
+            3 passengers, no overflow
           </p>
         </CardCommuteContent>
       </CardCommute>
@@ -226,7 +226,11 @@ export const WithActions = () => {
           outwardDeparture="08:00"
           inwardDeparture="17:30"
           actions={
-            <div onClick={(e) => e.stopPropagation()}>
+            <div
+              role="none"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
               <Button variant="ghost" size="icon-sm">
                 <Trash2 />
               </Button>

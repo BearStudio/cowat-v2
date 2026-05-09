@@ -20,8 +20,10 @@ const scriptSchema = z.enum(ALLOWED_SCRIPTS);
 export const runCommand = createServerFn({ method: 'POST' })
   .inputValidator(scriptSchema)
   .handler(async ({ data: script }): Promise<CommandResult> => {
-    const { exec } = await import('node:child_process');
-    const { promisify } = await import('node:util');
+    const [{ exec }, { promisify }] = await Promise.all([
+      import('node:child_process'),
+      import('node:util'),
+    ]);
     const execAsync = promisify(exec);
 
     const result = await Result.tryPromise(() => execAsync(`pnpm ${script}`));

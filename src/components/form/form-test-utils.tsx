@@ -33,7 +33,7 @@ export const FormMocked = <T extends ZodType<FieldValues>>({
       onSubmit={onSubmit ? (values) => onSubmit(values) : undefined}
     >
       {children({ form })}
-      <button type="submit">Submit</button>
+      <button type="submit">Save</button>
     </Form>
   );
 };

@@ -51,9 +51,9 @@ export const Inline = () => {
           </CollapsibleTrigger>
         </div>
         <CollapsibleContent className="mt-2 space-y-1 rounded-md border p-3 text-sm text-muted-foreground">
-          <p>Option A — configure advanced settings</p>
-          <p>Option B — enable experimental features</p>
-          <p>Option C — manage integrations</p>
+          <p>Option A: configure advanced settings</p>
+          <p>Option B: enable experimental features</p>
+          <p>Option C: manage integrations</p>
         </CollapsibleContent>
       </Collapsible>
     </div>

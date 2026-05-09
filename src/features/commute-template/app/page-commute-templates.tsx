@@ -138,6 +138,7 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                       seats={item.seats}
                       actions={
                         <div
+                          role="none"
                           onClick={(e) => e.stopPropagation()}
                           onKeyDown={(e) => e.stopPropagation()}
                         >

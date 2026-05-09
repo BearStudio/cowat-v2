@@ -45,7 +45,7 @@ export const Default = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -74,7 +74,7 @@ export const DefaultValue = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -103,7 +103,7 @@ export const Currency = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -128,7 +128,7 @@ export const Disabled = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>
@@ -153,7 +153,7 @@ export const ReadOnly = () => {
           <FormFieldHelper>Help</FormFieldHelper>
         </FormField>
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save</Button>
         </div>
       </div>
     </Form>

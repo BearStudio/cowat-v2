@@ -230,19 +230,19 @@ export function SpinnerExample() {
         </InputGroupAddon>
       </InputGroup>
       <InputGroup data-disabled>
-        <InputGroupInput placeholder="Saving changes..." disabled />
+        <InputGroupInput placeholder="Saving changes…" disabled />
         <InputGroupAddon align="inline-end">
-          <InputGroupText>Saving...</InputGroupText>
+          <InputGroupText>Saving…</InputGroupText>
           <Spinner />
         </InputGroupAddon>
       </InputGroup>
       <InputGroup data-disabled>
-        <InputGroupInput placeholder="Refreshing data..." disabled />
+        <InputGroupInput placeholder="Refreshing data…" disabled />
         <InputGroupAddon>
           <LoaderIcon className="animate-spin" />
         </InputGroupAddon>
         <InputGroupAddon align="inline-end">
-          <InputGroupText>Please wait...</InputGroupText>
+          <InputGroupText>Please wait…</InputGroupText>
         </InputGroupAddon>
       </InputGroup>
     </div>
@@ -322,7 +322,7 @@ export function DropdownExample() {
                 <InputGroupButton variant="ghost" className="pr-1.5! text-xs" />
               }
             >
-              Search In... <ChevronDownIcon className="size-3" />
+              Search In… <ChevronDownIcon className="size-3" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Documentation</DropdownMenuItem>

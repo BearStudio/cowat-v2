@@ -56,7 +56,7 @@ export const zStopInput = () =>
 export type FormFieldsStopInput = z.infer<
   ReturnType<typeof zFormFieldsStopInput>
 >;
-export const zFormFieldsStopInput = () =>
+const zFormFieldsStopInput = () =>
   z.object({
     outwardTime: zu.fieldText.required(t('common:errors.required')),
     inwardTime: zu.fieldText.nullish(),
@@ -216,7 +216,7 @@ export const zFormFieldsCommuteRequest = () =>
   });
 
 export type StopPassenger = z.infer<ReturnType<typeof zStopPassenger>>;
-export const zStopPassenger = () =>
+const zStopPassenger = () =>
   z.object({
     id: z.string(),
     status: zRequestStatus(),
@@ -226,7 +226,7 @@ export const zStopPassenger = () =>
   });
 
 export type StopEnriched = z.infer<ReturnType<typeof zStopEnriched>>;
-export const zStopEnriched = () =>
+const zStopEnriched = () =>
   zStop().extend({
     location: zLocationSummary(),
     passengers: z.array(zStopPassenger()),

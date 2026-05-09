@@ -32,7 +32,7 @@ export const fieldComponents = {
 } as const;
 
 export type FieldType = keyof typeof fieldComponents;
-export type FieldComponent<TFieldType extends FieldType> =
+type FieldComponent<TFieldType extends FieldType> =
   (typeof fieldComponents)[TFieldType];
 
 export type FieldComponentProps<TFieldType extends FieldType> =
