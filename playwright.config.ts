@@ -46,21 +46,17 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    // CI runs `dev:app` (not `dev`) because the workflow already starts
-    // its own MailDev — `dev:smtp` would collide on port 1080.
+    // CI runs the production build because the dev server's vite-driven
+    // JSON locale loading is broken with the pinned nitro nightly (every
+    // `/src/locales/**.json?import` returns 404, which leaves the SSR
+    // hydration stuck on a spinner).
     //
-    // We can't run the production build in CI yet: the pinned nitro
-    // nightly (see `nitro` in package.json) returns 500 for every
-    // request when serving a vite 8 build. Switch to `pnpm build &&
-    // pnpm start` once nitro ships a release that supports vite 8 prod
-    // output AND keeps JSON locale loading working in dev.
-    //
-    // `--unhandled-rejections=warn` keeps the dev server alive when a
+    // `--unhandled-rejections=warn` keeps the server alive when a
     // background fetch (push notifications, etc.) rejects after the
     // response has been sent. Drop this flag together with the test-env
     // guard in src/server/notifications/index.ts.
     command: process.env.CI
-      ? 'NODE_OPTIONS=--unhandled-rejections=warn pnpm dev:app'
+      ? 'pnpm build && NODE_OPTIONS=--unhandled-rejections=warn pnpm start'
       : 'pnpm dev',
     url: process.env.VITE_BASE_URL,
     reuseExistingServer: !process.env.CI,
