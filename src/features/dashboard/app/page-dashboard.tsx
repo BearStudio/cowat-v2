@@ -2,7 +2,7 @@ import { getUiState } from '@bearstudio/ui-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
@@ -79,15 +79,9 @@ export const PageDashboard = () => {
           isLastStop: stop.order === maxOrder,
         }));
       })
-      .find((s) => s.stopId === bookingStopId) ?? null;
-
-  const isDriverBooking = bookingInfo?.driver?.id === currentUserId;
-
-  useEffect(() => {
-    if (isDriverBooking) {
-      setSearchParams({ bookingStop: null });
-    }
-  }, [isDriverBooking, setSearchParams]);
+      .find(
+        (s) => s.stopId === bookingStopId && s.driver?.id !== currentUserId
+      ) ?? null;
 
   const commuteCancel = useMutation(
     orpc.commute.cancel.mutationOptions({
@@ -243,7 +237,7 @@ export const PageDashboard = () => {
           driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}
           isLastStop={bookingInfo?.isLastStop ?? false}
-          open={bookingInfo !== null && !!currentUserId && !isDriverBooking}
+          open={bookingInfo !== null && !!currentUserId}
           onOpenChange={(open) => {
             if (!open) setSearchParams({ bookingStop: null });
           }}

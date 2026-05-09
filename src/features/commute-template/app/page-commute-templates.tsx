@@ -137,7 +137,10 @@ export const PageCommuteTemplates = ({ orgSlug }: { orgSlug: string }) => {
                       stopsCount={item.stops.length}
                       seats={item.seats}
                       actions={
-                        <div onClick={(e) => e.stopPropagation()}>
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        >
                           <ConfirmResponsiveDrawer
                             title={item.name}
                             description={t(

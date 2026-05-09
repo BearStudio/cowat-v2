@@ -19,7 +19,7 @@ const RankingCardSkeleton = () => (
       </CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
-      {Array.from({ length: 3 }, (_, i) => (
+      {[0, 1, 2].map((i) => (
         <div
           key={i}
           className="flex items-center gap-3"
@@ -39,7 +39,7 @@ export const StatsSkeleton = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {Array.from({ length: 4 }, (_, i) => (
+        {[0, 1, 2, 3].map((i) => (
           <RankingCardSkeleton key={i} />
         ))}
       </div>
@@ -56,7 +56,7 @@ export const StatsSkeleton = () => {
         <CardContent>
           <DataList>
             <DataListRow>
-              {Array.from({ length: 5 }, (_, i) => (
+              {[0, 1, 2, 3, 4].map((i) => (
                 <DataListCell key={i} className={i === 0 ? 'flex-[2]' : ''}>
                   <Skeleton className="h-3 w-16" />
                 </DataListCell>
@@ -70,7 +70,7 @@ export const StatsSkeleton = () => {
                     <Skeleton className="h-4 w-24" />
                   </div>
                 </DataListCell>
-                {Array.from({ length: 4 }, (_, i) => (
+                {[0, 1, 2, 3].map((i) => (
                   <DataListCell key={i}>
                     <Skeleton className="h-4 w-8" />
                   </DataListCell>

@@ -46,10 +46,11 @@ export const StepRecap = ({
   const locationsMap = useMemo(
     () =>
       new Map(
-        locationsQuery.data?.pages
-          .flatMap((p) => p.items)
-          .map((loc) => [loc.id, { name: loc.name, address: loc.address }]) ??
-          []
+        locationsQuery.data?.pages.flatMap((p) =>
+          p.items.map(
+            (loc) => [loc.id, { name: loc.name, address: loc.address }] as const
+          )
+        ) ?? []
       ),
     [locationsQuery.data]
   );
@@ -83,8 +84,9 @@ export const StepRecap = ({
 
   const inwardStops = [...(stops ?? [])]
     .reverse()
-    .filter((s) => s.inwardTime)
-    .map((s) => toTimelineStop(s.locationId, s.inwardTime ?? ''));
+    .flatMap((s) =>
+      s.inwardTime ? [toTimelineStop(s.locationId, s.inwardTime)] : []
+    );
 
   return (
     <div className="flex flex-col gap-4">

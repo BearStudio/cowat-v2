@@ -4,6 +4,7 @@ import {
   ReactElement,
   ReactNode,
   useState,
+  useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from 'react-use-disclosure';
@@ -33,7 +34,7 @@ export const ConfirmResponsiveDrawer = (props: {
   requiredConfirmation?: string;
 }) => {
   const { t } = useTranslation(['common', 'components']);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [confirmationInput, setConfirmationInput] = useState('');
   const { close, open, isOpen } = useDisclosure();
 
@@ -64,18 +65,17 @@ export const ConfirmResponsiveDrawer = (props: {
     confirmationInput !== props.requiredConfirmation;
 
   const handleCancel = () => {
-    setIsPending(false);
     setConfirmationInput('');
     close();
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (isConfirmDisabled) return;
-    setIsPending(true);
-    await props.onConfirm();
-    setIsPending(false);
-    setConfirmationInput('');
-    close();
+    startTransition(async () => {
+      await props.onConfirm();
+      setConfirmationInput('');
+      close();
+    });
   };
 
   return (

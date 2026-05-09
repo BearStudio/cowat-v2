@@ -62,10 +62,9 @@ export const StepOutwardStops = ({
                 control={control}
                 name={`stops.${index}.locationId`}
                 setValue={setValue}
-                excludeLocationIds={stops
-                  ?.filter((_, i) => i !== index)
-                  .map((s) => s.locationId)
-                  .filter((id): id is string => !!id)}
+                excludeLocationIds={stops?.flatMap((s, i) =>
+                  i !== index && s.locationId ? [s.locationId] : []
+                )}
               />
 
               <div className="flex items-start gap-3">

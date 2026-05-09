@@ -58,10 +58,13 @@ export const FormFieldLocationSelect = <
   );
 
   const locationItems =
-    locationsQuery.data?.pages
-      .flatMap((p) => p.items)
-      .filter((loc) => !excludeLocationIds?.includes(loc.id))
-      .map((loc) => ({ label: loc.name, value: loc.id })) ?? [];
+    locationsQuery.data?.pages.flatMap((p) =>
+      p.items.flatMap((loc) =>
+        excludeLocationIds?.includes(loc.id)
+          ? []
+          : [{ label: loc.name, value: loc.id }]
+      )
+    ) ?? [];
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -40,6 +40,32 @@ export const RequestCommuteDrawer = ({
   onOpenChange: (open: boolean) => void;
   initialDate?: Date;
 }) => {
+  const [formKey, setFormKey] = useState(0);
+  const prevOpenRef = useRef(open);
+
+  if (prevOpenRef.current !== open) {
+    prevOpenRef.current = open;
+    if (open) setFormKey((k) => k + 1);
+  }
+
+  return (
+    <ResponsiveDrawer open={open} onOpenChange={onOpenChange}>
+      <RequestCommuteDrawerContent
+        key={formKey}
+        initialDate={initialDate}
+        onOpenChange={onOpenChange}
+      />
+    </ResponsiveDrawer>
+  );
+};
+
+const RequestCommuteDrawerContent = ({
+  initialDate,
+  onOpenChange,
+}: {
+  initialDate?: Date;
+  onOpenChange: (open: boolean) => void;
+}) => {
   const { t } = useTranslation(['commute']);
   const navigate = useNavigate();
   const { orgSlug } = useParams({ strict: false });
@@ -51,12 +77,6 @@ export const RequestCommuteDrawer = ({
     mode: 'onSubmit',
     defaultValues: { date: initialDate, destination: null, comment: null },
   });
-
-  useEffect(() => {
-    if (open) {
-      form.reset({ date: initialDate, destination: null, comment: null });
-    }
-  }, [open, form, initialDate]);
 
   const commuteRequest = useMutation(
     orpc.commuteRequest.create.mutationOptions({
@@ -81,68 +101,66 @@ export const RequestCommuteDrawer = ({
   });
 
   return (
-    <ResponsiveDrawer open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDrawerContent>
-        <Form {...form} noHtmlForm>
-          <ResponsiveDrawerHeader>
-            <ResponsiveDrawerTitle>
-              {t('commute:new.requestDrawer.title')}
-            </ResponsiveDrawerTitle>
-            <ResponsiveDrawerDescription>
-              {t('commute:new.requestDrawer.description')}
-            </ResponsiveDrawerDescription>
-          </ResponsiveDrawerHeader>
-          <ResponsiveDrawerBody className="flex-col gap-4 pt-2 pb-4">
-            <FormField>
-              <FormFieldLabel required>{t('commute:form.date')}</FormFieldLabel>
-              <FormFieldController
-                type="date"
-                control={form.control}
-                name="date"
-                calendarProps={{
-                  disabled: (d) => d < today,
-                  startMonth: today,
-                }}
-              />
-            </FormField>
-            <FormField>
-              <FormFieldLabel>
-                {t('commute:new.requestDrawer.destination')}
-              </FormFieldLabel>
-              <FormFieldController
-                type="text"
-                control={form.control}
-                name="destination"
-                placeholder={t(
-                  'commute:new.requestDrawer.destinationPlaceholder'
-                )}
-              />
-            </FormField>
-            <FormField>
-              <FormFieldLabel>
-                {t('commute:new.requestDrawer.comment')}
-              </FormFieldLabel>
-              <FormFieldController
-                type="textarea"
-                control={form.control}
-                name="comment"
-                placeholder={t('commute:new.requestDrawer.commentPlaceholder')}
-                rows={3}
-              />
-            </FormField>
-          </ResponsiveDrawerBody>
-          <ResponsiveDrawerFooter>
-            <Button
-              className="w-full"
-              disabled={commuteRequest.isPending}
-              loading={commuteRequest.isPending}
-              onClick={handleSubmit}
-            >
-              {t('commute:new.requestDrawer.submit')}
-            </Button>
-          </ResponsiveDrawerFooter>
-        </Form>
-      </ResponsiveDrawerContent>
-    </ResponsiveDrawer>
+    <ResponsiveDrawerContent>
+      <Form {...form} noHtmlForm>
+        <ResponsiveDrawerHeader>
+          <ResponsiveDrawerTitle>
+            {t('commute:new.requestDrawer.title')}
+          </ResponsiveDrawerTitle>
+          <ResponsiveDrawerDescription>
+            {t('commute:new.requestDrawer.description')}
+          </ResponsiveDrawerDescription>
+        </ResponsiveDrawerHeader>
+        <ResponsiveDrawerBody className="flex-col gap-4 pt-2 pb-4">
+          <FormField>
+            <FormFieldLabel required>{t('commute:form.date')}</FormFieldLabel>
+            <FormFieldController
+              type="date"
+              control={form.control}
+              name="date"
+              calendarProps={{
+                disabled: (d) => d < today,
+                startMonth: today,
+              }}
+            />
+          </FormField>
+          <FormField>
+            <FormFieldLabel>
+              {t('commute:new.requestDrawer.destination')}
+            </FormFieldLabel>
+            <FormFieldController
+              type="text"
+              control={form.control}
+              name="destination"
+              placeholder={t(
+                'commute:new.requestDrawer.destinationPlaceholder'
+              )}
+            />
+          </FormField>
+          <FormField>
+            <FormFieldLabel>
+              {t('commute:new.requestDrawer.comment')}
+            </FormFieldLabel>
+            <FormFieldController
+              type="textarea"
+              control={form.control}
+              name="comment"
+              placeholder={t('commute:new.requestDrawer.commentPlaceholder')}
+              rows={3}
+            />
+          </FormField>
+        </ResponsiveDrawerBody>
+        <ResponsiveDrawerFooter>
+          <Button
+            className="w-full"
+            disabled={commuteRequest.isPending}
+            loading={commuteRequest.isPending}
+            onClick={handleSubmit}
+          >
+            {t('commute:new.requestDrawer.submit')}
+          </Button>
+        </ResponsiveDrawerFooter>
+      </Form>
+    </ResponsiveDrawerContent>
   );
 };

@@ -19,8 +19,8 @@ export const RankingCard = (props: {
     'commuteCount' | 'bookingCount' | 'templateCount' | 'stopCount'
   >;
 }) => {
-  const ranked = [...props.users]
-    .sort((a, b) => b[props.metricKey] - a[props.metricKey])
+  const ranked = props.users
+    .toSorted((a, b) => b[props.metricKey] - a[props.metricKey])
     .slice(0, 5);
 
   return (
