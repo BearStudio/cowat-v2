@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_BASE_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
       VITE_ENV_NAME: tests
       DATABASE_URL: postgres://cowat:cowat@localhost:5432/cowat
       AUTH_SECRET: fyXjLxjXJowjicI2BAjxOaUsQd1QafdegZDciJE/xM8=
-      EMAIL_SERVER: smtp://username:password@localhost:1025
+      EMAIL_SERVER: smtp://localhost:1025
       EMAIL_FROM: Cowat <noreply@example.com>
       S3_HOST: localhost:9000
       S3_BUCKET_NAME: default
@@ -26,6 +27,15 @@ jobs:
       DOCKER_MINIO_USERNAME: minioadmin
       DOCKER_MINIO_PASSWORD: minioadmin
       VITE_S3_BUCKET_PUBLIC_URL: http://localhost:9000/default
+      FIREBASE_API_KEY: test-api-key
+      FIREBASE_AUTH_DOMAIN: cowat-tests.firebaseapp.com
+      FIREBASE_PROJECT_ID: cowat-tests
+      FIREBASE_STORAGE_BUCKET: cowat-tests.firebasestorage.app
+      FIREBASE_MESSAGING_SENDER_ID: "1234567890"
+      FIREBASE_APP_ID: 1:1234567890:web:test
+      FIREBASE_VAPID_PUBLIC_KEY: test-vapid-public-key
+      FIREBASE_SERVICE_ACCOUNT: eyJ0eXBlIjoic2VydmljZV9hY2NvdW50IiwicHJvamVjdF9pZCI6ImNvd2F0LXRlc3RzIiwicHJpdmF0ZV9rZXlfaWQiOiJ0ZXN0LWtleS1pZCIsInByaXZhdGVfa2V5IjoiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5URVNUXG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLCJjbGllbnRfZW1haWwiOiJmaXJlYmFzZS1hZG1pbnNka0Bjb3dhdC10ZXN0cy5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsImNsaWVudF9pZCI6IjEyMzQ1Njc4OTAiLCJ0b2tlbl91cmkiOiJodHRwczovL29hdXRoMi5nb29nbGVhcGlzLmNvbS90b2tlbiJ9
+      CRON_SECRET: test-cron-secret
     services:
       postgres:
         image: postgres:16.1
@@ -76,6 +86,18 @@ jobs:
 
       - name: Install deps
         run: pnpm install
+
+      - name: Start MailDev SMTP server
+        run: |
+          pnpm exec maildev \
+            --smtp 1025 \
+            --silent &
+
+          until nc -z localhost 1025 && curl -sf http://127.0.0.1:1080/healthz > /dev/null; do
+            echo "Waiting for MailDev..."
+            sleep 2
+          done
+          echo "MailDev is ready"
 
       - name: Start MinIO server
         run: |

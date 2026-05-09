@@ -82,7 +82,9 @@ test.describe.serial('Manager organization', () => {
     await managerOrgPage.openDeleteOrgDrawer();
 
     const confirmInput = page.getByRole('textbox');
-    await confirmInput.fill(await confirmInput.getAttribute('placeholder')!);
+    await confirmInput.fill(
+      (await confirmInput.getAttribute('placeholder')) ?? ''
+    );
 
     await page.getByRole('button', { name: 'Confirm' }).click();
 

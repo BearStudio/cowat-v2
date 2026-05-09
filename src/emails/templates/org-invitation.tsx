@@ -1,10 +1,4 @@
-import {
-  Button,
-  Container,
-  Heading,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Container, Heading, Section, Text } from 'react-email';
 
 import i18n from '@/lib/i18n';
 
