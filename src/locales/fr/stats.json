@@ -23,7 +23,19 @@
       "commutes": "Trajets",
       "bookings": "Réservations",
       "templates": "Modèles",
-      "stops": "Arrêts"
+      "stops": "Arrêts",
+      "activeUsers": "Utilisateurs actifs",
+      "allUsers": "Tous les utilisateurs",
+      "active": "Actif",
+      "inactive": "Inactif"
     }
+  },
+  "app": {
+    "stats": "Vos statistiques",
+    "manage": "Gérez quelles statistiques sont visibles par les autres utilisateurs.",
+    "users": "Utilisateurs",
+    "consult": "Consultez les statistiques publiques des autres utilisateurs.",
+    "public": "Public",
+    "private": "Privé"
   }
 }

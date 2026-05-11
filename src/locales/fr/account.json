@@ -34,6 +34,7 @@
   },
   "locationsLink": "Lieux",
   "commuteTemplatesLink": "Modèles de trajet",
+  "statisticsLink": "Statistiques",
   "editNameDrawer": {
     "title": "Modifier votre nom",
     "description": "Votre nom est visible par les autres membres.",

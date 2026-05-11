@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  ChartNoAxesCombined,
   HandIcon,
   InboxIcon,
   MapPinIcon,
@@ -15,6 +16,7 @@ export const featureIcons = {
   Commutes: IconCarDuotone,
   CommuteRequest: HandIcon,
   Bookings: InboxIcon,
+  Statistics: ChartNoAxesCombined,
 } as const;
 
 export const tripTypeIcons = {

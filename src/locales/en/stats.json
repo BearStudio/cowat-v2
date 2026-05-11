@@ -23,7 +23,19 @@
       "commutes": "Commutes",
       "bookings": "Bookings",
       "templates": "Templates",
-      "stops": "Stops"
+      "stops": "Stops",
+      "activeUsers": "Active Users",
+      "allUsers": "All Users",
+      "active": "Active",
+      "inactive": "Inactive"
     }
+  },
+  "app": {
+    "stats": "Your statistics",
+    "manage": "Manage which statistics are visible to other users.",
+    "users": "Users",
+    "consult": "Consult the public statistics of other users.",
+    "public": "Public",
+    "private": "Private"
   }
 }

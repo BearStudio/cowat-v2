@@ -89,6 +89,13 @@ export const PageAccount = () => {
             >
               {t('account:commuteTemplatesLink')}
             </AccountNavLink>
+            <AccountNavLink
+              to="/app/$orgSlug/account/statistics"
+              icon={featureIcons.Statistics}
+              viewTransition={{ types: ['slide-up'] }}
+            >
+              {t('account:statisticsLink')}
+            </AccountNavLink>
           </section>
 
           {import.meta.env.DEV && <FcmDebug />}
