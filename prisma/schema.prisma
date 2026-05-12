@@ -86,6 +86,11 @@ model User {
   members     Member[]
   invitations Invitation[]
 
+  showCommutes  Boolean   @default(true)
+  showBookings  Boolean   @default(true)
+  showTemplates Boolean   @default(true)
+  showStops     Boolean   @default(true)
+
   @@unique([email])
   @@map("user")
 }

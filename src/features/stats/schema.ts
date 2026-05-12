@@ -11,4 +11,8 @@ export const zStatsUser = () =>
     bookingCount: z.number(),
     templateCount: z.number(),
     stopCount: z.number(),
+    showCommutes: z.boolean(),
+    showBookings: z.boolean(),
+    showTemplates: z.boolean(),
+    showStops: z.boolean(),
   });

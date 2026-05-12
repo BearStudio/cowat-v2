@@ -21,6 +21,10 @@ export const userProfileSelect = {
 export const userCardSelect = {
   ...userSummarySelect,
   image: true,
+  showCommutes: true,
+  showBookings: true,
+  showTemplates: true,
+  showStops: true,
 } satisfies Prisma.UserSelect;
 
 // ── Location selects ─────────────────────────────────────────────────────────

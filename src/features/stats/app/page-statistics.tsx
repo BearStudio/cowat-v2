@@ -1,7 +1,7 @@
 import { getUiState } from '@bearstudio/ui-state';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Car, MapPin, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { orpc } from '@/lib/orpc/client';
@@ -40,26 +40,64 @@ export const PageStatistics = () => {
   const session = authClient.useSession();
 
   const { t } = useTranslation(['stats', 'components']);
+  const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');
 
+  const statsQuery = useQuery(orpc.stats.getAll.queryOptions());
+  const currentUserId = session.data?.user.id;
+  const currentUser =
+    statsQuery.data?.users.find((user) => user.id === currentUserId) ?? null;
+
   const [visibleStats, setVisibleStats] = useState({
     commutes: true,
-    bookings: false,
+    bookings: true,
     stops: true,
-    templates: false,
+    templates: true,
   });
 
-  const toggleVisibility = (
-    key: 'commutes' | 'bookings' | 'stops' | 'templates'
-  ) => {
-    setVisibleStats((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  useEffect(() => {
+    if (!currentUser) return;
+
+    setVisibleStats({
+      commutes: currentUser.showCommutes,
+      bookings: currentUser.showBookings,
+      stops: currentUser.showStops,
+      templates: currentUser.showTemplates,
+    });
+  }, [currentUser]);
+
+  const updateVisibility = useMutation(
+    orpc.stats.updateVisibility.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(orpc.stats.getAll.queryOptions());
+      },
+    })
+  );
+
+  const mapKey = (key: keyof typeof visibleStats) => {
+    const map = {
+      commutes: 'showCommutes',
+      bookings: 'showBookings',
+      stops: 'showStops',
+      templates: 'showTemplates',
+    } as const;
+
+    return map[key];
   };
 
-  const statsQuery = useQuery(orpc.stats.getAll.queryOptions());
+  const toggleVisibility = (key: keyof typeof visibleStats) => {
+    const newValue = !visibleStats[key];
+
+    setVisibleStats((prev) => ({
+      ...prev,
+      [key]: newValue,
+    }));
+
+    updateVisibility.mutate({
+      [mapKey(key)]: newValue,
+    } as any);
+  };
 
   const ui = getUiState((set) => {
     if (statsQuery.status === 'pending') return set('pending');
@@ -92,12 +130,10 @@ export const PageStatistics = () => {
             </DataList>
           ))
           .match('default', ({ users }) => {
-            const currentUserId = session.data?.user.id ?? '';
             const currentUser =
-              users.find((user) => user.id === currentUserId) ?? users[0];
-            if (!currentUser) {
-              return null;
-            }
+              users.find((u) => u.id === currentUserId) ?? users[0];
+            if (!currentUser) return null;
+
             const filteredUsers = users.filter((user) =>
               user.name.toLowerCase().includes(search.toLowerCase())
             );

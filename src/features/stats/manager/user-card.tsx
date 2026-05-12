@@ -10,7 +10,7 @@ const MiniStat = ({
   label,
 }: {
   icon: React.ElementType;
-  value: number;
+  value: number | string;
   label: string;
 }) => (
   <div className="flex items-center gap-2 rounded-md border p-2">
@@ -25,6 +25,9 @@ const MiniStat = ({
 export const UserCard = ({ user }: { user: any }) => {
   const isActive =
     user.commuteCount > 0 || user.bookingCount > 0 || user.stopCount > 0;
+
+  const formatStat = (visible: boolean, value: number) =>
+    visible ? value : '-';
 
   return (
     <Card className="transition hover:shadow-md">
@@ -52,22 +55,22 @@ export const UserCard = ({ user }: { user: any }) => {
         <div className="grid grid-cols-2 gap-2">
           <MiniStat
             icon={Car}
-            value={user.commuteCount}
+            value={formatStat(user.showCommutes, user.commuteCount)}
             label={t('stats:manager.table.commutes')}
           />
           <MiniStat
             icon={Calendar}
-            value={user.bookingCount}
+            value={formatStat(user.showBookings, user.bookingCount)}
             label={t('stats:manager.table.bookings')}
           />
           <MiniStat
             icon={MapPin}
-            value={user.stopCount}
+            value={formatStat(user.showStops, user.stopCount)}
             label={t('stats:manager.table.stops')}
           />
           <MiniStat
             icon={Users}
-            value={user.templateCount}
+            value={formatStat(user.showTemplates, user.templateCount)}
             label={t('stats:manager.table.templates')}
           />
         </div>

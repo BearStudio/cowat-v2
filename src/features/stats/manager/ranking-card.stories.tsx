@@ -17,6 +17,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 15,
     templateCount: 5,
     stopCount: 80,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
   {
     id: '2',
@@ -27,6 +31,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 28,
     templateCount: 3,
     stopCount: 60,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
   {
     id: '3',
@@ -37,6 +45,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 45,
     templateCount: 8,
     stopCount: 40,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
   {
     id: '4',
@@ -47,6 +59,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 12,
     templateCount: 2,
     stopCount: 35,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
   {
     id: '5',
@@ -57,6 +73,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 8,
     templateCount: 1,
     stopCount: 20,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
   {
     id: '6',
@@ -67,6 +87,10 @@ const mockUsers: Array<StatsUser> = [
     bookingCount: 3,
     templateCount: 0,
     stopCount: 10,
+    showCommutes: true,
+    showBookings: true,
+    showTemplates: true,
+    showStops: true,
   },
 ];
 

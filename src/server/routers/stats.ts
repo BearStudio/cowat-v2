@@ -50,12 +50,36 @@ export default {
         name: member.user.name,
         email: member.user.email,
         image: member.user.image,
+
         commuteCount: member._count.drivenCommutes,
         bookingCount: member._count.passengerBookings,
         templateCount: member._count.drivenTemplates,
         stopCount: stopCountByMember.get(member.id) ?? 0,
+
+        showCommutes: member.user.showCommutes,
+        showBookings: member.user.showBookings,
+        showTemplates: member.user.showTemplates,
+        showStops: member.user.showStops,
       }));
 
       return { users };
+    }),
+
+  updateVisibility: procedure()
+    .input(
+      z.object({
+        showCommutes: z.boolean().optional(),
+        showBookings: z.boolean().optional(),
+        showStops: z.boolean().optional(),
+        showTemplates: z.boolean().optional(),
+      })
+    )
+    .handler(async ({ context, input }) => {
+      const userId = context.session.userId;
+
+      return context.db.user.update({
+        where: { id: userId },
+        data: input,
+      });
     }),
 };
