@@ -190,6 +190,8 @@ export const DashboardCommuteCard = ({
               </div>
             }
             onCancel={() => commuteCancel.mutateAsync({ id: commute.id })}
+            commute={commute}
+            currentUserId={currentUserId}
           />
         </div>
       </CardCommuteContent>

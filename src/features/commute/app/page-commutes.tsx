@@ -252,6 +252,8 @@ export const PageCommutes = () => {
                                         id: item.id,
                                       })
                                     }
+                                    commute={item}
+                                    currentUserId={currentUserId}
                                   />
                                 </div>
                               </CardCommuteContent>
