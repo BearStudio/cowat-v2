@@ -7,6 +7,7 @@ import { nitro } from 'nitro/vite';
 import { defineConfig, loadEnv } from 'vite';
 import { qrcode } from 'vite-plugin-qrcode';
 
+import { jsonModuleFallbackPlugin } from './src/lib/vite-plugins/json-module-fallback';
 import { createPrismaCopyBinariesPlugin } from './src/lib/vite-plugins/prisma-copy-binaries';
 
 const { nitroRetrieveServerDirHook, prismaCopyBinariesPlugin } =
@@ -26,6 +27,7 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       qrcode(),
       devtools(),
+      jsonModuleFallbackPlugin(),
       tanstackStart(),
       nitro({
         modules: [
