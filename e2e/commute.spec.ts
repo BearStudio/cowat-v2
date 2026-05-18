@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { expect, test } from 'e2e/utils';
-import { USER_FILE } from 'e2e/utils/constants';
+import { ORG_SLUG, USER_FILE } from 'e2e/utils/constants';
 const randomString = (length: number) =>
   Math.random()
     .toString(36)
@@ -191,5 +191,26 @@ test.describe('Commute creation', () => {
       timeout: 10_000,
     });
     await commuteFormPage.expectCommuteInList();
+  });
+
+  test('cancel a commute (driver)', async ({ page, confirmDialog }) => {
+    await page.goto(`/app/${ORG_SLUG}/commutes`);
+
+    // getMyCommutes returns both driven and passenger commutes, so filter for
+    // a card where the current user is the driver (has the "Driver" status badge)
+    const driverCard = page
+      .locator('[data-slot="card-commute"]')
+      .filter({ has: page.getByText('Driver') })
+      .first();
+    await expect(driverCard).toBeVisible();
+
+    await driverCard.locator('[data-slot="card-commute-trigger"]').click();
+    const content = driverCard.locator('[data-slot="card-commute-content"]');
+    await expect(content).toBeVisible();
+
+    await content.getByRole('button', { name: 'Cancel' }).click();
+    await confirmDialog.confirm();
+
+    await expect(page.getByText('Commute cancelled').first()).toBeVisible();
   });
 });

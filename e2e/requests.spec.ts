@@ -69,25 +69,4 @@ test.describe.serial('Driver — Request Management', () => {
 
     await expect(page.getByText('Request refused').first()).toBeVisible();
   });
-
-  test('cancel a commute (driver)', async ({ page, confirmDialog }) => {
-    await page.goto(`/app/${ORG_SLUG}/commutes`);
-
-    // getMyCommutes returns both driven and passenger commutes, so filter for
-    // a card where the current user is the driver (has the "Driver" status badge)
-    const driverCard = page
-      .locator('[data-slot="card-commute"]')
-      .filter({ has: page.getByText('Driver') })
-      .first();
-    await expect(driverCard).toBeVisible();
-
-    await driverCard.locator('[data-slot="card-commute-trigger"]').click();
-    const content = driverCard.locator('[data-slot="card-commute-content"]');
-    await expect(content).toBeVisible();
-
-    await content.getByRole('button', { name: 'Cancel' }).click();
-    await confirmDialog.confirm();
-
-    await expect(page.getByText('Commute cancelled').first()).toBeVisible();
-  });
 });
