@@ -22,6 +22,9 @@ const toFilePath = (id: string) => {
 const isInsideDirectory = (filePath: string, directoryPath: string) =>
   filePath === directoryPath || filePath.startsWith(`${directoryPath}${sep}`);
 
+// Vite 8 no longer handles `?import` JSON requests in the dev server middleware,
+// causing the app to hang indefinitely waiting for a response. This plugin
+// intercepts those requests and serves JSON files from /src/ as ES modules.
 export function jsonModuleFallbackPlugin(): Plugin {
   const root = resolve('.');
   const srcDirectory = normalize(resolve(root, 'src'));
