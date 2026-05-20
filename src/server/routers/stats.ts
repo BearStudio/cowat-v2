@@ -10,8 +10,9 @@ import { createStatsRepository } from '@/server/repositories/stats.repository';
 const tags = ['stats'];
 
 const procedure = (args: OrganizationProcedureArgs = {}) =>
-  organizationProcedure(args).use(({ context, next }) =>
-    next({ context: { stats: createStatsRepository(context.db) } })
+  organizationProcedure({ permissions: { member: ['update'] }, ...args }).use(
+    ({ context, next }) =>
+      next({ context: { stats: createStatsRepository(context.db) } })
   );
 
 export default {
