@@ -17,6 +17,13 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
     })
   );
 
+const zOrgSlackConfigMasked = z.object({
+  enabled: z.boolean(),
+  hasToken: z.boolean(),
+  broadcastChannel: z.string().nullable(),
+  locale: z.enum(['en', 'fr']).nullable(),
+});
+
 const zOrgSlackConfig = z.object({
   enabled: z.boolean(),
   token: z.string().nullable(),
@@ -25,13 +32,13 @@ const zOrgSlackConfig = z.object({
 });
 
 export default {
-  getSlack: procedure()
+  getSlack: procedure({ permissions: { orgNotificationChannel: ['manage'] } })
     .route({
       method: 'GET',
       path: '/organizations/notification-channel/slack',
       tags,
     })
-    .output(zOrgSlackConfig.nullable())
+    .output(zOrgSlackConfigMasked.nullable())
     .handler(async ({ context }) => {
       const channel = await context.orgChannels.findByOrgAndType(
         context.organizationId,
@@ -42,7 +49,7 @@ export default {
 
       return {
         enabled: channel.enabled,
-        token: channel.token,
+        hasToken: channel.token !== null,
         broadcastChannel: channel.broadcastChannel,
         locale: (channel.locale as 'en' | 'fr' | null) ?? null,
       };

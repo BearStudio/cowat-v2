@@ -5,6 +5,7 @@
     "enabledLabel": "Enable Slack notifications",
     "tokenLabel": "Bot token",
     "tokenPlaceholder": "xoxb-...",
+    "tokenPlaceholderSet": "Token already set — leave empty to keep",
     "tokenHelper": "The Slack bot token for this organization.",
     "broadcastChannelIdLabel": "Broadcast channel ID",
     "broadcastChannelIdHelper": "Slack channel ID for commute announcements (e.g. C01234ABCDE). Find it in the channel details.",
