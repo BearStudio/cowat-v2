@@ -33,19 +33,22 @@ import {
   PageLayoutTopBar,
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
+import { Route } from '@/routes/manager/$orgSlug/route';
 
 export const PageStats = () => {
   const { t } = useTranslation(['stats']);
 
   const [from, setFrom] = useState<Date | null>(null);
   const [to, setTo] = useState<Date | null>(null);
+  const { orgSlug } = Route.useParams();
 
   const statsQuery = useQuery(
     orpc.stats.getAll.queryOptions({
-      input:
-        from || to
-          ? { from: from ?? undefined, to: to ?? undefined }
-          : undefined,
+      input: {
+        orgSlug,
+        from: from ?? undefined,
+        to: to ?? undefined,
+      },
     })
   );
 

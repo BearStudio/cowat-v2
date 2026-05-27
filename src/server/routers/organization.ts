@@ -125,6 +125,7 @@ export default {
 
   getActiveOrganization: orgProcedure()
     .route({ method: 'GET', path: '/organizations/active', tags })
+    .input(z.object({ slug: z.string() }))
     .output(
       z.object({
         id: z.string(),
@@ -154,10 +155,8 @@ export default {
         ),
       })
     )
-    .handler(async ({ context }) => {
-      const org = await context.organizations.findByIdWithDetails(
-        context.organizationId
-      );
+    .handler(async ({ context, input }) => {
+      const org = await context.organizations.findBySlugWithDetails(input.slug);
 
       if (!org) {
         throw new ORPCError('NOT_FOUND');

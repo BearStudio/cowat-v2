@@ -5,9 +5,11 @@ import { orpc } from '@/lib/orpc/client';
 import { PageStats } from '@/features/stats/manager/page-stats';
 
 export const Route = createFileRoute('/manager/$orgSlug/stats/')({
-  loader: ({ context }) => {
+  loader: ({ context, params }) => {
     context.queryClient.prefetchQuery(
-      orpc.stats.getAll.queryOptions({ input: undefined })
+      orpc.stats.getAll.queryOptions({
+        input: { orgSlug: params.orgSlug },
+      })
     );
   },
   component: RouteComponent,

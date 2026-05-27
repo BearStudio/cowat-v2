@@ -29,13 +29,17 @@ import {
   PageLayoutTopBar,
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
+import { Route } from '@/routes/manager/$orgSlug';
 
 export const PageOrganization = () => {
   const { t } = useTranslation(['organization', 'common']);
   const navigate = useNavigate();
+  const { orgSlug } = Route.useParams();
 
   const orgQuery = useQuery(
-    orpc.organization.getActiveOrganization.queryOptions()
+    orpc.organization.getActiveOrganization.queryOptions({
+      input: { slug: orgSlug },
+    })
   );
 
   const deleteOrganization = useMutation(

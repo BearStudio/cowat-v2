@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { Route } from '@/routes/manager/$orgSlug';
+
 const zFormFields = z.object({
   name: z.string().min(1).max(100),
 });
@@ -26,9 +28,12 @@ type FormFields = z.infer<typeof zFormFields>;
 export const OrgSettingsCard = () => {
   const { t } = useTranslation(['organization']);
   const queryClient = useQueryClient();
+  const { orgSlug } = Route.useParams();
 
   const orgQuery = useQuery(
-    orpc.organization.getActiveOrganization.queryOptions()
+    orpc.organization.getActiveOrganization.queryOptions({
+      input: { slug: orgSlug },
+    })
   );
 
   const form = useForm<FormFields>({

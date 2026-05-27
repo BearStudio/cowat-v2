@@ -30,7 +30,9 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([mockMemberFromDb]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      const result = await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, {
+        orgSlug: mockOrganizationId,
+      });
 
       expect(result.users).toEqual([
         {
@@ -50,7 +52,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, { orgSlug: mockOrganizationId });
 
       expect(mockDb.member.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -66,7 +68,7 @@ describe('stats router', () => {
       const from = new Date('2025-01-01');
       const to = new Date('2025-12-31');
 
-      await call(statsRouter.getAll, { from, to });
+      await call(statsRouter.getAll, { orgSlug: mockOrganizationId, from, to });
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -81,7 +83,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, { orgSlug: mockOrganizationId });
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -94,7 +96,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, { orgSlug: mockOrganizationId });
 
       expect(mockDb.member.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -123,7 +125,7 @@ describe('stats router', () => {
       mockDb.member.findMany.mockResolvedValue([]);
       mockDb.commute.findMany.mockResolvedValue([]);
 
-      await call(statsRouter.getAll, undefined);
+      await call(statsRouter.getAll, { orgSlug: mockOrganizationId });
 
       expect(mockDb.commute.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -139,7 +141,9 @@ describe('stats router', () => {
         { driverMemberId: mockMemberId, _count: { stops: 2 } },
       ]);
 
-      const result = await call(statsRouter.getAll, undefined);
+      const result = await call(statsRouter.getAll, {
+        orgSlug: mockOrganizationId,
+      });
 
       expect(result.users[0]!.stopCount).toBe(5);
     });
@@ -147,7 +151,9 @@ describe('stats router', () => {
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
-      await expect(call(statsRouter.getAll, undefined)).rejects.toMatchObject({
+      await expect(
+        call(statsRouter.getAll, { orgSlug: mockOrganizationId })
+      ).rejects.toMatchObject({
         code: 'UNAUTHORIZED',
       });
     });

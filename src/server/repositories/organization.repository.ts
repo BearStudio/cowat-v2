@@ -104,6 +104,27 @@ export const createOrganizationRepository = (db: AppDB) => ({
       orderBy: { email: 'asc' },
     }),
 
+  findBySlugWithDetails: (slug: string) =>
+    db.organization.findUnique({
+      where: { slug },
+      include: {
+        members: {
+          include: {
+            user: { select: userCardSelect },
+          },
+        },
+        invitations: {
+          where: { status: 'pending' },
+          select: {
+            id: true,
+            email: true,
+            role: true,
+            status: true,
+            expiresAt: true,
+          },
+        },
+      },
+    }),
   findById: (id: string) => db.organization.findUnique({ where: { id } }),
 
   findSlugById: (id: string) =>
