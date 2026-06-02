@@ -1,6 +1,11 @@
 import { type Browser } from '@playwright/test';
 import { expect, test } from 'e2e/utils';
-import { ADMIN_FILE, INVITED_EMAIL, INVITED_FILE } from 'e2e/utils/constants';
+import {
+  ADMIN_FILE,
+  INVITED_EMAIL,
+  INVITED_FILE,
+  ORG_SLUG,
+} from 'e2e/utils/constants';
 
 type Invitation = { id: string; email: string; status: string };
 type Member = { user: { email: string } };
@@ -18,7 +23,7 @@ async function ensureInvitation(browser: Browser): Promise<string> {
   try {
     // 1. Get current org state
     const orgResp = await adminContext.request.get(
-      '/api/rest/organizations/active'
+      `/api/rest/organizations/active?slug=${ORG_SLUG}`
     );
     const org = await orgResp.json();
 
@@ -50,7 +55,7 @@ async function ensureInvitation(browser: Browser): Promise<string> {
 
     // 5. Get the new invitation ID
     const orgResp2 = await adminContext.request.get(
-      '/api/rest/organizations/active'
+      `/api/rest/organizations/active?slug=${ORG_SLUG}`
     );
     const org2 = await orgResp2.json();
     const invitation = (org2.invitations as Invitation[] | undefined)?.find(

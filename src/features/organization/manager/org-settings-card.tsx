@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { Route } from '@/routes/manager/$orgSlug';
+import { Route } from '@/routes/manager/$orgSlug/route';
 
 const zFormFields = z.object({
   name: z.string().min(1).max(100),

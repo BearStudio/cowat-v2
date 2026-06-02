@@ -1,5 +1,5 @@
 import { call } from '@orpc/server';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import statsRouter from '@/server/routers/stats';
 import {
@@ -7,7 +7,21 @@ import {
   mockGetSession,
   mockMemberId,
   mockOrganizationId,
+  mockUser,
+  setupAuthenticatedUser,
 } from '@/server/routers/test-utils';
+
+const mockOrg = {
+  id: mockOrganizationId,
+  slug: 'org-1',
+  name: 'Test Org',
+  members: [
+    {
+      user: { id: mockUser.id },
+    },
+  ],
+  invitations: [],
+};
 
 const mockMemberFromDb = {
   id: mockMemberId,
@@ -25,6 +39,11 @@ const mockMemberFromDb = {
 };
 
 describe('stats router', () => {
+  beforeEach(() => {
+    setupAuthenticatedUser();
+    mockDb.organization.findUnique.mockResolvedValue(mockOrg);
+  });
+
   describe('getAll', () => {
     it('should return user stats', async () => {
       mockDb.member.findMany.mockResolvedValue([mockMemberFromDb]);

@@ -29,7 +29,7 @@ import {
   PageLayoutTopBar,
   PageLayoutTopBarTitle,
 } from '@/layout/manager/page-layout';
-import { Route } from '@/routes/manager/$orgSlug';
+import { Route } from '@/routes/manager/$orgSlug/route';
 
 export const PageOrganization = () => {
   const { t } = useTranslation(['organization', 'common']);
