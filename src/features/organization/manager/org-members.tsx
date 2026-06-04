@@ -44,6 +44,9 @@ export const OrgMembers = (props: {
         await context.client.invalidateQueries({
           queryKey: orpc.organization.getActiveOrganization.key(),
         });
+        await context.client.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganizationDetails.key(),
+        });
         toast.success(t('organization:manager.detail.removeMemberSuccess'));
       },
       onError: () => {
@@ -57,6 +60,9 @@ export const OrgMembers = (props: {
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           queryKey: orpc.organization.getActiveOrganization.key(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: orpc.organization.getActiveOrganizationDetails.key(),
         });
         toast.success(t('organization:manager.detail.updateMemberRoleSuccess'));
       },

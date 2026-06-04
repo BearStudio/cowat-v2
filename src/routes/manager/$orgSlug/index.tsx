@@ -9,6 +9,9 @@ export const Route = createFileRoute('/manager/$orgSlug/')({
     context.queryClient.prefetchQuery(
       orpc.organization.getActiveOrganization.queryOptions()
     );
+    context.queryClient.prefetchQuery(
+      orpc.organization.getActiveOrganizationDetails.queryOptions()
+    );
   },
   component: RouteComponent,
 });

@@ -18,7 +18,7 @@ async function ensureInvitation(browser: Browser): Promise<string> {
   try {
     // 1. Get current org state
     const orgResp = await adminContext.request.get(
-      '/api/rest/organizations/active'
+      '/api/rest/organizations/active/details'
     );
     const org = await orgResp.json();
 
@@ -50,7 +50,7 @@ async function ensureInvitation(browser: Browser): Promise<string> {
 
     // 5. Get the new invitation ID
     const orgResp2 = await adminContext.request.get(
-      '/api/rest/organizations/active'
+      '/api/rest/organizations/active/details'
     );
     const org2 = await orgResp2.json();
     const invitation = (org2.invitations as Invitation[] | undefined)?.find(

@@ -131,6 +131,34 @@ export default {
         name: z.string(),
         slug: z.string(),
         logo: z.string().nullable(),
+        role: z.string(),
+      })
+    )
+    .handler(async ({ context }) => {
+      const org = await context.organizations.findById(context.organizationId);
+
+      if (!org) {
+        throw new ORPCError('NOT_FOUND');
+      }
+
+      const membership = await context.organizations.findMemberById(
+        context.memberId,
+        context.organizationId
+      );
+
+      return { ...org, role: membership?.role ?? 'member' };
+    }),
+
+  getActiveOrganizationDetails: orgProcedure({
+    permissions: { invitation: ['create'] },
+  })
+    .route({ method: 'GET', path: '/organizations/active/details', tags })
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        slug: z.string(),
+        logo: z.string().nullable(),
         members: z.array(
           z.object({
             id: z.string(),

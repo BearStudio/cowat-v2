@@ -38,6 +38,10 @@ export const PageOrganization = () => {
     orpc.organization.getActiveOrganization.queryOptions()
   );
 
+  const orgDetailsQuery = useQuery(
+    orpc.organization.getActiveOrganizationDetails.queryOptions()
+  );
+
   const deleteOrganization = useMutation(
     orpc.organization.delete.mutationOptions({
       onSuccess: async (_data, _variables, _onMutateResult, context) => {
@@ -56,9 +60,14 @@ export const PageOrganization = () => {
   );
 
   const ui = getUiState((set) => {
-    if (orgQuery.status === 'pending') return set('pending');
-    if (orgQuery.status === 'error') return set('error');
-    return set('default', { org: orgQuery.data });
+    if (orgQuery.status === 'pending' || orgDetailsQuery.status === 'pending')
+      return set('pending');
+    if (orgQuery.status === 'error' || orgDetailsQuery.status === 'error')
+      return set('error');
+    return set('default', {
+      org: orgQuery.data,
+      details: orgDetailsQuery.data,
+    });
   });
 
   return (
@@ -78,7 +87,7 @@ export const PageOrganization = () => {
         {ui
           .match('pending', () => <Spinner full />)
           .match('error', () => <PageError type="unknown-server-error" />)
-          .match('default', ({ org }) => (
+          .match('default', ({ org, details }) => (
             <div className="flex flex-col gap-4">
               <Card>
                 <CardHeader>
@@ -96,14 +105,17 @@ export const PageOrganization = () => {
                   <Badge variant="secondary">
                     <UsersIcon className="size-3" />
                     {t('organization:manager.detail.memberCount', {
-                      count: org.members.length,
+                      count: details.members.length,
                     })}
                   </Badge>
                 </CardContent>
               </Card>
 
-              <OrgInvitations orgId={org.id} invitations={org.invitations} />
-              <OrgMembers orgId={org.id} members={org.members} />
+              <OrgInvitations
+                orgId={org.id}
+                invitations={details.invitations}
+              />
+              <OrgMembers orgId={org.id} members={details.members} />
               <OrgSlackIntegration />
 
               <DangerZone>
