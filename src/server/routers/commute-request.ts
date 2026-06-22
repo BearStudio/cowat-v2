@@ -1,6 +1,9 @@
 import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
+import { isRequesterOf } from '@/features/auth/ability/abilities';
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforce } from '@/features/auth/ability/enforce';
 import { zCommuteRequestForList } from '@/features/commute-request/schema';
 import {
   organizationProcedure,
@@ -115,9 +118,11 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (request.requesterMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      enforce(
+        isRequesterOf(actorFromContext(context))({
+          requesterMemberId: request.requesterMemberId,
+        })
+      );
 
       if (!VALID_TRANSITIONS[request.status]?.includes(input.status)) {
         throw new ORPCError('BAD_REQUEST', {

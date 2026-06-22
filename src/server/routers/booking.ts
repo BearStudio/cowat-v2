@@ -2,6 +2,13 @@ import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
 import {
+  isDriverOf,
+  isNotOwnCommute,
+  isPassengerOf,
+} from '@/features/auth/ability/abilities';
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforce } from '@/features/auth/ability/enforce';
+import {
   zBooking,
   zBookingForDriver,
   zBookingRequest,
@@ -45,11 +52,11 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (stop.commute.driverMemberId === context.memberId) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Drivers cannot book seats on their own commutes',
-        });
-      }
+      enforce(
+        isNotOwnCommute(actorFromContext(context))({
+          driverMemberId: stop.commute.driverMemberId,
+        })
+      );
 
       const orders = stop.commute.stops.map((s) => s.order);
       const isFirstStop = stop.order === Math.min(...orders);
@@ -174,9 +181,11 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.stop.commute.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      enforce(
+        isDriverOf(actorFromContext(context))({
+          driverMemberId: booking.stop.commute.driverMemberId,
+        })
+      );
 
       validateStatusTransition(booking.status, 'ACCEPTED');
 
@@ -225,9 +234,11 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.stop.commute.driverMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      enforce(
+        isDriverOf(actorFromContext(context))({
+          driverMemberId: booking.stop.commute.driverMemberId,
+        })
+      );
 
       validateStatusTransition(booking.status, 'REFUSED');
 
@@ -259,9 +270,11 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      if (booking.passengerMemberId !== context.memberId) {
-        throw new ORPCError('FORBIDDEN');
-      }
+      enforce(
+        isPassengerOf(actorFromContext(context))({
+          passengerMemberId: booking.passengerMemberId,
+        })
+      );
 
       validateStatusTransition(booking.status, 'CANCELED');
 

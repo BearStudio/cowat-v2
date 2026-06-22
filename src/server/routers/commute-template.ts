@@ -1,6 +1,8 @@
 import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforceOwnership } from '@/features/auth/ability/enforce';
 import {
   zCommuteTemplate,
   zFormFieldsCommuteTemplate,
@@ -14,7 +16,6 @@ import {
 } from '@/server/orpc';
 import { createCommuteTemplateRepository } from '@/server/repositories/commute-template.repository';
 import {
-  assertDriverOwnership,
   paginateResult,
   zPaginatedOutput,
   zPaginationInput,
@@ -102,7 +103,7 @@ export default {
         input.id,
         context.organizationId
       );
-      assertDriverOwnership(existing, context.memberId);
+      enforceOwnership(actorFromContext(context), existing);
 
       const { id, stops, ...data } = input;
 
@@ -126,7 +127,7 @@ export default {
         input.id,
         context.organizationId
       );
-      assertDriverOwnership(existing, context.memberId);
+      enforceOwnership(actorFromContext(context), existing);
 
       await context.templates.delete(input.id);
     }),

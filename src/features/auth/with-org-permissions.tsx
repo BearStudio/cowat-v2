@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import { authClient } from '@/features/auth/client';
 import { OrganizationPermission } from '@/features/auth/permissions';
+import { checkOrgPermission } from '@/features/auth/rbac';
 
 export const WithOrgPermissions = (props: {
   permissions: OrganizationPermission[];
@@ -22,16 +23,13 @@ export const WithOrgPermissions = (props: {
   );
   const role = currentUserMember?.role;
 
+  // Same in-process check as the server. No special-casing of `owner`: the
+  // owner role already authorizes everything via its role definition, so the
+  // previous `role !== 'owner'` bypass (which diverged from the server) is gone.
   if (
-    role !== 'owner' &&
-    (!role ||
-      props.permissions.every(
-        (permission) =>
-          !authClient.organization.checkRolePermission({
-            role: role,
-            permissions: permission,
-          })
-      ))
+    props.permissions.every(
+      (permission) => !checkOrgPermission(role, permission)
+    )
   ) {
     return props.fallback ?? null;
   }

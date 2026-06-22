@@ -2,6 +2,9 @@ import { ORPCError } from '@orpc/client';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
+import { canAssignRole } from '@/features/auth/ability/abilities';
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforce } from '@/features/auth/ability/enforce';
 import { auth } from '@/server/auth';
 import {
   organizationProcedure,
@@ -271,17 +274,8 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      const membership = await context.organizations.findOwnerMembership(
-        context.user.id,
-        context.organizationId
-      );
-
-      if (!membership) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners and admins can invite members',
-        });
-      }
-
+      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
+      // permission `invitation:['create']` (member role has no invitation perms).
       const headers = getRequestHeaders();
       const succeeded: string[] = [];
       const failed: { email: string; error: string }[] = [];
@@ -315,18 +309,12 @@ export default {
     .input(z.object({ memberIdOrEmail: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const membership = await context.organizations.findOwnerMembership(
-        context.user.id,
-        context.organizationId
-      );
-
-      if (!membership) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners and admins can remove members',
-        });
-      }
-
-      if (input.memberIdOrEmail === context.user.id) {
+      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
+      // permission `member:['delete']`.
+      const isSelf =
+        input.memberIdOrEmail === context.memberId ||
+        input.memberIdOrEmail === context.user.email;
+      if (isSelf) {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Cannot remove yourself from the organization',
         });
@@ -351,22 +339,10 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const membership = await context.organizations.findOwnerMembership(
-        context.user.id,
-        context.organizationId
-      );
-
-      if (!membership) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners and admins can update member roles',
-        });
-      }
-
-      if (input.role === 'owner' && membership.role !== 'owner') {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners can assign the owner role',
-        });
-      }
+      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
+      // permission `member:['update']`. The owner-only rule for assigning the
+      // owner role is a business invariant expressed by `canAssignRole`.
+      enforce(canAssignRole(actorFromContext(context), input.role));
 
       const targetMember = await context.organizations.findMemberById(
         input.memberId,
@@ -386,22 +362,13 @@ export default {
       );
     }),
 
-  cancelInvitation: orgProcedure()
+  cancelInvitation: orgProcedure({ permissions: { invitation: ['cancel'] } })
     .route({ method: 'POST', path: '/organizations/cancel-invitation', tags })
     .input(z.object({ invitationId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      const membership = await context.organizations.findOwnerMembership(
-        context.user.id,
-        context.organizationId
-      );
-
-      if (!membership) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Only org owners and admins can cancel invitations',
-        });
-      }
-
+      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
+      // permission `invitation:['cancel']` (member role has no invitation perms).
       const invitation = await context.organizations.findInvitationById(
         input.invitationId,
         context.organizationId

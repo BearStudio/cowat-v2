@@ -5,12 +5,11 @@ import { Match } from 'effect';
 import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
-import { organizationPermissions } from '@/features/auth/organization-permissions';
 import {
-  OrganizationPermission,
-  Permission,
-  permissions as appPermissions,
+  type OrganizationPermission,
+  type Permission,
 } from '@/features/auth/permissions';
+import { checkAppPermission, checkOrgPermission } from '@/features/auth/rbac';
 import { auth } from '@/server/auth';
 import { db } from '@/server/db';
 import { Prisma } from '@/server/db/generated/client';
@@ -20,56 +19,13 @@ import { notifier } from '@/server/notifications';
 import type { NotifyOrgContext } from '@/server/notifications/types';
 import { timingStore } from '@/server/timing-store';
 
-// Local role/permission checks: better-auth's `auth.api.userHasPermission`
-// fires an internal request that goes through the same TanStack Start /
-// Nitro pipeline that strips POST bodies (see api/auth.$.ts), and ends up
-// hanging instead of returning. We mirror the role definitions here in dev
-// and prod; the test env still exercises the real endpoint.
-//
-// Drop the local path (and inline both branches back to a single
-// `auth.api.userHasPermission` call) once that internal call returns
-// reliably — same condition as the body-forwarding workaround in
-// src/routes/api/auth.$.ts being removed.
-type AuthorizableRole<TPermission> = {
-  authorize: (permission: TPermission) => { success: boolean };
-};
-
-const hasAppPermission = ({
-  role,
-  permission,
-}: {
-  role: string | null | undefined;
-  permission: Permission;
-}) => {
-  const roleNames = (role ?? 'user').split(',');
-
-  return roleNames.some((roleName) => {
-    const authorizableRole = appPermissions.roles[
-      roleName as keyof typeof appPermissions.roles
-    ] as AuthorizableRole<Permission> | undefined;
-
-    return authorizableRole?.authorize(permission).success ?? false;
-  });
-};
-
-const hasOrganizationPermissionForRole = ({
-  role,
-  permission,
-}: {
-  role: string;
-  permission: OrganizationPermission;
-}) => {
-  return role.split(',').some((roleName) => {
-    const authorizableRole = organizationPermissions.roles[
-      roleName as keyof typeof organizationPermissions.roles
-    ] as AuthorizableRole<OrganizationPermission> | undefined;
-
-    return authorizableRole?.authorize(permission).success ?? false;
-  });
-};
-
-const shouldUseMockedAuthPermissionApi = import.meta.env.MODE === 'test';
-
+// Permission checks run in-process via `checkAppPermission` / `checkOrgPermission`
+// (which call `role.authorize()` directly). We do NOT use
+// `auth.api.userHasPermission`: that endpoint is a POST handler whose internal
+// dispatch goes through the TanStack Start / Nitro pipeline and hangs (it needs
+// the request body). Since the computation is a pure, in-process function and
+// we already hold the user/member role here, the direct call is both correct
+// and faster (and the test env now exercises the exact same path as prod).
 const base = os
   .$context<ResponseHeadersPluginContext>()
   // Auth
@@ -257,28 +213,7 @@ export const protectedProcedure = ({
       });
     }
 
-    if (shouldUseMockedAuthPermissionApi) {
-      const userHasPermission = await auth.api.userHasPermission({
-        headers: getRequestHeaders(),
-        body: {
-          userId: user.id,
-          permissions: permission,
-        },
-      });
-
-      if (userHasPermission.error) {
-        throw new ORPCError('INTERNAL_SERVER_ERROR');
-      }
-
-      if (!userHasPermission.success) {
-        throw new ORPCError('FORBIDDEN');
-      }
-    } else if (
-      !hasAppPermission({
-        role: user.role,
-        permission,
-      })
-    ) {
+    if (!checkAppPermission(user.role, permission)) {
       throw new ORPCError('FORBIDDEN');
     }
 
@@ -317,25 +252,9 @@ export const organizationProcedure = ({
     }
 
     // Check org-level permissions if specified
-    if (requiredPermission && shouldUseMockedAuthPermissionApi) {
-      const hasPermission = await auth.api.hasPermission({
-        headers: getRequestHeaders(),
-        body: {
-          permissions: requiredPermission,
-        },
-      });
-
-      if (!hasPermission.success) {
-        throw new ORPCError('FORBIDDEN', {
-          message: 'Insufficient organization permissions',
-        });
-      }
-    } else if (
+    if (
       requiredPermission &&
-      !hasOrganizationPermissionForRole({
-        role: member.role,
-        permission: requiredPermission,
-      })
+      !checkOrgPermission(member.role, requiredPermission)
     ) {
       throw new ORPCError('FORBIDDEN', {
         message: 'Insufficient organization permissions',
@@ -351,6 +270,7 @@ export const organizationProcedure = ({
       context: {
         organizationId,
         memberId: member.id,
+        orgRole: member.role,
         orgSlug: organization?.slug ?? '',
       },
     });

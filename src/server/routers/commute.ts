@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 import { getTodayMidnight } from '@/lib/date';
 
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforceOwnership } from '@/features/auth/ability/enforce';
 import {
   zCommute,
   zCommuteEnriched,
@@ -19,7 +21,6 @@ import { createBookingRepository } from '@/server/repositories/booking.repositor
 import { createCommuteRepository } from '@/server/repositories/commute.repository';
 import { createCommuteRequestRepository } from '@/server/repositories/commute-request.repository';
 import {
-  assertDriverOwnership,
   paginateResult,
   zPaginatedOutput,
   zPaginationInput,
@@ -173,7 +174,7 @@ export default {
         input.id,
         context.organizationId
       );
-      assertDriverOwnership(existing, context.memberId);
+      enforceOwnership(actorFromContext(context), existing);
 
       const { id, stops, ...data } = input;
 
@@ -246,7 +247,7 @@ export default {
         context.bookings.findAffectedPassengers(input.id),
       ]);
 
-      assertDriverOwnership(existing, context.memberId);
+      enforceOwnership(actorFromContext(context), existing);
 
       await context.commutes.delete(input.id);
 

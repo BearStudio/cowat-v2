@@ -84,11 +84,6 @@ export const createOrganizationRepository = (db: AppDB) => ({
       },
     }),
 
-  findOwnerMembership: (userId: string, organizationId: string) =>
-    db.member.findFirst({
-      where: { userId, organizationId, role: { in: ['owner', 'admin'] } },
-    }),
-
   searchUsersByEmail: (opts: {
     email: string;
     organizationId: string;
