@@ -25,7 +25,7 @@ const zOrgSlackConfig = z.object({
 });
 
 export default {
-  getSlack: procedure()
+  getSlack: procedure({ permissions: { orgNotificationChannel: ['manage'] } })
     .route({
       method: 'GET',
       path: '/organizations/notification-channel/slack',
