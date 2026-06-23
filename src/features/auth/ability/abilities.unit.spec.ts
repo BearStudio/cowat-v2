@@ -8,6 +8,7 @@ import {
   isNotOwnCommute,
   isNotSelfByMemberId,
   isNotSelfByUserId,
+  isOwnerByMemberId,
   isPassengerOf,
   isRequesterOf,
 } from '@/features/auth/ability/abilities';
@@ -90,6 +91,25 @@ describe('abilities — ownership (canMutateOwnedResource)', () => {
 
   it('allows the owner', () => {
     expect(can({ driverMemberId: 'm-1' })).toEqual({ ok: true });
+  });
+});
+
+describe('abilities — ownership by memberId (isOwnerByMemberId)', () => {
+  const can = isOwnerByMemberId(actor({ memberId: 'm-1' }));
+
+  it('NOT_FOUND when resource is absent', () => {
+    expect(can(null)).toMatchObject({ ok: false, code: 'NOT_FOUND' });
+  });
+
+  it('FORBIDDEN when not the owner', () => {
+    expect(can({ memberId: 'm-2' })).toMatchObject({
+      ok: false,
+      code: 'FORBIDDEN',
+    });
+  });
+
+  it('allows the owner', () => {
+    expect(can({ memberId: 'm-1' })).toEqual({ ok: true });
   });
 });
 

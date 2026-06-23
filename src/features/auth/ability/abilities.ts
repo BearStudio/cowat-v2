@@ -42,6 +42,18 @@ export const canMutateOwnedResource =
     return allow;
   };
 
+/**
+ * Ownership for resources owned directly by a member (field `memberId`, not
+ * `driverMemberId`) (e.g. a `Location`). Same fail-closed shape as the driver
+ * ownership ability: missing → NOT_FOUND, not mine → FORBIDDEN.
+ */
+export const isOwnerByMemberId =
+  (actor: Actor) =>
+  (resource: { memberId: string } | null | undefined): Decision => {
+    if (!resource) return deny('NOT_FOUND');
+    return resource.memberId === actor.memberId ? allow : deny('FORBIDDEN');
+  };
+
 // ---------------------------------------------------------------------------
 // Family 2 — Relation (driver / passenger / requester of a transaction)
 // ---------------------------------------------------------------------------
