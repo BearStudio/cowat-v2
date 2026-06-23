@@ -33,12 +33,11 @@ export const createFcmTokenRepository = (db: AppDB) => ({
     });
   },
 
-  deleteToken: (token: string) =>
-    db.fcmToken.delete({ where: { token } }).catch((error: unknown) => {
-      if (error instanceof Object && 'code' in error && error.code === 'P2025')
-        return;
-      throw error;
-    }),
+  // Scoped to the owning user: a caller cannot unregister another user's token
+  // even if they know its value. `deleteMany` is a no-op (count 0) when the
+  // token is absent or owned by someone else — no error to swallow.
+  deleteToken: (userId: string, token: string) =>
+    db.fcmToken.deleteMany({ where: { token, userId } }),
 
   deleteByIds: (ids: string[]) =>
     db.fcmToken.deleteMany({ where: { id: { in: ids } } }),
