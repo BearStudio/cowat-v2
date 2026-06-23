@@ -72,7 +72,14 @@
       "newButton": "Nouvelle organisation",
       "searchResults": "{{total}} résultat(s) pour \"{{searchTerm}}\"",
       "loadMore": "Charger plus",
-      "showing": "Affichage de {{count}} sur {{total}}"
+      "showing": "Affichage de {{count}} sur {{total}}",
+      "delete": {
+        "title": "Supprimer {{name}} ?",
+        "description": "Cette action est irréversible. L'organisation et toutes ses données seront définitivement supprimées.",
+        "confirm": "Supprimer l'organisation",
+        "success": "Organisation supprimée",
+        "error": "Impossible de supprimer l'organisation"
+      }
     },
     "new": {
       "createError": "Impossible de créer l'organisation"
