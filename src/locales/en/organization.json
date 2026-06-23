@@ -72,7 +72,14 @@
       "newButton": "New organization",
       "searchResults": "{{total}} result(s) for \"{{searchTerm}}\"",
       "loadMore": "Load more",
-      "showing": "Showing {{count}} of {{total}}"
+      "showing": "Showing {{count}} of {{total}}",
+      "delete": {
+        "title": "Delete {{name}}?",
+        "description": "This action is irreversible. The organization and all its data will be permanently deleted.",
+        "confirm": "Delete organization",
+        "success": "Organization deleted",
+        "error": "Could not delete the organization"
+      }
     },
     "new": {
       "createError": "Failed to create organization"
