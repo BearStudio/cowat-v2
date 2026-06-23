@@ -55,16 +55,23 @@ describe('organization router', () => {
   describe('updateMemberRole', () => {
     const input = { memberId: 'target-member-1', role: 'owner' as const };
 
-    // The organizationProcedure middleware calls db.member.findFirst once to verify
-    // org membership, then the handler calls it twice more (findOwnerMembership,
-    // findMemberById). mockResolvedValueOnce values are consumed in order, so we
-    // must account for the middleware call first.
+    // The org RBAC (`member:['update']`) is enforced in-process from the
+    // caller's member role, read by the organizationProcedure middleware (call
+    // #1). The owner-only rule for assigning owner is `canAssignRole` (no DB).
+    // The handler then calls findMemberById (call #2). We reset the queue per
+    // test to keep each self-contained.
+    const queueMemberFindFirst = (...rows: unknown[]) => {
+      mockDb.member.findFirst.mockReset();
+      for (const row of rows) {
+        mockDb.member.findFirst.mockResolvedValueOnce(row);
+      }
+    };
 
     it('should update role when caller is owner and member belongs to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership) // handler: findOwnerMembership
-        .mockResolvedValueOnce(targetMember); // handler: findMemberById
+      queueMemberFindFirst(
+        ownerMembership, // middleware: RBAC (owner has member:update)
+        targetMember // handler: findMemberById
+      );
       mockDb.member.update.mockResolvedValue(undefined);
 
       await expect(
@@ -72,10 +79,8 @@ describe('organization router', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should throw FORBIDDEN when caller is not owner or admin', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(null); // handler: findOwnerMembership → FORBIDDEN
+    it('should throw FORBIDDEN when caller is a regular member', async () => {
+      queueMemberFindFirst(defaultMember); // middleware RBAC denies member:update
 
       await expect(
         call(organizationRouter.updateMemberRole, input)
@@ -83,10 +88,10 @@ describe('organization router', () => {
     });
 
     it('should throw NOT_FOUND when target member does not belong to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership) // handler: findOwnerMembership
-        .mockResolvedValueOnce(null); // handler: findMemberById → NOT_FOUND
+      queueMemberFindFirst(
+        ownerMembership, // middleware RBAC
+        null // handler: findMemberById → NOT_FOUND
+      );
 
       await expect(
         call(organizationRouter.updateMemberRole, input)
@@ -94,9 +99,7 @@ describe('organization router', () => {
     });
 
     it('should throw FORBIDDEN when admin tries to assign owner role', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(adminMembership); // handler: findOwnerMembership (throws before findMemberById)
+      queueMemberFindFirst(adminMembership); // middleware RBAC; canAssignRole denies owner
 
       await expect(
         call(organizationRouter.updateMemberRole, {
@@ -107,10 +110,10 @@ describe('organization router', () => {
     });
 
     it('should allow admin to assign member role', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(adminMembership) // handler: findOwnerMembership (admin)
-        .mockResolvedValueOnce(targetMember); // handler: findMemberById
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC
+        targetMember // handler: findMemberById
+      );
       mockDb.member.update.mockResolvedValue(undefined);
 
       await expect(
@@ -133,10 +136,17 @@ describe('organization router', () => {
   describe('cancelInvitation', () => {
     const input = { invitationId: 'invitation-1' };
 
+    // cancelInvitation is now gated by RBAC `invitation:['cancel']`, enforced in
+    // the middleware from the caller's role (single member.findFirst call).
+    const queueMemberFindFirst = (...rows: unknown[]) => {
+      mockDb.member.findFirst.mockReset();
+      for (const row of rows) {
+        mockDb.member.findFirst.mockResolvedValueOnce(row);
+      }
+    };
+
     it('should cancel invitation when caller is owner and invitation belongs to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
+      queueMemberFindFirst(ownerMembership); // middleware RBAC (owner has invitation:cancel)
       mockDb.invitation.findFirst.mockResolvedValue(mockInvitation);
       mockCancelInvitation.mockResolvedValue(undefined);
 
@@ -146,9 +156,7 @@ describe('organization router', () => {
     });
 
     it('should throw FORBIDDEN when caller is a regular member', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(null); // handler: findOwnerMembership → FORBIDDEN
+      queueMemberFindFirst(defaultMember); // middleware RBAC denies invitation:cancel
 
       await expect(
         call(organizationRouter.cancelInvitation, input)
@@ -158,9 +166,7 @@ describe('organization router', () => {
     });
 
     it('should throw NOT_FOUND when invitation does not belong to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
+      queueMemberFindFirst(ownerMembership); // middleware RBAC
       mockDb.invitation.findFirst.mockResolvedValue(null);
 
       await expect(

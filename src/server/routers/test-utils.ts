@@ -41,7 +41,10 @@ export const mockDb: MockedDb = new Proxy({} as ExplicitAny, {
   },
 });
 
-export const mockUser = { id: 'user-1', name: 'Test User' };
+// Default app role is 'admin' so app-level endpoints (user.*, organization
+// admin) pass by default. Tests that assert FORBIDDEN override the session with
+// a lower role (e.g. 'user') via `mockGetSession`.
+export const mockUser = { id: 'user-1', name: 'Test User', role: 'admin' };
 export const mockMemberId = 'member-1';
 export const mockOrganizationId = 'org-1';
 export const mockSession = {
