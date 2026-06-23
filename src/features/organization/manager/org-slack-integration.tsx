@@ -46,7 +46,9 @@ export const OrgSlackIntegration = () => {
     resolver: zodResolver(zFormFields),
     values: {
       enabled: configQuery.data?.enabled ?? false,
-      token: configQuery.data?.token ?? '',
+      // The token is write-only: the server never returns it. Leave the field
+      // empty; submitting it empty keeps the stored token unchanged.
+      token: '',
       broadcastChannelId: configQuery.data?.broadcastChannel ?? '',
       locale: (configQuery.data?.locale ?? '') as 'en' | 'fr' | '',
     },
@@ -73,6 +75,10 @@ export const OrgSlackIntegration = () => {
       broadcastChannel: values.broadcastChannelId || null,
       locale: (values.locale || null) as 'en' | 'fr' | null,
     });
+    // Clear the token field once submitted: the secret is sent (or intentionally
+    // left blank to keep the stored one), so the input goes back to its empty
+    // state and shows the "leave empty to keep the existing token" placeholder.
+    form.resetField('token', { defaultValue: '' });
   };
 
   return (
@@ -113,7 +119,11 @@ export const OrgSlackIntegration = () => {
                       type="password"
                       control={form.control}
                       name="token"
-                      placeholder={t('organization:slack.tokenPlaceholder')}
+                      placeholder={
+                        configQuery.data?.hasToken
+                          ? t('organization:slack.tokenPlaceholderExisting')
+                          : t('organization:slack.tokenPlaceholder')
+                      }
                     />
                     <FormFieldHelper>
                       {t('organization:slack.tokenHelper')}

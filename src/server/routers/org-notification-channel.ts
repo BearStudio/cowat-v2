@@ -17,9 +17,20 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
     })
   );
 
-const zOrgSlackConfig = z.object({
+// The bot token is a secret: it is WRITE-ONLY across the API surface. The
+// output never returns it (only whether one is set); the input accepts it but
+// treats a blank value as "keep the stored token".
+const zOrgSlackConfigOutput = z.object({
   enabled: z.boolean(),
-  token: z.string().nullable(),
+  hasToken: z.boolean(),
+  broadcastChannel: z.string().nullable(),
+  locale: z.enum(['en', 'fr']).nullable(),
+});
+
+const zOrgSlackConfigInput = z.object({
+  enabled: z.boolean(),
+  // Nullish / empty ⇒ preserve the existing token (do not overwrite it).
+  token: z.string().nullish(),
   broadcastChannel: z.string().nullable(),
   locale: z.enum(['en', 'fr']).nullable(),
 });
@@ -31,7 +42,7 @@ export default {
       path: '/organizations/notification-channel/slack',
       tags,
     })
-    .output(zOrgSlackConfig.nullable())
+    .output(zOrgSlackConfigOutput.nullable())
     .handler(async ({ context }) => {
       const channel = await context.orgChannels.findByOrgAndType(
         context.organizationId,
@@ -42,7 +53,7 @@ export default {
 
       return {
         enabled: channel.enabled,
-        token: channel.token,
+        hasToken: channel.token !== null,
         broadcastChannel: channel.broadcastChannel,
         locale: (channel.locale as 'en' | 'fr' | null) ?? null,
       };
@@ -56,14 +67,25 @@ export default {
       path: '/organizations/notification-channel/slack',
       tags,
     })
-    .input(zOrgSlackConfig)
+    .input(zOrgSlackConfigInput)
     .output(z.void())
     .handler(async ({ context, input }) => {
+      // Preserve the stored token when the client sends a blank value (the UI
+      // never receives the secret back, so it cannot resubmit it).
+      let token = input.token || null;
+      if (!token) {
+        const existing = await context.orgChannels.findByOrgAndType(
+          context.organizationId,
+          'SLACK'
+        );
+        token = existing?.token ?? null;
+      }
+
       await context.orgChannels.upsert({
         orgId: context.organizationId,
         type: 'SLACK',
         enabled: input.enabled,
-        token: input.token,
+        token,
         broadcastChannel: input.broadcastChannel,
         locale: input.locale,
       });
