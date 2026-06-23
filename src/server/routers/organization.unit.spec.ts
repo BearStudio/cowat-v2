@@ -1,5 +1,5 @@
 import { call } from '@orpc/server';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import organizationRouter from '@/server/routers/organization';
 import {
@@ -12,8 +12,9 @@ import {
   mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
-const { mockCancelInvitation } = vi.hoisted(() => ({
+const { mockCancelInvitation, mockCreateInvitation } = vi.hoisted(() => ({
   mockCancelInvitation: vi.fn(),
+  mockCreateInvitation: vi.fn(),
 }));
 
 vi.mock('@/server/auth', () => ({
@@ -23,6 +24,7 @@ vi.mock('@/server/auth', () => ({
       userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
       hasPermission: (...args: unknown[]) => mockHasPermission(...args),
       cancelInvitation: (...args: unknown[]) => mockCancelInvitation(...args),
+      createInvitation: (...args: unknown[]) => mockCreateInvitation(...args),
     },
   },
 }));
@@ -130,6 +132,53 @@ describe('organization router', () => {
       await expect(
         call(organizationRouter.updateMemberRole, input)
       ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
+    });
+  });
+
+  describe('inviteMembers', () => {
+    beforeEach(() => {
+      mockCreateInvitation.mockReset();
+      mockCreateInvitation.mockResolvedValue(undefined);
+      mockDb.member.findFirst.mockReset();
+    });
+
+    it('should throw FORBIDDEN when an admin tries to invite an owner', async () => {
+      // Middleware RBAC: admin has invitation:create, so the gate passes…
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      // …but canAssignRole must still block assigning the owner role here,
+      // exactly like updateMemberRole does (no escalation via invitation).
+      await expect(
+        call(organizationRouter.inviteMembers, {
+          emails: ['victim@example.com'],
+          role: 'owner',
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(mockCreateInvitation).not.toHaveBeenCalled();
+    });
+
+    it('should let an owner invite an owner', async () => {
+      mockDb.member.findFirst.mockResolvedValue(ownerMembership);
+
+      const result = await call(organizationRouter.inviteMembers, {
+        emails: ['new-owner@example.com'],
+        role: 'owner',
+      });
+
+      expect(result.succeeded).toEqual(['new-owner@example.com']);
+      expect(mockCreateInvitation).toHaveBeenCalledTimes(1);
+    });
+
+    it('should let an admin invite a regular member', async () => {
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      const result = await call(organizationRouter.inviteMembers, {
+        emails: ['teammate@example.com'],
+        role: 'member',
+      });
+
+      expect(result.succeeded).toEqual(['teammate@example.com']);
+      expect(mockCreateInvitation).toHaveBeenCalledTimes(1);
     });
   });
 

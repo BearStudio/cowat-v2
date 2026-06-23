@@ -184,6 +184,20 @@ describe('location router', () => {
       });
     });
 
+    it('should throw FORBIDDEN when the location belongs to another member', async () => {
+      mockDb.location.findFirst.mockResolvedValue({
+        ...mockLocationFromDb,
+        memberId: 'another-member',
+      });
+
+      await expect(
+        call(locationRouter.update, updateInput)
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
+      expect(mockDb.location.update).not.toHaveBeenCalled();
+    });
+
     it('should not require any specific permission', async () => {
       mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
       mockDb.location.update.mockResolvedValue({
@@ -228,6 +242,20 @@ describe('location router', () => {
       ).rejects.toMatchObject({
         code: 'NOT_FOUND',
       });
+    });
+
+    it('should throw FORBIDDEN when the location belongs to another member', async () => {
+      mockDb.location.findFirst.mockResolvedValue({
+        ...mockLocationFromDb,
+        memberId: 'another-member',
+      });
+
+      await expect(
+        call(locationRouter.delete, { id: 'location-1' })
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
+      expect(mockDb.location.delete).not.toHaveBeenCalled();
     });
 
     it('should not require any specific permission', async () => {
