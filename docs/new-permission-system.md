@@ -85,7 +85,7 @@ Custom resource statements: `commute`, `booking`, `location`,
 | Permission | `member` | `admin` | `owner` |
 | --- | :---: | :---: | :---: |
 | commute / location / commuteTemplate (CRUD) | ✅ | ✅ | ✅ |
-| booking (read/create/manage/request) | ✅ | ✅ | ✅ |
+| booking (read/manage/request) | ✅ | ✅ | ✅ |
 | member (create/update/delete) | ❌ | ✅ | ✅ |
 | invitation (create/cancel) | ❌ | ✅ | ✅ |
 | organization: update | ❌ | ✅ | ✅ |
@@ -143,12 +143,15 @@ to gray out a button — without ever raising an error.
 
 Abilities are grouped into four families:
 
-1. **Ownership** — `canMutateOwnedResource` (am I the resource's driver?).
+1. **Ownership** — `canMutateOwnedResource` (am I the resource's driver, via
+   `driverMemberId`?) and `isOwnerByMemberId` (do I own a resource held
+   directly by `memberId`, e.g. a `Location`?).
 2. **Relation** — `isDriverOf`, `isPassengerOf`, `isRequesterOf`,
    `isNotOwnCommute`.
 3. **Self-action prevention** — `isNotSelfByUserId`, `isNotSelfByMemberId`,
    `isNotCurrentSession` (each takes the error message as a parameter).
-4. **Hierarchy** — `canAssignRole` (only an owner may assign the `owner` role).
+4. **Hierarchy** — `canAssignRole` (only an owner may assign the `owner` role)
+   and `canActOnMember` (only an owner may update/delete another `owner`).
 
 Helpers: `allow`, `deny(code, message)`, and `all(...decisions)` (returns the
 first denial, else `allow`).
@@ -183,9 +186,9 @@ the handler** once the resource has been loaded.
 
 ```ts
 // 1. RBAC at the boundary: only roles with `booking:['manage']` get here.
-acceptBooking: orgProcedure({ permissions: { booking: ['manage'] } })
+accept: organizationProcedure({ permissions: { booking: ['manage'] } })
   .handler(async ({ context, input }) => {
-    const booking = await context.bookings.findById(input.id);
+    const booking = await context.bookings.findForDriverAction(input.id);
     if (!booking) throw new ORPCError('NOT_FOUND');
 
     // 2. Ability inside the handler: must be THIS commute's driver.
@@ -199,6 +202,9 @@ acceptBooking: orgProcedure({ permissions: { booking: ['manage'] } })
   });
 ```
 
+(See [`booking.ts`](../src/server/routers/booking.ts) — the router aliases
+`organizationProcedure` locally as `procedure`.)
+
 ### Client UI gating
 
 The client uses the **same** pure functions, so UI and server never diverge:
@@ -210,11 +216,14 @@ The client uses the **same** pure functions, so UI and server never diverge:
 - [`guard-organization.tsx`](../src/features/organization/guard-organization.tsx)
   → both
 
-> ⚠️ **Known intentional divergence:** `guard-organization.tsx` lets app-admins
-> (`apps:['manager']`) bypass org-level checks **client-side only** (for the
-> manager UI). The server's `organizationProcedure` does **not** grant
-> app-admins org permissions. Keep this in mind — client gating is UX, not
-> security.
+> ⚠️ **Known intentional divergence:** `guard-organization.tsx` accepts an
+> optional per-route `appPermission` prop; when set, an app-level permission
+> (checked with `checkAppPermission`) **also** grants access to the org screen
+> — access passes if **either** the app permission or the org permission holds.
+> This is declared at the call site (not hardcoded here) and is **client-side
+> only**: the server's `organizationProcedure` authorizes every request on its
+> own and does **not** grant app roles any org permission. Keep this in mind —
+> client gating is UX, not security.
 
 ## Maintenance guide
 
@@ -276,7 +285,8 @@ The client uses the **same** pure functions, so UI and server never diverge:
 
 - Procedures & context injection: [`src/server/orpc.ts`](../src/server/orpc.ts)
 - Example handlers: [`src/server/routers/booking.ts`](../src/server/routers/booking.ts),
-  [`src/server/routers/organization.ts`](../src/server/routers/organization.ts),
-  [`src/server/routers/user.ts`](../src/server/routers/user.ts)
+  [`src/server/routers/organization.ts`](../src/server/routers/organization.ts)
+  (`canActOnMember`), [`src/server/routers/location.ts`](../src/server/routers/location.ts)
+  (`isOwnerByMemberId`), [`src/server/routers/user.ts`](../src/server/routers/user.ts)
 - Ability tests:
   [`src/features/auth/ability/abilities.unit.spec.ts`](../src/features/auth/ability/abilities.unit.spec.ts)
