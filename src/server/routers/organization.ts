@@ -2,7 +2,10 @@ import { ORPCError } from '@orpc/client';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
-import { canAssignRole } from '@/features/auth/ability/abilities';
+import {
+  canActOnMember,
+  canAssignRole,
+} from '@/features/auth/ability/abilities';
 import { actorFromContext } from '@/features/auth/ability/actor';
 import { enforce } from '@/features/auth/ability/enforce';
 import { auth } from '@/server/auth';
@@ -306,24 +309,36 @@ export default {
 
   removeMember: orgProcedure({ permissions: { member: ['delete'] } })
     .route({ method: 'POST', path: '/organizations/remove-member', tags })
-    .input(z.object({ memberIdOrEmail: z.string() }))
+    .input(z.object({ memberId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
       // Caller restriction (owner/admin) is enforced by the procedure's RBAC
       // permission `member:['delete']`.
-      const isSelf =
-        input.memberIdOrEmail === context.memberId ||
-        input.memberIdOrEmail === context.user.email;
-      if (isSelf) {
+      if (input.memberId === context.memberId) {
         throw new ORPCError('BAD_REQUEST', {
           message: 'Cannot remove yourself from the organization',
         });
       }
 
+      const targetMember = await context.organizations.findMemberById(
+        input.memberId,
+        context.organizationId
+      );
+
+      if (!targetMember) {
+        throw new ORPCError('NOT_FOUND', {
+          message: 'Member not found in this organization',
+        });
+      }
+
+      // Business invariant: only an owner can act on another owner, so a
+      // non-owner (e.g. an org admin) cannot remove an existing owner.
+      enforce(canActOnMember(actorFromContext(context), targetMember.role));
+
       await auth.api.removeMember({
         headers: getRequestHeaders(),
         body: {
-          memberIdOrEmail: input.memberIdOrEmail,
+          memberIdOrEmail: input.memberId,
           organizationId: context.organizationId,
         },
       });
@@ -354,6 +369,11 @@ export default {
           message: 'Member not found in this organization',
         });
       }
+
+      // Business invariant: only an owner can act on another owner, so a
+      // non-owner (e.g. an org admin) cannot demote an existing owner. This
+      // needs the target's CURRENT role, hence it runs after the member load.
+      enforce(canActOnMember(actorFromContext(context), targetMember.role));
 
       await context.organizations.updateMemberRole(
         input.memberId,

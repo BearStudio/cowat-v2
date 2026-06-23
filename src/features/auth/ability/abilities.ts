@@ -112,7 +112,7 @@ export const isNotCurrentSession = (
 
 // ---------------------------------------------------------------------------
 // Family 4 — Hierarchy
-// Only an owner can assign the owner role.
+// Only an owner can act on another owner.
 // ---------------------------------------------------------------------------
 
 const hasOrgRole = (actor: Actor, role: string): boolean =>
@@ -121,4 +121,9 @@ const hasOrgRole = (actor: Actor, role: string): boolean =>
 export const canAssignRole = (actor: Actor, targetRole: string): Decision =>
   targetRole === 'owner' && !hasOrgRole(actor, 'owner')
     ? deny('FORBIDDEN', 'Only org owners can assign the owner role')
+    : allow;
+
+export const canActOnMember = (actor: Actor, targetRole: string): Decision =>
+  !hasOrgRole(actor, 'owner') && targetRole.split(',').includes('owner')
+    ? deny('FORBIDDEN', 'Only an owner can act on another owner')
     : allow;
