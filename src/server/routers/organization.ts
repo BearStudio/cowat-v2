@@ -279,6 +279,11 @@ export default {
     .handler(async ({ context, input }) => {
       // Caller restriction (owner/admin) is enforced by the procedure's RBAC
       // permission `invitation:['create']` (member role has no invitation perms).
+      // Business invariant: assigning the `owner` role is owner-only. This must
+      // be enforced here too — not only in `updateMemberRole` — otherwise an org
+      // admin could escalate by inviting a new member directly as `owner`.
+      enforce(canAssignRole(actorFromContext(context), input.role));
+
       const headers = getRequestHeaders();
       const succeeded: string[] = [];
       const failed: { email: string; error: string }[] = [];
