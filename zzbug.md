@@ -1,0 +1,13 @@
+ - Les trajets (dispos sur la page mes trajets) ne sont pas trié au sein d'une même journée
+ - Les trajets déjà passé apparaissent toujours
+ - Raccourcis "Mes modèles" et "Mes lieux" disparraissent au click dessus
+ - Rôle admin (app) jamais utilisé (et impossible à assigné via l'ui)
+     - l'admin ne peut que manage les membres, et créer des invitations
+     - Owner peut en plus agir sur les autres owners, delete l'orga et manage les notifs
+ - Aucune infos sur les user sans organisations
+ - Double barre de scroll sur la page configuration
+ - Select du role cassé (visuel et couleur) sur la page configuration
+ - Suppression de token slack maintenant impossible
+ - Stat : pas de barre de recherche
+ - Pas de format imposé pour l'adresse
+ - La demande de trajet est pas très propre (pas d'adresse demandé, pas d'heure)

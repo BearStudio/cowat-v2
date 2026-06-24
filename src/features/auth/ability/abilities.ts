@@ -16,17 +16,13 @@ export type Decision =
   | { ok: true }
   | { ok: false; code: DecisionCode; message?: string };
 
-export const allow: Decision = { ok: true };
+const allow: Decision = { ok: true };
 
-export const deny = (code: DecisionCode, message?: string): Decision => ({
+const deny = (code: DecisionCode, message?: string): Decision => ({
   ok: false,
   code,
   message,
 });
-
-/** Chains several decisions: returns the first denial, otherwise `allow`. */
-export const all = (...decisions: Decision[]): Decision =>
-  decisions.find((d) => !d.ok) ?? allow;
 
 // ---------------------------------------------------------------------------
 // Family 1 — Resource ownership ("am I the owner?")
