@@ -209,7 +209,9 @@ accept: organizationProcedure({ permissions: { booking: ['manage'] } })
 
 ### Client UI gating
 
-The client uses the **same** pure functions, so UI and server never diverge:
+The client uses the **same** pure functions, so UI and server never diverge.
+
+**RBAC (role → permission):**
 
 - [`with-permission.tsx`](../src/features/auth/with-permission.tsx) →
   `checkAppPermission`
@@ -217,6 +219,32 @@ The client uses the **same** pure functions, so UI and server never diverge:
   `checkOrgPermission`
 - [`guard-organization.tsx`](../src/features/organization/guard-organization.tsx)
   → both
+
+**Abilities (actor → resource):** the RBAC components above can't answer "is this
+object _mine_?" — that needs an `Actor` and a resource. Two small hooks bridge the
+pure abilities to React:
+
+- [`use-actor.ts`](../src/features/auth/ability/use-actor.ts) → `useActor()` builds
+  the client `Actor` from the better-auth session + active organization (matching the
+  member on `userId` to get `memberId` and `orgRole`, the same source
+  `WithOrgPermissions` reads). Fail-closed: unauthenticated/pending ⇒ `actor: null`.
+- [`use-can.ts`](../src/features/auth/ability/use-can.ts) → `useCan()` returns a `can`
+  helper for the curried Ownership/Relation abilities, plus the raw `actor`/`isPending`
+  for non-curried ones (e.g. `canActOnMember`):
+
+  ```tsx
+  const { can } = useCan();
+  // gate the driver-only actions on a commute card (same memberId axis as the server)
+  const isDriver = can(isDriverOf, { driverMemberId: commute.driverMemberId });
+  ```
+
+  `can` is a stable callback, so it can be used inside a `.map()` (call `useCan()` once
+  at the top of the component, not in the loop). Fail-closed: no actor ⇒ `false`.
+
+  > **Identity axis.** Abilities compare `memberId` (`driverMemberId === actor.memberId`),
+  > **not** `userId`. Prefer `useCan` over an ad-hoc `currentUserId === resource.owner.id`
+  > so the client gates on the exact same axis the server enforces. This requires the
+  > resource to carry the relevant `*MemberId` field (e.g. `CommuteEnriched.driverMemberId`).
 
 > ⚠️ **Known intentional divergence:** `guard-organization.tsx` accepts an
 > optional per-route `appPermission` prop; when set, an app-level permission
