@@ -7,7 +7,6 @@ import {
   mockGetSession,
   mockSession,
   mockUser,
-  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 import userRouter from '@/server/routers/user';
 
@@ -22,7 +21,6 @@ vi.mock('@/server/auth', () => ({
   auth: {
     api: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
-      userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
       removeUser: (...args: unknown[]) => mockRemoveUser(...args),
       revokeUserSessions: (...args: unknown[]) =>
         mockRevokeUserSessions(...args),

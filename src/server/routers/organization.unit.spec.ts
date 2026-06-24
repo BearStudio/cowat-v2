@@ -5,11 +5,9 @@ import organizationRouter from '@/server/routers/organization';
 import {
   mockDb,
   mockGetSession,
-  mockHasPermission,
   mockMemberId,
   mockOrganizationId,
   mockUser,
-  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
 const { mockCancelInvitation, mockCreateInvitation } = vi.hoisted(() => ({
@@ -21,8 +19,6 @@ vi.mock('@/server/auth', () => ({
   auth: {
     api: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
-      userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
-      hasPermission: (...args: unknown[]) => mockHasPermission(...args),
       cancelInvitation: (...args: unknown[]) => mockCancelInvitation(...args),
       createInvitation: (...args: unknown[]) => mockCreateInvitation(...args),
     },

@@ -6,7 +6,6 @@ import {
   mockDb,
   mockGetSession,
   mockMemberId,
-  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
 const now = new Date();
@@ -37,17 +36,6 @@ describe('location router', () => {
       const result = await call(locationRouter.create, createInput);
 
       expect(result).toEqual(created);
-    });
-
-    it('should not require any specific permission', async () => {
-      mockDb.location.create.mockResolvedValue({
-        ...mockLocationFromDb,
-        ...createInput,
-      });
-
-      await call(locationRouter.create, createInput);
-
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -102,14 +90,6 @@ describe('location router', () => {
       expect(result.nextCursor).toBeUndefined();
     });
 
-    it('should not require any specific permission', async () => {
-      mockDb.location.findManyPaginated.mockResolvedValue([0, []]);
-
-      await call(locationRouter.getAll, {});
-
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
-    });
-
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
@@ -136,14 +116,6 @@ describe('location router', () => {
       ).rejects.toMatchObject({
         code: 'NOT_FOUND',
       });
-    });
-
-    it('should not require any specific permission', async () => {
-      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
-
-      await call(locationRouter.getById, { id: 'location-1' });
-
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -198,18 +170,6 @@ describe('location router', () => {
       expect(mockDb.location.update).not.toHaveBeenCalled();
     });
 
-    it('should not require any specific permission', async () => {
-      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
-      mockDb.location.update.mockResolvedValue({
-        ...mockLocationFromDb,
-        ...updateInput,
-      });
-
-      await call(locationRouter.update, updateInput);
-
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
-    });
-
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
@@ -256,18 +216,6 @@ describe('location router', () => {
         code: 'FORBIDDEN',
       });
       expect(mockDb.location.delete).not.toHaveBeenCalled();
-    });
-
-    it('should not require any specific permission', async () => {
-      mockDb.location.findFirst.mockResolvedValue(mockLocationFromDb);
-      mockDb.location.delete.mockResolvedValue({
-        ...mockLocationFromDb,
-        isDeleted: true,
-      });
-
-      await call(locationRouter.delete, { id: 'location-1' });
-
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
