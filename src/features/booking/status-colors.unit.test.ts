@@ -42,77 +42,26 @@ describe('getUserBookingStatus', () => {
     { tags: ['non-regression'] },
     () => {
       it('returns REQUESTED when user has both CANCELED and REQUESTED bookings', () => {
-        const commute = {
-          driverMemberId: 'driver',
-          stops: [
-            {
-              passengers: [
-                {
-                  status: 'CANCELED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-            {
-              passengers: [
-                {
-                  status: 'REQUESTED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-          ],
-        };
+        const commute = makeCommute('driver', [
+          { id: 'user1', status: 'CANCELED' },
+          { id: 'user1', status: 'REQUESTED' },
+        ]);
         expect(getUserBookingStatus(commute, 'user1')).toBe('REQUESTED');
       });
 
       it('returns ACCEPTED when user has both CANCELED and ACCEPTED bookings', () => {
-        const commute = {
-          driverMemberId: 'driver',
-          stops: [
-            {
-              passengers: [
-                {
-                  status: 'CANCELED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-            {
-              passengers: [
-                {
-                  status: 'ACCEPTED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-          ],
-        };
+        const commute = makeCommute('driver', [
+          { id: 'user1', status: 'CANCELED' },
+          { id: 'user1', status: 'ACCEPTED' },
+        ]);
         expect(getUserBookingStatus(commute, 'user1')).toBe('ACCEPTED');
       });
 
       it('returns ACCEPTED over REQUESTED', () => {
-        const commute = {
-          driverMemberId: 'driver',
-          stops: [
-            {
-              passengers: [
-                {
-                  status: 'REQUESTED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-            {
-              passengers: [
-                {
-                  status: 'ACCEPTED' as const,
-                  passengerMemberId: 'user1',
-                },
-              ],
-            },
-          ],
-        };
+        const commute = makeCommute('driver', [
+          { id: 'user1', status: 'REQUESTED' },
+          { id: 'user1', status: 'ACCEPTED' },
+        ]);
         expect(getUserBookingStatus(commute, 'user1')).toBe('ACCEPTED');
       });
     }
