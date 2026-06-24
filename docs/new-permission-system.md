@@ -80,7 +80,8 @@ Roles _within_ an organization, stored on `Member.role`. A user has one
 (being `owner` of org A grants nothing in org B).
 
 Custom resource statements: `commute`, `booking`, `location`,
-`commuteTemplate` (CRUD-ish), plus the owner-only `orgNotificationChannel`.
+`commuteTemplate` (CRUD-ish), the manager-level `stats` (admin + owner), plus
+the owner-only `orgNotificationChannel`.
 
 | Permission | `member` | `admin` | `owner` |
 | --- | :---: | :---: | :---: |
@@ -89,6 +90,7 @@ Custom resource statements: `commute`, `booking`, `location`,
 | member (create/update/delete) | ❌ | ✅ | ✅ |
 | invitation (create/cancel) | ❌ | ✅ | ✅ |
 | organization: update | ❌ | ✅ | ✅ |
+| **stats: read** | ❌ | ✅ | ✅ |
 | **organization: delete** | ❌ | ❌ | ✅ |
 | **orgNotificationChannel: manage** | ❌ | ❌ | ✅ |
 

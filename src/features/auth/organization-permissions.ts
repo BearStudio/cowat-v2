@@ -16,6 +16,11 @@ const customStatements = {
   commuteTemplate: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;
 
+// Reserved for managers and above (admin + owner), not regular members.
+const managerStatements = {
+  stats: ['read'],
+} satisfies Statements;
+
 const ownerOnlyStatements = {
   orgNotificationChannel: ['manage'],
 } satisfies Statements;
@@ -23,6 +28,7 @@ const ownerOnlyStatements = {
 const organizationStatements = {
   ...defaultStatements,
   ...customStatements,
+  ...managerStatements,
   ...ownerOnlyStatements,
 };
 
@@ -39,11 +45,13 @@ const roleMember = ac.newRole({
 const roleAdmin = ac.newRole({
   ...adminAc.statements,
   ...customStatements,
+  ...managerStatements,
 });
 
 const roleOwner = ac.newRole({
   ...ownerAc.statements,
   ...customStatements,
+  ...managerStatements,
   ...ownerOnlyStatements,
 });
 
