@@ -5,36 +5,21 @@ import { PageError } from '@/components/errors/page-error';
 import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
-import {
-  OrganizationPermission,
-  Permission,
-} from '@/features/auth/permissions';
-import { checkAppPermission, checkOrgPermission } from '@/features/auth/rbac';
+import { OrganizationPermission } from '@/features/auth/permissions';
+import { checkOrgPermission } from '@/features/auth/rbac';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
 import { useOrganizations } from '@/features/organization/use-organizations';
 
 export const GuardOrganization = ({
   orgSlug,
   organizationPermission,
-  appPermission,
   children,
 }: {
   orgSlug?: string;
   organizationPermission?: OrganizationPermission;
-  /**
-   * App-level permission that also grants access to this org screen, in
-   * addition to `organizationPermission`. Access is granted if EITHER passes.
-   * Declared per-route so the policy is visible at the call site instead of
-   * hardcoded here.
-   *
-   * UI affordance only: the server's `organizationProcedure` authorizes every
-   * request on its own and does NOT grant app roles any org permission.
-   */
-  appPermission?: Permission;
   children?: ReactNode;
 }) => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
   const { organizations, activeOrgId, isPending } = useOrganizations();
 
   const targetOrg = orgSlug
@@ -58,17 +43,8 @@ export const GuardOrganization = ({
   // Check org-level permission
   const hasOrgPermission = useMemo(() => {
     if (!organizationPermission || !targetOrg) return true;
-    const userRole = session.data?.user.role;
-    if (appPermission && checkAppPermission(userRole, appPermission)) {
-      return true;
-    }
     return checkOrgPermission(targetOrg.role, organizationPermission);
-  }, [
-    organizationPermission,
-    appPermission,
-    targetOrg,
-    session.data?.user.role,
-  ]);
+  }, [organizationPermission, targetOrg]);
 
   if (isPending) {
     return <Spinner full className="opacity-60" />;

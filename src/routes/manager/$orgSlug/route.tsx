@@ -12,7 +12,7 @@ function RouteComponent() {
   return (
     <GuardOrganization
       orgSlug={orgSlug}
-      organizationPermission={{ organization: ['delete'] }}
+      organizationPermission={{ stats: ['read'] }}
     >
       <Layout orgSlug={orgSlug}>
         <Outlet />

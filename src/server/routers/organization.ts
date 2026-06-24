@@ -5,6 +5,7 @@ import { z } from 'zod';
 import {
   canActOnMember,
   canAssignRole,
+  isNotSelfByMemberId,
 } from '@/features/auth/ability/abilities';
 import { actorFromContext } from '@/features/auth/ability/actor';
 import { enforce } from '@/features/auth/ability/enforce';
@@ -342,11 +343,13 @@ export default {
     .handler(async ({ context, input }) => {
       // Caller restriction (owner/admin) is enforced by the procedure's RBAC
       // permission `member:['delete']`.
-      if (input.memberId === context.memberId) {
-        throw new ORPCError('BAD_REQUEST', {
-          message: 'Cannot remove yourself from the organization',
-        });
-      }
+      enforce(
+        isNotSelfByMemberId(
+          actorFromContext(context),
+          input.memberId,
+          'Cannot remove yourself from the organization'
+        )
+      );
 
       const targetMember = await context.organizations.findMemberById(
         input.memberId,
