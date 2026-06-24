@@ -9,6 +9,7 @@ import '@/lib/dayjs/config';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 import { cn } from '@/lib/tailwind/utils';
+import { useCan } from '@/hooks/use-can';
 
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
@@ -23,7 +24,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 
-import { authClient } from '@/features/auth/client';
+import { isDriverOf } from '@/features/auth/ability/abilities';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
@@ -64,7 +65,7 @@ export const PageCommutes = () => {
     'location',
     'commuteTemplate',
   ]);
-  const session = authClient.useSession();
+  const { can, actor } = useCan();
   const commutesQuery = useInfiniteQuery(myCommutesInfiniteOptions());
 
   const commuteCancel = useMutation(
@@ -181,11 +182,12 @@ export const PageCommutes = () => {
                             acceptedPassengers,
                           } = getCommutePassengerStats(item);
                           const hasPassengers = acceptedPassengers.size > 0;
-                          const currentUserId = session.data?.user.id ?? '';
-                          const isDriver = currentUserId === item.driver.id;
+                          const isDriver = can(isDriverOf, {
+                            driverMemberId: item.driverMemberId,
+                          });
                           const bookingStatus = getUserBookingStatus(
                             item,
-                            currentUserId
+                            actor?.memberId
                           );
 
                           return (

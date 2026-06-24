@@ -12,6 +12,7 @@ const FALLBACK_DATE = new Date(0);
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 import { cn } from '@/lib/tailwind/utils';
+import { useCan } from '@/hooks/use-can';
 
 import { DashboardSkeleton } from '@/components/loading/dashboard-skeleton';
 import { DataListErrorState } from '@/components/ui/datalist';
@@ -22,6 +23,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 
+import { isDriverOf } from '@/features/auth/ability/abilities';
 import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
 import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
@@ -45,6 +47,7 @@ import {
 export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
   const session = authClient.useSession();
+  const { can, actor } = useCan();
   const currentUserId = session.data?.user.id ?? '';
 
   const [{ bookingStop: bookingStopId, openCommutes: initialOpenCommutes }] =
@@ -77,13 +80,16 @@ export const PageDashboard = () => {
           commuteDate: commute.date,
           stop: stop as StopEnriched,
           driver: commute.driver as UserSummary,
+          driverMemberId: commute.driverMemberId,
           isFirstStop: stop.order === minOrder,
           isLastStop: stop.order === maxOrder,
         }));
       })
       .find((s) => s.stopId === bookingStopId) ?? null;
 
-  const isDriverBooking = rawBookingInfo?.driver?.id === currentUserId;
+  const isDriverBooking =
+    !!rawBookingInfo &&
+    can(isDriverOf, { driverMemberId: rawBookingInfo.driverMemberId });
   const bookingInfo = isDriverBooking ? null : rawBookingInfo;
 
   useEffect(() => {
@@ -213,7 +219,7 @@ export const PageDashboard = () => {
                           <DashboardCommuteCard
                             key={item.id}
                             commute={item}
-                            currentUserId={currentUserId}
+                            currentMemberId={actor?.memberId}
                             commuteCancel={commuteCancel}
                             bookingCancel={bookingCancel}
                             open={openCommuteIds.includes(item.id)}

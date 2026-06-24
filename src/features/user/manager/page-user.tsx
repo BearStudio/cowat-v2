@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
+import { useCan } from '@/hooks/use-can';
 import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
@@ -42,6 +43,10 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
+import {
+  isNotCurrentSession,
+  isNotSelfByUserId,
+} from '@/features/auth/ability/abilities';
 import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
 import {
@@ -351,7 +356,7 @@ const UserSessions = (props: { userId: string }) => {
 
 const RevokeAllSessionsButton = (props: { userId: string }) => {
   const queryClient = useQueryClient();
-  const currentSession = authClient.useSession();
+  const { actor } = useCan();
   const { t } = useTranslation(['user']);
   const revokeAllSessions = useMutation(
     orpc.user.revokeUserSessions.mutationOptions({
@@ -373,7 +378,8 @@ const RevokeAllSessionsButton = (props: { userId: string }) => {
     <Button
       size="xs"
       variant="secondary"
-      disabled={currentSession.data?.user.id === props.userId}
+      // Can't revoke your own sessions (same self-action rule as the server).
+      disabled={!actor || !isNotSelfByUserId(actor, props.userId, '').ok}
       loading={revokeAllSessions.isPending}
       onClick={() => {
         revokeAllSessions.mutate({
@@ -391,7 +397,7 @@ const RevokeSessionButton = (props: {
   sessionToken: string;
 }) => {
   const queryClient = useQueryClient();
-  const currentSession = authClient.useSession();
+  const { actor } = useCan();
   const { t } = useTranslation(['user']);
   const revokeSession = useMutation(
     orpc.user.revokeUserSession.mutationOptions({
@@ -412,7 +418,10 @@ const RevokeSessionButton = (props: {
     <Button
       size="xs"
       variant="secondary"
-      disabled={currentSession.data?.session.token === props.sessionToken}
+      // Can't revoke the session you're currently using.
+      disabled={
+        !actor || !isNotCurrentSession(actor, props.sessionToken, '').ok
+      }
       loading={revokeSession.isPending}
       onClick={() => {
         revokeSession.mutate({

@@ -136,6 +136,7 @@ export const WithPassengers = () => (
             status: 'ACCEPTED',
             tripType: 'ROUND',
             comment: null,
+            passengerMemberId: 'm1',
             passenger: {
               id: 'u1',
               name: 'Alice Martin',
@@ -148,6 +149,7 @@ export const WithPassengers = () => (
             status: 'REQUESTED',
             tripType: 'ONEWAY',
             comment: null,
+            passengerMemberId: 'm2',
             passenger: {
               id: 'u2',
               name: 'Bob Dupont',
@@ -169,6 +171,7 @@ export const WithPassengers = () => (
             status: 'ACCEPTED',
             tripType: 'ROUND',
             comment: null,
+            passengerMemberId: 'm3',
             passenger: {
               id: 'u3',
               name: 'Claire Moreau',

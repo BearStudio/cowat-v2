@@ -3,15 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 
 const makeCommute = (
-  driverId: string,
+  driverMemberId: string,
   passengers: Array<{ id: string; status: string }>
 ) => ({
-  driver: { id: driverId },
+  driverMemberId,
   stops: [
     {
       passengers: passengers.map((p) => ({
         status: p.status as 'REQUESTED' | 'ACCEPTED' | 'REFUSED' | 'CANCELED',
-        passenger: { id: p.id },
+        passengerMemberId: p.id,
       })),
     },
   ],
@@ -43,13 +43,13 @@ describe('getUserBookingStatus', () => {
     () => {
       it('returns REQUESTED when user has both CANCELED and REQUESTED bookings', () => {
         const commute = {
-          driver: { id: 'driver' },
+          driverMemberId: 'driver',
           stops: [
             {
               passengers: [
                 {
                   status: 'CANCELED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
@@ -57,7 +57,7 @@ describe('getUserBookingStatus', () => {
               passengers: [
                 {
                   status: 'REQUESTED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
@@ -68,13 +68,13 @@ describe('getUserBookingStatus', () => {
 
       it('returns ACCEPTED when user has both CANCELED and ACCEPTED bookings', () => {
         const commute = {
-          driver: { id: 'driver' },
+          driverMemberId: 'driver',
           stops: [
             {
               passengers: [
                 {
                   status: 'CANCELED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
@@ -82,7 +82,7 @@ describe('getUserBookingStatus', () => {
               passengers: [
                 {
                   status: 'ACCEPTED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
@@ -93,13 +93,13 @@ describe('getUserBookingStatus', () => {
 
       it('returns ACCEPTED over REQUESTED', () => {
         const commute = {
-          driver: { id: 'driver' },
+          driverMemberId: 'driver',
           stops: [
             {
               passengers: [
                 {
                   status: 'REQUESTED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
@@ -107,7 +107,7 @@ describe('getUserBookingStatus', () => {
               passengers: [
                 {
                   status: 'ACCEPTED' as const,
-                  passenger: { id: 'user1' },
+                  passengerMemberId: 'user1',
                 },
               ],
             },
