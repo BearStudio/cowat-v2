@@ -2,12 +2,15 @@ import { UseMutationResult } from '@tanstack/react-query';
 import { AlertTriangleIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { useCan } from '@/hooks/use-can';
+
 import { CommentText } from '@/components/comment-text';
 import { ConfirmSummary } from '@/components/confirm-summary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 
+import { isDriverOf, isPassengerOf } from '@/features/auth/ability/abilities';
 import { BookingStatusBadge } from '@/features/booking/booking-status-badge';
 import { getUserBookingStatus } from '@/features/booking/status-colors';
 import {
@@ -22,7 +25,7 @@ import { CommuteEnriched } from '@/features/commute/schema';
 
 type DashboardCommuteCardProps = {
   commute: CommuteEnriched;
-  currentUserId: string;
+  currentMemberId: string | undefined;
   commuteCancel: UseMutationResult<void, unknown, { id: string }>;
   bookingCancel: UseMutationResult<void, unknown, { id: string }>;
   open?: boolean;
@@ -32,7 +35,7 @@ type DashboardCommuteCardProps = {
 
 export const DashboardCommuteCard = ({
   commute,
-  currentUserId,
+  currentMemberId,
   commuteCancel,
   bookingCancel,
   open,
@@ -44,14 +47,15 @@ export const DashboardCommuteCard = ({
   const { outwardCount, inwardCount, acceptedPassengers } =
     getCommutePassengerStats(commute);
 
-  const isDriver = currentUserId === commute.driver.id;
-  const bookingStatus = getUserBookingStatus(commute, currentUserId);
+  const { can } = useCan();
+  const isDriver = can(isDriverOf, { driverMemberId: commute.driverMemberId });
+  const bookingStatus = getUserBookingStatus(commute, currentMemberId);
   const hasPassengers = acceptedPassengers.size > 0;
 
   const hasBookingOnCommute = commute.stops.some((s) =>
     s.passengers.some(
       (p) =>
-        p.passenger.id === currentUserId &&
+        can(isPassengerOf, { passengerMemberId: p.passengerMemberId }) &&
         (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
     )
   );
@@ -89,7 +93,9 @@ export const DashboardCommuteCard = ({
 
                   const userBooking = stop.passengers?.find(
                     (p) =>
-                      p.passenger.id === currentUserId &&
+                      can(isPassengerOf, {
+                        passengerMemberId: p.passengerMemberId,
+                      }) &&
                       (p.status === 'REQUESTED' || p.status === 'ACCEPTED')
                   );
 

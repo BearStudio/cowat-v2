@@ -222,6 +222,7 @@ const zStopPassenger = () =>
     status: zRequestStatus(),
     tripType: zTripType(),
     comment: z.string().nullish(),
+    passengerMemberId: z.string(),
     passenger: zUserSummary(),
   });
 
