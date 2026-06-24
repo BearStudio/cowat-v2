@@ -54,6 +54,88 @@ const mockInvitation = {
 };
 
 describe('organization router', () => {
+  describe('getActiveOrganization', () => {
+    const orgDetails = {
+      id: mockOrganizationId,
+      name: 'Acme',
+      slug: 'acme',
+      logo: null,
+      members: [
+        {
+          id: 'member-1',
+          role: 'member',
+          user: {
+            id: 'user-1',
+            name: 'Alice',
+            email: 'alice@example.com',
+            image: null,
+          },
+        },
+      ],
+      invitations: [
+        {
+          id: 'invitation-1',
+          email: 'invited@example.com',
+          role: 'member',
+          status: 'pending',
+          expiresAt: new Date('2099-01-01'),
+        },
+      ],
+    };
+
+    // The handler triggers two organization.findUnique calls: the
+    // organizationProcedure middleware reads the slug, then the handler reads
+    // the full details. checkOrgPermission runs in-process from the caller's
+    // role (not mocked), so it decides whether members/invitations are exposed.
+    beforeEach(() => {
+      mockDb.member.findFirst.mockReset();
+      mockDb.organization.findUnique.mockReset();
+      mockDb.organization.findUnique
+        .mockResolvedValueOnce({ slug: orgDetails.slug }) // middleware: slug
+        .mockResolvedValueOnce(orgDetails); // handler: findByIdWithDetails
+    });
+
+    it('should expose members and invitations to an owner', async () => {
+      mockDb.member.findFirst.mockResolvedValue(ownerMembership);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      expect(result.members).toHaveLength(1);
+      expect(result.invitations).toHaveLength(1);
+    });
+
+    it('should expose members and invitations to an admin', async () => {
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      expect(result.members).toHaveLength(1);
+      expect(result.invitations).toHaveLength(1);
+    });
+
+    it('should NOT leak members or invitations to a regular member', async () => {
+      mockDb.member.findFirst.mockResolvedValue(defaultMember);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      // Minimal org info is still returned…
+      expect(result.id).toBe(mockOrganizationId);
+      expect(result.name).toBe('Acme');
+      // …but manager-only data must be absent.
+      expect(result.members).toBeUndefined();
+      expect(result.invitations).toBeUndefined();
+    });
+  });
+
   describe('updateMemberRole', () => {
     const input = { memberId: 'target-member-1', role: 'owner' as const };
 

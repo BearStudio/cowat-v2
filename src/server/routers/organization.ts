@@ -8,6 +8,7 @@ import {
 } from '@/features/auth/ability/abilities';
 import { actorFromContext } from '@/features/auth/ability/actor';
 import { enforce } from '@/features/auth/ability/enforce';
+import { checkOrgPermission } from '@/features/auth/rbac';
 import { auth } from '@/server/auth';
 import {
   organizationProcedure,
@@ -137,27 +138,35 @@ export default {
         name: z.string(),
         slug: z.string(),
         logo: z.string().nullable(),
-        members: z.array(
-          z.object({
-            id: z.string(),
-            role: z.string(),
-            user: z.object({
+        // Manager-only data: only present when the caller has the relevant
+        // organization permission. A regular member receives them as
+        // `undefined` and therefore cannot read other members' emails or
+        // pending invitations.
+        members: z
+          .array(
+            z.object({
               id: z.string(),
-              name: z.string(),
+              role: z.string(),
+              user: z.object({
+                id: z.string(),
+                name: z.string(),
+                email: z.string(),
+                image: z.string().nullable(),
+              }),
+            })
+          )
+          .optional(),
+        invitations: z
+          .array(
+            z.object({
+              id: z.string(),
               email: z.string(),
-              image: z.string().nullable(),
-            }),
-          })
-        ),
-        invitations: z.array(
-          z.object({
-            id: z.string(),
-            email: z.string(),
-            role: z.string().nullable(),
-            status: z.string(),
-            expiresAt: z.date(),
-          })
-        ),
+              role: z.string().nullable(),
+              status: z.string(),
+              expiresAt: z.date(),
+            })
+          )
+          .optional(),
       })
     )
     .handler(async ({ context }) => {
@@ -169,7 +178,21 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      return org;
+      const canReadMembers = checkOrgPermission(context.orgRole, {
+        member: ['update'],
+      });
+      const canReadInvitations = checkOrgPermission(context.orgRole, {
+        invitation: ['create'],
+      });
+
+      return {
+        id: org.id,
+        name: org.name,
+        slug: org.slug,
+        logo: org.logo,
+        members: canReadMembers ? org.members : undefined,
+        invitations: canReadInvitations ? org.invitations : undefined,
+      };
     }),
 
   create: adminProcedure({ permission: { organization: ['create'] } })
