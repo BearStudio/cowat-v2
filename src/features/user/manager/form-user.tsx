@@ -10,7 +10,7 @@ import {
   FormFieldLabel,
 } from '@/components/form';
 
-import { isNotSelfByUserId } from '@/features/auth/ability/abilities';
+import { isSelfByUserId } from '@/features/auth/ability/abilities';
 import { rolesNames } from '@/features/auth/permissions';
 import { FormFieldsUser } from '@/features/user/schema';
 
@@ -20,7 +20,7 @@ export const FormUser = (props: { userId?: string }) => {
   const form = useFormContext<FormFieldsUser>();
   // Editing yourself: you can't change your own role (server enforces it too).
   const isCurrentUser =
-    !!props.userId && !!actor && !isNotSelfByUserId(actor, props.userId, '').ok;
+    !!props.userId && !!actor && isSelfByUserId(actor, props.userId);
 
   return (
     <div className="flex flex-col gap-4">
