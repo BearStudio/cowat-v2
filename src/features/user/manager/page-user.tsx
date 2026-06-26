@@ -44,8 +44,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
 import {
-  isNotCurrentSession,
-  isNotSelfByUserId,
+  isCurrentSession,
+  isSelfByUserId,
 } from '@/features/auth/ability/abilities';
 import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
@@ -379,7 +379,7 @@ const RevokeAllSessionsButton = (props: { userId: string }) => {
       size="xs"
       variant="secondary"
       // Can't revoke your own sessions (same self-action rule as the server).
-      disabled={!actor || !isNotSelfByUserId(actor, props.userId, '').ok}
+      disabled={!actor || isSelfByUserId(actor, props.userId)}
       loading={revokeAllSessions.isPending}
       onClick={() => {
         revokeAllSessions.mutate({
@@ -419,9 +419,7 @@ const RevokeSessionButton = (props: {
       size="xs"
       variant="secondary"
       // Can't revoke the session you're currently using.
-      disabled={
-        !actor || !isNotCurrentSession(actor, props.sessionToken, '').ok
-      }
+      disabled={!actor || isCurrentSession(actor, props.sessionToken)}
       loading={revokeSession.isPending}
       onClick={() => {
         revokeSession.mutate({
