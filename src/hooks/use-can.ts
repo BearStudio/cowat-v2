@@ -15,8 +15,10 @@
  *   `isNotCurrentSession(actor, token, msg)` (read `.ok`; the `msg` only feeds
  *   the server-side error, so pass `''` on the client).
  *
- * Fail-closed: no actor (pending or unauthenticated) => `can` returns `false`;
- * with the raw `actor`, guard on `!actor` yourself.
+ * Fail-closed: with no actor (unauthenticated) `can` returns `false`. While the
+ * active org is still loading, the actor exists but its org fields are
+ * `undefined`, so org-scoped abilities deny too. With the raw `actor`, guard on
+ * `!actor` yourself.
  *
  * ⚠️ Client gating is UX only : the server (`organizationProcedure` + `enforce`)
  * remains the source of truth. See `docs/new-permission-system.md`.
