@@ -125,7 +125,7 @@ export const zFormFieldsCommute = () =>
       const rules = createCommuteRules(data);
 
       data.stops.forEach((stop, index) => {
-        if (!rules.isOutwardInFuture(stop)) {
+        if (!rules.isOutwardInFuture(stop, index)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.outwardInPast'),
@@ -133,15 +133,15 @@ export const zFormFieldsCommute = () =>
           });
         }
 
-        if (!rules.shouldInwardBeAfterOutward(stop)) {
+        if (!rules.shouldInwardDifferFromOutward(stop)) {
           ctx.addIssue({
             code: 'custom',
-            message: t('commute:form.errors.inwardBeforeOutward'),
+            message: t('commute:form.errors.inwardSameAsOutward'),
             path: ['stops', index, 'inwardTime'],
           });
         }
 
-        if (!rules.isInwardInFuture(stop)) {
+        if (!rules.isInwardInFuture(stop, index)) {
           ctx.addIssue({
             code: 'custom',
             message: t('commute:form.errors.inwardInPast'),
@@ -149,18 +149,18 @@ export const zFormFieldsCommute = () =>
           });
         }
 
-        if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+        if (!rules.shouldOutwardDifferFromPrev(stop, index)) {
           ctx.addIssue({
             code: 'custom',
-            message: t('commute:form.errors.outwardNotIncreasing'),
+            message: t('commute:form.errors.outwardSameAsPrev'),
             path: ['stops', index, 'outwardTime'],
           });
         }
 
-        if (!rules.shouldInwardBeDecreasing(stop, index)) {
+        if (!rules.shouldInwardDifferFromPrev(stop, index)) {
           ctx.addIssue({
             code: 'custom',
-            message: t('commute:form.errors.inwardNotDecreasing'),
+            message: t('commute:form.errors.inwardSameAsPrev'),
             path: ['stops', index, 'inwardTime'],
           });
         }
@@ -175,26 +175,26 @@ export const zFormFieldsCommuteUpdate = () =>
     const rules = createStopOrderRules(data);
 
     data.stops.forEach((stop, index) => {
-      if (!rules.shouldInwardBeAfterOutward(stop)) {
+      if (!rules.shouldInwardDifferFromOutward(stop)) {
         ctx.addIssue({
           code: 'custom',
-          message: t('commute:form.errors.inwardBeforeOutward'),
+          message: t('commute:form.errors.inwardSameAsOutward'),
           path: ['stops', index, 'inwardTime'],
         });
       }
 
-      if (!rules.shouldOutwardBeIncreasing(stop, index)) {
+      if (!rules.shouldOutwardDifferFromPrev(stop, index)) {
         ctx.addIssue({
           code: 'custom',
-          message: t('commute:form.errors.outwardNotIncreasing'),
+          message: t('commute:form.errors.outwardSameAsPrev'),
           path: ['stops', index, 'outwardTime'],
         });
       }
 
-      if (!rules.shouldInwardBeDecreasing(stop, index)) {
+      if (!rules.shouldInwardDifferFromPrev(stop, index)) {
         ctx.addIssue({
           code: 'custom',
-          message: t('commute:form.errors.inwardNotDecreasing'),
+          message: t('commute:form.errors.inwardSameAsPrev'),
           path: ['stops', index, 'inwardTime'],
         });
       }

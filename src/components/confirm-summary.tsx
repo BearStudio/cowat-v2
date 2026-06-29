@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import '@/lib/dayjs/config';
 
 import { type DateFormatKey } from '@/lib/dayjs/formats';
@@ -10,6 +11,7 @@ import {
   type StopForTimeline,
   StopsTimelineItem,
 } from '@/features/commute/stops-timeline';
+import { computeStopDayLabels } from '@/features/commute/time-utils';
 
 type ConfirmSummaryProps = {
   user?: { name?: string | null; image?: string | null };
@@ -26,6 +28,9 @@ export const ConfirmSummary = ({
   typeLabel,
   stops,
 }: ConfirmSummaryProps) => {
+  const { t } = useTranslation(['common']);
+  const dayLabels = computeStopDayLabels(stops, date, t('common:nextDay'));
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
       <div className="flex items-center gap-3">
@@ -57,7 +62,7 @@ export const ConfirmSummary = ({
             {stops.map((stop, i) => (
               <StopsTimelineItem
                 key={stop.location.id}
-                stop={stop}
+                stop={{ ...stop, ...dayLabels[i] }}
                 isFirst={i === 0}
                 isLast={i === stops.length - 1}
               />

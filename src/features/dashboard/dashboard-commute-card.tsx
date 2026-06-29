@@ -81,6 +81,7 @@ export const DashboardCommuteCard = ({
           inwardTaken={commute.type === 'ROUND' ? inwardCount : undefined}
           outwardDeparture={commute.stops.at(0)?.outwardTime}
           inwardDeparture={commute.stops.at(-1)?.inwardTime ?? undefined}
+          date={commute.date}
           stops={commute.stops}
           passengers={[...acceptedPassengers.values()]}
           badge={bookingStatus && <BookingStatusBadge status={bookingStatus} />}

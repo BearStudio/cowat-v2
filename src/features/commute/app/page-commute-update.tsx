@@ -177,6 +177,7 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                 <StepOutwardStops
                   {...asCommuteBase(form)}
                   ns="commute"
+                  tripDate={commuteQuery.data?.date}
                   defaultStop={{
                     locationId: '',
                     outwardTime: '',
@@ -201,7 +202,11 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                         );
                       }}
                     >
-                      <StepInwardStops {...asCommuteBase(form)} ns="commute" />
+                      <StepInwardStops
+                        {...asCommuteBase(form)}
+                        ns="commute"
+                        tripDate={commuteQuery.data?.date}
+                      />
                     </MultiStepFormStep>
                   ) : null
                 }
@@ -221,6 +226,7 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                   <StepRecap
                     {...asCommuteBase(form)}
                     ns="commute"
+                    tripDate={commuteQuery.data?.date}
                     passengersByLocationId={passengersByLocationId}
                   />
                 </div>

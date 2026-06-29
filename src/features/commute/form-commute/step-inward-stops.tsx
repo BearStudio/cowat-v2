@@ -18,20 +18,29 @@ import {
 } from '@/components/ui/popover';
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+import { StopDayBadge } from '@/features/commute/stops-timeline';
+import {
+  computeDayOffsets,
+  stopDayLabel,
+  tripCrossesMidnight,
+} from '@/features/commute/time-utils';
 import { useAutoInwardTimes } from '@/features/commute/use-auto-inward-times';
 
 type StepInwardStopsProps = {
   control: Control<FormFieldsCommuteBase>;
   setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
+  /** Commute date, used to show the exact date when a leg crosses midnight. */
+  tripDate?: Date | null;
 };
 
 export const StepInwardStops = ({
   control,
   setValue,
   ns,
+  tripDate,
 }: StepInwardStopsProps) => {
-  const { t } = useTranslation([ns]);
+  const { t } = useTranslation([ns, 'common']);
   const { stops, autoComputedIndices } = useAutoInwardTimes({
     control,
     setValue,
@@ -51,6 +60,9 @@ export const StepInwardStops = ({
       p.items.map((loc) => [loc.id, loc.name] as const)
     ) ?? []
   );
+
+  const dayOffsets = computeDayOffsets(stops ?? []);
+  const hasDayChange = tripCrossesMidnight(stops ?? [], dayOffsets);
 
   // Reverse order so stops are chronological for the return trip
   const reversedIndices = stops
@@ -86,6 +98,14 @@ export const StepInwardStops = ({
             <FormField>
               <FormFieldLabel>
                 {t(`${ns}:form.inwardTime`)}
+                <StopDayBadge
+                  label={stopDayLabel(
+                    tripDate,
+                    dayOffsets.inward[index] ?? 0,
+                    hasDayChange,
+                    t('common:nextDay')
+                  )}
+                />
                 {autoComputedIndices.has(index) && (
                   <FormFieldHelper>
                     <Popover>
