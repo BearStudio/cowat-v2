@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/empty';
 
 import { isDriverOf } from '@/features/auth/ability/abilities';
-import { authClient } from '@/features/auth/client';
 import { BookingDrawer } from '@/features/booking/booking-drawer';
 import { CommuteOptionsMenu } from '@/features/commute/commute-options-menu';
 import {
@@ -46,9 +45,7 @@ import {
 
 export const PageDashboard = () => {
   const { t } = useTranslation(['dashboard', 'commute', 'common']);
-  const session = authClient.useSession();
   const { can, actor } = useCan();
-  const currentUserId = session.data?.user.id ?? '';
 
   const [{ bookingStop: bookingStopId, openCommutes: initialOpenCommutes }] =
     useDashboardSearchParams();
@@ -252,7 +249,7 @@ export const PageDashboard = () => {
           driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}
           isLastStop={bookingInfo?.isLastStop ?? false}
-          open={bookingInfo !== null && !!currentUserId}
+          open={bookingInfo !== null && !!actor}
           onOpenChange={(open) => {
             if (!open) setSearchParams({ bookingStop: null });
           }}
