@@ -47,7 +47,6 @@ import {
   isCurrentSession,
   isSelfByUserId,
 } from '@/features/auth/ability/abilities';
-import { authClient } from '@/features/auth/client';
 import { WithPermissions } from '@/features/auth/with-permission';
 import {
   PageLayout,
@@ -58,7 +57,7 @@ import {
 
 export const PageUser = (props: { id: string }) => {
   const queryClient = useQueryClient();
-  const session = authClient.useSession();
+  const { actor } = useCan();
   const { navigateBack } = useNavigateBack();
   const { t } = useTranslation(['user']);
   const userQuery = useQuery(
@@ -109,7 +108,8 @@ export const PageUser = (props: { id: string }) => {
         startActions={<BackButton />}
         endActions={
           <>
-            {session.data?.user.id !== props.id && (
+            {/* Can't delete yourself (same self-action rule as the server). */}
+            {actor && !isSelfByUserId(actor, props.id) && (
               <WithPermissions
                 permissions={[
                   {
