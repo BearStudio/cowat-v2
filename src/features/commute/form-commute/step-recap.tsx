@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -18,19 +17,31 @@ import {
   type StopForTimeline,
   StopsTimelineItem,
 } from '@/features/commute/stops-timeline';
+import {
+  computeDayOffsets,
+  formatTripDate,
+  stopDayLabel,
+  tripCrossesMidnight,
+} from '@/features/commute/time-utils';
 
 type StepRecapProps = {
   control: Control<FormFieldsCommuteBase>;
   ns: 'commute' | 'commuteTemplate';
   passengersByLocationId?: Map<string, StopPassenger[]>;
+  /**
+   * Commute date, used to show the exact date when a leg crosses midnight.
+   * Falls back to the form's `date` field when omitted (creation flow).
+   */
+  tripDate?: Date | null;
 };
 
 export const StepRecap = ({
   control,
   ns,
   passengersByLocationId,
+  tripDate: tripDateProp,
 }: StepRecapProps) => {
-  const { t } = useTranslation([ns, 'commute']);
+  const { t } = useTranslation([ns, 'commute', 'common']);
   const values = useWatch({ control }) as FormFieldsCommuteBase &
     Record<string, unknown>;
 
@@ -61,9 +72,26 @@ export const StepRecap = ({
   const OnewayIcon = tripTypeIcons.ONEWAY;
   const ReturnIcon = tripTypeIcons.RETURN;
 
+  // Cumulative day offset per stop, so a leg crossing midnight flags every
+  // later time (e.g. the return departure) as happening the next day.
+  // `hasDayChange` answers: does any displayed stop land on a different day?
+  const dayOffsets = computeDayOffsets(stops ?? []);
+  const hasDayChange = tripCrossesMidnight(stops ?? [], dayOffsets);
+
+  const tripDate =
+    tripDateProp ??
+    (ns === 'commute' ? (values.date as Date | undefined) : null);
+
+  // Shared with the form steps: when the trip crosses midnight, every stop
+  // carries its exact date so the reader can tell the days apart; otherwise
+  // the single global date badge is enough and stops carry no per-stop label.
+  const stopDateLabel = (dayOffset: number) =>
+    stopDayLabel(tripDate, dayOffset, hasDayChange, t('common:nextDay'));
+
   const toTimelineStop = (
     locationId: string,
-    time: string
+    time: string,
+    dayOffset: number
   ): StopForTimeline => {
     const loc = locationsMap.get(locationId);
     return {
@@ -74,28 +102,36 @@ export const StepRecap = ({
       },
       outwardTime: time,
       inwardTime: null,
+      outwardDayLabel: stopDateLabel(dayOffset),
       passengers: passengersByLocationId?.get(locationId),
     };
   };
 
-  const outwardStops = (stops ?? []).map((s) =>
-    toTimelineStop(s.locationId, s.outwardTime)
+  const outwardStops = (stops ?? []).map((s, i) =>
+    toTimelineStop(s.locationId, s.outwardTime, dayOffsets.outward[i] ?? 0)
   );
 
-  const inwardStops = [...(stops ?? [])]
+  const inwardStops = (stops ?? [])
+    .map((s, i) => ({ s, i }))
     .reverse()
-    .flatMap((s) =>
-      s.inwardTime ? [toTimelineStop(s.locationId, s.inwardTime)] : []
+    .flatMap(({ s, i }) =>
+      s.inwardTime
+        ? [
+            toTimelineStop(
+              s.locationId,
+              s.inwardTime,
+              dayOffsets.inward[i] ?? 0
+            ),
+          ]
+        : []
     );
 
   return (
     <div className="flex flex-col gap-4">
       {/* Meta info */}
       <div className="flex flex-wrap gap-2">
-        {ns === 'commute' && values.date != null && (
-          <Badge variant="secondary">
-            {dayjs(values.date as Date).format('DD/MM/YYYY')}
-          </Badge>
+        {ns === 'commute' && tripDate != null && !hasDayChange && (
+          <Badge variant="secondary">{formatTripDate(tripDate, 0)}</Badge>
         )}
         {ns === 'commuteTemplate' && values.name != null && (
           <Badge variant="secondary">{String(values.name)}</Badge>

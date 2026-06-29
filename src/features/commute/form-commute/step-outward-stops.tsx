@@ -18,6 +18,12 @@ import {
 import { Button } from '@/components/ui/button';
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+import { StopDayBadge } from '@/features/commute/stops-timeline';
+import {
+  computeDayOffsets,
+  stopDayLabel,
+  tripCrossesMidnight,
+} from '@/features/commute/time-utils';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type StepOutwardStopsProps = {
@@ -25,6 +31,8 @@ type StepOutwardStopsProps = {
   setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
   defaultStop: FormFieldsCommuteBase['stops'][number];
+  /** Commute date, used to show the exact date when a leg crosses midnight. */
+  tripDate?: Date | null;
 };
 
 export const StepOutwardStops = ({
@@ -32,8 +40,9 @@ export const StepOutwardStops = ({
   setValue,
   ns,
   defaultStop,
+  tripDate,
 }: StepOutwardStopsProps) => {
-  const { t } = useTranslation([ns]);
+  const { t } = useTranslation([ns, 'common']);
   const { fields, insert, remove } = useFieldArray({
     control,
     name: 'stops',
@@ -43,6 +52,8 @@ export const StepOutwardStops = ({
     name: 'stops',
   });
   const { containerRef, focusFieldAt } = useFocusFieldAt();
+  const dayOffsets = computeDayOffsets(stops ?? []);
+  const hasDayChange = tripCrossesMidnight(stops ?? [], dayOffsets);
 
   return (
     <div ref={containerRef} className="flex flex-col gap-3">
@@ -72,6 +83,14 @@ export const StepOutwardStops = ({
                   <FormField>
                     <FormFieldLabel required>
                       {t(`${ns}:form.outwardTime`)}
+                      <StopDayBadge
+                        label={stopDayLabel(
+                          tripDate,
+                          dayOffsets.outward[index] ?? 0,
+                          hasDayChange,
+                          t('common:nextDay')
+                        )}
+                      />
                     </FormFieldLabel>
                     <FormFieldController
                       type="time"

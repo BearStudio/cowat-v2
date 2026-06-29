@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from 'lucide-react';
 import { CSSProperties, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { tripTypeIcons } from '@/lib/feature-icons';
 import { cn } from '@/lib/tailwind/utils';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { bookingStatusBadgeVariants } from '@/features/booking/booking-status-badge';
 import { StopEnriched, StopPassenger } from '@/features/commute/schema';
+import { computeStopDayLabels } from '@/features/commute/time-utils';
 
 export const TripTime = ({
   type,
@@ -27,10 +29,31 @@ export const TripTime = ({
   );
 };
 
+/**
+ * Small secondary badge shown next to a time when it falls on a later day
+ * (the exact date, or a generic next-day label). Renders nothing when `label`
+ * is null/undefined. Shared by the form steps, the recap and the read-only
+ * timelines so the day indicator looks identical everywhere.
+ */
+export const StopDayBadge = ({ label }: { label?: string | null }) =>
+  label ? (
+    <Badge variant="secondary" size="xs">
+      {label}
+    </Badge>
+  ) : null;
+
 export type StopForTimeline = Pick<
   StopEnriched,
   'location' | 'outwardTime' | 'inwardTime'
-> & { passengers?: StopPassenger[] };
+> & {
+  passengers?: StopPassenger[];
+  /**
+   * Badge label shown next to the time when it falls on a later day (the
+   * exact date, or a generic next-day label). Omitted/null = same day.
+   */
+  outwardDayLabel?: string | null;
+  inwardDayLabel?: string | null;
+};
 
 export const TimelineDot = ({ className }: { className?: string }) => (
   <div
@@ -163,17 +186,19 @@ export const StopsTimelineItem = ({
     <div
       className={cn('flex min-w-0 flex-1 flex-col gap-1.5', !isLast && 'pb-4')}
     >
-      <div className="-mb-1 flex items-center gap-1.5">
+      <div className="-mb-1 flex flex-wrap items-center gap-1.5">
         <span className="truncate text-sm leading-5 font-medium">
           {stop.location.name}
         </span>
         <span className="text-muted-foreground/50">·</span>
         <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
           <TripTime type="ONEWAY" time={stop.outwardTime} />
+          <StopDayBadge label={stop.outwardDayLabel} />
           {stop.inwardTime && (
             <>
               <span className="text-muted-foreground/50">·</span>
               <TripTime type="RETURN" time={stop.inwardTime} />
+              <StopDayBadge label={stop.inwardDayLabel} />
             </>
           )}
         </div>
@@ -205,22 +230,29 @@ export const StopsTimeline = ({
   renderActions,
   className,
   disableLinks,
-}: StopsTimelineProps) => (
-  <div className={cn('flex flex-col', className)}>
-    {stops.map((stop, index) => {
-      const isFirst = index === 0;
-      const isLast = index === stops.length - 1;
-      return (
-        <StopsTimelineItem
-          key={stop.id}
-          stop={stop}
-          index={index}
-          isFirst={isFirst}
-          isLast={isLast}
-          disableLinks={disableLinks}
-          actions={renderActions?.(stop, { isFirst, isLast })}
-        />
-      );
-    })}
-  </div>
-);
+}: StopsTimelineProps) => {
+  const { t } = useTranslation(['common']);
+  // Only used for dateless contexts (templates) today, so crossed stops show
+  // the generic "next day" badge rather than an exact date.
+  const dayLabels = computeStopDayLabels(stops, null, t('common:nextDay'));
+
+  return (
+    <div className={cn('flex flex-col', className)}>
+      {stops.map((stop, index) => {
+        const isFirst = index === 0;
+        const isLast = index === stops.length - 1;
+        return (
+          <StopsTimelineItem
+            key={stop.id}
+            stop={{ ...stop, ...dayLabels[index] }}
+            index={index}
+            isFirst={isFirst}
+            isLast={isLast}
+            disableLinks={disableLinks}
+            actions={renderActions?.(stop, { isFirst, isLast })}
+          />
+        );
+      })}
+    </div>
+  );
+};

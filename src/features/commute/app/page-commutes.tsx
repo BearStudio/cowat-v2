@@ -212,6 +212,7 @@ export const PageCommutes = () => {
                                   inwardDeparture={
                                     item.stops.at(-1)?.inwardTime ?? undefined
                                   }
+                                  date={item.date}
                                   stops={item.stops}
                                   passengers={[...acceptedPassengers.values()]}
                                   badge={

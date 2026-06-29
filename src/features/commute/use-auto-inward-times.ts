@@ -2,17 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Control, UseFormReturn, useWatch } from 'react-hook-form';
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
-
-const timeToMinutes = (time: string): number => {
-  const [hours = 0, minutes = 0] = time.split(':').map(Number);
-  return hours * 60 + minutes;
-};
-
-const minutesToTime = (minutes: number): string => {
-  const h = Math.floor(minutes / 60) % 24;
-  const m = minutes % 60;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-};
+import { minutesToTime, timeToMinutes } from '@/features/commute/time-utils';
 
 /**
  * Auto-computes inward times for stops before the last one,

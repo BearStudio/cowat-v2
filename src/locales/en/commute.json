@@ -100,11 +100,11 @@
     "errors": {
       "seatsMin": "At least 1 seat required",
       "stopsMin": "At least 2 stops required",
-      "inwardBeforeOutward": "Inbound time must be after outbound time",
+      "inwardSameAsOutward": "Inbound time must differ from outbound time",
       "inwardInPast": "Inbound time must be in the future",
       "outwardInPast": "Outbound time must be in the future",
-      "outwardNotIncreasing": "Must be after the previous stop's outbound time",
-      "inwardNotDecreasing": "Must be before the previous stop's inbound time",
+      "outwardSameAsPrev": "Must differ from the previous stop's outbound time",
+      "inwardSameAsPrev": "Must differ from the previous stop's inbound time",
       "datePast": "Date must be today or in the future"
     }
   }

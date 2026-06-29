@@ -250,6 +250,7 @@ export const PageCommuteNew = ({
                 <StepOutwardStops
                   {...asCommuteBase(form)}
                   ns="commute"
+                  tripDate={currentDate}
                   defaultStop={{
                     locationId: '',
                     outwardTime: '',
@@ -274,13 +275,21 @@ export const PageCommuteNew = ({
                         );
                       }}
                     >
-                      <StepInwardStops {...asCommuteBase(form)} ns="commute" />
+                      <StepInwardStops
+                        {...asCommuteBase(form)}
+                        ns="commute"
+                        tripDate={currentDate}
+                      />
                     </MultiStepFormStep>
                   ) : null
                 }
               />
               <MultiStepFormStep name={t('commute:stepper.recap')}>
-                <StepRecap {...asCommuteBase(form)} ns="commute" />
+                <StepRecap
+                  {...asCommuteBase(form)}
+                  ns="commute"
+                  tripDate={currentDate}
+                />
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation
