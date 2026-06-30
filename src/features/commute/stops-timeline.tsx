@@ -30,17 +30,38 @@ export const TripTime = ({
 };
 
 /**
- * Small secondary badge shown next to a time when it falls on a later day
- * (the exact date, or a generic next-day label). Renders nothing when `label`
- * is null/undefined. Shared by the form steps, the recap and the read-only
- * timelines so the day indicator looks identical everywhere.
+ * Small secondary badge shown next to a time when it falls on a later day.
+ * Renders nothing when `label` is null/undefined. Shared by the form steps, the
+ * recap and the read-only timelines so the day indicator looks identical
+ * everywhere.
+ *
+ * On mobile the full date / next-day label would crowd the time block and push
+ * the stop name out (it truncates first), so we instead show a compact "+N"
+ * day-offset chip — and only for stops actually shifted to a later day. From
+ * `sm` up there is room for the full label.
  */
-export const StopDayBadge = ({ label }: { label?: string | null }) =>
-  label ? (
-    <Badge variant="secondary" size="xs">
-      {label}
-    </Badge>
-  ) : null;
+export const StopDayBadge = ({
+  label,
+  offset,
+}: {
+  label?: string | null;
+  offset?: number | null;
+}) => {
+  if (!label) return null;
+  const shifted = typeof offset === 'number' && offset >= 1;
+  return (
+    <>
+      {shifted && (
+        <Badge className="sm:hidden" variant="secondary" size="xs">
+          +{offset}
+        </Badge>
+      )}
+      <Badge className="hidden sm:inline-flex" variant="secondary" size="xs">
+        {label}
+      </Badge>
+    </>
+  );
+};
 
 export type StopForTimeline = Pick<
   StopEnriched,
@@ -53,6 +74,9 @@ export type StopForTimeline = Pick<
    */
   outwardDayLabel?: string | null;
   inwardDayLabel?: string | null;
+  /** Cumulative day offset, for the compact "+N" badge shown on mobile. */
+  outwardDayOffset?: number | null;
+  inwardDayOffset?: number | null;
 };
 
 export const TimelineDot = ({ className }: { className?: string }) => (
@@ -193,12 +217,18 @@ export const StopsTimelineItem = ({
         <span className="text-muted-foreground/50">·</span>
         <div className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground">
           <TripTime type="ONEWAY" time={stop.outwardTime} />
-          <StopDayBadge label={stop.outwardDayLabel} />
+          <StopDayBadge
+            label={stop.outwardDayLabel}
+            offset={stop.outwardDayOffset}
+          />
           {stop.inwardTime && (
             <>
               <span className="text-muted-foreground/50">·</span>
               <TripTime type="RETURN" time={stop.inwardTime} />
-              <StopDayBadge label={stop.inwardDayLabel} />
+              <StopDayBadge
+                label={stop.inwardDayLabel}
+                offset={stop.inwardDayOffset}
+              />
             </>
           )}
         </div>

@@ -105,6 +105,7 @@ export const StepInwardStops = ({
                     hasDayChange,
                     t('common:nextDay')
                   )}
+                  offset={dayOffsets.inward[index] ?? 0}
                 />
                 {autoComputedIndices.has(index) && (
                   <FormFieldHelper>

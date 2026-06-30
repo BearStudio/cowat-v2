@@ -159,6 +159,10 @@ export const stopDayLabel = (
 export type StopDayLabels = {
   outwardDayLabel: string | null;
   inwardDayLabel: string | null;
+  // Raw cumulative day offset (0 = trip date, 1 = next day, …) so the day badge
+  // can render a compact "+N" form on mobile instead of the full date label.
+  outwardDayOffset: number;
+  inwardDayOffset: number;
 };
 
 /**
@@ -195,5 +199,7 @@ export const computeStopDayLabels = (
           fallback
         )
       : null,
+    outwardDayOffset: dayOffsets.outward[i] ?? 0,
+    inwardDayOffset: dayOffsets.inward[i] ?? 0,
   }));
 };

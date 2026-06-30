@@ -103,6 +103,7 @@ export const StepRecap = ({
       outwardTime: time,
       inwardTime: null,
       outwardDayLabel: stopDateLabel(dayOffset),
+      outwardDayOffset: dayOffset,
       passengers: passengersByLocationId?.get(locationId),
     };
   };
