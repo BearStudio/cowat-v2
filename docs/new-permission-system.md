@@ -216,16 +216,15 @@ The client uses the **same** pure functions, so UI and server never diverge:
 - [`with-org-permissions.tsx`](../src/features/auth/with-org-permissions.tsx) →
   `checkOrgPermission`
 - [`guard-organization.tsx`](../src/features/organization/guard-organization.tsx)
-  → both
+  → `checkOrgPermission` (via its optional `organizationPermission` prop)
 
-> ⚠️ **Known intentional divergence:** `guard-organization.tsx` accepts an
-> optional per-route `appPermission` prop; when set, an app-level permission
-> (checked with `checkAppPermission`) **also** grants access to the org screen
-> — access passes if **either** the app permission or the org permission holds.
-> This is declared at the call site (not hardcoded here) and is **client-side
-> only**: the server's `organizationProcedure` authorizes every request on its
-> own and does **not** grant app roles any org permission. Keep this in mind —
-> client gating is UX, not security.
+> ℹ️ **`guard-organization.tsx` is org-only.** It accepts an optional
+> `organizationPermission` prop and gates the route with `checkOrgPermission`
+> against the active org's role; when the prop is omitted it only resolves the
+> active org and renders the children. There is **no** app-level escape hatch:
+> an app role never grants access to an org screen here. As always, this guard
+> is **client-side UX only** — the server's `organizationProcedure` authorizes
+> every request on its own.
 
 ## Maintenance guide
 
