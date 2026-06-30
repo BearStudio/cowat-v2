@@ -103,6 +103,12 @@ export const BookingDrawer = (props: {
   commuteType: CommuteType;
   commuteDate: Date;
   stop: StopEnriched | null;
+  /**
+   * All the commute's stops in order. Passed to the summary so the day-offset
+   * of the single booked stop is computed against the whole trip (a stop after
+   * a midnight crossing would otherwise be mislabelled when shown in isolation).
+   */
+  commuteStops: StopEnriched[];
   driver: UserSummary | null;
   isFirstStop: boolean;
   isLastStop: boolean;
@@ -172,6 +178,7 @@ export const BookingDrawer = (props: {
                 date={props.commuteDate}
                 typeLabel={t(`commute:list.type.${props.commuteType}`)}
                 stops={[props.stop]}
+                tripStops={props.commuteStops}
               />
             )}
             {tripTypeOptions.length > 1 && (

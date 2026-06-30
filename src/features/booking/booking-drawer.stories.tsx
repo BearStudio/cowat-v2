@@ -22,6 +22,7 @@ export const RoundMiddleStop = () => {
         commuteType="ROUND"
         commuteDate={STORY_DATE}
         stop={null}
+        commuteStops={[]}
         driver={null}
         isFirstStop={false}
         isLastStop={false}
@@ -43,6 +44,7 @@ export const RoundFirstStop = () => {
         commuteType="ROUND"
         commuteDate={STORY_DATE}
         stop={null}
+        commuteStops={[]}
         driver={null}
         isFirstStop={true}
         isLastStop={false}
@@ -64,6 +66,7 @@ export const RoundLastStop = () => {
         commuteType="ROUND"
         commuteDate={STORY_DATE}
         stop={null}
+        commuteStops={[]}
         driver={null}
         isFirstStop={false}
         isLastStop={true}
@@ -85,6 +88,7 @@ export const OneWayCommute = () => {
         commuteType="ONEWAY"
         commuteDate={STORY_DATE}
         stop={null}
+        commuteStops={[]}
         driver={null}
         isFirstStop={false}
         isLastStop={false}

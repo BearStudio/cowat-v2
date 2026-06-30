@@ -19,6 +19,13 @@ type ConfirmSummaryProps = {
   dateFormat?: DateFormatKey;
   typeLabel: string;
   stops: StopForTimeline[];
+  /**
+   * Full ordered trip, used **only** to compute the per-stop day offsets when
+   * `stops` is a subset (e.g. the booking drawer renders a single boarding
+   * stop). A stop's day depends on the legs before it, so the offsets must be
+   * computed over the whole trip. Rendered stops are matched into it by reference.
+   */
+  tripStops?: StopForTimeline[];
 };
 
 export const ConfirmSummary = ({
@@ -27,9 +34,22 @@ export const ConfirmSummary = ({
   dateFormat = 'commute:dayHeader',
   typeLabel,
   stops,
+  tripStops,
 }: ConfirmSummaryProps) => {
   const { t } = useTranslation(['common']);
-  const dayLabels = computeStopDayLabels(stops, date, t('common:nextDay'));
+  const offsetStops = tripStops ?? stops;
+  const dayLabels = computeStopDayLabels(
+    offsetStops,
+    date,
+    t('common:nextDay')
+  );
+  // Each rendered stop reuses the label computed for its position in the full
+  // trip. When `tripStops` is omitted, `offsetStops === stops` so this is the
+  // identity mapping.
+  const labelFor = (stop: StopForTimeline) => {
+    const index = offsetStops.indexOf(stop);
+    return index >= 0 ? dayLabels[index] : undefined;
+  };
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
@@ -62,7 +82,7 @@ export const ConfirmSummary = ({
             {stops.map((stop, i) => (
               <StopsTimelineItem
                 key={stop.location.id}
-                stop={{ ...stop, ...dayLabels[i] }}
+                stop={{ ...stop, ...labelFor(stop) }}
                 isFirst={i === 0}
                 isLast={i === stops.length - 1}
               />

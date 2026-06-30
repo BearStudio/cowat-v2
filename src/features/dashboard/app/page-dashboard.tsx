@@ -76,6 +76,7 @@ export const PageDashboard = () => {
           commuteType: commute.type as CommuteType,
           commuteDate: commute.date,
           stop: stop as StopEnriched,
+          commuteStops: commute.stops as StopEnriched[],
           driver: commute.driver as UserSummary,
           driverMemberId: commute.driverMemberId,
           isFirstStop: stop.order === minOrder,
@@ -246,6 +247,7 @@ export const PageDashboard = () => {
           commuteType={bookingInfo?.commuteType ?? 'ROUND'}
           commuteDate={bookingInfo?.commuteDate ?? FALLBACK_DATE}
           stop={bookingInfo?.stop ?? null}
+          commuteStops={bookingInfo?.commuteStops ?? []}
           driver={bookingInfo?.driver ?? null}
           isFirstStop={bookingInfo?.isFirstStop ?? false}
           isLastStop={bookingInfo?.isLastStop ?? false}
