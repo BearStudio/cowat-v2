@@ -115,8 +115,9 @@ export const outwardDurationMinutes = (
 
 /**
  * A trip date shifted by `dayOffset` days, formatted with the shared
- * `common:short` date format (rather than a hardcoded pattern) so the day
- * badges follow the project-wide date convention.
+ * `common:short` date format (rather than a hardcoded pattern) so it follows
+ * the project-wide date convention. Used for the single global trip-date badge;
+ * the per-stop day badges show a relative label instead (see `stopDayLabel`).
  */
 export const formatTripDate = (tripDate: Date, dayOffset: number): string =>
   dayjs(tripDate).add(dayOffset, 'day').f('common:short');
@@ -136,31 +137,30 @@ export const tripCrossesMidnight = (
   );
 
 /**
- * Per-stop day badge label, shared by the form steps and the recap so they
- * stay consistent.
+ * Per-stop day badge label, shared by the form steps, the recap and the
+ * read-only timelines so they stay consistent.
  *
- * As soon as the trip crosses midnight at least once (`hasDayChange`), **every**
- * stop carries a label so the reader can tell the days apart — its exact date
- * when the trip date is known, or the generic `fallback` (next-day) for dateless
- * templates (and only on the crossed stops in that case). No crossing → no
- * per-stop badge at all.
+ * The label is a **relative** day indicator built from the offset, never an
+ * exact date. It only appears once the trip crosses midnight at least once
+ * (`hasDayChange`); when it does, **every** stop carries a badge built from the
+ * offset-aware `fallback` so the days read consistently (e.g. "Jour J" at 0,
+ * "Lendemain" at +1, "+2 jours" at +2). No crossing → no badge (the single
+ * global trip-date badge is enough).
  */
 export const stopDayLabel = (
-  tripDate: Date | null | undefined,
   dayOffset: number,
   hasDayChange: boolean,
-  fallback: string
+  fallback: (offset: number) => string
 ): string | null => {
   if (!hasDayChange) return null;
-  if (tripDate) return formatTripDate(tripDate, dayOffset);
-  return dayOffset >= 1 ? fallback : null;
+  return fallback(dayOffset);
 };
 
 export type StopDayLabels = {
   outwardDayLabel: string | null;
   inwardDayLabel: string | null;
   // Raw cumulative day offset (0 = trip date, 1 = next day, …) so the day badge
-  // can render a compact "+N" form on mobile instead of the full date label.
+  // can render a compact "+N" form on mobile instead of the full text label.
   outwardDayOffset: number;
   inwardDayOffset: number;
 };
@@ -176,8 +176,7 @@ export type StopDayLabels = {
  */
 export const computeStopDayLabels = (
   stops: ReadonlyArray<DayOffsetStop | undefined>,
-  tripDate: Date | null | undefined,
-  fallback: string,
+  fallback: (offset: number) => string,
   // Optional precomputed offsets, shared with callers that also need the raw
   // offsets (e.g. to compute the trip duration) to avoid recomputing them.
   precomputedOffsets?: DayOffsets
@@ -186,18 +185,12 @@ export const computeStopDayLabels = (
   const hasDayChange = tripCrossesMidnight(stops, dayOffsets);
   return stops.map((stop, i) => ({
     outwardDayLabel: stopDayLabel(
-      tripDate,
       dayOffsets.outward[i] ?? 0,
       hasDayChange,
       fallback
     ),
     inwardDayLabel: stop?.inwardTime
-      ? stopDayLabel(
-          tripDate,
-          dayOffsets.inward[i] ?? 0,
-          hasDayChange,
-          fallback
-        )
+      ? stopDayLabel(dayOffsets.inward[i] ?? 0, hasDayChange, fallback)
       : null,
     outwardDayOffset: dayOffsets.outward[i] ?? 0,
     inwardDayOffset: dayOffsets.inward[i] ?? 0,

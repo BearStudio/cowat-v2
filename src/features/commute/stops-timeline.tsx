@@ -30,15 +30,16 @@ export const TripTime = ({
 };
 
 /**
- * Small secondary badge shown next to a time when it falls on a later day.
+ * Small secondary day badge shown next to a time on a multi-day trip.
  * Renders nothing when `label` is null/undefined. Shared by the form steps, the
  * recap and the read-only timelines so the day indicator looks identical
  * everywhere.
  *
- * On mobile the full date / next-day label would crowd the time block and push
- * the stop name out (it truncates first), so we instead show a compact "+N"
- * day-offset chip — and only for stops actually shifted to a later day. From
- * `sm` up there is room for the full label.
+ * On mobile the full label ("Jour J", "Lendemain", "+2 jours") would crowd the
+ * time block and push the stop name out (it truncates first), so we instead
+ * show a compact "+N" chip — and only for stops actually shifted to a later day
+ * (the day-0 "Jour J" label is desktop-only). From `sm` up there is room for
+ * the full label.
  */
 export const StopDayBadge = ({
   label,
@@ -69,8 +70,8 @@ export type StopForTimeline = Pick<
 > & {
   passengers?: StopPassenger[];
   /**
-   * Badge label shown next to the time when it falls on a later day (the
-   * exact date, or a generic next-day label). Omitted/null = same day.
+   * Relative day badge label shown on a multi-day trip (e.g. "Jour J" on the
+   * trip's own day, "Lendemain", "+2 jours"). Omitted/null = single-day trip.
    */
   outwardDayLabel?: string | null;
   inwardDayLabel?: string | null;
@@ -262,9 +263,10 @@ export const StopsTimeline = ({
   disableLinks,
 }: StopsTimelineProps) => {
   const { t } = useTranslation(['common']);
-  // Only used for dateless contexts (templates) today, so crossed stops show
-  // the generic "next day" badge rather than an exact date.
-  const dayLabels = computeStopDayLabels(stops, null, t('common:nextDay'));
+  // Crossed stops show a relative day badge ("Lendemain", "+2 jours").
+  const dayLabels = computeStopDayLabels(stops, (offset) =>
+    t('common:dayBadge', { count: offset })
+  );
 
   return (
     <div className={cn('flex flex-col', className)}>

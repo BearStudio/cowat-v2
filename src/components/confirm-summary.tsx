@@ -38,10 +38,8 @@ export const ConfirmSummary = ({
 }: ConfirmSummaryProps) => {
   const { t } = useTranslation(['common']);
   const offsetStops = tripStops ?? stops;
-  const dayLabels = computeStopDayLabels(
-    offsetStops,
-    date,
-    t('common:nextDay')
+  const dayLabels = computeStopDayLabels(offsetStops, (offset) =>
+    t('common:dayBadge', { count: offset })
   );
   // Each rendered stop reuses the label computed for its position in the full
   // trip. When `tripStops` is omitted, `offsetStops === stops` so this is the

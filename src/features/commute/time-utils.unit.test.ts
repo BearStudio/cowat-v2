@@ -7,7 +7,10 @@ import {
   timeToMinutes,
 } from '@/features/commute/time-utils';
 
-const TRIP_DATE = new Date('2026-06-29T00:00:00');
+// Mirrors the offset-aware i18n fallback: "Jour J" at 0, "Lendemain" at +1,
+// "+N jours" beyond.
+const dayBadge = (offset: number) =>
+  offset === 0 ? 'Jour J' : offset === 1 ? 'Lendemain' : `+${offset} jours`;
 
 describe('minutesToTime', () => {
   it('formats a regular time', () => {
@@ -75,8 +78,7 @@ describe('computeStopDayLabels', () => {
         { outwardTime: '08:00', inwardTime: '17:30' },
         { outwardTime: '08:30', inwardTime: '17:00' },
       ],
-      TRIP_DATE,
-      'Lendemain'
+      dayBadge
     );
     expect(labels).toEqual([
       {
@@ -94,56 +96,49 @@ describe('computeStopDayLabels', () => {
     ]);
   });
 
-  it('labels every stop with its exact date when the return crosses midnight', () => {
-    // Outward stays on day 0, the return (02:00) is read as the next day.
+  it('labels every stop once the return crosses midnight ("Jour J" then "Lendemain")', () => {
+    // The outward stays on day 0 ("Jour J"), the return (02:00) is read as the
+    // next day ("Lendemain"), so the days can be told apart at a glance.
     const labels = computeStopDayLabels(
       [
         { outwardTime: '15:00', inwardTime: '02:20' },
         { outwardTime: '15:30', inwardTime: '02:00' },
       ],
-      TRIP_DATE,
-      'Lendemain'
+      dayBadge
     );
     expect(labels).toEqual([
       {
-        outwardDayLabel: '29/06/2026',
-        inwardDayLabel: '30/06/2026',
+        outwardDayLabel: 'Jour J',
+        inwardDayLabel: 'Lendemain',
         outwardDayOffset: 0,
         inwardDayOffset: 1,
       },
       {
-        outwardDayLabel: '29/06/2026',
-        inwardDayLabel: '30/06/2026',
+        outwardDayLabel: 'Jour J',
+        inwardDayLabel: 'Lendemain',
         outwardDayOffset: 0,
         inwardDayOffset: 1,
       },
     ]);
   });
 
-  it('falls back to the generic label on crossed stops when there is no date (templates)', () => {
+  it('uses the day offset in the relative label when a trip spans several days', () => {
+    // Regression: each backward clock jump on the outward leg adds a day, so a
+    // trip spanning 3 days must read "Jour J" / "Lendemain" / "+2 jours".
     const labels = computeStopDayLabels(
       [
-        { outwardTime: '15:00', inwardTime: '02:20' },
-        { outwardTime: '15:30', inwardTime: '02:00' },
+        { outwardTime: '15:00' },
+        { outwardTime: '10:00' },
+        { outwardTime: '09:00' },
       ],
-      null,
-      'Lendemain'
+      dayBadge
     );
-    // Day-0 outward stops get no badge, only the next-day returns do.
-    expect(labels).toEqual([
-      {
-        outwardDayLabel: null,
-        inwardDayLabel: 'Lendemain',
-        outwardDayOffset: 0,
-        inwardDayOffset: 1,
-      },
-      {
-        outwardDayLabel: null,
-        inwardDayLabel: 'Lendemain',
-        outwardDayOffset: 0,
-        inwardDayOffset: 1,
-      },
+    expect(labels.map((l) => l.outwardDayLabel)).toEqual([
+      'Jour J',
+      'Lendemain',
+      '+2 jours',
     ]);
+    expect(labels.map((l) => l.outwardDayOffset)).toEqual([0, 1, 2]);
   });
 
   it('never sets an inward label when the stop has no return time', () => {
@@ -152,12 +147,13 @@ describe('computeStopDayLabels', () => {
         { outwardTime: '23:30', inwardTime: null },
         { outwardTime: '00:15', inwardTime: null },
       ],
-      TRIP_DATE,
-      'Lendemain'
+      dayBadge
     );
     expect(labels[0]?.inwardDayLabel).toBeNull();
     expect(labels[1]?.inwardDayLabel).toBeNull();
-    // The outward leg crosses midnight, so the post-midnight stop is day 1.
-    expect(labels[1]?.outwardDayLabel).toBe('30/06/2026');
+    // The outward leg crosses midnight: day 0 is "Jour J", the post-midnight
+    // stop is "Lendemain".
+    expect(labels[0]?.outwardDayLabel).toBe('Jour J');
+    expect(labels[1]?.outwardDayLabel).toBe('Lendemain');
   });
 });

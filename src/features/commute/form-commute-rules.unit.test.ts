@@ -109,22 +109,24 @@ describe('tripCrossesMidnight', () => {
 });
 
 describe('stopDayLabel', () => {
+  // Mirrors the offset-aware i18n fallback: "Jour J" at 0, "Lendemain" at +1,
+  // "+N jours" beyond.
+  const dayBadge = (offset: number) =>
+    offset === 0 ? 'Jour J' : offset === 1 ? 'Lendemain' : `+${offset} jours`;
+
   it('shows no badge when the trip stays on a single day', () => {
-    expect(stopDayLabel(TODAY, 0, false, 'Lendemain')).toBeNull();
-    expect(stopDayLabel(TODAY, 1, false, 'Lendemain')).toBeNull();
+    expect(stopDayLabel(0, false, dayBadge)).toBeNull();
+    expect(stopDayLabel(1, false, dayBadge)).toBeNull();
   });
 
-  it('labels every stop with its exact date once the trip crosses midnight', () => {
-    // Day 0 stops are labelled too, so the reader can tell the days apart.
-    expect(stopDayLabel(TODAY, 0, true, 'Lendemain')).toBe('29/06/2026');
-    expect(stopDayLabel(TODAY, 1, true, 'Lendemain')).toBe('30/06/2026');
-    expect(stopDayLabel(TODAY, 2, true, 'Lendemain')).toBe('01/07/2026');
+  it('labels a day-0 stop with "Jour J" when the trip crosses midnight', () => {
+    expect(stopDayLabel(0, true, dayBadge)).toBe('Jour J');
   });
 
-  it('falls back to the generic label (crossed stops only) without a date', () => {
-    expect(stopDayLabel(null, 0, true, 'Lendemain')).toBeNull();
-    expect(stopDayLabel(null, 1, true, 'Lendemain')).toBe('Lendemain');
-    expect(stopDayLabel(undefined, 1, true, 'Lendemain')).toBe('Lendemain');
+  it('labels a shifted stop with a relative day badge once the trip crosses midnight', () => {
+    expect(stopDayLabel(1, true, dayBadge)).toBe('Lendemain');
+    expect(stopDayLabel(2, true, dayBadge)).toBe('+2 jours');
+    expect(stopDayLabel(3, true, dayBadge)).toBe('+3 jours');
   });
 });
 

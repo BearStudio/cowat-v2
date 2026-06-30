@@ -31,8 +31,6 @@ type StepOutwardStopsProps = {
   setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
   defaultStop: FormFieldsCommuteBase['stops'][number];
-  /** Commute date, used to show the exact date when a leg crosses midnight. */
-  tripDate?: Date | null;
 };
 
 export const StepOutwardStops = ({
@@ -40,7 +38,6 @@ export const StepOutwardStops = ({
   setValue,
   ns,
   defaultStop,
-  tripDate,
 }: StepOutwardStopsProps) => {
   const { t } = useTranslation([ns, 'common']);
   const { fields, insert, remove } = useFieldArray({
@@ -85,10 +82,9 @@ export const StepOutwardStops = ({
                       {t(`${ns}:form.outwardTime`)}
                       <StopDayBadge
                         label={stopDayLabel(
-                          tripDate,
                           dayOffsets.outward[index] ?? 0,
                           hasDayChange,
-                          t('common:nextDay')
+                          (offset) => t('common:dayBadge', { count: offset })
                         )}
                         offset={dayOffsets.outward[index] ?? 0}
                       />

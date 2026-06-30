@@ -35,11 +35,6 @@ type StopActionsRenderer = (
 type HeaderStopsTimelineProps = {
   stops: HeaderStop[];
   renderStopActions?: StopActionsRenderer;
-  /**
-   * Trip date, used to label stops that fall on a later day when the trip
-   * crosses midnight (e.g. a return departing after midnight).
-   */
-  tripDate?: Date | null;
 };
 
 /**
@@ -149,7 +144,6 @@ function TimelineStopRow({
 export function HeaderStopsTimeline({
   stops,
   renderStopActions,
-  tripDate,
 }: HeaderStopsTimelineProps) {
   const { t } = useTranslation(['commute', 'common']);
 
@@ -161,8 +155,7 @@ export function HeaderStopsTimeline({
   // affected times, consistently with the form recap.
   const dayLabels = computeStopDayLabels(
     stops,
-    tripDate,
-    t('common:nextDay'),
+    (offset) => t('common:dayBadge', { count: offset }),
     dayOffsets
   );
   const labeledStops = stops.map((stop, i) => ({ ...stop, ...dayLabels[i] }));

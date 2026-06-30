@@ -1,6 +1,8 @@
 {
   "or": "ou",
-  "nextDay": "Lendemain",
+  "dayBadge_zero": "Jour J",
+  "dayBadge_one": "Lendemain",
+  "dayBadge_other": "+{{count}} jours",
   "languages": {
     "label": "Langue",
     "values": {

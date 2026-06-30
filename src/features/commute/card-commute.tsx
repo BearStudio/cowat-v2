@@ -140,8 +140,6 @@ type CardCommuteHeaderProps = {
   inwardTaken?: number;
   outwardDeparture?: string;
   inwardDeparture?: string;
-  /** Commute date, used to show the exact day on stops crossing midnight. */
-  date?: Date | null;
   stops?: StopEnriched[];
   passengers?: PassengerSummary[];
   badge?: React.ReactNode;
@@ -207,7 +205,6 @@ function CardCommuteHeader({
   inwardTaken,
   outwardDeparture,
   inwardDeparture,
-  date,
   stops,
   passengers,
   badge,
@@ -270,7 +267,6 @@ function CardCommuteHeader({
         <HeaderStopsTimeline
           stops={stops}
           renderStopActions={renderStopActions}
-          tripDate={date}
         />
       )}
     </>

@@ -1,6 +1,8 @@
 {
   "or": "or",
-  "nextDay": "Next day",
+  "dayBadge_zero": "D-day",
+  "dayBadge_one": "Next day",
+  "dayBadge_other": "+{{count}} days",
   "languages": {
     "label": "Language",
     "values": {

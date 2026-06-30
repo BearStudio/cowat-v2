@@ -29,8 +29,10 @@ type StepRecapProps = {
   ns: 'commute' | 'commuteTemplate';
   passengersByLocationId?: Map<string, StopPassenger[]>;
   /**
-   * Commute date, used to show the exact date when a leg crosses midnight.
-   * Falls back to the form's `date` field when omitted (creation flow).
+   * Commute date, shown as the single global trip-date (anchor) badge. The
+   * per-stop badges then express later days relative to it ("Lendemain",
+   * "+2 jours"). Falls back to the form's `date` field when omitted (creation
+   * flow).
    */
   tripDate?: Date | null;
 };
@@ -82,11 +84,13 @@ export const StepRecap = ({
     tripDateProp ??
     (ns === 'commute' ? (values.date as Date | undefined) : null);
 
-  // Shared with the form steps: when the trip crosses midnight, every stop
-  // carries its exact date so the reader can tell the days apart; otherwise
-  // the single global date badge is enough and stops carry no per-stop label.
+  // Shared with the form steps and timelines: when the trip crosses midnight,
+  // each shifted stop carries a relative day badge ("Lendemain", "+2 jours")
+  // anchored to the global trip-date badge below.
   const stopDateLabel = (dayOffset: number) =>
-    stopDayLabel(tripDate, dayOffset, hasDayChange, t('common:nextDay'));
+    stopDayLabel(dayOffset, hasDayChange, (offset) =>
+      t('common:dayBadge', { count: offset })
+    );
 
   const toTimelineStop = (
     locationId: string,
@@ -131,7 +135,7 @@ export const StepRecap = ({
     <div className="flex flex-col gap-4">
       {/* Meta info */}
       <div className="flex flex-wrap gap-2">
-        {ns === 'commute' && tripDate != null && !hasDayChange && (
+        {ns === 'commute' && tripDate != null && (
           <Badge variant="secondary">{formatTripDate(tripDate, 0)}</Badge>
         )}
         {ns === 'commuteTemplate' && values.name != null && (

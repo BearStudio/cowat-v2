@@ -30,15 +30,12 @@ type StepInwardStopsProps = {
   control: Control<FormFieldsCommuteBase>;
   setValue: UseFormReturn<FormFieldsCommuteBase>['setValue'];
   ns: 'commute' | 'commuteTemplate';
-  /** Commute date, used to show the exact date when a leg crosses midnight. */
-  tripDate?: Date | null;
 };
 
 export const StepInwardStops = ({
   control,
   setValue,
   ns,
-  tripDate,
 }: StepInwardStopsProps) => {
   const { t } = useTranslation([ns, 'common']);
   const { stops, autoComputedIndices } = useAutoInwardTimes({
@@ -100,10 +97,9 @@ export const StepInwardStops = ({
                 {t(`${ns}:form.inwardTime`)}
                 <StopDayBadge
                   label={stopDayLabel(
-                    tripDate,
                     dayOffsets.inward[index] ?? 0,
                     hasDayChange,
-                    t('common:nextDay')
+                    (offset) => t('common:dayBadge', { count: offset })
                   )}
                   offset={dayOffsets.inward[index] ?? 0}
                 />
