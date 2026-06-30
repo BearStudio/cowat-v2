@@ -64,12 +64,18 @@ function StopNameRow({ stop }: { stop: StopForTimeline }) {
         <div className="flex shrink-0 items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground">
           <span className="text-muted-foreground/50">·</span>
           <TripTime type="ONEWAY" time={stop.outwardTime} />
-          <StopDayBadge label={stop.outwardDayLabel} />
+          <StopDayBadge
+            label={stop.outwardDayLabel}
+            offset={stop.outwardDayOffset}
+          />
           {stop.inwardTime && (
             <>
               <span className="text-muted-foreground/50">·</span>
               <TripTime type="RETURN" time={stop.inwardTime} />
-              <StopDayBadge label={stop.inwardDayLabel} />
+              <StopDayBadge
+                label={stop.inwardDayLabel}
+                offset={stop.inwardDayOffset}
+              />
             </>
           )}
         </div>

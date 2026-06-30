@@ -79,8 +79,18 @@ describe('computeStopDayLabels', () => {
       'Lendemain'
     );
     expect(labels).toEqual([
-      { outwardDayLabel: null, inwardDayLabel: null },
-      { outwardDayLabel: null, inwardDayLabel: null },
+      {
+        outwardDayLabel: null,
+        inwardDayLabel: null,
+        outwardDayOffset: 0,
+        inwardDayOffset: 0,
+      },
+      {
+        outwardDayLabel: null,
+        inwardDayLabel: null,
+        outwardDayOffset: 0,
+        inwardDayOffset: 0,
+      },
     ]);
   });
 
@@ -95,8 +105,18 @@ describe('computeStopDayLabels', () => {
       'Lendemain'
     );
     expect(labels).toEqual([
-      { outwardDayLabel: '29/06/2026', inwardDayLabel: '30/06/2026' },
-      { outwardDayLabel: '29/06/2026', inwardDayLabel: '30/06/2026' },
+      {
+        outwardDayLabel: '29/06/2026',
+        inwardDayLabel: '30/06/2026',
+        outwardDayOffset: 0,
+        inwardDayOffset: 1,
+      },
+      {
+        outwardDayLabel: '29/06/2026',
+        inwardDayLabel: '30/06/2026',
+        outwardDayOffset: 0,
+        inwardDayOffset: 1,
+      },
     ]);
   });
 
@@ -111,8 +131,18 @@ describe('computeStopDayLabels', () => {
     );
     // Day-0 outward stops get no badge, only the next-day returns do.
     expect(labels).toEqual([
-      { outwardDayLabel: null, inwardDayLabel: 'Lendemain' },
-      { outwardDayLabel: null, inwardDayLabel: 'Lendemain' },
+      {
+        outwardDayLabel: null,
+        inwardDayLabel: 'Lendemain',
+        outwardDayOffset: 0,
+        inwardDayOffset: 1,
+      },
+      {
+        outwardDayLabel: null,
+        inwardDayLabel: 'Lendemain',
+        outwardDayOffset: 0,
+        inwardDayOffset: 1,
+      },
     ]);
   });
 

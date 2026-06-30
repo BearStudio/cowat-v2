@@ -90,6 +90,7 @@ export const StepOutwardStops = ({
                           hasDayChange,
                           t('common:nextDay')
                         )}
+                        offset={dayOffsets.outward[index] ?? 0}
                       />
                     </FormFieldLabel>
                     <FormFieldController
