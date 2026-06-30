@@ -130,11 +130,17 @@ describe('stopDayLabel', () => {
 
 describe('createCommuteRules — return crossing midnight (today)', () => {
   // Reported bug: departure 15:00, return 02:00 the next day.
-  const data = roundTrip([
-    { outwardTime: '15:00', inwardTime: '02:20' },
-    { outwardTime: '15:30', inwardTime: '02:00' },
-  ]);
-  const rules = createCommuteRules(data);
+  // Built inside `beforeEach` (after the fake timers are set) so the "now"
+  // captured by createCommuteRules is the frozen NOW, not the real clock.
+  let data: ReturnType<typeof roundTrip>;
+  let rules: ReturnType<typeof createCommuteRules>;
+  beforeEach(() => {
+    data = roundTrip([
+      { outwardTime: '15:00', inwardTime: '02:20' },
+      { outwardTime: '15:30', inwardTime: '02:00' },
+    ]);
+    rules = createCommuteRules(data);
+  });
 
   it('accepts the return order (02:00 is read as next day)', () => {
     expect(rules.shouldInwardDifferFromOutward(data.stops[1]!)).toBe(true);
@@ -152,14 +158,14 @@ describe('createCommuteRules — return crossing midnight (today)', () => {
 });
 
 describe('createCommuteRules — outward leg crossing midnight (today)', () => {
-  // Departure 23:30, arrival 00:15 the next day.
-  const data = roundTrip([
-    { outwardTime: '23:30', inwardTime: '02:30' },
-    { outwardTime: '00:15', inwardTime: '02:00' },
-  ]);
-  const rules = createCommuteRules(data);
-
   it('treats the post-midnight arrival outward time as next day (future)', () => {
+    // Departure 23:30, arrival 00:15 the next day. Built inside the test so it
+    // sees the frozen NOW set by the fake timers.
+    const data = roundTrip([
+      { outwardTime: '23:30', inwardTime: '02:30' },
+      { outwardTime: '00:15', inwardTime: '02:00' },
+    ]);
+    const rules = createCommuteRules(data);
     expect(rules.isOutwardInFuture(data.stops[1]!, 1)).toBe(true);
   });
 });
