@@ -87,10 +87,12 @@ export const isRequesterOf =
 /** Prevents the driver from booking a seat on their own commute (`booking.request`). */
 export const isNotOwnCommute =
   (actor: Actor) =>
-  (resource: { driverMemberId: string }): Decision =>
-    resource.driverMemberId === actor.memberId
+  (resource: { driverMemberId: string } | null | undefined): Decision => {
+    if (!resource) return deny('NOT_FOUND');
+    return resource.driverMemberId === actor.memberId
       ? deny('FORBIDDEN', 'Drivers cannot book seats on their own commutes')
       : allow;
+  };
 
 // ---------------------------------------------------------------------------
 // Family 3 — Self-action prevention
