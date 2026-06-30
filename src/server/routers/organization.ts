@@ -180,10 +180,10 @@ export default {
       }
 
       const canReadMembers = checkOrgPermission(context.orgRole, {
-        member: ['update'],
+        member: ['read'],
       });
       const canReadInvitations = checkOrgPermission(context.orgRole, {
-        invitation: ['create'],
+        invitation: ['read'],
       });
 
       return {

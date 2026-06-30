@@ -27,6 +27,8 @@ const ownerOnlyStatements = {
 
 const organizationStatements = {
   ...defaultStatements,
+  member: [...defaultStatements.member, 'read'],
+  invitation: [...defaultStatements.invitation, 'read'],
   ...customStatements,
   ...managerStatements,
   ...ownerOnlyStatements,
@@ -44,12 +46,16 @@ const roleMember = ac.newRole({
 
 const roleAdmin = ac.newRole({
   ...adminAc.statements,
+  member: [...adminAc.statements.member, 'read'],
+  invitation: [...adminAc.statements.invitation, 'read'],
   ...customStatements,
   ...managerStatements,
 });
 
 const roleOwner = ac.newRole({
   ...ownerAc.statements,
+  member: [...ownerAc.statements.member, 'read'],
+  invitation: [...ownerAc.statements.invitation, 'read'],
   ...customStatements,
   ...managerStatements,
   ...ownerOnlyStatements,
