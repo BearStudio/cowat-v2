@@ -9,6 +9,7 @@ import {
 } from '@/features/auth/ability/abilities';
 import { actorFromContext } from '@/features/auth/ability/actor';
 import { enforce } from '@/features/auth/ability/enforce';
+import { zOrgRole } from '@/features/auth/organization-permissions';
 import { checkOrgPermission } from '@/features/auth/rbac';
 import { auth } from '@/server/auth';
 import {
@@ -243,7 +244,7 @@ export default {
       z.object({
         organizationId: z.string(),
         email: z.string().email(),
-        role: z.enum(['owner', 'member']).prefault('member'),
+        role: zOrgRole().prefault('member'),
       })
     )
     .output(z.void())
@@ -291,7 +292,7 @@ export default {
     .input(
       z.object({
         emails: z.array(z.string().email()).min(1),
-        role: z.enum(['owner', 'member']).prefault('member'),
+        role: zOrgRole().prefault('member'),
       })
     )
     .output(
@@ -380,7 +381,7 @@ export default {
     .input(
       z.object({
         memberId: z.string(),
-        role: z.enum(['owner', 'member']),
+        role: zOrgRole(),
       })
     )
     .output(z.void())

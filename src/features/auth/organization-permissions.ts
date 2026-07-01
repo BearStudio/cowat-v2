@@ -8,6 +8,7 @@ import {
   memberAc,
   ownerAc,
 } from 'better-auth/plugins/organization/access';
+import { z } from 'zod';
 
 const customStatements = {
   commute: ['read', 'create', 'update', 'delete'],
@@ -64,3 +65,7 @@ const roleOwner = ac.newRole({
 const roles = { owner: roleOwner, admin: roleAdmin, member: roleMember };
 
 export const organizationPermissions = { ac, roles };
+
+export const orgRolesNames = ['owner', 'admin', 'member'] as const;
+export type OrgRole = (typeof orgRolesNames)[number];
+export const zOrgRole: () => z.ZodType<OrgRole> = () => z.enum(orgRolesNames);

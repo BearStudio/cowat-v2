@@ -1,3 +1,4 @@
+import type { OrgRole } from '@/features/auth/organization-permissions';
 import type { AppDB } from '@/server/db';
 import type { Prisma } from '@/server/db/generated/client';
 
@@ -36,11 +37,7 @@ export const createOrganizationRepository = (db: AppDB) => ({
     );
   },
 
-  updateMemberRole: (
-    memberId: string,
-    organizationId: string,
-    role: 'owner' | 'member'
-  ) =>
+  updateMemberRole: (memberId: string, organizationId: string, role: OrgRole) =>
     db.member.update({
       where: { id: memberId, organizationId },
       data: { role },
