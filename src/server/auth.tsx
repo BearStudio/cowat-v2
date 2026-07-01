@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { admin, emailOTP, openAPI, organization } from 'better-auth/plugins';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { Match } from 'effect';
@@ -18,6 +19,7 @@ import {
 } from '@/features/auth/config';
 import { organizationPermissions } from '@/features/auth/organization-permissions';
 import { permissions } from '@/features/auth/permissions';
+import { isInternalOnlyAuthPath } from '@/server/auth-api-lockdown';
 import { db } from '@/server/db';
 import { sendEmail } from '@/server/email';
 import { getUserLanguage } from '@/server/utils';
@@ -70,6 +72,19 @@ export const auth = betterAuth({
   },
   onAPIError: {
     errorURL: '/login/error',
+  },
+  hooks: {
+    // Lock down the organization/admin management endpoints so they can only be
+    // reached through our oRPC API (which enforces RBAC + business invariants).
+    // `ctx.request` is set only for real inbound HTTP requests; server-side
+    // `auth.api.*` calls made by our oRPC handlers have none and pass through.
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.request && isInternalOnlyAuthPath(ctx.path)) {
+        throw new APIError('FORBIDDEN', {
+          message: 'This endpoint is managed by the application API.',
+        });
+      }
+    }),
   },
   plugins: [
     openAPI({
