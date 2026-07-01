@@ -1,6 +1,8 @@
 import { t } from 'i18next';
 import { z } from 'zod';
 
+import { orgRolesNames } from '@/features/auth/organization-permissions';
+
 export type FormFieldsOrg = z.infer<ReturnType<typeof zFormFieldsOrg>>;
 export const zFormFieldsOrg = () =>
   z.object({
@@ -27,5 +29,5 @@ export const zInviteForm = () =>
           });
         }
       }),
-    role: z.enum(['owner', 'member']),
+    role: z.enum(orgRolesNames),
   });

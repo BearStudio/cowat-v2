@@ -24,6 +24,10 @@ import {
   canAssignRole,
   isNotSelfByMemberId,
 } from '@/features/auth/ability/abilities';
+import {
+  type OrgRole,
+  orgRolesNames,
+} from '@/features/auth/organization-permissions';
 import { WithOrgPermissions } from '@/features/auth/with-org-permissions';
 
 export const OrgMembers = (props: {
@@ -126,20 +130,19 @@ export const OrgMembers = (props: {
                       onChange={(e) =>
                         updateMemberRole.mutateAsync({
                           memberId: member.id,
-                          role: e.target.value as 'member' | 'owner',
+                          role: e.target.value as OrgRole,
                         })
                       }
                       disabled={updateMemberRole.isPending}
                       className="rounded border px-2 py-1 text-sm"
                     >
-                      <option value="member">
-                        {t('organization:members.roles.member')}
-                      </option>
-                      {canPromoteToOwner && (
-                        <option value="owner">
-                          {t('organization:members.roles.owner')}
-                        </option>
-                      )}
+                      {orgRolesNames
+                        .filter((role) => role !== 'owner' || canPromoteToOwner)
+                        .map((role) => (
+                          <option key={role} value={role}>
+                            {t(`organization:members.roles.${role}`)}
+                          </option>
+                        ))}
                     </select>
                   ) : (
                     <Badge
