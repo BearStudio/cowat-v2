@@ -204,6 +204,37 @@ describe('organization router', () => {
       ).resolves.toBeUndefined();
     });
 
+    it('should allow admin to promote a member to admin', async () => {
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC (admin has member:update)
+        targetMember // handler: findMemberById (target is a member)
+      );
+      mockDb.member.update.mockResolvedValue(undefined);
+
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'admin',
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw FORBIDDEN when admin tries to change an owner role', async () => {
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC
+        { ...targetMember, role: 'owner' } // handler: target is an owner
+      );
+
+      // canActOnMember: a non-owner cannot act on an existing owner.
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'admin',
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(mockDb.member.update).not.toHaveBeenCalled();
+    });
+
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       mockGetSession.mockResolvedValue(null);
 
