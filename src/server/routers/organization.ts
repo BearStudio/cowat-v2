@@ -243,7 +243,7 @@ export default {
     .input(
       z.object({
         organizationId: z.string(),
-        email: z.string().email(),
+        email: z.email(),
         role: zOrgRole().prefault('member'),
       })
     )
@@ -291,7 +291,7 @@ export default {
     .route({ method: 'POST', path: '/organizations/invite-bulk', tags })
     .input(
       z.object({
-        emails: z.array(z.string().email()).min(1),
+        emails: z.array(z.email()).min(1),
         role: zOrgRole().prefault('member'),
       })
     )
