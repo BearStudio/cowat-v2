@@ -18,6 +18,14 @@ import {
   DataListRow,
   DataListText,
 } from '@/components/ui/datalist';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import {
   canActOnMember,
@@ -45,6 +53,11 @@ export const OrgMembers = (props: {
 }) => {
   const { t } = useTranslation(['organization']);
   const { actor } = useCan();
+
+  const roleItems = orgRolesNames.map((role) => ({
+    value: role,
+    label: t(`organization:members.roles.${role}`),
+  }));
 
   const removeMember = useMutation(
     orpc.organization.removeMember.mutationOptions({
@@ -120,25 +133,34 @@ export const OrgMembers = (props: {
               <WithOrgPermissions permissions={[{ member: ['update'] }]}>
                 <DataListCell className="flex-none">
                   {canManageMember ? (
-                    <select
+                    <Select
+                      items={roleItems}
                       value={member.role}
-                      onChange={(e) =>
+                      onValueChange={(value) =>
                         updateMemberRole.mutateAsync({
                           memberId: member.id,
-                          role: e.target.value as OrgRole,
+                          role: value as OrgRole,
                         })
                       }
                       disabled={updateMemberRole.isPending}
-                      className="rounded border px-2 py-1 text-sm"
                     >
-                      {orgRolesNames
-                        .filter((role) => role !== 'owner' || canPromoteToOwner)
-                        .map((role) => (
-                          <option key={role} value={role}>
-                            {t(`organization:members.roles.${role}`)}
-                          </option>
-                        ))}
-                    </select>
+                      <SelectTrigger className="w-36">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {orgRolesNames
+                            .filter(
+                              (role) => role !== 'owner' || canPromoteToOwner
+                            )
+                            .map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {t(`organization:members.roles.${role}`)}
+                              </SelectItem>
+                            ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <Badge
                       variant={
