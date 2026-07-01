@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   canAssignRole,
-  canMutateOwnedResource,
   isDriverOf,
   isNotCurrentSession,
   isNotOwnCommute,
@@ -68,29 +67,6 @@ describe('rbac — checkOrgPermission', () => {
 
   it('is fail-closed when the role is null/empty', () => {
     expect(checkOrgPermission(null, { commute: ['create'] })).toBe(false);
-  });
-});
-
-describe('abilities — ownership (canMutateOwnedResource)', () => {
-  const can = canMutateOwnedResource(actor({ memberId: 'm-1' }));
-
-  it('NOT_FOUND when resource is absent', () => {
-    expect(can(null)).toEqual({
-      ok: false,
-      code: 'NOT_FOUND',
-      message: undefined,
-    });
-  });
-
-  it('FORBIDDEN when not the owner', () => {
-    expect(can({ driverMemberId: 'm-2' })).toMatchObject({
-      ok: false,
-      code: 'FORBIDDEN',
-    });
-  });
-
-  it('allows the owner', () => {
-    expect(can({ driverMemberId: 'm-1' })).toEqual({ ok: true });
   });
 });
 

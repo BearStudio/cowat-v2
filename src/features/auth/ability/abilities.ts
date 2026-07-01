@@ -25,21 +25,6 @@ const deny = (code: DecisionCode, message?: string): Decision => ({
 // Family 1 — Resource ownership
 // ---------------------------------------------------------------------------
 
-export const canMutateOwnedResource =
-  (actor: Actor) =>
-  <T extends { driverMemberId: string }>(
-    resource: T | null | undefined
-  ): Decision => {
-    if (!resource) return deny('NOT_FOUND');
-    if (resource.driverMemberId !== actor.memberId) return deny('FORBIDDEN');
-    return allow;
-  };
-
-/**
- * Ownership for resources owned directly by a member (field `memberId`, not
- * `driverMemberId`). Same fail-closed shape as the driver
- * ownership ability: missing → NOT_FOUND, not mine → FORBIDDEN.
- */
 export const isOwnerByMemberId =
   (actor: Actor) =>
   (resource: { memberId: string } | null | undefined): Decision => {

@@ -8,10 +8,7 @@
  */
 import { ORPCError } from '@orpc/client';
 
-import {
-  canMutateOwnedResource,
-  type Decision,
-} from '@/features/auth/ability/abilities';
+import { type Decision, isDriverOf } from '@/features/auth/ability/abilities';
 import { type Actor } from '@/features/auth/ability/actor';
 
 export function enforce(decision: Decision): asserts decision is { ok: true } {
@@ -24,5 +21,5 @@ export function enforceOwnership<T extends { driverMemberId: string }>(
   actor: Actor,
   resource: T | null | undefined
 ): asserts resource is T {
-  enforce(canMutateOwnedResource(actor)(resource));
+  enforce(isDriverOf(actor)(resource));
 }
