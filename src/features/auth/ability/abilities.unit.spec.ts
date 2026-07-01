@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  canActOnMember,
   canAssignRole,
+  isCurrentSession,
   isDriverOf,
   isNotCurrentSession,
   isNotOwnCommute,
@@ -10,6 +12,7 @@ import {
   isOwnerByMemberId,
   isPassengerOf,
   isRequesterOf,
+  isSelfByUserId,
 } from '@/features/auth/ability/abilities';
 import { type Actor } from '@/features/auth/ability/actor';
 import { checkAppPermission, checkOrgPermission } from '@/features/auth/rbac';
@@ -178,5 +181,65 @@ describe('abilities — hierarchy (canAssignRole)', () => {
     expect(canAssignRole(actor({ orgRole: 'admin' }), 'member')).toEqual({
       ok: true,
     });
+  });
+
+  it('is fail-closed when the actor has no org role', () => {
+    expect(canAssignRole(actor({ orgRole: undefined }), 'owner')).toEqual({
+      ok: false,
+      code: 'FORBIDDEN',
+      message: 'Only org owners can assign the owner role',
+    });
+  });
+});
+
+describe('abilities — hierarchy (canActOnMember)', () => {
+  it('lets an owner act on another owner', () => {
+    expect(canActOnMember(actor({ orgRole: 'owner' }), 'owner')).toEqual({
+      ok: true,
+    });
+  });
+
+  it('forbids a non-owner from acting on an owner', () => {
+    expect(canActOnMember(actor({ orgRole: 'admin' }), 'owner')).toEqual({
+      ok: false,
+      code: 'FORBIDDEN',
+      message: 'Only an owner can act on another owner',
+    });
+  });
+
+  it('lets a non-owner act on a non-owner', () => {
+    expect(canActOnMember(actor({ orgRole: 'admin' }), 'member')).toEqual({
+      ok: true,
+    });
+  });
+
+  it('recognises the owner target role inside a CSV role', () => {
+    expect(canActOnMember(actor({ orgRole: 'admin' }), 'admin,owner')).toEqual({
+      ok: false,
+      code: 'FORBIDDEN',
+      message: 'Only an owner can act on another owner',
+    });
+  });
+
+  it('is fail-closed when the actor has no org role and target is owner', () => {
+    expect(canActOnMember(actor({ orgRole: undefined }), 'owner')).toEqual({
+      ok: false,
+      code: 'FORBIDDEN',
+      message: 'Only an owner can act on another owner',
+    });
+  });
+});
+
+describe('abilities — client-side self mirrors', () => {
+  it('isSelfByUserId is true for the actor, false otherwise', () => {
+    const a = actor({ userId: 'u-1' });
+    expect(isSelfByUserId(a, 'u-1')).toBe(true);
+    expect(isSelfByUserId(a, 'u-2')).toBe(false);
+  });
+
+  it('isCurrentSession is true for the actor session, false otherwise', () => {
+    const a = actor({ sessionToken: 's-1' });
+    expect(isCurrentSession(a, 's-1')).toBe(true);
+    expect(isCurrentSession(a, 's-2')).toBe(false);
   });
 });
