@@ -55,9 +55,6 @@ export const PageOrganizations = (props: {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // App admins delete orgs they are not a member of, so this goes through the
-  // app-level `organization:['delete']` permission (checked server-side by
-  // `organization.delete`), not the org-scoped one.
   const deleteOrg = useMutation(
     orpc.organization.delete.mutationOptions({
       onSuccess: async () => {

@@ -108,7 +108,6 @@ export const PageUser = (props: { id: string }) => {
         startActions={<BackButton />}
         endActions={
           <>
-            {/* Can't delete yourself (same self-action rule as the server). */}
             {actor && !isSelfByUserId(actor, props.id) && (
               <WithPermissions
                 permissions={[
@@ -378,7 +377,6 @@ const RevokeAllSessionsButton = (props: { userId: string }) => {
     <Button
       size="xs"
       variant="secondary"
-      // Can't revoke your own sessions (same self-action rule as the server).
       disabled={!actor || isSelfByUserId(actor, props.userId)}
       loading={revokeAllSessions.isPending}
       onClick={() => {
@@ -418,7 +416,6 @@ const RevokeSessionButton = (props: {
     <Button
       size="xs"
       variant="secondary"
-      // Can't revoke the session you're currently using.
       disabled={!actor || isCurrentSession(actor, props.sessionToken)}
       loading={revokeSession.isPending}
       onClick={() => {

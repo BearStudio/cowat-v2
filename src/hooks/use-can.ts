@@ -7,21 +7,6 @@
  * (Ownership / Relation families: `isDriverOf`, `canMutateOwnedResource`,
  * `isPassengerOf`, `isRequesterOf`, `isOwnerByMemberId`, …) — pass the ability
  * and the resource, get back a boolean.
- *
- * It also returns the raw `actor`/`isPending`, for abilities `can` can't wrap
- * because they aren't curried `(actor) => (resource) => …`:
- * - hierarchy: `canActOnMember(actor, targetRole)`, `canAssignRole(actor, role)`
- * - self-action: `isNotSelfByUserId(actor, userId, msg)`,
- *   `isNotCurrentSession(actor, token, msg)` (read `.ok`; the `msg` only feeds
- *   the server-side error, so pass `''` on the client).
- *
- * Fail-closed: with no actor (unauthenticated) `can` returns `false`. While the
- * active org is still loading, the actor exists but its org fields are
- * `undefined`, so org-scoped abilities deny too. With the raw `actor`, guard on
- * `!actor` yourself.
- *
- * ⚠️ Client gating is UX only : the server (`organizationProcedure` + `enforce`)
- * remains the source of truth. See `docs/new-permission-system.md`.
  */
 import { useCallback } from 'react';
 

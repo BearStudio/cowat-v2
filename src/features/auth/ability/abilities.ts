@@ -103,11 +103,7 @@ export const isNotCurrentSession = (
   actor.sessionToken === sessionToken ? deny('BAD_REQUEST', message) : allow;
 
 /**
- * Client-side "positive" mirrors of the self-action abilities above. The
- * `isNot…` abilities are written for the server (they carry a `message` and
- * `enforce` throws on `!ok`), but the UI usually wants the plain "is this me?"
- * predicate — these wrappers avoid the `!isNotSelf(...).ok` double negation at
- * call sites. They never need a message, since they don't feed `enforce`.
+ * Client-side "positive" mirrors of the self-action abilities above. They never need a message, since they don't feed `enforce`.
  */
 export const isSelfByUserId = (actor: Actor, targetUserId: string): boolean =>
   !isNotSelfByUserId(actor, targetUserId, '').ok;

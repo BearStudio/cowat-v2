@@ -18,7 +18,6 @@ export const FormUser = (props: { userId?: string }) => {
   const { t } = useTranslation(['user']);
   const { actor } = useCan();
   const form = useFormContext<FormFieldsUser>();
-  // Editing yourself: you can't change your own role (server enforces it too).
   const isCurrentUser =
     !!props.userId && !!actor && isSelfByUserId(actor, props.userId);
 

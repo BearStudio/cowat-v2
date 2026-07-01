@@ -89,15 +89,10 @@ export const OrgMembers = (props: {
         </DataListEmptyState>
       ) : (
         props.members.map((member) => {
-          // RBAC (member:['update'/'delete']) gates the cells below by role.
-          // These per-resource abilities refine it on the memberId axis, exactly
-          // like the server: only an owner may act on another owner, and you
-          // can't manage your own membership here.
           const canManageMember =
             !!actor &&
             isNotSelfByMemberId(actor, member.id, '').ok &&
             canActOnMember(actor, member.role).ok;
-          // Only an owner may promote someone to the owner role.
           const canPromoteToOwner = !!actor && canAssignRole(actor, 'owner').ok;
 
           return (
