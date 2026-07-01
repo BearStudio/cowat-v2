@@ -140,10 +140,6 @@ export default {
         name: z.string(),
         slug: z.string(),
         logo: z.string().nullable(),
-        // Manager-only data: only present when the caller has the relevant
-        // organization permission. A regular member receives them as
-        // `undefined` and therefore cannot read other members' emails or
-        // pending invitations.
         members: z
           .array(
             z.object({
@@ -302,11 +298,6 @@ export default {
       })
     )
     .handler(async ({ context, input }) => {
-      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
-      // permission `invitation:['create']` (member role has no invitation perms).
-      // Business invariant: assigning the `owner` role is owner-only. This must
-      // be enforced here too — not only in `updateMemberRole` — otherwise an org
-      // admin could escalate by inviting a new member directly as `owner`.
       enforce(canAssignRole(actorFromContext(context), input.role));
 
       const headers = getRequestHeaders();
@@ -342,8 +333,6 @@ export default {
     .input(z.object({ memberId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
-      // permission `member:['delete']`.
       enforce(
         isNotSelfByMemberId(
           actorFromContext(context),
@@ -363,8 +352,6 @@ export default {
         });
       }
 
-      // Business invariant: only an owner can act on another owner, so a
-      // non-owner (e.g. an org admin) cannot remove an existing owner.
       enforce(canActOnMember(actorFromContext(context), targetMember.role));
 
       await auth.api.removeMember({
@@ -386,9 +373,6 @@ export default {
     )
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
-      // permission `member:['update']`. The owner-only rule for assigning the
-      // owner role is a business invariant expressed by `canAssignRole`.
       enforce(canAssignRole(actorFromContext(context), input.role));
 
       const targetMember = await context.organizations.findMemberById(
@@ -402,9 +386,6 @@ export default {
         });
       }
 
-      // Business invariant: only an owner can act on another owner, so a
-      // non-owner (e.g. an org admin) cannot demote an existing owner. This
-      // needs the target's CURRENT role, hence it runs after the member load.
       enforce(canActOnMember(actorFromContext(context), targetMember.role));
 
       await context.organizations.updateMemberRole(
@@ -419,8 +400,6 @@ export default {
     .input(z.object({ invitationId: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Caller restriction (owner/admin) is enforced by the procedure's RBAC
-      // permission `invitation:['cancel']` (member role has no invitation perms).
       const invitation = await context.organizations.findInvitationById(
         input.invitationId,
         context.organizationId

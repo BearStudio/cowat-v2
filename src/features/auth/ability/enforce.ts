@@ -20,11 +20,6 @@ export function enforce(decision: Decision): asserts decision is { ok: true } {
   }
 }
 
-/**
- * Ownership assertion: combines the `canMutateOwnedResource` ability with
- * `enforce`, while NARROWING the resource to non-null for the rest of the
- * handler (replaces the former `assertDriverOwnership`).
- */
 export function enforceOwnership<T extends { driverMemberId: string }>(
   actor: Actor,
   resource: T | null | undefined

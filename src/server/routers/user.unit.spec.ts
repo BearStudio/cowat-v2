@@ -57,8 +57,6 @@ const mockSessionFromDb = {
   expiresAt: new Date(Date.now() + 86400000),
 };
 
-// Permissions are now enforced in-process from the session's user role.
-// To exercise a denial, sign the actor in with a role lacking the permission.
 function signInWithRole(role: string) {
   mockGetSession.mockResolvedValue({
     user: { ...mockUser, role },

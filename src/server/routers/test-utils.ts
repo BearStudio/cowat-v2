@@ -19,8 +19,6 @@ type ModelKeys = {
 type MockedModel<T> = { [K in keyof T]: Mock };
 type MockedDb = { [K in ModelKeys]: MockedModel<Db[K]> };
 
-// Auto-mock @/server/db: any model property returns a proxy where
-// every method is a vi.fn(), so tests don't need to declare the shape.
 export const mockDb: MockedDb = new Proxy({} as ExplicitAny, {
   get(target: Record<string, Record<string, unknown>>, model: string) {
     if (!(model in target)) {
@@ -37,9 +35,6 @@ export const mockDb: MockedDb = new Proxy({} as ExplicitAny, {
   },
 });
 
-// Default app role is 'admin' so app-level endpoints (user.*, organization
-// admin) pass by default. Tests that assert FORBIDDEN override the session with
-// a lower role (e.g. 'user') via `mockGetSession`.
 export const mockUser = { id: 'user-1', name: 'Test User', role: 'admin' };
 export const mockMemberId = 'member-1';
 export const mockOrganizationId = 'org-1';

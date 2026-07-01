@@ -4,9 +4,6 @@
  * These are PURE FUNCTIONS `(actor, resource) => Decision`. They never throw
  * (that is `enforce`'s job, on the server side) so they stay reusable on the
  * client for UI gating.
- *
- * Each ability reproduces exactly the behaviour (code + message) of the manual
- * guard it replaces, so the migration does not change any observable behaviour.
  */
 import { type Actor } from '@/features/auth/ability/actor';
 
@@ -25,7 +22,7 @@ const deny = (code: DecisionCode, message?: string): Decision => ({
 });
 
 // ---------------------------------------------------------------------------
-// Family 1 — Resource ownership ("am I the owner?")
+// Family 1 — Resource ownership
 // ---------------------------------------------------------------------------
 
 export const canMutateOwnedResource =
@@ -40,7 +37,7 @@ export const canMutateOwnedResource =
 
 /**
  * Ownership for resources owned directly by a member (field `memberId`, not
- * `driverMemberId`) (e.g. a `Location`). Same fail-closed shape as the driver
+ * `driverMemberId`). Same fail-closed shape as the driver
  * ownership ability: missing → NOT_FOUND, not mine → FORBIDDEN.
  */
 export const isOwnerByMemberId =
@@ -51,7 +48,7 @@ export const isOwnerByMemberId =
   };
 
 // ---------------------------------------------------------------------------
-// Family 2 — Relation (driver / passenger / requester of a transaction)
+// Family 2 — Relation abilities
 // ---------------------------------------------------------------------------
 
 /** The driver of a commute. */

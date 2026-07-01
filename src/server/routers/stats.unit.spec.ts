@@ -27,9 +27,6 @@ const mockMemberFromDb = {
 
 describe('stats router', () => {
   describe('getAll', () => {
-    // getAll requires the `stats: ['read']` org permission (manager+). The
-    // default authenticated user is a regular member, so success-path tests
-    // elevate the caller to a manager role.
     beforeEach(() => {
       mockDb.member.findFirst.mockResolvedValue({
         id: mockMemberId,

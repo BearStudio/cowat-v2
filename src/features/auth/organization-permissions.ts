@@ -17,7 +17,6 @@ const customStatements = {
   commuteTemplate: ['read', 'create', 'update', 'delete'],
 } satisfies Statements;
 
-// Reserved for managers and above (admin + owner), not regular members.
 const managerStatements = {
   stats: ['read'],
 } satisfies Statements;

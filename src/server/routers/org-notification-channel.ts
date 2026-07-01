@@ -17,9 +17,6 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
     })
   );
 
-// The bot token is a secret: it is WRITE-ONLY across the API surface. The
-// output never returns it (only whether one is set); the input accepts it but
-// treats a blank value as "keep the stored token".
 const zOrgSlackConfigOutput = z.object({
   enabled: z.boolean(),
   hasToken: z.boolean(),
@@ -70,8 +67,6 @@ export default {
     .input(zOrgSlackConfigInput)
     .output(z.void())
     .handler(async ({ context, input }) => {
-      // Preserve the stored token when the client sends a blank value (the UI
-      // never receives the secret back, so it cannot resubmit it).
       let token = input.token || null;
       if (!token) {
         const existing = await context.orgChannels.findByOrgAndType(

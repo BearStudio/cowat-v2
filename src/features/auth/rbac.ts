@@ -1,13 +1,6 @@
 /**
  * RBAC shared between UI and server.
  *
- * Answers "does this role have this permission?" by reusing the better-auth
- * role definitions (`permissions.ts` / `organization-permissions.ts`).
- * Each role exposes `.authorize(permission)`, a PURE and SYNCHRONOUS function
- * (no network) : this is what allows the RBAC to be evaluated identically on
- * the server AND on the client, without going through the HTTP endpoint
- * `auth.api.userHasPermission`.
- *
  * Replaces the local "mirror" in `orpc.ts` and the client `checkRolePermission`.
  */
 import { organizationPermissions } from '@/features/auth/organization-permissions';
@@ -22,12 +15,8 @@ type AuthorizableRole<TPermission> = {
 };
 
 /**
- * A role can be multiple, stored as CSV by better-auth (e.g. "admin,user").
+ * A role can be multiple, stored as CSV by better-auth.
  * We split it and authorize if AT LEAST ONE of the roles grants the permission.
- *
- * No fallback to a default role: an absent/empty role ⇒ no rights
- * ("fail-closed"). This is the opposite of the former `role ?? 'user'` which
- * silently granted `user` rights (vulnerability #3.5).
  */
 const someRoleAuthorizes = <TPermission>(
   rolesCsv: string,

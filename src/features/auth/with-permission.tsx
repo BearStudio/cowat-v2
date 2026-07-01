@@ -17,8 +17,6 @@ export const WithPermissions = (props: {
     return props.loadingFallback ?? props.fallback ?? null;
   }
 
-  // Same in-process check as the server (single source of truth).
-  // checkAppPermission is fail-closed: a null/empty role grants nothing.
   if (
     props.permissions.every(
       (permission) => !checkAppPermission(userRole, permission)

@@ -79,10 +79,6 @@ describe('organization router', () => {
       ],
     };
 
-    // The handler triggers two organization.findUnique calls: the
-    // organizationProcedure middleware reads the slug, then the handler reads
-    // the full details. checkOrgPermission runs in-process from the caller's
-    // role (not mocked), so it decides whether members/invitations are exposed.
     beforeEach(() => {
       mockDb.member.findFirst.mockReset();
       mockDb.organization.findUnique.mockReset();
@@ -135,11 +131,6 @@ describe('organization router', () => {
   describe('updateMemberRole', () => {
     const input = { memberId: 'target-member-1', role: 'owner' as const };
 
-    // The org RBAC (`member:['update']`) is enforced in-process from the
-    // caller's member role, read by the organizationProcedure middleware (call
-    // #1). The owner-only rule for assigning owner is `canAssignRole` (no DB).
-    // The handler then calls findMemberById (call #2). We reset the queue per
-    // test to keep each self-contained.
     const queueMemberFindFirst = (...rows: unknown[]) => {
       mockDb.member.findFirst.mockReset();
       for (const row of rows) {
@@ -252,11 +243,8 @@ describe('organization router', () => {
     });
 
     it('should throw FORBIDDEN when an admin tries to invite an owner', async () => {
-      // Middleware RBAC: admin has invitation:create, so the gate passes…
       mockDb.member.findFirst.mockResolvedValue(adminMembership);
 
-      // …but canAssignRole must still block assigning the owner role here,
-      // exactly like updateMemberRole does (no escalation via invitation).
       await expect(
         call(organizationRouter.inviteMembers, {
           emails: ['victim@example.com'],
@@ -294,8 +282,6 @@ describe('organization router', () => {
   describe('cancelInvitation', () => {
     const input = { invitationId: 'invitation-1' };
 
-    // cancelInvitation is now gated by RBAC `invitation:['cancel']`, enforced in
-    // the middleware from the caller's role (single member.findFirst call).
     const queueMemberFindFirst = (...rows: unknown[]) => {
       mockDb.member.findFirst.mockReset();
       for (const row of rows) {

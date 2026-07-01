@@ -96,8 +96,6 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      // Ownership: a location belongs to the member who created it. Passing the
-      // org-level RBAC gate is not enough — you may only mutate your own.
       enforce(isOwnerByMemberId(actorFromContext(context))(existing));
 
       return await context.locations.update(input.id, {
@@ -122,7 +120,6 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
-      // Ownership: only the member who owns the location may delete it.
       enforce(isOwnerByMemberId(actorFromContext(context))(existing));
 
       await context.locations.delete(input.id);

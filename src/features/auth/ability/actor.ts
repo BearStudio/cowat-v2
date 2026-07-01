@@ -5,23 +5,13 @@
  */
 export type Actor = {
   userId: string;
-  /** Application role ("admin", "user", or CSV "admin,user"). */
   appRole: string;
-  /** Present only when an organization is active. */
   organizationId?: string;
   memberId?: string;
-  /** Role within the active organization ("owner" | "admin" | "member"). */
   orgRole?: string;
-  /** Current session token (for self-action prevention). */
   sessionToken?: string;
 };
 
-/**
- * Builds the `Actor` on the server from the oRPC context.
- *
- * The parameter is typed structurally (and not with the oRPC context type) so
- * this pure module does not pull in a server dependency.
- */
 export const actorFromContext = (context: {
   user: { id: string; role?: string | null };
   session?: { token?: string | null };

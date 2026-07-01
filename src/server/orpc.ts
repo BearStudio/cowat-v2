@@ -19,13 +19,8 @@ import { notifier } from '@/server/notifications';
 import type { NotifyOrgContext } from '@/server/notifications/types';
 import { timingStore } from '@/server/timing-store';
 
-// Permission checks run in-process via `checkAppPermission` / `checkOrgPermission`
-// (which call `role.authorize()` directly). We do NOT use
-// `auth.api.userHasPermission`: that endpoint is a POST handler whose internal
-// dispatch goes through the TanStack Start / Nitro pipeline and hangs (it needs
-// the request body). Since the computation is a pure, in-process function and
-// we already hold the user/member role here, the direct call is both correct
-// and faster (and the test env now exercises the exact same path as prod).
+// Permission checks run in-process via `checkAppPermission` / `checkOrgPermission`.
+// We do NOT use `auth.api.userHasPermission`.
 const base = os
   .$context<ResponseHeadersPluginContext>()
   // Auth

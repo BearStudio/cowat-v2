@@ -23,9 +23,6 @@ export const WithOrgPermissions = (props: {
   );
   const role = currentUserMember?.role;
 
-  // Same in-process check as the server. No special-casing of `owner`: the
-  // owner role already authorizes everything via its role definition, so the
-  // previous `role !== 'owner'` bypass (which diverged from the server) is gone.
   if (
     props.permissions.every(
       (permission) => !checkOrgPermission(role, permission)
