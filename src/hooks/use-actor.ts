@@ -12,15 +12,6 @@
  *   `isNotSelfByUserId`, `isNotCurrentSession` (e.g. the back-office user
  *   manager, which has no active org).
  *
- * The org fields reuse the exact same source as `WithOrgPermissions`: the
- * active organization's member list, matched on `userId`.
- *
- * Fail-closed: when unauthenticated (no session user), `actor` is `null`. The
- * app-level identity (`userId`, `appRole`, `sessionToken`) is available as soon
- * as the session loads; the org fields (`memberId`, `orgRole`) stay `undefined`
- * until the active org loads, which makes org-scoped abilities deny in the
- * meantime. Either way, any ability evaluated against a missing identity must
- * deny (see `useCan`).
  *
  * The returned `actor` is memoized on its primitive fields, so its identity is
  * stable across renders. Consumers can safely use it (or the `can` it powers in
@@ -33,16 +24,15 @@ import { authClient } from '@/features/auth/client';
 
 export function useActor(): { actor: Actor | null; isPending: boolean } {
   const session = authClient.useSession();
-  const activeOrg = authClient.useActiveOrganization();
-  const isPending = session.isPending || activeOrg.isPending;
+  const activeMember = authClient.useActiveMember();
+  const isPending = session.isPending || activeMember.isPending;
 
   const user = session.data?.user;
   const userId = user?.id;
   const appRole = user?.role ?? '';
-  const organizationId = activeOrg.data?.id;
-  const member = activeOrg.data?.members.find((m) => m.userId === userId);
-  const memberId = member?.id;
-  const orgRole = member?.role;
+  const organizationId = activeMember.data?.organizationId ?? undefined;
+  const memberId = activeMember.data?.id ?? undefined;
+  const orgRole = activeMember.data?.role ?? undefined;
   const sessionToken = session.data?.session?.token ?? undefined;
 
   const actor = useMemo<Actor | null>(
