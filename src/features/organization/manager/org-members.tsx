@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 import { queryClient } from '@/lib/tanstack-query/query-client';
+import { useCan } from '@/hooks/use-can';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +18,24 @@ import {
   DataListRow,
   DataListText,
 } from '@/components/ui/datalist';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-import { authClient } from '@/features/auth/client';
+import {
+  canActOnMember,
+  canAssignRole,
+  isNotSelfByMemberId,
+} from '@/features/auth/ability/abilities';
+import {
+  type OrgRole,
+  orgRolesNames,
+} from '@/features/auth/organization-permissions';
 import { WithOrgPermissions } from '@/features/auth/with-org-permissions';
 
 export const OrgMembers = (props: {
@@ -35,8 +52,12 @@ export const OrgMembers = (props: {
   }>;
 }) => {
   const { t } = useTranslation(['organization']);
-  const session = authClient.useSession();
-  const currentUserId = session.data?.user?.id;
+  const { actor } = useCan();
+
+  const roleItems = orgRolesNames.map((role) => ({
+    value: role,
+    label: t(`organization:members.roles.${role}`),
+  }));
 
   const removeMember = useMutation(
     orpc.organization.removeMember.mutationOptions({
@@ -80,93 +101,113 @@ export const OrgMembers = (props: {
           {t('organization:manager.detail.noMembers')}
         </DataListEmptyState>
       ) : (
-        props.members.map((member) => (
-          <DataListRow key={member.id} className="">
-            <DataListCell className="flex-none">
-              <Avatar>
-                <AvatarImage
-                  src={member.user.image ?? undefined}
-                  alt={member.user.name ?? ''}
-                />
-                <AvatarFallback
-                  variant="boring"
-                  name={member.user.name ?? ''}
-                />
-              </Avatar>
-            </DataListCell>
-            <DataListCell>
-              <DataListText className="font-medium">
-                {member.user.name}
-              </DataListText>
-              <DataListText className="text-xs text-muted-foreground">
-                {member.user.email}
-              </DataListText>
-            </DataListCell>
-            <WithOrgPermissions permissions={[{ member: ['update'] }]}>
+        props.members.map((member) => {
+          const canManageMember =
+            !!actor &&
+            isNotSelfByMemberId(actor, member.id, '').ok &&
+            canActOnMember(actor, member.role).ok;
+          const canPromoteToOwner = !!actor && canAssignRole(actor, 'owner').ok;
+
+          return (
+            <DataListRow key={member.id} className="">
               <DataListCell className="flex-none">
-                {member.user.id !== currentUserId ? (
-                  <select
-                    value={member.role}
-                    onChange={(e) =>
-                      updateMemberRole.mutateAsync({
-                        memberId: member.id,
-                        role: e.target.value as 'member' | 'owner',
-                      })
-                    }
-                    disabled={updateMemberRole.isPending}
-                    className="rounded border px-2 py-1 text-sm"
-                  >
-                    <option value="member">
-                      {t('organization:members.roles.member')}
-                    </option>
-                    <option value="owner">
-                      {t('organization:members.roles.owner')}
-                    </option>
-                  </select>
-                ) : (
-                  <Badge
-                    variant={
-                      member.role === 'owner' || member.role === 'admin'
-                        ? 'default'
-                        : 'secondary'
-                    }
-                  >
-                    {t(`organization:members.roles.${member.role}`, {
-                      defaultValue: member.role,
-                    })}
-                  </Badge>
-                )}
+                <Avatar>
+                  <AvatarImage
+                    src={member.user.image ?? undefined}
+                    alt={member.user.name ?? ''}
+                  />
+                  <AvatarFallback
+                    variant="boring"
+                    name={member.user.name ?? ''}
+                  />
+                </Avatar>
               </DataListCell>
-            </WithOrgPermissions>
-            <WithOrgPermissions permissions={[{ member: ['delete'] }]}>
-              <DataListCell className="flex-none">
-                <ConfirmResponsiveDrawer
-                  title={member.user.name}
-                  description={t(
-                    'organization:manager.detail.removeMemberConfirm'
+              <DataListCell>
+                <DataListText className="font-medium">
+                  {member.user.name}
+                </DataListText>
+                <DataListText className="text-xs text-muted-foreground">
+                  {member.user.email}
+                </DataListText>
+              </DataListCell>
+              <WithOrgPermissions permissions={[{ member: ['update'] }]}>
+                <DataListCell className="flex-none">
+                  {canManageMember ? (
+                    <Select
+                      items={roleItems}
+                      value={member.role}
+                      onValueChange={(value) =>
+                        updateMemberRole.mutateAsync({
+                          memberId: member.id,
+                          role: value as OrgRole,
+                        })
+                      }
+                      disabled={updateMemberRole.isPending}
+                    >
+                      <SelectTrigger className="w-36">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {orgRolesNames
+                            .filter(
+                              (role) => role !== 'owner' || canPromoteToOwner
+                            )
+                            .map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {t(`organization:members.roles.${role}`)}
+                              </SelectItem>
+                            ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Badge
+                      variant={
+                        member.role === 'owner' || member.role === 'admin'
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
+                      {t(`organization:members.roles.${member.role}`, {
+                        defaultValue: member.role,
+                      })}
+                    </Badge>
                   )}
-                  confirmText={t('organization:members.remove')}
-                  confirmVariant="destructive"
-                  icon={<UsersIcon />}
-                  onConfirm={() =>
-                    removeMember.mutateAsync({
-                      memberId: member.id,
-                    })
-                  }
-                >
-                  <Button
-                    size="xs"
-                    variant="ghost"
-                    loading={removeMember.isPending}
-                  >
-                    <XIcon className="size-3" />
-                    {t('organization:members.remove')}
-                  </Button>
-                </ConfirmResponsiveDrawer>
-              </DataListCell>
-            </WithOrgPermissions>
-          </DataListRow>
-        ))
+                </DataListCell>
+              </WithOrgPermissions>
+              <WithOrgPermissions permissions={[{ member: ['delete'] }]}>
+                {canManageMember && (
+                  <DataListCell className="flex-none">
+                    <ConfirmResponsiveDrawer
+                      title={member.user.name}
+                      description={t(
+                        'organization:manager.detail.removeMemberConfirm'
+                      )}
+                      confirmText={t('organization:members.remove')}
+                      confirmVariant="destructive"
+                      icon={<UsersIcon />}
+                      onConfirm={() =>
+                        removeMember.mutateAsync({
+                          memberId: member.id,
+                        })
+                      }
+                    >
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                        loading={removeMember.isPending}
+                      >
+                        <XIcon className="size-3" />
+                        {t('organization:members.remove')}
+                      </Button>
+                    </ConfirmResponsiveDrawer>
+                  </DataListCell>
+                )}
+              </WithOrgPermissions>
+            </DataListRow>
+          );
+        })
       )}
     </DataList>
   );

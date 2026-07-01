@@ -11,6 +11,7 @@
 const EXTERNALLY_ALLOWED_PATHS = new Set([
   '/organization/accept-invitation',
   '/organization/set-active',
+  '/organization/get-active-member',
 ]);
 
 const MANAGED_NAMESPACES = ['/organization/', '/admin/'];

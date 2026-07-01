@@ -1,14 +1,20 @@
 import { getUiState } from '@bearstudio/ui-state';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
-import { BuildingIcon, PlusIcon, UsersIcon } from 'lucide-react';
+import { BuildingIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { orpc } from '@/lib/orpc/client';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConfirmResponsiveDrawer } from '@/components/ui/confirm-responsive-drawer';
 import {
   DataList,
   DataListCell,
@@ -47,6 +53,21 @@ export const PageOrganizations = (props: {
 }) => {
   const { t } = useTranslation(['organization']);
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const deleteOrg = useMutation(
+    orpc.organization.delete.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: orpc.organization.getAll.key(),
+        });
+        toast.success(t('organization:manager.list.delete.success'));
+      },
+      onError: () => {
+        toast.error(t('organization:manager.list.delete.error'));
+      },
+    })
+  );
 
   const searchInputProps = {
     value: props.search.searchTerm ?? '',
@@ -145,13 +166,28 @@ export const PageOrganizations = (props: {
                     </DataListCell>
                     <DataListCell>
                       <DataListText className="font-medium">
-                        <Link
-                          to="/manager/$orgSlug"
-                          params={{ orgSlug: item.slug }}
+                        <ConfirmResponsiveDrawer
+                          title={t('organization:manager.list.delete.title', {
+                            name: item.name,
+                          })}
+                          description={t(
+                            'organization:manager.list.delete.description'
+                          )}
+                          confirmText={t(
+                            'organization:manager.list.delete.confirm'
+                          )}
+                          confirmVariant="destructive"
+                          icon={<Trash2Icon />}
+                          requiredConfirmation={item.name}
+                          onConfirm={() =>
+                            deleteOrg.mutateAsync({ organizationId: item.id })
+                          }
                         >
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </Link>
+                          <button type="button" className="text-left">
+                            {item.name}
+                            <span className="absolute inset-0" />
+                          </button>
+                        </ConfirmResponsiveDrawer>
                       </DataListText>
                       <DataListText className="text-xs text-muted-foreground">
                         {item.slug}

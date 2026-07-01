@@ -48,7 +48,7 @@ export const Default = () => {
   return (
     <DashboardCommuteCard
       commute={baseCommute}
-      currentUserId="passenger-1"
+      currentMemberId="member-passenger-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -66,6 +66,7 @@ export const WithPendingBooking = () => {
           status: 'REQUESTED',
           tripType: 'ROUND',
           comment: null,
+          passengerMemberId: 'member-passenger-1',
           passenger: {
             id: 'passenger-1',
             name: 'Bob Dupont',
@@ -81,7 +82,7 @@ export const WithPendingBooking = () => {
   return (
     <DashboardCommuteCard
       commute={commute}
-      currentUserId="passenger-1"
+      currentMemberId="member-passenger-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -99,6 +100,7 @@ export const WithAcceptedBooking = () => {
           status: 'ACCEPTED',
           tripType: 'ROUND',
           comment: null,
+          passengerMemberId: 'member-passenger-1',
           passenger: {
             id: 'passenger-1',
             name: 'Bob Dupont',
@@ -114,7 +116,7 @@ export const WithAcceptedBooking = () => {
   return (
     <DashboardCommuteCard
       commute={commute}
-      currentUserId="passenger-1"
+      currentMemberId="member-passenger-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -126,7 +128,7 @@ export const AsDriver = () => {
   return (
     <DashboardCommuteCard
       commute={baseCommute}
-      currentUserId="driver-1"
+      currentMemberId="member-driver-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -158,7 +160,7 @@ export const ActiveCommute = () => {
   return (
     <DashboardCommuteCard
       commute={commute}
-      currentUserId="passenger-1"
+      currentMemberId="member-passenger-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -178,7 +180,7 @@ export const FutureCommute = () => {
   return (
     <DashboardCommuteCard
       commute={commute}
-      currentUserId="passenger-1"
+      currentMemberId="member-passenger-1"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}
@@ -193,6 +195,7 @@ export const FullSeats = () => {
       status: 'ACCEPTED' as const,
       tripType: 'ROUND' as const,
       comment: null,
+      passengerMemberId: 'member-p-1',
       passenger: { id: 'p-1', name: 'Bob Dupont', image: null, phone: null },
     },
     {
@@ -200,6 +203,7 @@ export const FullSeats = () => {
       status: 'ACCEPTED' as const,
       tripType: 'ONEWAY' as const,
       comment: null,
+      passengerMemberId: 'member-p-2',
       passenger: {
         id: 'p-2',
         name: 'Charlie Durand',
@@ -212,6 +216,7 @@ export const FullSeats = () => {
       status: 'ACCEPTED' as const,
       tripType: 'ROUND' as const,
       comment: null,
+      passengerMemberId: 'member-p-3',
       passenger: { id: 'p-3', name: 'Diana Moreau', image: null, phone: null },
     },
     {
@@ -219,6 +224,7 @@ export const FullSeats = () => {
       status: 'ACCEPTED' as const,
       tripType: 'RETURN' as const,
       comment: null,
+      passengerMemberId: 'member-p-4',
       passenger: { id: 'p-4', name: 'Émile Petit', image: null, phone: null },
     },
   ];
@@ -234,7 +240,7 @@ export const FullSeats = () => {
   return (
     <DashboardCommuteCard
       commute={commute}
-      currentUserId="other-user"
+      currentMemberId="member-other"
       commuteCancel={noopMutation}
       bookingCancel={noopMutation}
       onBookStop={noop}

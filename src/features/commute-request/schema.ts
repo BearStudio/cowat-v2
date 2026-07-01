@@ -15,5 +15,6 @@ export const zCommuteRequestForList = () =>
     comment: z.string().nullish(),
     status: zCommuteRequestStatus(),
     createdAt: z.date(),
+    requesterMemberId: z.string(),
     requester: zUserSummary(),
   });

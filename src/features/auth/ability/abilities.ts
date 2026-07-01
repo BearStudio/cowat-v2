@@ -102,6 +102,15 @@ export const isNotCurrentSession = (
 ): Decision =>
   actor.sessionToken === sessionToken ? deny('BAD_REQUEST', message) : allow;
 
+/**
+ * Client-side "positive" mirrors of the self-action abilities above. They never need a message, since they don't feed `enforce`.
+ */
+export const isSelfByUserId = (actor: Actor, targetUserId: string): boolean =>
+  !isNotSelfByUserId(actor, targetUserId, '').ok;
+
+export const isCurrentSession = (actor: Actor, sessionToken: string): boolean =>
+  !isNotCurrentSession(actor, sessionToken, '').ok;
+
 // ---------------------------------------------------------------------------
 // Family 4 — Hierarchy
 // Only an owner can act on another owner.

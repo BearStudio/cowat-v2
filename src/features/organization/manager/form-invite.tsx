@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { orpc } from '@/lib/orpc/client';
+import { useCan } from '@/hooks/use-can';
 
 import { Form } from '@/components/form/form';
 import { FormField } from '@/components/form/form-field';
@@ -16,10 +17,14 @@ import { FormFieldError } from '@/components/form/form-field-error';
 import { FormFieldLabel } from '@/components/form/form-field-label';
 import { Button } from '@/components/ui/button';
 
+import { canAssignRole } from '@/features/auth/ability/abilities';
+import { orgRolesNames } from '@/features/auth/organization-permissions';
 import { zInviteForm } from '@/features/organization/schema';
 
 export const FormInvite = () => {
   const { t } = useTranslation(['organization']);
+  const { actor } = useCan();
+  const canPromoteToOwner = !!actor && canAssignRole(actor, 'owner').ok;
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -112,16 +117,12 @@ export const FormInvite = () => {
             control={form.control}
             type="select"
             name="role"
-            items={[
-              {
-                label: t('organization:members.roles.member'),
-                value: 'member',
-              },
-              {
-                label: t('organization:members.roles.owner'),
-                value: 'owner',
-              },
-            ]}
+            items={orgRolesNames
+              .filter((role) => role !== 'owner' || canPromoteToOwner)
+              .map((role) => ({
+                label: t(`organization:members.roles.${role}`),
+                value: role,
+              }))}
           />
         </FormField>
         <Button

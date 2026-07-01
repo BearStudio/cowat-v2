@@ -15,6 +15,9 @@ describe('auth-api-lockdown — isInternalOnlyAuthPath', () => {
     expect(isInternalOnlyAuthPath('/organization/cancel-invitation')).toBe(
       true
     );
+    expect(isInternalOnlyAuthPath('/organization/get-full-organization')).toBe(
+      true
+    );
   });
 
   it('blocks all admin plugin endpoints', () => {
@@ -30,6 +33,9 @@ describe('auth-api-lockdown — isInternalOnlyAuthPath', () => {
       false
     );
     expect(isInternalOnlyAuthPath('/organization/set-active')).toBe(false);
+    expect(isInternalOnlyAuthPath('/organization/get-active-member')).toBe(
+      false
+    );
   });
 
   it('does not touch core auth endpoints (session, OTP, sign-out)', () => {

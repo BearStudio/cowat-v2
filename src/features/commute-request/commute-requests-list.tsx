@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
+import { useCan } from '@/hooks/use-can';
 
 import { LoadMoreButton } from '@/components/load-more-button';
 import { CardListSkeleton } from '@/components/loading/card-list-skeleton';
@@ -19,13 +20,13 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 
-import { authClient } from '@/features/auth/client';
+import { isRequesterOf } from '@/features/auth/ability/abilities';
 import { CommuteRequestCard } from '@/features/commute-request/commute-request-card';
 import { RequestCommuteDrawer } from '@/features/commute-request/request-commute-drawer';
 
 export const CommuteRequestsList = () => {
   const { t } = useTranslation(['commuteRequest']);
-  const session = authClient.useSession();
+  const { can } = useCan();
   const [requestDrawerOpen, setRequestDrawerOpen] = useState(false);
 
   const requestsQuery = useInfiniteQuery(
@@ -45,18 +46,17 @@ export const CommuteRequestsList = () => {
   );
 
   const { myRequests, otherRequests } = useMemo(() => {
-    const userId = session.data?.user.id;
     const mine: typeof allItems = [];
     const others: typeof allItems = [];
     for (const item of allItems) {
-      if (item.requester.id === userId) {
+      if (can(isRequesterOf, { requesterMemberId: item.requesterMemberId })) {
         mine.push(item);
       } else {
         others.push(item);
       }
     }
     return { myRequests: mine, otherRequests: others };
-  }, [allItems, session.data?.user.id]);
+  }, [allItems, can]);
 
   const ui = getUiState((set) => {
     if (requestsQuery.status === 'pending') return set('pending');

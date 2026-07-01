@@ -1,6 +1,8 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import { useCan } from '@/hooks/use-can';
+
 import {
   FormField,
   FormFieldController,
@@ -8,15 +10,16 @@ import {
   FormFieldLabel,
 } from '@/components/form';
 
-import { authClient } from '@/features/auth/client';
+import { isSelfByUserId } from '@/features/auth/ability/abilities';
 import { rolesNames } from '@/features/auth/permissions';
 import { FormFieldsUser } from '@/features/user/schema';
 
 export const FormUser = (props: { userId?: string }) => {
   const { t } = useTranslation(['user']);
-  const session = authClient.useSession();
+  const { actor } = useCan();
   const form = useFormContext<FormFieldsUser>();
-  const isCurrentUser = props.userId === session.data?.user.id;
+  const isCurrentUser =
+    !!props.userId && !!actor && isSelfByUserId(actor, props.userId);
 
   return (
     <div className="flex flex-col gap-4">

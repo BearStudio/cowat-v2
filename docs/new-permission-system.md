@@ -209,7 +209,9 @@ accept: organizationProcedure({ permissions: { booking: ['manage'] } })
 
 ### Client UI gating
 
-The client uses the **same** pure functions, so UI and server never diverge:
+The client uses the **same** pure functions, so UI and server never diverge.
+
+**RBAC (role → permission):**
 
 - [`with-permission.tsx`](../src/features/auth/with-permission.tsx) →
   `checkAppPermission`
@@ -217,6 +219,51 @@ The client uses the **same** pure functions, so UI and server never diverge:
   `checkOrgPermission`
 - [`guard-organization.tsx`](../src/features/organization/guard-organization.tsx)
   → `checkOrgPermission` (via its optional `organizationPermission` prop)
+
+**Abilities (actor → resource):** the RBAC components above can't answer "is this
+object _mine_?" — that needs an `Actor` and a resource. Two small hooks bridge the
+pure abilities to React:
+
+- [`use-actor.ts`](../src/hooks/use-actor.ts) → `useActor()` builds
+  the client `Actor` from the better-auth session + active organization (matching the
+  member on `userId` to get `memberId` and `orgRole`, the same source
+  `WithOrgPermissions` reads). Fail-closed: unauthenticated/pending ⇒ `actor: null`.
+
+  > **Where each `Actor` field comes from.** The actor spans two axes, read from two
+  > different better-auth sources:
+  >
+  > | Field | Source (client) | Available when |
+  > | --- | --- | --- |
+  > | `userId`, `appRole` | `authClient.useSession()` → `session.data.user` (`id`, `role`) | session loaded |
+  > | `sessionToken` | `authClient.useSession()` → `session.data.session.token` | session loaded |
+  > | `organizationId`, `memberId`, `orgRole` | `authClient.useActiveOrganization()` → the member of `data.members` matched on `userId` (`id` → `memberId`, `role` → `orgRole`) | an org is **active** |
+  >
+  > So the **app-level** identity (`userId`, `appRole`, `sessionToken`) is ready as soon
+  > as the session loads, but the **org-level** identity (`memberId`, `orgRole`) is read
+  > from the **active organization** and stays `undefined` until one is active. Two
+  > consequences: (1) org-scoped abilities deny while no org is active (fail-closed);
+  > (2) the gating is correct only when the screen operates on the **active** org — an
+  > ability comparing `memberId` against a resource from a _different_ org would compare
+  > against the wrong membership. This mirrors `WithOrgPermissions`, which reads the same
+  > active-org source. On the server, the equivalent fields come from the oRPC context
+  > via `actorFromContext` (see [`actor.ts`](../src/features/auth/ability/actor.ts)).
+- [`use-can.ts`](../src/hooks/use-can.ts) → `useCan()` returns a `can`
+  helper for the curried Ownership/Relation abilities, plus the raw `actor`/`isPending`
+  for non-curried ones (e.g. `canActOnMember`):
+
+  ```tsx
+  const { can } = useCan();
+  // gate the driver-only actions on a commute card (same memberId axis as the server)
+  const isDriver = can(isDriverOf, { driverMemberId: commute.driverMemberId });
+  ```
+
+  `can` is a stable callback, so it can be used inside a `.map()` (call `useCan()` once
+  at the top of the component, not in the loop). Fail-closed: no actor ⇒ `false`.
+
+  > **Identity axis.** Abilities compare `memberId` (`driverMemberId === actor.memberId`),
+  > **not** `userId`. Prefer `useCan` over an ad-hoc `currentUserId === resource.owner.id`
+  > so the client gates on the exact same axis the server enforces. This requires the
+  > resource to carry the relevant `*MemberId` field (e.g. `CommuteEnriched.driverMemberId`).
 
 > ℹ️ **`guard-organization.tsx` is org-only.** It accepts an optional
 > `organizationPermission` prop and gates the route with `checkOrgPermission`

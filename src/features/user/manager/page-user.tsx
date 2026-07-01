@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
 import { orpc } from '@/lib/orpc/client';
+import { useCan } from '@/hooks/use-can';
 import { useNavigateBack } from '@/hooks/use-navigate-back';
 
 import { BackButton } from '@/components/back-button';
@@ -42,7 +43,10 @@ import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 
-import { authClient } from '@/features/auth/client';
+import {
+  isCurrentSession,
+  isSelfByUserId,
+} from '@/features/auth/ability/abilities';
 import { WithPermissions } from '@/features/auth/with-permission';
 import {
   PageLayout,
@@ -53,7 +57,7 @@ import {
 
 export const PageUser = (props: { id: string }) => {
   const queryClient = useQueryClient();
-  const session = authClient.useSession();
+  const { actor } = useCan();
   const { navigateBack } = useNavigateBack();
   const { t } = useTranslation(['user']);
   const userQuery = useQuery(
@@ -104,7 +108,7 @@ export const PageUser = (props: { id: string }) => {
         startActions={<BackButton />}
         endActions={
           <>
-            {session.data?.user.id !== props.id && (
+            {actor && !isSelfByUserId(actor, props.id) && (
               <WithPermissions
                 permissions={[
                   {
@@ -351,7 +355,7 @@ const UserSessions = (props: { userId: string }) => {
 
 const RevokeAllSessionsButton = (props: { userId: string }) => {
   const queryClient = useQueryClient();
-  const currentSession = authClient.useSession();
+  const { actor } = useCan();
   const { t } = useTranslation(['user']);
   const revokeAllSessions = useMutation(
     orpc.user.revokeUserSessions.mutationOptions({
@@ -373,7 +377,7 @@ const RevokeAllSessionsButton = (props: { userId: string }) => {
     <Button
       size="xs"
       variant="secondary"
-      disabled={currentSession.data?.user.id === props.userId}
+      disabled={!actor || isSelfByUserId(actor, props.userId)}
       loading={revokeAllSessions.isPending}
       onClick={() => {
         revokeAllSessions.mutate({
@@ -391,7 +395,7 @@ const RevokeSessionButton = (props: {
   sessionToken: string;
 }) => {
   const queryClient = useQueryClient();
-  const currentSession = authClient.useSession();
+  const { actor } = useCan();
   const { t } = useTranslation(['user']);
   const revokeSession = useMutation(
     orpc.user.revokeUserSession.mutationOptions({
@@ -412,7 +416,7 @@ const RevokeSessionButton = (props: {
     <Button
       size="xs"
       variant="secondary"
-      disabled={currentSession.data?.session.token === props.sessionToken}
+      disabled={!actor || isCurrentSession(actor, props.sessionToken)}
       loading={revokeSession.isPending}
       onClick={() => {
         revokeSession.mutate({

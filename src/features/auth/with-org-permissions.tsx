@@ -10,18 +10,13 @@ export const WithOrgPermissions = (props: {
   loadingFallback?: ReactNode;
   fallback?: ReactNode;
 }) => {
-  const session = authClient.useSession();
-  const activeOrg = authClient.useActiveOrganization();
+  const activeMember = authClient.useActiveMember();
 
-  if (session.isPending || activeOrg.isPending) {
+  if (activeMember.isPending) {
     return props.loadingFallback ?? props.fallback ?? null;
   }
 
-  const currentUserId = session.data?.user?.id;
-  const currentUserMember = activeOrg.data?.members.find(
-    (m) => m.userId === currentUserId
-  );
-  const role = currentUserMember?.role;
+  const role = activeMember.data?.role;
 
   if (
     props.permissions.every(
