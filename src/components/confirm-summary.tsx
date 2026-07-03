@@ -42,12 +42,14 @@ export const ConfirmSummary = ({
     t('common:dayBadge', { count: offset })
   );
   // Each rendered stop reuses the label computed for its position in the full
-  // trip. When `tripStops` is omitted, `offsetStops === stops` so this is the
-  // identity mapping.
-  const labelFor = (stop: StopForTimeline) => {
-    const index = offsetStops.indexOf(stop);
-    return index >= 0 ? dayLabels[index] : undefined;
-  };
+  // trip. We match on `location.id` (unique within a trip, and already the
+  // render key below) rather than object identity, so a cloned/normalised stop
+  // still resolves its label instead of silently losing its day badge.
+  const labelByLocationId = new Map(
+    offsetStops.map((stop, i) => [stop.location.id, dayLabels[i]])
+  );
+  const labelFor = (stop: StopForTimeline) =>
+    labelByLocationId.get(stop.location.id);
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
