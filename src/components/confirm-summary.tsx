@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import '@/lib/dayjs/config';
 
 import { type DateFormatKey } from '@/lib/dayjs/formats';
@@ -10,6 +11,7 @@ import {
   type StopForTimeline,
   StopsTimelineItem,
 } from '@/features/commute/stops-timeline';
+import { computeStopDayLabels } from '@/features/commute/time-utils';
 
 type ConfirmSummaryProps = {
   user?: { name?: string | null; image?: string | null };
@@ -17,6 +19,13 @@ type ConfirmSummaryProps = {
   dateFormat?: DateFormatKey;
   typeLabel: string;
   stops: StopForTimeline[];
+  /**
+   * Full ordered trip, used **only** to compute the per-stop day offsets when
+   * `stops` is a subset (e.g. the booking drawer renders a single boarding
+   * stop). A stop's day depends on the legs before it, so the offsets must be
+   * computed over the whole trip. Rendered stops are matched into it by reference.
+   */
+  tripStops?: StopForTimeline[];
 };
 
 export const ConfirmSummary = ({
@@ -25,7 +34,23 @@ export const ConfirmSummary = ({
   dateFormat = 'commute:dayHeader',
   typeLabel,
   stops,
+  tripStops,
 }: ConfirmSummaryProps) => {
+  const { t } = useTranslation(['common']);
+  const offsetStops = tripStops ?? stops;
+  const dayLabels = computeStopDayLabels(offsetStops, (offset) =>
+    t('common:dayBadge', { count: offset })
+  );
+  // Each rendered stop reuses the label computed for its position in the full
+  // trip. We match on `location.id` (unique within a trip, and already the
+  // render key below) rather than object identity, so a cloned/normalised stop
+  // still resolves its label instead of silently losing its day badge.
+  const labelByLocationId = new Map(
+    offsetStops.map((stop, i) => [stop.location.id, dayLabels[i]])
+  );
+  const labelFor = (stop: StopForTimeline) =>
+    labelByLocationId.get(stop.location.id);
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-3 text-left text-sm">
       <div className="flex items-center gap-3">
@@ -57,7 +82,7 @@ export const ConfirmSummary = ({
             {stops.map((stop, i) => (
               <StopsTimelineItem
                 key={stop.location.id}
-                stop={stop}
+                stop={{ ...stop, ...labelFor(stop) }}
                 isFirst={i === 0}
                 isLast={i === stops.length - 1}
               />

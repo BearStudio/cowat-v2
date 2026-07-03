@@ -121,6 +121,7 @@ export const DashboardCommuteCard = ({
                                   `commute:list.type.${commute.type}`
                                 )}
                                 stops={[stop]}
+                                tripStops={commute.stops}
                               />
                             </div>
                           }

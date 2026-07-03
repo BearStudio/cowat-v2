@@ -280,7 +280,11 @@ export const PageCommuteNew = ({
                 }
               />
               <MultiStepFormStep name={t('commute:stepper.recap')}>
-                <StepRecap {...asCommuteBase(form)} ns="commute" />
+                <StepRecap
+                  {...asCommuteBase(form)}
+                  ns="commute"
+                  tripDate={currentDate}
+                />
               </MultiStepFormStep>
             </PageLayoutContent>
             <MultiStepFormNavigation

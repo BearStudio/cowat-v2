@@ -5,16 +5,17 @@ import { cn } from '@/lib/tailwind/utils';
 
 import {
   ActivePassengersBadges,
+  StopDayBadge,
   StopForTimeline,
   TimelineDot,
   TimelineLine,
   TripTime,
 } from '@/features/commute/stops-timeline';
-
-function parseMins(time: string) {
-  const [h, m] = time.split(':');
-  return Number(h ?? 0) * 60 + Number(m ?? 0);
-}
+import {
+  computeDayOffsets,
+  computeStopDayLabels,
+  outwardDurationMinutes,
+} from '@/features/commute/time-utils';
 
 function formatDuration(mins: number) {
   const h = Math.floor(mins / 60);
@@ -58,10 +59,18 @@ function StopNameRow({ stop }: { stop: StopForTimeline }) {
         <div className="flex shrink-0 items-center gap-1.5 text-sm whitespace-nowrap text-muted-foreground">
           <span className="text-muted-foreground/50">·</span>
           <TripTime type="ONEWAY" time={stop.outwardTime} />
+          <StopDayBadge
+            label={stop.outwardDayLabel}
+            offset={stop.outwardDayOffset}
+          />
           {stop.inwardTime && (
             <>
               <span className="text-muted-foreground/50">·</span>
               <TripTime type="RETURN" time={stop.inwardTime} />
+              <StopDayBadge
+                label={stop.inwardDayLabel}
+                offset={stop.inwardDayOffset}
+              />
             </>
           )}
         </div>
@@ -136,17 +145,31 @@ export function HeaderStopsTimeline({
   stops,
   renderStopActions,
 }: HeaderStopsTimelineProps) {
-  const { t } = useTranslation(['commute']);
+  const { t } = useTranslation(['commute', 'common']);
 
-  const firstStop = stops[0];
-  const lastStop = stops[stops.length - 1];
+  // Computed once and shared between the day labels and the duration below, so
+  // a leg crossing midnight is handled consistently without recomputing.
+  const dayOffsets = computeDayOffsets(stops);
+
+  // Merge per-stop day labels so a leg crossing midnight is shown next to the
+  // affected times, consistently with the form recap.
+  const dayLabels = computeStopDayLabels(
+    stops,
+    (offset) => t('common:dayBadge', { count: offset }),
+    dayOffsets
+  );
+  const labeledStops = stops.map((stop, i) => ({ ...stop, ...dayLabels[i] }));
+
+  const firstStop = labeledStops[0];
+  const lastStop = labeledStops[labeledStops.length - 1];
   if (!firstStop || !lastStop) return null;
 
-  const isOnlyStop = stops.length === 1;
-  const intermediateStops = stops.length > 2 ? stops.slice(1, -1) : [];
-  const duration = formatDuration(
-    parseMins(lastStop.outwardTime) - parseMins(firstStop.outwardTime)
-  );
+  const isOnlyStop = labeledStops.length === 1;
+  const intermediateStops =
+    labeledStops.length > 2 ? labeledStops.slice(1, -1) : [];
+  // Day-offset aware so an outward leg crossing midnight (e.g. 23:30 → 00:15)
+  // yields a real elapsed time, not a negative raw-clock difference.
+  const duration = formatDuration(outwardDurationMinutes(stops, dayOffsets));
   const connectorLabel =
     intermediateStops.length > 0
       ? `${t('commute:list.stops', { count: intermediateStops.length })} · ${duration}`

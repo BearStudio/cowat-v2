@@ -221,6 +221,7 @@ export const PageCommuteUpdate = (props: { id: string; orgSlug: string }) => {
                   <StepRecap
                     {...asCommuteBase(form)}
                     ns="commute"
+                    tripDate={commuteQuery.data?.date}
                     passengersByLocationId={passengersByLocationId}
                   />
                 </div>

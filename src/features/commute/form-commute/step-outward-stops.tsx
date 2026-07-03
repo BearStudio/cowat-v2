@@ -18,6 +18,12 @@ import {
 import { Button } from '@/components/ui/button';
 
 import type { FormFieldsCommuteBase } from '@/features/commute/schema';
+import { StopDayBadge } from '@/features/commute/stops-timeline';
+import {
+  computeDayOffsets,
+  stopDayLabel,
+  tripCrossesMidnight,
+} from '@/features/commute/time-utils';
 import { FormFieldLocationSelect } from '@/features/location/app/form-field-location-select';
 
 type StepOutwardStopsProps = {
@@ -33,7 +39,7 @@ export const StepOutwardStops = ({
   ns,
   defaultStop,
 }: StepOutwardStopsProps) => {
-  const { t } = useTranslation([ns]);
+  const { t } = useTranslation([ns, 'common']);
   const { fields, insert, remove } = useFieldArray({
     control,
     name: 'stops',
@@ -43,6 +49,8 @@ export const StepOutwardStops = ({
     name: 'stops',
   });
   const { containerRef, focusFieldAt } = useFocusFieldAt();
+  const dayOffsets = computeDayOffsets(stops ?? []);
+  const hasDayChange = tripCrossesMidnight(stops ?? [], dayOffsets);
 
   return (
     <div ref={containerRef} className="flex flex-col gap-3">
@@ -72,6 +80,14 @@ export const StepOutwardStops = ({
                   <FormField>
                     <FormFieldLabel required>
                       {t(`${ns}:form.outwardTime`)}
+                      <StopDayBadge
+                        label={stopDayLabel(
+                          dayOffsets.outward[index] ?? 0,
+                          hasDayChange,
+                          (offset) => t('common:dayBadge', { count: offset })
+                        )}
+                        offset={dayOffsets.outward[index] ?? 0}
+                      />
                     </FormFieldLabel>
                     <FormFieldController
                       type="time"

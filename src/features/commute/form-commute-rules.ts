@@ -4,10 +4,12 @@ import type {
   FormFieldsCommute,
   FormFieldsStopInput,
 } from '@/features/commute/schema';
+import { computeDayOffsets } from '@/features/commute/time-utils';
 
-const isTimeInFuture = (date: Date, time: string) => {
+const isTimeInFuture = (date: Date, time: string, dayOffset = 0) => {
   const [hours = 0, minutes = 0] = time.split(':').map(Number);
-  return dayjs(date).hour(hours).minute(minutes).isAfter(dayjs());
+  const instant = dayjs(date).hour(hours).minute(minutes).add(dayOffset, 'day');
+  return instant.isAfter(dayjs());
 };
 
 type StopOrderRulesData = {
@@ -21,15 +23,21 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
   return {
     isRound,
 
-    shouldInwardBeAfterOutward: (
+    // A return time earlier than the outward time is read as the next day
+    // (e.g. outward 15:00, inward 02:00), so any distinct time is valid.
+    // Only an identical time is rejected (zero-length round trip).
+    shouldInwardDifferFromOutward: (
       stop: Pick<FormFieldsStopInput, 'outwardTime' | 'inwardTime'>
     ) =>
       !isRound ||
       !stop.inwardTime ||
       !stop.outwardTime ||
-      stop.inwardTime > stop.outwardTime,
+      stop.inwardTime !== stop.outwardTime,
 
-    shouldOutwardBeIncreasing: (
+    // Across stops a later time means progress within the day, an earlier
+    // time means the journey crossed midnight — both are valid. Only an
+    // identical time as the previous stop is rejected.
+    shouldOutwardDifferFromPrev: (
       stop: Pick<FormFieldsStopInput, 'outwardTime'>,
       index: number
     ) => {
@@ -38,11 +46,13 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
       return (
         !stop.outwardTime ||
         !prevStop?.outwardTime ||
-        stop.outwardTime > prevStop.outwardTime
+        stop.outwardTime !== prevStop.outwardTime
       );
     },
 
-    shouldInwardBeDecreasing: (
+    // Same reasoning for the return leg: distinct adjacent times are valid
+    // (a smaller value simply crossed midnight), identical ones are not.
+    shouldInwardDifferFromPrev: (
       stop: Pick<FormFieldsStopInput, 'inwardTime'>,
       index: number
     ) => {
@@ -51,7 +61,7 @@ export const createStopOrderRules = (data: StopOrderRulesData) => {
       return (
         !stop.inwardTime ||
         !prevStop?.inwardTime ||
-        stop.inwardTime < prevStop.inwardTime
+        stop.inwardTime !== prevStop.inwardTime
       );
     },
   };
@@ -66,24 +76,35 @@ export const createCommuteRules = (data: FormFieldsCommute) => {
 
   const stopOrderRules = createStopOrderRules(data);
 
-  const isFutureTime = (time?: string) =>
-    !time || isTimeInFuture(data.date, time);
+  // Cumulative day offset per stop along the real trip chronology, so a leg
+  // that crosses midnight pushes everything after it to the next day.
+  const dayOffsets = computeDayOffsets(data.stops);
 
   return {
     isToday,
     ...stopOrderRules,
 
-    isOutwardInFuture: (stop: FormFieldsStopInput) => {
+    isOutwardInFuture: (stop: FormFieldsStopInput, index: number) => {
       if (isInPast) return false;
       if (!isToday) return true;
-      return isFutureTime(stop.outwardTime);
+      if (!stop.outwardTime) return true;
+      return isTimeInFuture(
+        data.date,
+        stop.outwardTime,
+        dayOffsets.outward[index] ?? 0
+      );
     },
 
-    isInwardInFuture: (stop: FormFieldsStopInput) => {
+    isInwardInFuture: (stop: FormFieldsStopInput, index: number) => {
       if (isInPast) return false;
       if (!isToday) return true;
       if (!stopOrderRules.isRound) return true;
-      return isFutureTime(stop.inwardTime || undefined);
+      if (!stop.inwardTime) return true;
+      return isTimeInFuture(
+        data.date,
+        stop.inwardTime,
+        dayOffsets.inward[index] ?? 0
+      );
     },
   };
 };

@@ -47,9 +47,9 @@
     "errors": {
       "seatsMin": "Au moins 1 place est requise",
       "stopsMin": "Au moins 2 arrêts sont requis",
-      "inwardBeforeOutward": "L'heure retour doit être après l'heure aller",
-      "outwardNotIncreasing": "Doit être après l'heure aller de l'arrêt précédent",
-      "inwardNotDecreasing": "Doit être avant l'heure retour de l'arrêt précédent"
+      "inwardSameAsOutward": "L'heure retour doit être différente de l'heure aller",
+      "outwardSameAsPrev": "Doit être différente de l'heure aller de l'arrêt précédent",
+      "inwardSameAsPrev": "Doit être différente de l'heure retour de l'arrêt précédent"
     }
   }
 }

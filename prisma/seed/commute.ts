@@ -14,47 +14,65 @@ function addDays(date: Date, days: number): Date {
   return d;
 }
 
-/** Generate ascending stop times for both outward and inward trips.
- *  Outward times are ascending (morning), inward times are also ascending
- *  (afternoon) and always start after the last outward arrival. */
+/** Shape of a generated trip on the day timeline:
+ *  - SAME_DAY:          outward in the morning, return the same afternoon.
+ *  - RETURN_NEXT_DAY:   outward in the morning, return early the *next* day.
+ *  - OVERNIGHT_OUTWARD: the outward leg itself crosses midnight, so its stops
+ *                       are spread over two days. */
+type TripShape = 'SAME_DAY' | 'RETURN_NEXT_DAY' | 'OVERNIGHT_OUTWARD';
+
+/** Generate stop times for both outward and inward trips.
+ *
+ *  Stops carry no date of their own — the app infers a day offset whenever a
+ *  time "wraps" before the previous one (see `isNextDay`). We exploit that to
+ *  produce multi-day commutes purely through the HH:mm values.
+ *
+ *  Outward times are ascending by index (the route runs stop 0 → last stop).
+ *  The return drives the reverse route, departing from the last stop, so inward
+ *  times are *descending* by index — the last stop has the earliest inward
+ *  time, stop 0 the latest. */
 function generateStopTimes(
   stopCount: number,
-  type: 'ROUND' | 'ONEWAY'
+  type: 'ROUND' | 'ONEWAY',
+  shape: TripShape = 'SAME_DAY'
 ): Array<{ outwardTime: string; inwardTime: string | null }> {
   const quarters = ['00', '15', '30', '45'] as const;
 
-  // Outward: pick a base hour then increment by 15min per stop
-  const outwardBaseHour = faker.number.int({ min: 6, max: 9 });
-  const outwardBaseQuarter = faker.number.int({ min: 0, max: 2 });
+  // Format a quarter-hour count (from midnight of the commute date) as HH:mm,
+  // wrapping past 24h so a leg crossing midnight yields a valid wall clock.
+  const fmt = (totalQuarters: number): string => {
+    const h = Math.floor(totalQuarters / 4) % 24;
+    const q = ((totalQuarters % 4) + 4) % 4;
+    return `${h.toString().padStart(2, '0')}:${quarters[q]}`;
+  };
 
-  // Last outward quarter (for the last stop)
-  const lastOutwardQuarter =
-    outwardBaseHour * 4 + outwardBaseQuarter + (stopCount - 1);
+  // Outward start (in quarter-hours). OVERNIGHT_OUTWARD anchors the LAST stop
+  // at 00:00 (next day) so the outward leg always crosses midnight, whatever
+  // the stop count.
+  const outwardStartQuarter =
+    shape === 'OVERNIGHT_OUTWARD'
+      ? 24 * 4 - (stopCount - 1)
+      : faker.number.int({ min: 6, max: 9 }) * 4 +
+        faker.number.int({ min: 0, max: 2 });
 
-  // Inward base starts at least 6 hours after the last outward time
-  const inwardBaseQuarter = lastOutwardQuarter + 6 * 4;
-  const inwardBaseHour = Math.floor(inwardBaseQuarter / 4);
-  const inwardBaseQ = inwardBaseQuarter % 4;
+  const lastOutwardQuarter = outwardStartQuarter + (stopCount - 1);
 
-  return Array.from({ length: stopCount }, (_, i) => {
-    // Outward times ascending: each stop is 15min later
-    const outTotalQuarters = outwardBaseHour * 4 + outwardBaseQuarter + i;
-    const outH = Math.floor(outTotalQuarters / 4);
-    const outQ = outTotalQuarters % 4;
+  // Inward time of the LAST stop (the return departs from there first).
+  // RETURN_NEXT_DAY pushes it to ~05:00–06:00 the following day, so its clock
+  // value sits before the last outward arrival and is read as the next day.
+  const inwardBaseQuarter =
+    shape === 'RETURN_NEXT_DAY'
+      ? 24 * 4 + faker.number.int({ min: 5 * 4, max: 6 * 4 })
+      : lastOutwardQuarter + 6 * 4;
 
-    // Inward times ascending: each stop is 15min later (same order as outward)
-    const inTotalQuarters = inwardBaseHour * 4 + inwardBaseQ + i;
-    const inH = Math.floor(inTotalQuarters / 4);
-    const inQ = inTotalQuarters % 4;
-
-    return {
-      outwardTime: `${outH.toString().padStart(2, '0')}:${quarters[outQ]}`,
-      inwardTime:
-        type === 'ROUND'
-          ? `${inH.toString().padStart(2, '0')}:${quarters[inQ]}`
-          : null,
-    };
-  });
+  return Array.from({ length: stopCount }, (_, i) => ({
+    // Outward ascending by index: each stop is 15min later.
+    outwardTime: fmt(outwardStartQuarter + i),
+    // Inward descending by index: the last stop leaves first, each
+    // earlier-indexed stop is 15min later.
+    inwardTime:
+      type === 'ROUND' ? fmt(inwardBaseQuarter + (stopCount - 1 - i)) : null,
+  }));
 }
 
 export async function createCommutes(organizationId: string) {
@@ -73,7 +91,8 @@ export async function createCommutes(organizationId: string) {
   });
 
   const today = getToday();
-  const COMMUTE_DAYS = 2;
+  // Spread commutes over a week so the dashboard shows trips on several days.
+  const COMMUTE_DAYS = 7;
 
   // Pre-fetch locations and existing commutes for all members in parallel
   const memberData = await Promise.all(
@@ -123,8 +142,23 @@ export async function createCommutes(organizationId: string) {
       // Create all commutes for all day offsets in parallel
       const dayResults = await Promise.all(
         Array.from({ length: COMMUTE_DAYS }, async (_, dayOffset) => {
-          const type = faker.helpers.arrayElement(['ROUND', 'ONEWAY'] as const);
-          const stopTimes = generateStopTimes(locations.length, type);
+          // Day 1 is a "return next day" round trip and day 2 an overnight
+          // outward leg (stops spread over two days), so every driver exercises
+          // both multi-day cases. Day 0 stays a same-day trip (it carries the
+          // seeded passenger booking) and the rest are random same-day trips.
+          let shape: TripShape;
+          let type: 'ROUND' | 'ONEWAY';
+          if (dayOffset === 1) {
+            shape = 'RETURN_NEXT_DAY';
+            type = 'ROUND';
+          } else if (dayOffset === 2) {
+            shape = 'OVERNIGHT_OUTWARD';
+            type = 'ROUND';
+          } else {
+            shape = 'SAME_DAY';
+            type = faker.helpers.arrayElement(['ROUND', 'ONEWAY'] as const);
+          }
+          const stopTimes = generateStopTimes(locations.length, type, shape);
 
           const commute = await db.commute.create({
             data: {
