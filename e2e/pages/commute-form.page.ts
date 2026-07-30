@@ -71,7 +71,7 @@ export class CommuteFormPage {
   /** Dismiss the save-template drawer that appears after creating from scratch. */
   async skipSaveTemplate() {
     await this.page
-      .getByRole('button', { name: 'Continue without creating a template' })
+      .getByRole('button', { name: 'Continue without saving' })
       .click({ timeout: 10_000 });
   }
 
