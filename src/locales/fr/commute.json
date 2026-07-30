@@ -32,9 +32,9 @@
     "submitButton": "Créer",
     "requestButton": "Demander un trajet",
     "saveTemplateTitle": "Enregistrer comme modèle ?",
-    "saveTemplateDescription": "Enregistrez ce trajet comme modèle pour le réutiliser la prochaine fois.",
-    "saveTemplateConfirm": "Poster et enregistrer le modèle",
-    "saveTemplateSkip": "Continuer sans créer de modèle",
+    "saveTemplateDescription": "Votre trajet est publié. Enregistrez-le comme modèle pour le réutiliser la prochaine fois.",
+    "saveTemplateConfirm": "Enregistrer le modèle",
+    "saveTemplateSkip": "Continuer sans enregistrer",
     "templateSaved": "Modèle enregistré !",
     "requestDrawer": {
       "title": "Demander un trajet",
