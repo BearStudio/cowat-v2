@@ -32,9 +32,9 @@
     "submitButton": "Create",
     "requestButton": "Request a commute",
     "saveTemplateTitle": "Save as template?",
-    "saveTemplateDescription": "Save this commute as a template to reuse it next time.",
-    "saveTemplateConfirm": "Post and save template",
-    "saveTemplateSkip": "Continue without creating a template",
+    "saveTemplateDescription": "Your commute is posted. Save it as a template to reuse it next time.",
+    "saveTemplateConfirm": "Save template",
+    "saveTemplateSkip": "Continue without saving",
     "templateSaved": "Template saved!",
     "requestDrawer": {
       "title": "Request a commute",
