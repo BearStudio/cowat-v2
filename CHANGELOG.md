@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/BearStudio/cowat-v2/compare/v1.3.1...v1.3.2) (2026-07-31)
+
+
+### Bug Fixes
+
+* **search:** serialize dates to YYYY-MM-DD in search params ([#352](https://github.com/BearStudio/cowat-v2/issues/352)) ([acae02a](https://github.com/BearStudio/cowat-v2/commit/acae02ae618da7dc9ee8a5e8bbc9e354ce79ba58))
+
 ## [1.3.1](https://github.com/BearStudio/cowat-v2/compare/v1.3.0...v1.3.1) (2026-04-28)
 
 
