@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
+import { toDateParam } from '@/lib/dayjs/date-param';
 import { orpc } from '@/lib/orpc/client';
 
 import { CommentText } from '@/components/comment-text';
@@ -106,7 +107,10 @@ export const CommuteRequestCard = ({
             className="flex-1"
             size="sm"
             to="/app/$orgSlug/commutes/new"
-            search={{ date: request.date, commuteRequestIds: [request.id] }}
+            search={{
+              date: toDateParam(request.date),
+              commuteRequestIds: [request.id],
+            }}
             viewTransition={{ types: ['slide-up'] }}
           >
             {t('commuteRequest:actions.offerRide')}

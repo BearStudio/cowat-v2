@@ -1,6 +1,7 @@
 /** @jsxImportSource jsx-slack */
 import { Blocks, Button } from 'jsx-slack';
 
+import { toDateParam } from '@/lib/dayjs/date-param';
 import i18n from '@/lib/i18n';
 import { routeUrl } from '@/lib/route-url';
 
@@ -18,10 +19,11 @@ type Props = {
 };
 
 export function CommuteRequested({ event, baseUrl, requesterSlackId }: Props) {
-  const dateParam =
+  const dateParam = toDateParam(
     event.payload.commuteDate instanceof Date
-      ? event.payload.commuteDate.toISOString()
-      : String(event.payload.commuteDate);
+      ? event.payload.commuteDate
+      : new Date(String(event.payload.commuteDate))
+  );
 
   const link = routeUrl(baseUrl, '/app/$orgSlug/commutes/new', {
     params: { orgSlug: event.payload.orgSlug },

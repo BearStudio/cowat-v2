@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import '@/lib/dayjs/config';
 
+import { toDateParam } from '@/lib/dayjs/date-param';
 import { featureIcons } from '@/lib/feature-icons';
 import { orpc } from '@/lib/orpc/client';
 import { cn } from '@/lib/tailwind/utils';
@@ -189,7 +190,7 @@ export const PageDashboard = () => {
                     {dayCommutes.length === 0 ? (
                       <OrgLink
                         to="/app/$orgSlug/commutes/new"
-                        search={{ date: day.toDate() }}
+                        search={{ date: toDateParam(day.toDate()) }}
                         className="block"
                         viewTransition={{ types: ['slide-up'] }}
                       >
