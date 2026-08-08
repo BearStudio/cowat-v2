@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import { authClient } from '@/features/auth/client';
 import { OrganizationPermission } from '@/features/auth/permissions';
+import { checkOrgPermission } from '@/features/auth/rbac';
 
 export const WithOrgPermissions = (props: {
   permissions: OrganizationPermission[];
@@ -23,15 +24,9 @@ export const WithOrgPermissions = (props: {
   const role = currentUserMember?.role;
 
   if (
-    role !== 'owner' &&
-    (!role ||
-      props.permissions.every(
-        (permission) =>
-          !authClient.organization.checkRolePermission({
-            role: role,
-            permissions: permission,
-          })
-      ))
+    props.permissions.every(
+      (permission) => !checkOrgPermission(role, permission)
+    )
   ) {
     return props.fallback ?? null;
   }

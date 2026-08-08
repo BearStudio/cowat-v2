@@ -7,7 +7,6 @@ import {
   mockGetSession,
   mockSession,
   mockUser,
-  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 import userRouter from '@/server/routers/user';
 
@@ -22,7 +21,6 @@ vi.mock('@/server/auth', () => ({
   auth: {
     api: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
-      userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
       removeUser: (...args: unknown[]) => mockRemoveUser(...args),
       revokeUserSessions: (...args: unknown[]) =>
         mockRevokeUserSessions(...args),
@@ -59,15 +57,11 @@ const mockSessionFromDb = {
   expiresAt: new Date(Date.now() + 86400000),
 };
 
-function expectUserHasPermissionBody(body: {
-  userId: string;
-  permissions: Record<string, string[]>;
-}) {
-  expect(mockUserHasPermission).toHaveBeenCalledWith(
-    expect.objectContaining({
-      body,
-    })
-  );
+function signInWithRole(role: string) {
+  mockGetSession.mockResolvedValue({
+    user: { ...mockUser, role },
+    session: mockSession,
+  });
 }
 
 describe('user router', () => {
@@ -120,22 +114,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require user list permission', async () => {
-      mockDb.user.findManyPaginated.mockResolvedValue([0, []]);
-
-      await call(userRouter.getAll, {});
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { user: ['list'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks user list permission', async () => {
+      signInWithRole('user');
 
       await expect(call(userRouter.getAll, {})).rejects.toMatchObject({
         code: 'FORBIDDEN',
@@ -172,22 +152,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require user list permission', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUserFromDb);
-
-      await call(userRouter.getById, { id: 'target-user-1' });
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { user: ['list'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks user list permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.getById, { id: 'target-user-1' })
@@ -244,25 +210,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require user create permission', async () => {
-      mockDb.user.create.mockResolvedValue({
-        ...mockUserFromDb,
-        ...createInput,
-      });
-
-      await call(userRouter.create, createInput);
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { user: ['create'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks user create permission', async () => {
+      signInWithRole('user');
 
       await expect(call(userRouter.create, createInput)).rejects.toMatchObject({
         code: 'FORBIDDEN',
@@ -367,28 +316,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require user set-role permission', async () => {
-      mockDb.user.findUnique.mockResolvedValue({
-        email: 'target@example.com',
-      });
-      mockDb.user.update.mockResolvedValue({
-        ...mockUserFromDb,
-        ...updateInput,
-      });
-
-      await call(userRouter.updateById, updateInput);
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { user: ['set-role'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks user set-role permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.updateById, updateInput)
@@ -435,22 +364,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require user delete permission', async () => {
-      mockRemoveUser.mockResolvedValue({ success: true });
-
-      await call(userRouter.deleteById, { id: 'target-user-1' });
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { user: ['delete'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks user delete permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.deleteById, { id: 'target-user-1' })
@@ -505,22 +420,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require session list permission', async () => {
-      mockDb.session.findManyPaginated.mockResolvedValue([0, []]);
-
-      await call(userRouter.getUserSessions, { userId: 'target-user-1' });
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { session: ['list'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks session list permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.getUserSessions, { userId: 'target-user-1' })
@@ -567,22 +468,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require session revoke permission', async () => {
-      mockRevokeUserSessions.mockResolvedValue({ success: true });
-
-      await call(userRouter.revokeUserSessions, { id: 'target-user-1' });
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { session: ['revoke'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks session revoke permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.revokeUserSessions, { id: 'target-user-1' })
@@ -646,25 +533,8 @@ describe('user router', () => {
       });
     });
 
-    it('should require session revoke permission', async () => {
-      mockRevokeUserSession.mockResolvedValue({ success: true });
-
-      await call(userRouter.revokeUserSession, {
-        id: 'target-user-1',
-        sessionToken: 'other-token',
-      });
-
-      expectUserHasPermissionBody({
-        userId: mockUser.id,
-        permissions: { session: ['revoke'] },
-      });
-    });
-
-    it('should throw FORBIDDEN when user lacks permission', async () => {
-      mockUserHasPermission.mockResolvedValue({
-        success: false,
-        error: false,
-      });
+    it('should throw FORBIDDEN when the role lacks session revoke permission', async () => {
+      signInWithRole('user');
 
       await expect(
         call(userRouter.revokeUserSession, {

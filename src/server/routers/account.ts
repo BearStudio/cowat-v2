@@ -122,7 +122,7 @@ export default {
           MAX_TOKENS_PER_USER
         );
       } else {
-        await context.fcmTokens.deleteToken(input.token);
+        await context.fcmTokens.deleteToken(context.user.id, input.token);
       }
     }),
 };

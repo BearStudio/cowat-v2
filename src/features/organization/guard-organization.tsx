@@ -5,7 +5,8 @@ import { PageError } from '@/components/errors/page-error';
 import { Spinner } from '@/components/ui/spinner';
 
 import { authClient } from '@/features/auth/client';
-import { OrganizationPermission, Role } from '@/features/auth/permissions';
+import { OrganizationPermission } from '@/features/auth/permissions';
+import { checkOrgPermission } from '@/features/auth/rbac';
 import { PageNoOrganization } from '@/features/organization/page-no-organization';
 import { useOrganizations } from '@/features/organization/use-organizations';
 
@@ -19,7 +20,6 @@ export const GuardOrganization = ({
   children?: ReactNode;
 }) => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
   const { organizations, activeOrgId, isPending } = useOrganizations();
 
   const targetOrg = orgSlug
@@ -43,19 +43,8 @@ export const GuardOrganization = ({
   // Check org-level permission
   const hasOrgPermission = useMemo(() => {
     if (!organizationPermission || !targetOrg) return true;
-    const userRole = session.data?.user.role;
-    if (!userRole) return false;
-    // App admins bypass org-level permission checks
-    const isAdmin = authClient.admin.checkRolePermission({
-      role: userRole as Role,
-      permissions: { apps: ['manager'] },
-    });
-    if (isAdmin) return true;
-    return authClient.organization.checkRolePermission({
-      role: targetOrg.role as 'owner' | 'admin' | 'member',
-      permissions: organizationPermission,
-    });
-  }, [organizationPermission, targetOrg, session.data?.user.role]);
+    return checkOrgPermission(targetOrg.role, organizationPermission);
+  }, [organizationPermission, targetOrg]);
 
   if (isPending) {
     return <Spinner full className="opacity-60" />;

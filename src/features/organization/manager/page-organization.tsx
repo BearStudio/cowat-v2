@@ -96,14 +96,17 @@ export const PageOrganization = () => {
                   <Badge variant="secondary">
                     <UsersIcon className="size-3" />
                     {t('organization:manager.detail.memberCount', {
-                      count: org.members.length,
+                      count: org.members?.length ?? 0,
                     })}
                   </Badge>
                 </CardContent>
               </Card>
 
-              <OrgInvitations orgId={org.id} invitations={org.invitations} />
-              <OrgMembers orgId={org.id} members={org.members} />
+              <OrgInvitations
+                orgId={org.id}
+                invitations={org.invitations ?? []}
+              />
+              <OrgMembers orgId={org.id} members={org.members ?? []} />
               <OrgSlackIntegration />
 
               <DangerZone>

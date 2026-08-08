@@ -1,5 +1,5 @@
 import { call } from '@orpc/server';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import statsRouter from '@/server/routers/stats';
 import {
@@ -7,6 +7,7 @@ import {
   mockGetSession,
   mockMemberId,
   mockOrganizationId,
+  mockUser,
 } from '@/server/routers/test-utils';
 
 const mockMemberFromDb = {
@@ -26,6 +27,15 @@ const mockMemberFromDb = {
 
 describe('stats router', () => {
   describe('getAll', () => {
+    beforeEach(() => {
+      mockDb.member.findFirst.mockResolvedValue({
+        id: mockMemberId,
+        userId: mockUser.id,
+        organizationId: mockOrganizationId,
+        role: 'admin',
+      });
+    });
+
     it('should return user stats', async () => {
       mockDb.member.findMany.mockResolvedValue([mockMemberFromDb]);
       mockDb.commute.findMany.mockResolvedValue([]);
@@ -149,6 +159,19 @@ describe('stats router', () => {
 
       await expect(call(statsRouter.getAll, undefined)).rejects.toMatchObject({
         code: 'UNAUTHORIZED',
+      });
+    });
+
+    it('should throw FORBIDDEN when caller is a regular member', async () => {
+      mockDb.member.findFirst.mockResolvedValue({
+        id: mockMemberId,
+        userId: mockUser.id,
+        organizationId: mockOrganizationId,
+        role: 'member',
+      });
+
+      await expect(call(statsRouter.getAll, undefined)).rejects.toMatchObject({
+        code: 'FORBIDDEN',
       });
     });
   });

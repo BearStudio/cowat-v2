@@ -46,7 +46,7 @@ export const OrgSlackIntegration = () => {
     resolver: zodResolver(zFormFields),
     values: {
       enabled: configQuery.data?.enabled ?? false,
-      token: configQuery.data?.token ?? '',
+      token: '',
       broadcastChannelId: configQuery.data?.broadcastChannel ?? '',
       locale: (configQuery.data?.locale ?? '') as 'en' | 'fr' | '',
     },
@@ -73,6 +73,7 @@ export const OrgSlackIntegration = () => {
       broadcastChannel: values.broadcastChannelId || null,
       locale: (values.locale || null) as 'en' | 'fr' | null,
     });
+    form.resetField('token', { defaultValue: '' });
   };
 
   return (
@@ -113,7 +114,11 @@ export const OrgSlackIntegration = () => {
                       type="password"
                       control={form.control}
                       name="token"
-                      placeholder={t('organization:slack.tokenPlaceholder')}
+                      placeholder={
+                        configQuery.data?.hasToken
+                          ? t('organization:slack.tokenPlaceholderExisting')
+                          : t('organization:slack.tokenPlaceholder')
+                      }
                     />
                     <FormFieldHelper>
                       {t('organization:slack.tokenHelper')}

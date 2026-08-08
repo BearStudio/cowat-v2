@@ -8,12 +8,17 @@ import {
   memberAc,
   ownerAc,
 } from 'better-auth/plugins/organization/access';
+import { z } from 'zod';
 
 const customStatements = {
   commute: ['read', 'create', 'update', 'delete'],
-  booking: ['read', 'create', 'manage', 'request'],
+  booking: ['read', 'manage', 'request'],
   location: ['read', 'create', 'update', 'delete'],
   commuteTemplate: ['read', 'create', 'update', 'delete'],
+} satisfies Statements;
+
+const managerStatements = {
+  stats: ['read'],
 } satisfies Statements;
 
 const ownerOnlyStatements = {
@@ -22,7 +27,10 @@ const ownerOnlyStatements = {
 
 const organizationStatements = {
   ...defaultStatements,
+  member: [...defaultStatements.member, 'read'],
+  invitation: [...defaultStatements.invitation, 'read'],
   ...customStatements,
+  ...managerStatements,
   ...ownerOnlyStatements,
 };
 
@@ -38,15 +46,25 @@ const roleMember = ac.newRole({
 
 const roleAdmin = ac.newRole({
   ...adminAc.statements,
+  member: [...adminAc.statements.member, 'read'],
+  invitation: [...adminAc.statements.invitation, 'read'],
   ...customStatements,
+  ...managerStatements,
 });
 
 const roleOwner = ac.newRole({
   ...ownerAc.statements,
+  member: [...ownerAc.statements.member, 'read'],
+  invitation: [...ownerAc.statements.invitation, 'read'],
   ...customStatements,
+  ...managerStatements,
   ...ownerOnlyStatements,
 });
 
 const roles = { owner: roleOwner, admin: roleAdmin, member: roleMember };
 
 export const organizationPermissions = { ac, roles };
+
+export const orgRolesNames = ['owner', 'admin', 'member'] as const;
+export type OrgRole = (typeof orgRolesNames)[number];
+export const zOrgRole: () => z.ZodType<OrgRole> = () => z.enum(orgRolesNames);

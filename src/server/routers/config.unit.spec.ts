@@ -2,10 +2,7 @@ import { call } from '@orpc/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import configRouter from '@/server/routers/config';
-import {
-  mockGetSession,
-  mockUserHasPermission,
-} from '@/server/routers/test-utils';
+import { mockGetSession } from '@/server/routers/test-utils';
 
 vi.mock('@/env/client', () => ({
   envClient: {
@@ -30,9 +27,8 @@ describe('config router', () => {
 
     it('should not require authentication', async () => {
       mockGetSession.mockResolvedValue(null);
-      await call(configRouter.env, undefined);
 
-      expect(mockUserHasPermission).not.toHaveBeenCalled();
+      await expect(call(configRouter.env, undefined)).resolves.toBeDefined();
     });
   });
 });

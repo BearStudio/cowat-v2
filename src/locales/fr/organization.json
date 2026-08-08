@@ -5,6 +5,7 @@
     "enabledLabel": "Activer les notifications Slack",
     "tokenLabel": "Token du bot",
     "tokenPlaceholder": "xoxb-...",
+    "tokenPlaceholderExisting": "Garder vide pour ne pas modifier le token existant",
     "tokenHelper": "Le token du bot Slack pour cette organisation.",
     "broadcastChannelIdLabel": "ID du canal de diffusion",
     "broadcastChannelIdHelper": "ID du canal Slack pour les annonces de covoiturage (ex. C01234ABCDE). Disponible dans les détails du canal.",

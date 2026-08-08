@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 
 import { authClient } from '@/features/auth/client';
-import { Permission, Role } from '@/features/auth/permissions';
+import { Permission } from '@/features/auth/permissions';
+import { checkAppPermission } from '@/features/auth/rbac';
 
 export const WithPermissions = (props: {
   permissions: Permission[];
@@ -17,13 +18,8 @@ export const WithPermissions = (props: {
   }
 
   if (
-    !userRole ||
     props.permissions.every(
-      (permission) =>
-        !authClient.admin.checkRolePermission({
-          role: userRole as Role,
-          permissions: permission,
-        })
+      (permission) => !checkAppPermission(userRole, permission)
     )
   ) {
     return props.fallback ?? null;

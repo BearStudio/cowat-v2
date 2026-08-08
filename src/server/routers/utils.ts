@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/client';
 import { z, type ZodType } from 'zod';
 
 export const zPaginationInput = z.object({
@@ -36,16 +35,4 @@ export function paginateResult(
     nextCursor = items.pop()?.id;
   }
   return { items: map ? items.map(map) : items, nextCursor, total };
-}
-
-export function assertDriverOwnership<T extends { driverMemberId: string }>(
-  entity: T | null | undefined,
-  memberId: string
-): asserts entity is T {
-  if (!entity) {
-    throw new ORPCError('NOT_FOUND');
-  }
-  if (entity.driverMemberId !== memberId) {
-    throw new ORPCError('FORBIDDEN');
-  }
 }

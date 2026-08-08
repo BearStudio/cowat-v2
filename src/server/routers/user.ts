@@ -2,6 +2,12 @@ import { ORPCError } from '@orpc/client';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
+import {
+  isNotCurrentSession,
+  isNotSelfByUserId,
+} from '@/features/auth/ability/abilities';
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforce } from '@/features/auth/ability/enforce';
 import { zSession, zUser } from '@/features/user/schema';
 import { auth } from '@/server/auth';
 import { protectedProcedure, type ProtectedProcedureArgs } from '@/server/orpc';
@@ -115,12 +121,13 @@ export default {
     .input(zUser().pick({ id: true }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      if (context.user.id === input.id) {
-        context.logger.warn('Prevent to delete the current connected user');
-        throw new ORPCError('BAD_REQUEST', {
-          message: 'You cannot delete yourself',
-        });
-      }
+      enforce(
+        isNotSelfByUserId(
+          actorFromContext(context),
+          input.id,
+          'You cannot delete yourself'
+        )
+      );
 
       context.logger.info('Delete user');
       const response = await auth.api.removeUser({
@@ -157,14 +164,13 @@ export default {
     .input(z.object({ id: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      if (context.user.id === input.id) {
-        context.logger.warn(
-          'Prevent to revoke all sesssions of the current connected user'
-        );
-        throw new ORPCError('BAD_REQUEST', {
-          message: 'You cannot revoke all your sessions',
-        });
-      }
+      enforce(
+        isNotSelfByUserId(
+          actorFromContext(context),
+          input.id,
+          'You cannot revoke all your sessions'
+        )
+      );
 
       context.logger.info('Revoke all user sessions');
       const response = await auth.api.revokeUserSessions({
@@ -187,14 +193,13 @@ export default {
     .input(z.object({ id: z.string(), sessionToken: z.string() }))
     .output(z.void())
     .handler(async ({ context, input }) => {
-      if (context.session.token === input.sessionToken) {
-        context.logger.warn(
-          'Prevent to revoke the current connected user session'
-        );
-        throw new ORPCError('BAD_REQUEST', {
-          message: 'You cannot revoke your current session',
-        });
-      }
+      enforce(
+        isNotCurrentSession(
+          actorFromContext(context),
+          input.sessionToken,
+          'You cannot revoke your current session'
+        )
+      );
 
       context.logger.info('Revoke user session');
       const response = await auth.api.revokeUserSession({

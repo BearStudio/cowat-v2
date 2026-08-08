@@ -16,7 +16,7 @@ export const zInviteForm = () =>
       .min(1, t('organization:members.emailsRequired'))
       .superRefine((emails, ctx) => {
         const invalid = emails.filter(
-          (email) => !z.string().email().safeParse(email).success
+          (email) => !z.email().safeParse(email).success
         );
         if (invalid.length > 0) {
           ctx.addIssue({

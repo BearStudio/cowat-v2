@@ -1,28 +1,26 @@
 import { call } from '@orpc/server';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import organizationRouter from '@/server/routers/organization';
 import {
   mockDb,
   mockGetSession,
-  mockHasPermission,
   mockMemberId,
   mockOrganizationId,
   mockUser,
-  mockUserHasPermission,
 } from '@/server/routers/test-utils';
 
-const { mockCancelInvitation } = vi.hoisted(() => ({
+const { mockCancelInvitation, mockCreateInvitation } = vi.hoisted(() => ({
   mockCancelInvitation: vi.fn(),
+  mockCreateInvitation: vi.fn(),
 }));
 
 vi.mock('@/server/auth', () => ({
   auth: {
     api: {
       getSession: (...args: unknown[]) => mockGetSession(...args),
-      userHasPermission: (...args: unknown[]) => mockUserHasPermission(...args),
-      hasPermission: (...args: unknown[]) => mockHasPermission(...args),
       cancelInvitation: (...args: unknown[]) => mockCancelInvitation(...args),
+      createInvitation: (...args: unknown[]) => mockCreateInvitation(...args),
     },
   },
 }));
@@ -52,19 +50,99 @@ const mockInvitation = {
 };
 
 describe('organization router', () => {
+  describe('getActiveOrganization', () => {
+    const orgDetails = {
+      id: mockOrganizationId,
+      name: 'Acme',
+      slug: 'acme',
+      logo: null,
+      members: [
+        {
+          id: 'member-1',
+          role: 'member',
+          user: {
+            id: 'user-1',
+            name: 'Alice',
+            email: 'alice@example.com',
+            image: null,
+          },
+        },
+      ],
+      invitations: [
+        {
+          id: 'invitation-1',
+          email: 'invited@example.com',
+          role: 'member',
+          status: 'pending',
+          expiresAt: new Date('2099-01-01'),
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      mockDb.member.findFirst.mockReset();
+      mockDb.organization.findUnique.mockReset();
+      mockDb.organization.findUnique
+        .mockResolvedValueOnce({ slug: orgDetails.slug }) // middleware: slug
+        .mockResolvedValueOnce(orgDetails); // handler: findByIdWithDetails
+    });
+
+    it('should expose members and invitations to an owner', async () => {
+      mockDb.member.findFirst.mockResolvedValue(ownerMembership);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      expect(result.members).toHaveLength(1);
+      expect(result.invitations).toHaveLength(1);
+    });
+
+    it('should expose members and invitations to an admin', async () => {
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      expect(result.members).toHaveLength(1);
+      expect(result.invitations).toHaveLength(1);
+    });
+
+    it('should NOT leak members or invitations to a regular member', async () => {
+      mockDb.member.findFirst.mockResolvedValue(defaultMember);
+
+      const result = await call(
+        organizationRouter.getActiveOrganization,
+        undefined
+      );
+
+      // Minimal org info is still returned…
+      expect(result.id).toBe(mockOrganizationId);
+      expect(result.name).toBe('Acme');
+      // …but manager-only data must be absent.
+      expect(result.members).toBeUndefined();
+      expect(result.invitations).toBeUndefined();
+    });
+  });
+
   describe('updateMemberRole', () => {
     const input = { memberId: 'target-member-1', role: 'owner' as const };
 
-    // The organizationProcedure middleware calls db.member.findFirst once to verify
-    // org membership, then the handler calls it twice more (findOwnerMembership,
-    // findMemberById). mockResolvedValueOnce values are consumed in order, so we
-    // must account for the middleware call first.
+    const queueMemberFindFirst = (...rows: unknown[]) => {
+      mockDb.member.findFirst.mockReset();
+      for (const row of rows) {
+        mockDb.member.findFirst.mockResolvedValueOnce(row);
+      }
+    };
 
     it('should update role when caller is owner and member belongs to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership) // handler: findOwnerMembership
-        .mockResolvedValueOnce(targetMember); // handler: findMemberById
+      queueMemberFindFirst(
+        ownerMembership, // middleware: RBAC (owner has member:update)
+        targetMember // handler: findMemberById
+      );
       mockDb.member.update.mockResolvedValue(undefined);
 
       await expect(
@@ -72,10 +150,8 @@ describe('organization router', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should throw FORBIDDEN when caller is not owner or admin', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(null); // handler: findOwnerMembership → FORBIDDEN
+    it('should throw FORBIDDEN when caller is a regular member', async () => {
+      queueMemberFindFirst(defaultMember); // middleware RBAC denies member:update
 
       await expect(
         call(organizationRouter.updateMemberRole, input)
@@ -83,10 +159,10 @@ describe('organization router', () => {
     });
 
     it('should throw NOT_FOUND when target member does not belong to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership) // handler: findOwnerMembership
-        .mockResolvedValueOnce(null); // handler: findMemberById → NOT_FOUND
+      queueMemberFindFirst(
+        ownerMembership, // middleware RBAC
+        null // handler: findMemberById → NOT_FOUND
+      );
 
       await expect(
         call(organizationRouter.updateMemberRole, input)
@@ -94,9 +170,7 @@ describe('organization router', () => {
     });
 
     it('should throw FORBIDDEN when admin tries to assign owner role', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(adminMembership); // handler: findOwnerMembership (throws before findMemberById)
+      queueMemberFindFirst(adminMembership); // middleware RBAC; canAssignRole denies owner
 
       await expect(
         call(organizationRouter.updateMemberRole, {
@@ -107,10 +181,10 @@ describe('organization router', () => {
     });
 
     it('should allow admin to assign member role', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(adminMembership) // handler: findOwnerMembership (admin)
-        .mockResolvedValueOnce(targetMember); // handler: findMemberById
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC
+        targetMember // handler: findMemberById
+      );
       mockDb.member.update.mockResolvedValue(undefined);
 
       await expect(
@@ -119,6 +193,37 @@ describe('organization router', () => {
           role: 'member',
         })
       ).resolves.toBeUndefined();
+    });
+
+    it('should allow admin to promote a member to admin', async () => {
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC (admin has member:update)
+        targetMember // handler: findMemberById (target is a member)
+      );
+      mockDb.member.update.mockResolvedValue(undefined);
+
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'admin',
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should throw FORBIDDEN when admin tries to change an owner role', async () => {
+      queueMemberFindFirst(
+        adminMembership, // middleware RBAC
+        { ...targetMember, role: 'owner' } // handler: target is an owner
+      );
+
+      // canActOnMember: a non-owner cannot act on an existing owner.
+      await expect(
+        call(organizationRouter.updateMemberRole, {
+          memberId: 'target-member-1',
+          role: 'admin',
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(mockDb.member.update).not.toHaveBeenCalled();
     });
 
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
@@ -130,13 +235,62 @@ describe('organization router', () => {
     });
   });
 
+  describe('inviteMembers', () => {
+    beforeEach(() => {
+      mockCreateInvitation.mockReset();
+      mockCreateInvitation.mockResolvedValue(undefined);
+      mockDb.member.findFirst.mockReset();
+    });
+
+    it('should throw FORBIDDEN when an admin tries to invite an owner', async () => {
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      await expect(
+        call(organizationRouter.inviteMembers, {
+          emails: ['victim@example.com'],
+          role: 'owner',
+        })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(mockCreateInvitation).not.toHaveBeenCalled();
+    });
+
+    it('should let an owner invite an owner', async () => {
+      mockDb.member.findFirst.mockResolvedValue(ownerMembership);
+
+      const result = await call(organizationRouter.inviteMembers, {
+        emails: ['new-owner@example.com'],
+        role: 'owner',
+      });
+
+      expect(result.succeeded).toEqual(['new-owner@example.com']);
+      expect(mockCreateInvitation).toHaveBeenCalledTimes(1);
+    });
+
+    it('should let an admin invite a regular member', async () => {
+      mockDb.member.findFirst.mockResolvedValue(adminMembership);
+
+      const result = await call(organizationRouter.inviteMembers, {
+        emails: ['teammate@example.com'],
+        role: 'member',
+      });
+
+      expect(result.succeeded).toEqual(['teammate@example.com']);
+      expect(mockCreateInvitation).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('cancelInvitation', () => {
     const input = { invitationId: 'invitation-1' };
 
+    const queueMemberFindFirst = (...rows: unknown[]) => {
+      mockDb.member.findFirst.mockReset();
+      for (const row of rows) {
+        mockDb.member.findFirst.mockResolvedValueOnce(row);
+      }
+    };
+
     it('should cancel invitation when caller is owner and invitation belongs to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
+      queueMemberFindFirst(ownerMembership); // middleware RBAC (owner has invitation:cancel)
       mockDb.invitation.findFirst.mockResolvedValue(mockInvitation);
       mockCancelInvitation.mockResolvedValue(undefined);
 
@@ -146,9 +300,7 @@ describe('organization router', () => {
     });
 
     it('should throw FORBIDDEN when caller is a regular member', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(null); // handler: findOwnerMembership → FORBIDDEN
+      queueMemberFindFirst(defaultMember); // middleware RBAC denies invitation:cancel
 
       await expect(
         call(organizationRouter.cancelInvitation, input)
@@ -158,9 +310,7 @@ describe('organization router', () => {
     });
 
     it('should throw NOT_FOUND when invitation does not belong to org', async () => {
-      mockDb.member.findFirst
-        .mockResolvedValueOnce(defaultMember) // middleware: org membership check
-        .mockResolvedValueOnce(ownerMembership); // handler: findOwnerMembership
+      queueMemberFindFirst(ownerMembership); // middleware RBAC
       mockDb.invitation.findFirst.mockResolvedValue(null);
 
       await expect(

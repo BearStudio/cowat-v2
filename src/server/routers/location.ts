@@ -1,6 +1,9 @@
 import { ORPCError } from '@orpc/client';
 import { z } from 'zod';
 
+import { isOwnerByMemberId } from '@/features/auth/ability/abilities';
+import { actorFromContext } from '@/features/auth/ability/actor';
+import { enforce } from '@/features/auth/ability/enforce';
 import { zFormFieldsLocation, zLocation } from '@/features/location/schema';
 import {
   organizationProcedure,
@@ -93,6 +96,8 @@ export default {
         throw new ORPCError('NOT_FOUND');
       }
 
+      enforce(isOwnerByMemberId(actorFromContext(context))(existing));
+
       return await context.locations.update(input.id, {
         name: input.name,
         address: input.address,
@@ -114,6 +119,8 @@ export default {
       if (!existing) {
         throw new ORPCError('NOT_FOUND');
       }
+
+      enforce(isOwnerByMemberId(actorFromContext(context))(existing));
 
       await context.locations.delete(input.id);
     }),

@@ -15,7 +15,7 @@ const procedure = (args: OrganizationProcedureArgs = {}) =>
   );
 
 export default {
-  getAll: procedure()
+  getAll: procedure({ permissions: { stats: ['read'] } })
     .route({ method: 'GET', path: '/stats', tags })
     .input(
       z
